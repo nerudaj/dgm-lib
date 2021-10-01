@@ -1,0 +1,2 @@
+dgm-lib v1.0.0
+ * INDEV
