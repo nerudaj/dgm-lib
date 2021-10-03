@@ -68,7 +68,7 @@ target_compile_options ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-	${LIB_CFG} ${LIB_LVLD} ${LIB_STR}
+	${LIB_CFG} ${LIB_LVLD} ${LIB_STR} ${LIB_SFML_MAIN} ${LIB_SFML_SYSTEM} ${LIB_SFML_GRAPHICS} ${LIB_SFML_WINDOW} ${LIB_SFML_AUDIO}
 )
 
 set ( DEBUG_BINARY_DIR   "${CMAKE_CURRENT_BINARY_DIR}/Debug" )

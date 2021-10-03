@@ -1,7 +1,10 @@
 function (copy_dlls_to_build_folders)
-	file (GLOB DEBUG_SFML_DLLS   ${CMAKE_BINARY_DIR}/_deps/sfml-src/bin/*-d-2.dll)
-	file (GLOB RELEASE_SFML_DLLS ${CMAKE_BINARY_DIR}/_deps/sfml-src/bin/*[oskmw]-2.dll)
-	set ( OPENAL_DLL ${CMAKE_BINARY_DIR}/_deps/sfml-src/bin/openal32.dll )
+	message ( "Copying DLLs to build folders" )
+	message ( "${SFML_FOLDER}" )
+
+	file (GLOB DEBUG_SFML_DLLS   ${SFML_FOLDER}/bin/*-d-2.dll)
+	file (GLOB RELEASE_SFML_DLLS ${SFML_FOLDER}/bin/*[oskmw]-2.dll)
+	set ( OPENAL_DLL 			 ${SFML_FOLDER}/bin/openal32.dll )
 
 	file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Debug" "${CMAKE_CURRENT_BINARY_DIR}/Release" )
 

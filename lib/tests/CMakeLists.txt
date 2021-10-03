@@ -3,6 +3,7 @@ cmake_minimum_required ( VERSION 3.19 )
 project ( lib-testrunner )
 
 include_directories ( ${CATCH_FOLDER} )
+copy_dlls_to_build_folders ()
 
 set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
@@ -16,10 +17,6 @@ add_executable ( ${PROJECT_NAME}
 
 target_link_libraries ( ${PROJECT_NAME}
 	libdgm
-)
-
-set_property (TARGET ${PROJECT_NAME}
-    PROPERTY VS_PACKAGE_REFERENCES "MSTest.TestAdapter_2.2.7"
 )
 
 add_test (
