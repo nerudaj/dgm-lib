@@ -10,12 +10,12 @@ void dgm::Window::open(const cfg::Ini & config) {
 	}
 }
 
-void dgm::Window::open(const sf::Vector2u & resolution, const std::string & title, const bool fullscreen) {
-	Window::title = title;
-	Window::style = fullscreen ? sf::Style::Fullscreen : (sf::Style::Titlebar | sf::Style::Close);
-	Window::fullscreen = fullscreen;
+void dgm::Window::open(const sf::Vector2u & resolution, const std::string & windowTitle, const bool forceFullscreen) {
+	title = windowTitle;
+	style = forceFullscreen ? sf::Style::Fullscreen : (sf::Style::Titlebar | sf::Style::Close);
+	fullscreen = forceFullscreen;
 
-	window.create({ resolution.x, resolution.y, 32 }, title, style);
+	window.create({ resolution.x, resolution.y, 32 }, windowTitle, style);
 }
 
 void dgm::Window::close(cfg::Ini & config) {

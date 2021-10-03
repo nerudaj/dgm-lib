@@ -18,8 +18,8 @@ void dgm::ShellModule::addAction(const std::string& name, const Action& action) 
 std::string ShellModule::printHelp() const {
 	std::string result = "Available actions for command '" + name + "':\n";
 
-	for (auto& kv : actions) {
-		result += TAB + kv.second.description + '\n';
+	for (auto&& [key, value] : actions) {
+		result += TAB + value.description + '\n';
 	}
 
 	return result + "\n";
@@ -91,8 +91,8 @@ public:
 	StringVariable(std::string* ptr) : ptr(ptr) {}
 };
 
-std::string dgm::ShellModuleVars::formatVariable (const std::string &name) const {
-	return "CONST(" + variables.at(name)->getType() + ", " + name + ", " + variables.at(name)->getValue() + ");\n";
+std::string dgm::ShellModuleVars::formatVariable (const std::string &varname) const {
+	return "CONST(" + variables.at(varname)->getType() + ", " + varname + ", " + variables.at(varname)->getValue() + ");\n";
 }
 
 template<>
@@ -144,8 +144,8 @@ dgm::ShellModuleVars::ShellModuleVars() : ShellModule("var") {
 
 	addAction("list", {0, "list: List names of bound variables", [this] (const Arguments &args) {
 		std::string result = "List of bound variables:\n";
-		for (auto pair : variables) {
-			result += TAB + pair.first + "\n";
+		for (auto&& [key, value] : variables) {
+			result += TAB + key + "\n";
 		}
 		return result;
 	}});
@@ -156,8 +156,8 @@ dgm::ShellModuleVars::ShellModuleVars() : ShellModule("var") {
 		std::ofstream save(filename);
 
 		save << "#pragma once" << std::endl << std::endl;
-		for (auto &kv : variables) {
-			save << formatVariable(kv.first);
+		for (auto &&[key, value] : variables) {
+			save << formatVariable(key);
 		}
 
 		save.close();
@@ -177,9 +177,8 @@ std::string Shell::printGlobalHelp() const {
 	std::string result = "Available commands:\n";
 	result += TAB + "help: Prints this text.\n";
 
-	for (auto &pair : modules) {
-		auto module = pair.second;
-		result += TAB + module->getName() + ": " + module->getDescription() + "\n";
+	for (auto&& [key, shellModule] : modules) {
+		result += TAB + shellModule->getName() + ": " + shellModule->getDescription() + "\n";
 	}
 
 	result += "\n";
@@ -196,26 +195,26 @@ std::string Shell::execute(const std::string &command) {
 		throw ShellException("Shell::execute(): Nothing to execute!");
 	}
 
-	auto module = args[0];
+	auto shellModule = args[0];
 	args.erase(args.begin());
 
-	if (module == "help") {
+	if (shellModule == "help") {
 		return printGlobalHelp();
 	}
 
-	if (modules.find(module) == modules.end()) {
-		throw ShellException("Shell::execute(): Command " + module + " is not recognized! Try 'help' to list available commands.");
+	if (modules.find(shellModule) == modules.end()) {
+		throw ShellException("Shell::execute(): Command " + shellModule + " is not recognized! Try 'help' to list available commands.");
 	}
 
-	return modules.at(module)->execute(args);
+	return modules.at(shellModule)->execute(args);
 }
 
-void Shell::install(ShellModule& module) {
-	if (modules.find(module.getName()) != modules.end()) {
-		throw ShellException("Cannot install module '" + module.getName() + "'. It is already installed.");
+void Shell::install(ShellModule& shellModule) {
+	if (modules.find(shellModule.getName()) != modules.end()) {
+		throw ShellException("Cannot install module '" + shellModule.getName() + "'. It is already installed.");
 	}
 
-	modules[module.getName()] = &module;
+	modules[shellModule.getName()] = &shellModule;
 }
 
 Shell::Shell() {}

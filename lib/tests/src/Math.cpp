@@ -8,20 +8,6 @@
 	REQUIRE(NUMBER_DISTANCE(v1.x, v2.x) < 0.0001f); \
 	REQUIRE(NUMBER_DISTANCE(v1.y, v2.y) < 0.0001f);
 
-TEST_CASE("Clamp", "Math") {
-	SECTION("int version") {
-		REQUIRE(dgm::Math::clamp(-1, 0, 2) == 0);
-		REQUIRE(dgm::Math::clamp(1, 0, 2) == 1);
-		REQUIRE(dgm::Math::clamp(3, 0, 2) == 2);
-	}
-
-	SECTION("float version") {
-		REQUIRE(dgm::Math::clamp(-1.f, 0.f, 2.f) == 0.f);
-		REQUIRE(dgm::Math::clamp(1.f, 0.f, 2.f) == 1.f);
-		REQUIRE(dgm::Math::clamp(3.f, 0.f, 2.f) == 2.f);
-	}
-}
-
 TEST_CASE("Lerp", "Math") {
 	REQUIRE(dgm::Math::lerp(0.f, 1.f, 0.f) == 0.f);
 	REQUIRE(dgm::Math::lerp(0.f, 1.f, 1.f) == 1.f);

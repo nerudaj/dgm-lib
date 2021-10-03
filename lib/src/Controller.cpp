@@ -17,20 +17,10 @@ bool dgm::Controller::keyPressed(const int code) {
 		: (bindings[code].released = false); // assignment is on purpose
 }
 
-void dgm::Controller::releaseKey(const int code) {
-	bindings[code].released = true;
-}
-
 void dgm::Controller::bindKeyboardKey(const int code, sf::Keyboard::Key key) {
 	bindCode(code, key, sf::Mouse::Button::ButtonCount);
 }
 
 void dgm::Controller::bindMouseButton(const int code, sf::Mouse::Button btn) {
 	bindCode(code, sf::Keyboard::KeyCount, btn);
-}
-
-dgm::Controller::Controller() {
-}
-
-dgm::Controller::~Controller() {
 }

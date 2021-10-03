@@ -28,8 +28,10 @@ namespace dgm {
 		 */
 		virtual bool init() = 0;
 
-		void setAppPointer(App *app) {
-			AppState::app = app;
+		void setAppPointer(App *appPtr) {
+			app = appPtr;
 		}
+
+		virtual ~AppState() {}
 	};
 };

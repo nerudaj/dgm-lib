@@ -40,7 +40,7 @@ namespace dgm {
 		 * physical key/button must first be released, this function called
 		 * and only then will this function return TRUE again.
 		 */
-		bool keyPressed(const int code);
+		[[nodiscard]] bool keyPressed(const int code);
 
 		/**
 		 * \brief Marks input as released
@@ -54,7 +54,9 @@ namespace dgm {
 		 * \note In order to function properly, keyPressed should be called
 		 * every frame (to ensure that controller will notice the released key)
 		 */
-		void releaseKey(const int code);
+		void releaseKey(const int code) noexcept {
+			bindings[code].released = true;
+		}
 
 		/**
 		 *  Bind numerical input code to keyboard key
@@ -72,7 +74,7 @@ namespace dgm {
 		 */
 		void bindMouseButton(const int code, sf::Mouse::Button btn);
 
-		Controller();
-		~Controller();
+		Controller() {}
+		~Controller() {}
 	};
 }

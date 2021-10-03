@@ -26,7 +26,7 @@ namespace dgm {
 		AnimationStates::const_iterator currentState;
 		bool looping;
 
-		bool isCurrentStateValid() {
+		[[nodiscard]] bool isCurrentStateValid() const noexcept {
 			return currentState != states->end();
 		}
 
@@ -66,25 +66,25 @@ namespace dgm {
 		 */
 		void setSpeed(int framesPerSecond);
 
-		void setLooping(bool looping) {
-			Animation::looping = looping;
+		constexpr void setLooping(bool enabled) noexcept {
+			looping = enabled;
 		}
 
 		/**
 		 *  \brief Get speed as number of frames per second
 		 */
-		int getSpeed() const {
+		[[nodiscard]] int getSpeed() const{
 			return static_cast<int>(1000.f / timePerFrame.asMilliseconds());
 		}
 
 		/**
 		 *  \brief Get name of currently selected state
 		 */
-		const std::string &getStateName() const {
+		[[nodiscard]] const std::string &getStateName() const noexcept {
 			return currentState->first;
 		}
 
-		bool isLooping() const {
+		[[nodiscard]] constexpr bool isLooping() const noexcept {
 			return looping;
 		}
 

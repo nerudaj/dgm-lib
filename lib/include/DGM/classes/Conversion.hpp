@@ -11,7 +11,7 @@ namespace dgm {
 		 *
 		 * If color is not valid, black is returned
 		 */
-		static sf::Color stringToColor(std::string str);
+		static [[nodiscard]] sf::Color stringToColor(std::string str);
 
 		/**
 		 * \brief Takes a string of integer numbers separated with delimiter
@@ -20,7 +20,7 @@ namespace dgm {
 		 *
 		 * \returns NULL on failure, valid pointer to int array otherwise
 		 */
-		static std::vector<int> stringToIntArray(const char delimiter, const std::string &str);
+		static [[nodiscard]] std::vector<int> stringToIntArray(const char delimiter, const std::string &str);
 
 		/**
 		 * \brief Takes a string of integer numbers separated with delimiter
@@ -30,7 +30,7 @@ namespace dgm {
 		 *
 		 * \returns TRUE if str contains only precisely two int numbers. FALSE otherwise
 		 */
-		static bool stringToVector2i(const char delimiter, const std::string &str, sf::Vector2i &dst);
+		static [[nodiscard]] bool stringToVector2i(const char delimiter, const std::string &str, sf::Vector2i &dst);
 
 		/**
 		* \brief Takes a string of integer numbers separated with delimiter
@@ -40,7 +40,7 @@ namespace dgm {
 		*
 		* \returns TRUE if str contains precisely four int numbers. FALSE otherwise
 		*/
-		static bool stringToIntRect(const char delimiter, const std::string &str, sf::IntRect &dst);
+		static [[nodiscard]] bool stringToIntRect(const char delimiter, const std::string &str, sf::IntRect &dst);
 
 		/**
 		 *  \brief Convert polar coordinates to cartesian
@@ -48,7 +48,7 @@ namespace dgm {
 		 *  \param [in] angle 0° is at [0, 1], counting clockwise
 		 *  \param [in] size Length of the vector
 		 */
-		static sf::Vector2f polarToCartesian(float angle, float size) {
+		static [[nodiscard]] sf::Vector2f polarToCartesian(float angle, float size) {
 			const float PIOVER180 = 0.01745329252f;
 			angle *= PIOVER180;
 			return sf::Vector2f(std::cos(angle), std::sin(angle)) * size;
@@ -59,7 +59,7 @@ namespace dgm {
 		 *
 		 *  \param [in] angleSize X coord is angle, Y coord is size
 		 */
-		static sf::Vector2f polarToCartesian(const sf::Vector2f &angleSize) {
+		static [[nodiscard]] sf::Vector2f polarToCartesian(const sf::Vector2f &angleSize) {
 			return polarToCartesian(angleSize.x, angleSize.y);
 		}
 
@@ -68,14 +68,14 @@ namespace dgm {
 		 *
 		 *  \return X component of returned vector is angle, Y component is size
 		 */
-		static sf::Vector2f cartesianToPolar(const float x, const float y);
+		static [[nodiscard]] sf::Vector2f cartesianToPolar(const float x, const float y);
 
 		/**
 		*  \brief Convert cartesian coordinates to polar
 		*
 		*  \return X component of returned vector is angle, Y component is size
 		*/
-		static sf::Vector2f cartesianToPolar(const sf::Vector2f &coordinates) {
+		static [[nodiscard]] sf::Vector2f cartesianToPolar(const sf::Vector2f &coordinates) {
 			return cartesianToPolar(coordinates.x, coordinates.y);
 		}
 	};

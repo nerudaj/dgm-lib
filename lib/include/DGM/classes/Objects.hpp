@@ -50,42 +50,58 @@ namespace dgm {
 		/**
 		 *  \brief Returns position of circle
 		 */
-		const sf::Vector2f &getPosition() const;
+		[[nodiscard]] const sf::Vector2f& getPosition() const noexcept {
+			return position;
+		}
 		
 		/**
 		 *  \brief Returns radius of circle
 		 */
-		const float getRadius() const;
+		[[nodiscard]] constexpr const float getRadius() const noexcept {
+			return radius;
+		}
 		
 		/**
 		 *  \brief Sets position of circle by setting new XY coordinates
 		 */
-		void setPosition(const float x, const float y);
+		void setPosition(const float x, const float y) {
+			position.x = x;
+			position.y = y;
+		}
 		
 		/**
 		 *  \brief Sets new position of circle with SFML vector
 		 */
-		void setPosition(const sf::Vector2f &position);
+		void setPosition(const sf::Vector2f& newPosition) noexcept {
+			position = newPosition;
+		}
 		
 		/**
 		 *  \brief Sets radius
 		 */
-		void setRadius(const float radius);
+		void setRadius(const float newRadius) noexcept {
+			radius = newRadius;
+		}
 		
 		/**
 		 *  \brief Moves object
 		 */
-		void move(const float x, const float y);
+		void move(const float x, const float y) noexcept {
+			position.x += x;
+			position.y += y;
+		}
 		
 		/**
 		 *  \brief Moves object
 		 */
-		void move(const sf::Vector2f &forward);
+		void move(const sf::Vector2f& forward) noexcept {
+			position += forward;
+		}
 		
 		Circle();
 		Circle(const float x, const float y);
 		Circle(const sf::Vector2f &position);
-		~Circle();
+		~Circle() {}
 	};
 	
 	/**
@@ -110,14 +126,20 @@ namespace dgm {
 		/**
 		 *  \brief Returns position of topleft vertex of rectangle
 		 */
-		const sf::Vector2f &getPosition() const;
+		[[nodiscard]] const sf::Vector2f& getPosition() const noexcept {
+			return position;
+		}
 		
 		/**
 		 *  \brief Returns dimensions of rectangle
 		 */
-		const sf::Vector2f &getSize() const;
+		[[nodiscard]] const sf::Vector2f& getSize() const noexcept {
+			return size;
+		}
 		
-		const sf::Vector2f& getCenter() const;
+		[[nodiscard]] const sf::Vector2f& getCenter() const noexcept {
+			return getPosition() + getSize() / 2.f;
+		}
 
 		/**
 		 *  \brief Set position of top-left corner
@@ -127,17 +149,24 @@ namespace dgm {
 		/**
 		 *  \brief Set position of top-left corner
 		 */
-		void setPosition(const sf::Vector2f &position);
+		void setPosition(const sf::Vector2f& newPosition) noexcept {
+			position = newPosition;
+		}
 		
 		/**
 		 *  \brief Moves object
 		 */
-		void move(const float x, const float y);
+		void move(const float x, const float y) noexcept {
+			position.x += x;
+			position.y += y;
+		}
 		
 		/**
 		 *  \brief Moves object
 		 */
-		void move(const sf::Vector2f &forward);
+		void move(const sf::Vector2f& forward) noexcept {
+			position += forward;
+		}
 		
 		/**
 		 *  \brief Set dimensions of rectangle
@@ -147,12 +176,14 @@ namespace dgm {
 		/**
 		 *  \brief Set dimensions of rectangle
 		 */
-		void setSize(const sf::Vector2f &size);
+		constexpr void setSize(const sf::Vector2f& newSize) noexcept {
+			size = newSize;
+		}
 		
 		Rect();
 		Rect(const float x, const float y, const float width, const float height);
 		Rect(const sf::Vector2f &position, const sf::Vector2f &size);
-		~Rect();
+		~Rect() {}
 	};
 	
 	/**
@@ -200,12 +231,12 @@ namespace dgm {
 			return (*this)[y * dataSize.x + x];
 		}
 
-		int &at(const sf::Vector2u &position) {
-			return at(position.x, position.y);
+		int &at(const sf::Vector2u &pos) {
+			return at(pos.x, pos.y);
 		}
 
-		const int &at(const sf::Vector2u &position) const {
-			return at(position.x, position.y);
+		const int &at(const sf::Vector2u &pos) const {
+			return at(pos.x, pos.y);
 		}
 	
 		/**
@@ -232,7 +263,7 @@ namespace dgm {
 		/**
 		 *  \brief Set position of top-left corner
 		 */
-		void setPosition(const float x, const float y) {
+		void setPosition(const float x, const float y) noexcept {
 			position.x = x;
 			position.y = y;
 		}
@@ -240,14 +271,14 @@ namespace dgm {
 		/**
 		 *  \brief Set position of top-left corner
 		 */
-		void setPosition(const sf::Vector2f &position) {
-			Mesh::position = position;
+		void setPosition(const sf::Vector2f &newPosition) noexcept {
+			position = newPosition;
 		}
 		
 		/**
 		 *  \brief Set dimensions of single voxel
 		 */
-		void setVoxelSize(const unsigned width, const unsigned height) {
+		void setVoxelSize(const unsigned width, const unsigned height) noexcept {
 			voxelSize.x = width;
 			voxelSize.y = height;
 		}

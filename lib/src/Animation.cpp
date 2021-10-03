@@ -30,7 +30,7 @@ bool Animation::update(const dgm::Time &time) {
 	return true;
 }
 
-void Animation::setState(const std::string &state, bool looping) {
+void Animation::setState(const std::string &state, bool shouldLoop) {
 	if (isCurrentStateValid() && currentState->first == state) return;
 
 	auto newState = states->find(state);
@@ -39,7 +39,7 @@ void Animation::setState(const std::string &state, bool looping) {
 	}
 
 	currentState = newState;
-	setLooping(looping);
+	setLooping(shouldLoop);
 
 	reset();
 }

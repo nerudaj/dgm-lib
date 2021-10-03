@@ -225,7 +225,7 @@ namespace dgm {
 		 *  This function does nothing if camera isShaking
 		 */
 		void shake(const sf::Time& duration, float amount,
-			EasingFunc f = [](float x) { return 1; }, const sf::Time& hold = sf::milliseconds(20));
+			EasingFunc f = [] (float) -> float { return 1.f; }, const sf::Time& hold = sf::milliseconds(20));
 
 		Camera(sf::View& view) : view(view) {
 			defaultZoomLevel = view.getSize();

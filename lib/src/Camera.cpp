@@ -6,7 +6,7 @@ template<typename T>
 inline float dgm::Camera::Effect<T>::update(const dgm::Time& time) {
 	elapsed += time.getDeltaTime();
 	float f = elapsed / duration;
-	return easing(dgm::Math::clamp(f, f, 1.f));
+	return easing(std::clamp(f, f, 1.f));
 }
 
 template<typename T>

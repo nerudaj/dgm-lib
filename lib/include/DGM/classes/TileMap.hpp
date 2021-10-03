@@ -89,12 +89,12 @@ namespace dgm {
 			);
 		}
 
-		void init(sf::Texture &texture, const dgm::Clip &clip) {
+		void init(sf::Texture &texture, const dgm::Clip &newClip) {
 			texturePtr = &texture;
-			TileMap::clip = clip;
+			clip = newClip;
 		}
 
-		const dgm::Clip& getClip() const {
+		[[nodiscard]] const dgm::Clip& getClip() const noexcept {
 			return clip;
 		}
 

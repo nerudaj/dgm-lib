@@ -8,11 +8,12 @@ namespace dgm {
 	 *  \brief Class representing array of sf::IntRect (frames) for purpose of clipping textures
 	 *  
 	 *  This class is base building block for animations or tilesets.
+	 *  All frames must have the same size
 	 */
 	class Clip {
 	protected:
-		std::vector<sf::IntRect> frames;
-		sf::Vector2u size;
+		std::vector<sf::IntRect> frames; /// Array of sprite frames
+		sf::Vector2u size;				 /// Size of each frame in pixels
 
 	public:
 		/**
@@ -20,17 +21,23 @@ namespace dgm {
 		 *
 		 *  \param [in] index Index of the frame
 		 */
-		const sf::IntRect &getFrame(const std::size_t index) const { return frames[index]; }
+		[[nodiscard]] const sf::IntRect &getFrame(const std::size_t index) const noexcept {
+			return frames[index];
+		}
 		
 		/**
 		 *  \brief Get number of frames stored in object
 		 */
-		std::size_t getFrameCount() const { return frames.size(); }
+		[[nodiscard]] std::size_t getFrameCount() const noexcept {
+			return frames.size();
+		}
 		
 		/**
 		 *  \brief Get resolution of every frame in object
 		 */
-		const sf::Vector2u &getFrameSize() const { return size; }
+		[[nodiscard]] const sf::Vector2u &getFrameSize() const noexcept {
+			return size;
+		}
 
 		/**
 		 *  \brief Initialize the object
@@ -43,10 +50,12 @@ namespace dgm {
 		 *  \details This method must be called prior to any other method.
 		 *  If frameCount is 0, maximum number of frames is loaded within bounding box
 		 */
-		bool init(const sf::Vector2u &frameSize, const sf::IntRect &boundaries, std::size_t frameCount = 0, const sf::Vector2u &frameOffset = sf::Vector2u(0, 0));
+		void init(const sf::Vector2u &frameSize, const sf::IntRect &boundaries, const std::size_t frameCount = 0, const sf::Vector2u &frameOffset = sf::Vector2u(0, 0));
 
-		Clip();
-		Clip(const sf::Vector2u &frameSize, const sf::IntRect &boundaries, std::size_t frameCount = 0, const sf::Vector2u &frameOffset = sf::Vector2u(0, 0));
-		~Clip();
+		Clip() {}
+		Clip(const sf::Vector2u& frameSize, const sf::IntRect& boundaries, const std::size_t frameCount = 0, const sf::Vector2u& frameOffset = sf::Vector2u(0, 0)) {
+			init(frameSize, boundaries, frameCount, frameOffset);
+		}
+		~Clip() {}
 	};
 }

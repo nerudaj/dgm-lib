@@ -38,32 +38,6 @@ namespace dgm {
 		}
 		
 		/**
-		 *  \brief Limit value to interval <min, max>
-		 *  
-		 *  \param[in]  value  Value to limit
-		 *  \param[in]  min    Start of interval
-		 *  \param[in]  max    End of interval
-		 *
-		 *  \return Value if value belongs to interval. If value < min, then min is returned, if value > max, then max is returned.
-		 */
-		static float clamp(const float value, const float min, const float max) {
-			return std::max(min, std::min(value, max));
-		}
-		
-		/**
-		 *  \brief Limit value to interval <min, max>
-		 *  
-		 *  \param[in]  value  Value to limit
-		 *  \param[in]  min    Start of interval
-		 *  \param[in]  max    End of interval
-		 *
-		 *  \return Value if value belongs to interval. If value < min, then min is returned, if value > max, then max is returned.
-		 */
-		static int clamp(const int value, const int min, const int max) {
-			return std::max(min, std::min(value, max));
-		}
-		
-		/**
 		 *  \brief Computes dot product of two vectors
 		 *  
 		 *  \param[in]  vectorA  Vector object

@@ -15,23 +15,26 @@ namespace dgm {
 		class Particle {
 		protected:
 			sf::Vertex *quad; ///< Pointer to first of the four quad vertices
+			float lifespan = 1.f; ///< How long till dead
+			sf::Vector2f forward = { 0.f, 0.f }; ///< Direction of particle movement
+			sf::Vector2f size = { 1.f, 1.f }; ///< Particle render size. Must be set before calling spawn()
 
 		public:
-			float lifespan; ///< How long till dead
-			sf::Vector2f forward; ///< Direction of particle movement
-			sf::Vector2f size; ///< Particle render size. Must be set before calling spawn()
-
 			/**
 			 *  \brief Get position of particle (center of the particle)
 			 */
-			sf::Vector2f getPosition() const { return quad[0].position + size / 2.f; }
+			[[nodiscard]] sf::Vector2f getPosition() const noexcept {
+				return quad[0].position + size / 2.f;
+			}
+
+			void setPosition(const sf::Vector2f& pos) noexcept;
 
 			/**
 			 *  \brief Is the particle alive
 			 *  
 			 *  \details Test whether lifespan is greater than zero
 			 */
-			bool alive() const { return (lifespan > 0.f); }
+			bool isAlive() const { return (lifespan > 0.f); }
 
 			/**
 			 *  \brief Change animation frame displayed on particle
@@ -77,8 +80,7 @@ namespace dgm {
 			 */
 			virtual void init(sf::Vertex *vertices);
 
-			Particle() {}
-			~Particle() {}
+			virtual ~Particle() {}
 		};
 	};
 }

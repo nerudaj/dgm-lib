@@ -110,7 +110,7 @@ ResourceManager::ResourceManager(ResourceManager &&other) {
 }
 
 ResourceManager::~ResourceManager() {
-	for (auto keyval : database) {
-		free(keyval.second);
+	for (auto&& [key, value] : database) {
+		free(value);
 	}
 }
