@@ -84,12 +84,13 @@ TEST_CASE("StringToColor", "Conversion") {
 TEST_CASE("StringToIntArray", "Conversion") {
 	SECTION("empty array") {
 		auto arr = dgm::Conversion::stringToIntArray(',', "");
-		REQUIRE(arr.size() == 0);
+		REQUIRE(arr.has_value());
+		REQUIRE(arr.value().size() == 0);
 	}
 
 	SECTION("invalid array") {
 		auto arr = dgm::Conversion::stringToIntArray(',', "10, bug");
-		REQUIRE(arr.size() == 0);
+		REQUIRE(!arr.has_value());
 	}
 
 	// TODO: too big number
@@ -99,21 +100,58 @@ TEST_CASE("StringToIntArray", "Conversion") {
 	SECTION("valid array") {
 		auto arr = dgm::Conversion::stringToIntArray(',', "10, 20, 30");
 
-		REQUIRE(arr.size() == 3);
-		REQUIRE(arr[0] == 10);
-		REQUIRE(arr[1] == 20);
-		REQUIRE(arr[2] == 30);
+		REQUIRE(arr.has_value());
+		REQUIRE(arr.value().size() == 3);
+		REQUIRE(arr.value()[0] == 10);
+		REQUIRE(arr.value()[1] == 20);
+		REQUIRE(arr.value()[2] == 30);
 	}
 }
 
 TEST_CASE("StringToIntRect", "Conversion") {
 	SECTION("Valid conversion") {
+		auto v = dgm::Conversion::stringToIntRect(':', "10:20:30:40");
+
+		REQUIRE(v.has_value());
+		REQUIRE(v.value().left == 10);
+		REQUIRE(v.value().top == 20);
+		REQUIRE(v.value().width == 30);
+		REQUIRE(v.value().height == 40);
 	}
 
-	SECTION("Invalid conversion - bad number of ints") {}
+	SECTION("Invalid conversion - bad number of ints") {
+		auto v1 = dgm::Conversion::stringToIntRect(',', "10,20,30,40,50");
+		REQUIRE(!v1.has_value());
 
-	SECTION("Invalid conversion - invalid numbers") {}
+		auto v2 = dgm::Conversion::stringToIntRect(',', "10,20,30");
+		REQUIRE(!v2.has_value());
+	}
+
+	SECTION("Invalid conversion - invalid numbers") {
+		auto v = dgm::Conversion::stringToIntRect(',', "10,a,30,b");
+		REQUIRE(!v.has_value());
+	}
 }
 
 TEST_CASE("StringToVector2i", "Conversion") {
+	SECTION("Valid conversion") {
+		auto v = dgm::Conversion::stringToVector2i(':', "10:20");
+
+		REQUIRE(v.has_value());
+		REQUIRE(v.value().x == 10);
+		REQUIRE(v.value().y == 20);
+	}
+
+	SECTION("Invalid conversion - bad number of ints") {
+		auto v1 = dgm::Conversion::stringToVector2i(',', "10");
+		REQUIRE(!v1.has_value());
+
+		auto v2 = dgm::Conversion::stringToVector2i(',', "10,20,30");
+		REQUIRE(!v2.has_value());
+	}
+
+	SECTION("Invalid conversion - invalid numbers") {
+		auto v1 = dgm::Conversion::stringToVector2i(',', "10,a");
+		REQUIRE(!v1.has_value());
+	}
 }

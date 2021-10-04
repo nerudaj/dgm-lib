@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM\dgm.hpp>
+#include <optional>
 
 namespace dgm {
 	class Conversion {
@@ -20,7 +21,7 @@ namespace dgm {
 		 *
 		 * \returns NULL on failure, valid pointer to int array otherwise
 		 */
-		static [[nodiscard]] std::vector<int> stringToIntArray(const char delimiter, const std::string &str);
+		static [[nodiscard]] std::optional<std::vector<int>> stringToIntArray(const char delimiter, const std::string &str);
 
 		/**
 		 * \brief Takes a string of integer numbers separated with delimiter
@@ -30,7 +31,7 @@ namespace dgm {
 		 *
 		 * \returns TRUE if str contains only precisely two int numbers. FALSE otherwise
 		 */
-		static [[nodiscard]] bool stringToVector2i(const char delimiter, const std::string &str, sf::Vector2i &dst);
+		static [[nodiscard]] std::optional<sf::Vector2i> stringToVector2i(const char delimiter, const std::string &str);
 
 		/**
 		* \brief Takes a string of integer numbers separated with delimiter
@@ -40,7 +41,7 @@ namespace dgm {
 		*
 		* \returns TRUE if str contains precisely four int numbers. FALSE otherwise
 		*/
-		static [[nodiscard]] bool stringToIntRect(const char delimiter, const std::string &str, sf::IntRect &dst);
+		static [[nodiscard]] std::optional<sf::IntRect> stringToIntRect(const char delimiter, const std::string &str);
 
 		/**
 		 *  \brief Convert polar coordinates to cartesian

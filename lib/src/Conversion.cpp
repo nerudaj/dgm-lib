@@ -50,38 +50,33 @@ sf::Color Conversion::stringToColor(std::string str) {
 	return sf::Color(colorBits[0], colorBits[1], colorBits[2]);
 }
 
-vector<int> Conversion::stringToIntArray(const char delimiter, const std::string & str) {
+std::optional<vector<int>> Conversion::stringToIntArray(const char delimiter, const std::string & str) {
 	vector<string> split;
 	Strings::split(delimiter, str, split);
 	
 	vector<int> result(split.size());
 
 	for (size_t i = 0; i < split.size(); i++) {
-		result[i] = int(strtol(split[i].c_str(), NULL, 10));
+		try {
+			result[i] = std::stoi(split[i]);
+		} catch (...) {
+			return std::nullopt;
+		}
 	}
 
 	return result;
 }
 
-bool Conversion::stringToVector2i(const char delimiter, const std::string & str, sf::Vector2i & dst) {
+std::optional<sf::Vector2i> Conversion::stringToVector2i(const char delimiter, const std::string& str) {
 	auto arr = Conversion::stringToIntArray(delimiter, str);
-
-	if (arr.size() == 2) dst = { arr[0], arr[1] };
-
-	return (arr.size() == 2);
+	if (!arr.has_value() || arr.value().size() != 2) return std::nullopt;
+	return sf::Vector2i(arr.value()[0], arr.value()[1]);
 }
 
-bool Conversion::stringToIntRect(const char delimiter, const std::string & str, sf::IntRect & dst) {
+std::optional<sf::IntRect> Conversion::stringToIntRect(const char delimiter, const std::string& str) {
 	auto arr = Conversion::stringToIntArray(delimiter, str);
-
-	if (arr.size() == 4) {
-		dst.left = arr[0];
-		dst.top = arr[1];
-		dst.width = arr[2];
-		dst.height = arr[3];
-	}
-
-	return (arr.size() == 4);
+	if (!arr.has_value() || arr.value().size() != 4) return std::nullopt;
+	return sf::IntRect(arr.value()[0], arr.value()[1], arr.value()[2], arr.value()[3]);
 }
 
 sf::Vector2f Conversion::cartesianToPolar(const float x, const float y) {
