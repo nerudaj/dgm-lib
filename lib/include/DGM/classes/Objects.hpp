@@ -112,9 +112,9 @@ namespace dgm {
 	 */
 	class Rect : public Object {
 	protected:
-		sf::Vector2f position; ///< Position of the topleft corner
-		sf::Vector2f size; ///< Dimensions of the rectangle
-		
+		sf::Vector2f position = { 0.f, 0.f }; ///< Position of the topleft corner
+		sf::Vector2f size = { 0.f, 0.f }; ///< Dimensions of the rectangle
+
 	public:
 		/**
 		 *  \brief Displays object in the window
@@ -129,14 +129,14 @@ namespace dgm {
 		[[nodiscard]] const sf::Vector2f& getPosition() const noexcept {
 			return position;
 		}
-		
+
 		/**
 		 *  \brief Returns dimensions of rectangle
 		 */
 		[[nodiscard]] const sf::Vector2f& getSize() const noexcept {
 			return size;
 		}
-		
+
 		[[nodiscard]] const sf::Vector2f& getCenter() const noexcept {
 			return getPosition() + getSize() / 2.f;
 		}
@@ -145,14 +145,14 @@ namespace dgm {
 		 *  \brief Set position of top-left corner
 		 */
 		void setPosition(const float x, const float y);
-		
+
 		/**
 		 *  \brief Set position of top-left corner
 		 */
 		void setPosition(const sf::Vector2f& newPosition) noexcept {
 			position = newPosition;
 		}
-		
+
 		/**
 		 *  \brief Moves object
 		 */
@@ -160,29 +160,29 @@ namespace dgm {
 			position.x += x;
 			position.y += y;
 		}
-		
+
 		/**
 		 *  \brief Moves object
 		 */
 		void move(const sf::Vector2f& forward) noexcept {
 			position += forward;
 		}
-		
+
 		/**
 		 *  \brief Set dimensions of rectangle
 		 */
 		void setSize(const float width, const float height);
-		
+
 		/**
 		 *  \brief Set dimensions of rectangle
 		 */
 		constexpr void setSize(const sf::Vector2f& newSize) noexcept {
 			size = newSize;
 		}
-		
-		Rect();
-		Rect(const float x, const float y, const float width, const float height);
-		Rect(const sf::Vector2f &position, const sf::Vector2f &size);
+
+		Rect() {}
+		Rect(const float x, const float y, const float width, const float height) : position({ x, y }), size({ width, height }) {}
+		Rect(const sf::Vector2f& position, const sf::Vector2f& size) : position(position), size(size) {}
 		~Rect() {}
 	};
 	

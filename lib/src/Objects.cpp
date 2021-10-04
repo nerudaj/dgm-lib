@@ -46,21 +46,6 @@ void dgm::Rect::setSize(const float width, const float height) {
 	size.y = height;
 }
 
-dgm::Rect::Rect() {
-	setPosition(0.f, 0.f);
-	setSize(0.f, 0.f);
-}
-
-dgm::Rect::Rect(const float x, const float y, const float width, const float height) {
-	setPosition(x, y);
-	setSize(width, height);
-}
-
-dgm::Rect::Rect(const sf::Vector2f &position, const sf::Vector2f &size) {
-	setPosition(position);
-	setSize(size);
-}
-
 // ************
 // *** MESH ***
 // ************

@@ -81,6 +81,8 @@ namespace dgm {
 			virtual void set(const std::string& value) = 0;
 			virtual std::string getType() const = 0;
 			virtual std::string getValue() const = 0;
+
+			virtual ~Variable() {}
 		};
 
 	private:
