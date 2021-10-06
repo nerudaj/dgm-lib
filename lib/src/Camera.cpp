@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Camera.hpp>
 
 template<typename T>
 inline float dgm::Camera::Effect<T>::update(const dgm::Time& time) {

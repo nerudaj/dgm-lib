@@ -6,6 +6,12 @@
 
 #pragma once
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <LevelD.hpp>
+
+#include <vector>
+
 namespace dgm {
 	class Window;
 
@@ -24,6 +30,8 @@ namespace dgm {
 		virtual void move(const float x, const float y) =0;
 		
 		virtual void move(const sf::Vector2f &position) =0;
+
+		virtual ~Object() {}
 	};
 	
 	/**
@@ -101,7 +109,7 @@ namespace dgm {
 		Circle();
 		Circle(const float x, const float y);
 		Circle(const sf::Vector2f &position);
-		~Circle() {}
+		virtual ~Circle() {}
 	};
 	
 	/**
@@ -183,7 +191,7 @@ namespace dgm {
 		Rect() {}
 		Rect(const float x, const float y, const float width, const float height) : position({ x, y }), size({ width, height }) {}
 		Rect(const sf::Vector2f& position, const sf::Vector2f& size) : position(position), size(size) {}
-		~Rect() {}
+		virtual ~Rect() {}
 	};
 	
 	/**
@@ -329,5 +337,7 @@ namespace dgm {
 		 *  LevelD::TileLayer::blocks from selected layer as data (collision information)
 		 */
 		Mesh(const LevelD::Mesh& mesh, unsigned layerIndex = 0);
+
+		virtual ~Mesh() {}
 	};
 }

@@ -5,6 +5,8 @@
  
 #pragma once
 
+#include <DGM/classes/Objects.hpp>
+
 namespace dgm {
 	class Collision {
 	public:

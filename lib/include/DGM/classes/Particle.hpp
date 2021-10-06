@@ -8,9 +8,13 @@ namespace dgm {
 		 *  \brief Particle abstraction
 		 *  
 		 *  \details This class represents a single particle which
-		 *  we can move around, scale or even animate it. You can
-		 *  also have a particle with a limited (or conditioned)
-		 *  lifespan.
+		 *  we can move around, scale or even animate it. 
+		 * 
+		 *  You can also track its lifetime.
+		 * 
+		 *  Inherit from this class if you want to create your custom Particles.
+		 *  To texture your particles, see ParticleSystem::setTexture and
+		 *  Particle::setAnimationFrame.
 		 */
 		class Particle {
 		protected:
@@ -27,26 +31,61 @@ namespace dgm {
 				return quad[0].position + size / 2.f;
 			}
 
-			void setPosition(const sf::Vector2f& pos) noexcept;
+			/**
+			 *  \brief Get forward vector of the particle
+			 */
+			[[nodiscard]] const sf::Vector2f &getForward() const noexcept {
+				return forward;
+			}
 
 			/**
 			 *  \brief Is the particle alive
 			 *  
 			 *  \details Test whether lifespan is greater than zero
 			 */
-			bool isAlive() const { return (lifespan > 0.f); }
+			[[nodiscard]] constexpr bool isAlive() const noexcept {
+				return lifespan > 0.f;
+			}
 
 			/**
 			 *  \brief Change animation frame displayed on particle
 			 *  
 			 *  \details Change textCoords of each quads vertex
 			 */
-			void changeFrame(const sf::IntRect &frame);
+			virtual void setAnimationFrame(const sf::IntRect &frame) noexcept;
+
+			/**
+			 *  \brief Set forward vector of the particle 
+			 */
+			virtual void setForward(const sf::Vector2f& f) noexcept {
+				forward = f;
+			}
 
 			/**
 			 *  \brief Sets the color of the particle
 			 */
-			void setColor(const sf::Color &color);
+			virtual void setColor(const sf::Color& color) noexcept {
+				for (unsigned i = 0; i < 4; i++) quad[i].color = color;
+			}
+
+			/**
+			 *  \brief Move the particle in direction of forward
+			 * 
+			 *  Typically, you want to first retrieve forward of this particle
+			 *  add some global force to it (like gravity), then multiply it
+			 *  with deltaTime since last frame and pass the resulting value
+			 *  to this function.
+			 */
+			virtual void moveForwardBy(const sf::Vector2f& fwd) noexcept {
+				for (unsigned i = 0; i < 4; i++) quad[i].position += fwd;
+			}
+
+			/**
+			 *  \brief Decrement lifespan by given time difference
+			 */
+			virtual void updateLifespan(const sf::Time& deltaTime) noexcept {
+				lifespan -= deltaTime.asSeconds();
+			}
 
 			/**
 			 *  \brief Spawns the particle at given position
@@ -54,31 +93,14 @@ namespace dgm {
 			 *  Size of the particle must be set prior to calling
 			 *  this method.
 			 */
-			virtual void spawn(const sf::Vector2f &position);
-
-			/**
-			 *  \brief Move the particle in direction of forward
-			 */
-			virtual void move(const sf::Vector2f &forward);
-
-			/**
-			 *  \brief Destroys the particle
-			 *
-			 *  \details Until next call to spawn(), particle will not be visible
-			 *  and will not be updated in any way. Frame still can be changed.
-			 */
-			virtual void destroy();
+			virtual void spawn(const sf::Vector2f &position, const sf::Vector2f &size, const sf::Time &lifespan);
 
 			/**
 			 *  \brief Initialize the object with pointer to its vertices
 			 *
 			 *  \param [in] vertices Pointer to topleft vertex of particle
-			 *
-			 *  \details This method must be called prior to any other. If
-			 *  you use the ParticleSystem template, particles are properly
-			 *  initialized already.
 			 */
-			virtual void init(sf::Vertex *vertices);
+			Particle(sf::Vertex* vertices) : quad(vertices) {}
 
 			virtual ~Particle() {}
 		};

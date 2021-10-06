@@ -1,4 +1,8 @@
-#include <DGM\dgm.hpp>
+#include <DGM/classes/TileMap.hpp>
+
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+
 #include <cassert>
 
 void dgm::TileMap::draw(sf::RenderTarget & target, sf::RenderStates states) const {
@@ -35,21 +39,18 @@ void dgm::TileMap::changeTile(float x, float y, uint32_t tileIndex, uint32_t til
 	quad[3].texCoords = sf::Vector2f(float(frame.left), float(frame.top + frame.height));
 }
 
-void dgm::TileMap::build(const sf::Vector2u tileSize, const std::vector<int> &imageData, const sf::Vector2u &dataSize) {
+void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int> &imageData, const sf::Vector2u &newDataSize) {
 	if (!texturePtr) {
 		throw dgm::GeneralException("You have to call dgm::TileMap::init prior to dgm::TileMap::build!");
 	}
 		
 	assert(imageData.size() == size_t(dataSize.x) * dataSize.y);
 
-	TileMap::clip = clip;
-	TileMap::tileSize = sf::Vector2f(float(tileSize.x), float(tileSize.y));
-	TileMap::dataSize = dataSize;
+	//TileMap::clip = clip;
+	tileSize = sf::Vector2f(float(newTileSize.x), float(newTileSize.y));
+	dataSize = newDataSize;
 
-	// initialize vertex array
-	vertices.clear();
-	vertices.setPrimitiveType(sf::Quads);
-	vertices.resize(size_t(4) * dataSize.x * dataSize.y);
+	vertices = sf::VertexArray(sf::Quads, size_t(4) * dataSize.x * dataSize.y);
 
 	// Loop over all tiles
 	for (size_t y = 0; y < dataSize.y; y++) {
@@ -59,8 +60,3 @@ void dgm::TileMap::build(const sf::Vector2u tileSize, const std::vector<int> &im
 	}
 }
 
-dgm::TileMap::TileMap() {
-}
-
-dgm::TileMap::~TileMap() {
-}

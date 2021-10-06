@@ -20,6 +20,10 @@ target_link_libraries ( ${PROJECT_NAME}
 	libdgm
 )
 
+target_compile_options ( ${PROJECT_NAME}
+	PRIVATE /W4 /MP
+)
+
 add_test (
 	NAME    ${PROJECT_NAME}
 	COMMAND ${PROJECT_NAME}

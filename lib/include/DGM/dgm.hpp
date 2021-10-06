@@ -1,5 +1,6 @@
 #pragma once
 
+#pragma warning(push, 0)    
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -7,13 +8,12 @@
 
 #include <ciso646>	// keywords: and, or, and_eq, or_eq, xor, xor_eq, bitand, bitor, not, compl, not_eq
 
-// dsh libraries
-#pragma warning(push, 0)        
+// dsh libraries    
 #include <Config.hpp>
-#pragma warning(pop)
 
 #include <Strings.hpp>
 #include <LevelD.hpp>
+#pragma warning(pop)
 
 // DGM core
 #include "classes/Error.hpp"

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Window.hpp>
+#include <DGM/classes/Time.hpp>
 
 #include <stack>
 

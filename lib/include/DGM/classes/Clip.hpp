@@ -1,6 +1,8 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
+
 #include <vector>
 
 namespace dgm {
@@ -56,6 +58,5 @@ namespace dgm {
 		Clip(const sf::Vector2u& frameSize, const sf::IntRect& boundaries, const std::size_t frameCount = 0, const sf::Vector2u& frameOffset = sf::Vector2u(0, 0)) {
 			init(frameSize, boundaries, frameCount, frameOffset);
 		}
-		~Clip() {}
 	};
 }

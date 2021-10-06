@@ -1,6 +1,10 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Time.hpp>
+
+#include <SFML/Graphics/Sprite.hpp>
+
 #include <map>
 #include <functional>
 #include <memory>

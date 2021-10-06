@@ -1,8 +1,11 @@
-#include <DGM\dgm.hpp>
-#include <cassert>
-#include <fstream>
+#include <DGM/classes/Animation.hpp>
+#include <DGM/classes/Error.hpp>
+
 #include <Strings.hpp>
 #include <json.hpp>
+
+#include <cassert>
+#include <fstream>
 
 using dgm::Animation;
 using dgm::AnimationStates;

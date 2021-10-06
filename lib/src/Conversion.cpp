@@ -1,7 +1,5 @@
-#include <DGM\dgm.hpp>
-
-const float PIOVER180 = 0.01745329252f;
-const float _180OVERPI = 57.2957795131f;
+#include <DGM/classes/Conversion.hpp>
+#include <DGM/classes/Math.hpp>
 
 using dgm::Conversion;
 

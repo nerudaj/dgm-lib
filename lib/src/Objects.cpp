@@ -1,9 +1,8 @@
-﻿/**
- *  \file Objects.cpp
- *  \author doomista
- */
+﻿#include <DGM/classes/Objects.hpp>
+#include <DGM/classes/Window.hpp>
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 // **************
 // *** CIRCLE ***

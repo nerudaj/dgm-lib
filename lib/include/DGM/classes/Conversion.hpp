@@ -1,8 +1,13 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <cmath>
 
 namespace dgm {
+	constexpr float PIOVER180 = 0.01745329252f;
+	constexpr float _180OVERPI = 57.2957795131f;
+
 	class Conversion {
 	public:
 		/**
@@ -12,7 +17,6 @@ namespace dgm {
 		 *  \param [in] size Length of the vector
 		 */
 		static [[nodiscard]] sf::Vector2f polarToCartesian(float angle, float size) {
-			const float PIOVER180 = 0.01745329252f;
 			angle *= PIOVER180;
 			return sf::Vector2f(std::cos(angle), std::sin(angle)) * size;
 		}

@@ -1,4 +1,8 @@
-#include <DGM/dgm.hpp>
+#include <DGM/classes/Shell.hpp>
+#include <DGM/classes/Error.hpp>
+
+#include <Strings.hpp>
+
 #include <fstream>
 
 using dgm::Shell;
@@ -8,12 +12,12 @@ using dgm::ShellException;
 const std::string TAB(4, ' ');
 
 /* ShellModule */
-void dgm::ShellModule::addAction(const std::string& name, const Action& action) {
-	if (actions.find(name) != actions.end()) {
-		throw ShellException("Trying to add action '" + name + "' to module '" + ShellModule::name + " but it is already here");
+void dgm::ShellModule::addAction(const std::string& newActionName, const Action& action) {
+	if (actions.find(newActionName) != actions.end()) {
+		throw ShellException("Trying to add action '" + newActionName + "' to module '" + ShellModule::name + " but it is already here");
 	}
 
-	actions[name] = action;
+	actions[newActionName] = action;
 }
 std::string ShellModule::printHelp() const {
 	std::string result = "Available actions for command '" + name + "':\n";

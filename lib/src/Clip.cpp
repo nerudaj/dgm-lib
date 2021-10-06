@@ -1,8 +1,8 @@
-#pragma once
+#include <DGM/classes/Clip.hpp>
 
-#include <DGM\dgm.hpp>
+#include <iostream>
 #include <cassert>
-//#include <format.h>
+#include <format>
 
 void dgm::Clip::init(const sf::Vector2u & frameSize, const sf::IntRect & boundaries, const std::size_t frameCount, const sf::Vector2u & frameOffset) {
 	assert(frameSize.x > 0 and frameSize.y > 0);
@@ -24,12 +24,12 @@ void dgm::Clip::init(const sf::Vector2u & frameSize, const sf::IntRect & boundar
 	const std::size_t MAX_AVAILABLE_FRAMES = X_FRAME_COUNT * Y_FRAME_COUNT;
 
 	if (frameCount > MAX_AVAILABLE_FRAMES) {
-		/*TODO:std::cerr << std::format("dgm::Clip::init called with frame count {}, but only {} frames are available"
+		std::cerr << std::format("dgm::Clip::init called with frame count {}, but only {} frames are available"
 								 " given frameSize [{}, {}], boundaries [{}, {}, {}, {}] and frameOffset [{}, {}]\n",
 								 frameCount, MAX_AVAILABLE_FRAMES,
 								 frameSize.x, frameSize.y,
 								 boundaries.left, boundaries.top, boundaries.width, boundaries.height,
-								 frameOffset.x, frameOffset.y);*/
+								 frameOffset.x, frameOffset.y);
 	}
 
 	const std::size_t CONCRETE_FRAME_COUNT = frameCount > 0

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <Ini.hpp>
 
 namespace dgm {
 	/**
@@ -11,9 +12,9 @@ namespace dgm {
 	class Window {
 	protected:
 		sf::RenderWindow window;
-		bool fullscreen;
-		std::string title;
-		int style;
+		bool fullscreen = false;
+		std::string title = "";
+		sf::Uint32 style = sf::Style::Default;
 
 	public:
 		/**
@@ -126,7 +127,7 @@ namespace dgm {
 		 */
 		void endDraw() { window.display(); }
 
-		Window() : fullscreen(false) {}
+		Window() {}
 		Window(const cfg::Ini &config) { open(config); }
 		Window(const sf::Vector2u &resolution, const std::string &title, bool fullscreen) { open(resolution, title, fullscreen); }
 		~Window() { if (isOpen()) close(); }

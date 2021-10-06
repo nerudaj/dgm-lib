@@ -1,7 +1,24 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <LevelD.hpp>
+
+#include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Error.hpp>
+
+#include <cstdint>
 #include <cassert>
+#include <vector>
+
+namespace sf {
+	class Texture;
+	class RenderTarget;
+	class RenderStates;
+}
 
 namespace dgm {
 	/**
@@ -97,8 +114,5 @@ namespace dgm {
 		[[nodiscard]] const dgm::Clip& getClip() const noexcept {
 			return clip;
 		}
-
-		TileMap();
-		~TileMap();
 	};
 }

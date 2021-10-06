@@ -1,6 +1,16 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+
+#include <cassert>
+
+namespace sf {
+	class RenderTarget;
+	class RenderStates;
+	class Texture;
+}
 
 namespace dgm {
 	namespace ps {		
@@ -10,7 +20,7 @@ namespace dgm {
 			
 		protected:
 			sf::VertexArray vertices;
-			sf::Texture *texture;
+			sf::Texture *texture = nullptr;
 		
 		public:
 			/**
@@ -19,7 +29,10 @@ namespace dgm {
 			 *  \param[in] index  Index of particle
 			 *  \return Pointer to array of four vertices
 			 */
-			sf::Vertex *getParticleVertices(const std::size_t index);
+			sf::Vertex* getParticleVertices(const std::size_t index) noexcept {
+				assert(index < vertices.getVertexCount() / 4);
+				return &vertices[index * 4];
+			}
 			
 			/**
 			 *  \brief Initialize the object
@@ -27,7 +40,9 @@ namespace dgm {
 			 *  \param[in]  particleCount  How many particles will renderer hold
 			 *  \return TRUE on success
 			 */
-			bool init(const std::size_t particleCount);
+			void init(const std::size_t particleCount) {
+				vertices = sf::VertexArray(sf::Quads, particleCount * 4);
+			}
 			
 			/**
 			 *  \brief Bind texture to the object
@@ -37,17 +52,8 @@ namespace dgm {
 			 *  Particle system does not interface directly with bound texture, it only
 			 *  has access to clipping data.
 			 */
-			void setTexture(sf::Texture &texture);
-
-			/**
-			 *  \brief Clear texture previously bound to this object
-			 */
-			void unbindTexture() {
-				texture = nullptr;
-			}
-
-			ParticleSystemRenderer() {
-				unbindTexture();
+			void setTexture(sf::Texture& newTexture) noexcept {
+				texture = &newTexture;
 			}
 		};
 	};

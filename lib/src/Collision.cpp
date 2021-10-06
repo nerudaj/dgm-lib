@@ -1,9 +1,6 @@
-/**
- *  \brief Collision.cpp
- *  \author doomista
- */
- 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Collision.hpp>
+
+#include <SFML/Graphics/Rect.hpp>
 
 bool dgm::Collision::basic(const dgm::Rect &rect, const sf::Vector2i &point) {
 	sf::Vector2f pos = rect.getPosition();
@@ -95,7 +92,7 @@ bool dgm::Collision::basic(const dgm::Rect &A, const dgm::Rect &B) {
 	return false;
 }
 
-sf::IntRect normalizeBoundaries(const sf::IntRect &src, const dgm::Mesh &mesh) {
+static sf::IntRect normalizeBoundaries(const sf::IntRect &src, const dgm::Mesh &mesh) {
 	sf::IntRect dst;
 
 	sf::Vector2u meshSize = mesh.getDataSize();

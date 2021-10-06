@@ -1,6 +1,12 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Animation.hpp>
+#include <DGM/classes/Error.hpp>
+
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
+
 #include <map>
 
 namespace dgm {
@@ -9,7 +15,7 @@ namespace dgm {
 	 */
 	class ResourceManager {
 	private:
-		bool pedantic;
+		bool pedantic = true;
 
 		std::map<std::string, void*> database;
 		std::string commonPrefix;
@@ -100,7 +106,7 @@ namespace dgm {
 		template<typename T>
 		void loadResourceDir(const std::string &folder, bool recursive = false);
 
-		ResourceManager();
+		ResourceManager() {}
 		ResourceManager(const ResourceManager &other) = delete;
 		ResourceManager(ResourceManager &&other);
 		~ResourceManager();

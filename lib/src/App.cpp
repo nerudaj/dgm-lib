@@ -1,4 +1,6 @@
-#include <DGM\dgm.hpp>
+#include <DGM/classes/App.hpp>
+#include <DGM/classes/AppState.hpp>
+
 #include <fstream>
 
 class AppEnvironment {

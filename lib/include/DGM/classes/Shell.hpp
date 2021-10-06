@@ -1,5 +1,7 @@
 #pragma once
 
+#include <DGM/classes/RingBuffer.hpp>
+
 #include <map>
 #include <vector>
 #include <stdexcept>
@@ -54,7 +56,7 @@ namespace dgm {
 		 */
 		std::string execute(const Arguments& args);
 
-		const std::string& getName() const {
+		[[nodiscard]] const std::string& getName() const noexcept {
 			return name;
 		}
 

@@ -1,4 +1,4 @@
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Controller.hpp>
 
 void dgm::Controller::bindCode(const int code, sf::Keyboard::Key key, sf::Mouse::Button btn) {
 	if (bindings.count(code) > 0) {

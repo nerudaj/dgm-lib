@@ -1,6 +1,7 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
 
 namespace dgm {
 	/**
@@ -21,12 +22,16 @@ namespace dgm {
 		 *  
 		 *  \return Float representation of seconds, 1.f = 1s
 		 */
-		float getDeltaTime() const { return deltaTime; }
+		[[nodiscard]] constexpr float getDeltaTime() const noexcept {
+			return deltaTime;
+		}
 
 		/**
 		 *  \brief Get time between last two calls to reset
 		 */
-		const sf::Time &getElapsed() const { return elapsed; }
+		[[nodiscard]] const sf::Time &getElapsed() const noexcept {
+			return elapsed;
+		}
 
 		/**
 		 *  \brief Reset the clock and store time elapsed

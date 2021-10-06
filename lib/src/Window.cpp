@@ -1,4 +1,4 @@
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Window.hpp>
 
 void dgm::Window::open(const cfg::Ini & config) {
 	if (config.hasSection("Window")) {

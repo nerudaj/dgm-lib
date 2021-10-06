@@ -1,4 +1,5 @@
-#include <DGM/dgm.hpp>
+#include <DGM/classes/ResourceManager.hpp>
+
 #include <stdexcept>
 #include <filesystem>
 
@@ -99,12 +100,7 @@ template void ResourceManager::loadResourceDir<sf::SoundBuffer>(const std::strin
 template void ResourceManager::loadResourceDir<sf::Font>(const std::string &filename, bool recursive);
 template void ResourceManager::loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(const std::string &filename, bool recursive);
 
-ResourceManager::ResourceManager() {
-	pedantic = true;
-}
-
 ResourceManager::ResourceManager(ResourceManager &&other) {
-	pedantic = true;
 	database = other.database;
 	other.database.clear();
 }
