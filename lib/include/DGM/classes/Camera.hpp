@@ -1,9 +1,17 @@
 #pragma once
 
-#include <DGM/dgm.hpp>
+#include <DGM/classes/Camera.hpp>
+#include <DGM/classes/Objects.hpp>
+#include <DGM/classes/Collision.hpp>
+
+#include <SFML/System/Time.hpp>
+#include <SFML/Graphics/View.hpp>
+
 #include <functional>
 
 namespace dgm {
+	class Time;
+
 	/**
 	 * \brief Class for manipulating sf::View transformation
 	 *
@@ -43,7 +51,7 @@ namespace dgm {
 			/**
 			 * Is effect still animating?
 			 */
-			inline bool isActive() const {
+			[[nodiscard]] constexpr bool isActive() const noexcept {
 				return elapsed < duration;
 			}
 
@@ -60,28 +68,6 @@ namespace dgm {
 		 */
 		struct ShakeEffect : public Effect<sf::Vector2f> {
 			float hold = 0.f; // how long should position be held before changing
-			sf::Vector2f positions[20] = { // Predefined set of directions where shake should go
-				{ 0.2f, -0.6f },
-				{ -1.f, 0.5f },
-				{ -0.3f, -1.f },
-				{ 0.5f, -1.f },
-				{ -0.8f, -0.7f },
-				{ -0.2f, 0.3f },
-				{ -0.6f, -0.6f },
-				{ 0.2f, 0.5f },
-				{ 0.5f, -0.2f },
-				{ 1.f, -0.6f },
-				{ 0.4f, 0.6f },
-				{ 0.5f, 0.7f },
-				{ -1.f, -1.f },
-				{ 0.6f, 0.5f },
-				{ 0.3f, 0.7f },
-				{ 0.3f, -0.7f },
-				{ -0.2f, -0.7f },
-				{ -0.1f, -0.3f },
-				{ -0.2f, 0.1f },
-				{ -0.1f, 0.6f },
-			}; // we loop over 20 predefined positions
 		};
 
 		Effect<sf::Vector2f> moveEffect;
@@ -89,33 +75,45 @@ namespace dgm {
 		Effect<float> rotationEffect;
 		ShakeEffect shakeEffect;
 
+		[[nodiscard]] dgm::Rect getVíewBoundingBox() const {
+			return dgm::Rect(view.getCenter() - view.getSize() / 2.f, view.getSize());
+		}
+
 	public:
 		/**
 		 *  \brief True if camera is animating movement
 		 */
-		inline bool isMoving() const {
+		[[nodiscard]] constexpr bool isMoving() const noexcept {
 			return moveEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating zooming
 		 */
-		inline bool isZooming() const {
+		[[nodiscard]] constexpr bool isZooming() const noexcept {
 			return zoomEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating rotation
 		 */
-		inline bool isRotating() const {
+		[[nodiscard]] constexpr bool isRotating() const noexcept{
 			return rotationEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating shaking
 		 */
-		inline bool isShaking() const {
+		[[nodiscard]] constexpr bool isShaking() const noexcept {
 			return shakeEffect.isActive();
+		}
+
+		[[nodiscard]] bool isObjectVisible(const dgm::Rect &object) const noexcept {
+			return dgm::Collision::basic(getVíewBoundingBox(), object);
+		}
+
+		[[nodiscard]] bool isObjectVisible(const dgm::Circle& object) const noexcept {
+			return dgm::Collision::basic(getVíewBoundingBox(), object);
 		}
 
 		/**

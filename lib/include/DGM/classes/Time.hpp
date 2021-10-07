@@ -11,7 +11,7 @@ namespace dgm {
 	 *  calls to reset.
 	 */
 	class Time {
-	private:
+	protected:
 		sf::Clock clock;
 		sf::Time  elapsed;
 		float     deltaTime;

@@ -44,8 +44,8 @@ namespace dgm {
 	 */
 	class Circle : public Object {
 	protected:
-		sf::Vector2f position; ///< Position of the center
-		float radius; ///< Radius of circle
+		sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
+		float radius = 0.f; ///< Radius of circle
 		
 	public:
 		/**
@@ -106,9 +106,9 @@ namespace dgm {
 			position += forward;
 		}
 		
-		Circle();
-		Circle(const float x, const float y);
-		Circle(const sf::Vector2f &position);
+		Circle() {}
+		Circle(const float x, const float y, const float radius) : position(x, y), radius(radius) {}
+		Circle(const sf::Vector2f& position, const float radius) : position(position), radius(radius) {}
 		virtual ~Circle() {}
 	};
 	

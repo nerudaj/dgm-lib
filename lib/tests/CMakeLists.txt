@@ -6,6 +6,7 @@ include_directories ( ${CATCH_FOLDER} )
 copy_dlls_to_build_folders ()
 
 set ( SOURCES
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Clip.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Conversion.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
