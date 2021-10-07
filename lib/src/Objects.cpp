@@ -16,14 +16,6 @@ void dgm::Circle::debugRender(dgm::Window& window, sf::Color color) const {
 	window.draw(shape);
 }
 
-dgm::Circle::Circle() {
-	setPosition(0.f, 0.f);
-	radius = 0.f;
-}
-
-dgm::Circle::Circle(const float x, const float y) { setPosition(x, y); }
-dgm::Circle::Circle(const sf::Vector2f &position) { setPosition(position); }
-
 // ************
 // *** RECT ***
 // ************

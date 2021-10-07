@@ -60,3 +60,16 @@ void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int> 
 	}
 }
 
+void dgm::TileMap::build(const LevelD::Mesh& mesh, unsigned layerIndex) {
+	if (mesh.layers.size() <= layerIndex) {
+		throw dgm::EnvironmentException("Requesting layer " + std::to_string(layerIndex) +
+			" in mesh which has only " + std::to_string(mesh.layers.size()) + " layers");
+	}
+
+	build(
+		{ mesh.tileWidth, mesh.tileHeight },
+		std::vector<int>(mesh.layers[layerIndex].tiles.begin(), mesh.layers[layerIndex].tiles.end()),
+		{ mesh.layerWidth, mesh.layerHeight }
+	);
+}
+

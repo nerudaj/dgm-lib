@@ -93,18 +93,7 @@ namespace dgm {
 		 *
 		 *  \see changeTile
 		 */
-		void build(const LevelD::Mesh &mesh, unsigned layerIndex = 0) {
-			if (mesh.layers.size() <= layerIndex) {
-				throw dgm::EnvironmentException("Requesting layer " + std::to_string(layerIndex) +
-					" in mesh which has only " + std::to_string(mesh.layers.size()) + " layers");
-			}
-
-			build(
-				{ mesh.tileWidth, mesh.tileHeight },
-				std::vector<int>(mesh.layers[layerIndex].tiles.begin(), mesh.layers[layerIndex].tiles.end()),
-				{ mesh.layerWidth, mesh.layerHeight }
-			);
-		}
+		void build(const LevelD::Mesh& mesh, unsigned layerIndex = 0);
 
 		void init(sf::Texture &texture, const dgm::Clip &newClip) {
 			texturePtr = &texture;
