@@ -5,9 +5,13 @@
 
 #include <stack>
 #include <fstream>
+#include <cassert>
 
 namespace dgm {
 	class AppState;
+
+	template<class T>
+	concept IsDerivedFromAppState = std::is_base_of<dgm::AppState, T>::value;
 
 	class App {
 	public:
@@ -19,8 +23,21 @@ namespace dgm {
 		std::ofstream errbuf;
 		std::streambuf* stdoutBackup = nullptr;
 		std::streambuf* stderrBackup = nullptr;
-		std::stack<AppState*> states;
-		bool scheduleCleanup = false; // Schedule memory cleanup of state popped during current run
+		std::stack<std::unique_ptr<AppState>> states;
+		bool scheduledDestructionOfTopState = false;
+		bool scheduledDestructionOfApp = false;
+
+	protected:
+		/**
+		 *  \brief Get reference to top state on the stack
+		 */
+		[[nodiscard]] dgm::AppState& topState() noexcept {
+			assert(not states.empty());
+			return *states.top().get();
+		}
+
+		void clearStack();
+		void performPostFrameCleanup();
 
 	public:
 
@@ -34,17 +51,10 @@ namespace dgm {
 		 *  called. If init succeeds, the state is
 		 *  pushed to app stack.
 		 */
-		void pushState(dgm::AppState *state);
-		
-		/**
-		 *  \brief Remove top state from app stack
-		 */
-		void popState();
-		
-		/**
-		 *  \brief Get pointer to top state on app stack
-		 */
-		dgm::AppState *topState();
+		template<IsDerivedFromAppState T, class ... Args>
+		void pushState(Args ... args) {
+			states.push(std::make_unique<T>(*this, args...));
+		}
 		
 		/**
 		 *  \brief Run the main app loop
@@ -55,9 +65,25 @@ namespace dgm {
 		void run();
 		
 		/**
-		 *  \brief Exit the app with proper deinitialization of states
+		 *  \brief Remove top state from app stack
+		 * 
+		 *  The actual removal will happen at the end of the frame
+		 *  so input/update/draw will be performed.
 		 */
-		void exit();
+		void popState() noexcept {
+			scheduledDestructionOfTopState = true;
+		}
+
+		/**
+		 *  \brief Exit the app with proper deinitialization of states
+		 * 
+		 *  The actual termination will happen at the end of the frame
+		 *  so input/update/draw will be performed.
+		 */
+		void exit() {
+			scheduledDestructionOfTopState = true;
+			scheduledDestructionOfApp = true;
+		}
 
 		App(dgm::Window& window);
 		~App();

@@ -5,7 +5,7 @@
 namespace dgm {
 	class AppState {
 	protected:
-		App *app;
+		App &app;
 
 	public:
 		/**
@@ -26,12 +26,13 @@ namespace dgm {
 		/**
 		 *  \brief Initialize the state object
 		 */
-		virtual bool init() = 0;
+		/*virtual bool init() = 0;
 
 		void setAppPointer(App *appPtr) {
 			app = appPtr;
-		}
+		}*/
 
+		AppState(dgm::App& app) : app(app) {}
 		virtual ~AppState() {}
 	};
 };

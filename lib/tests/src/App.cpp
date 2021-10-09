@@ -2,11 +2,11 @@
 #include <DGM/dgm.hpp>
 
 struct Reporter {
-	bool destructorCalled = false;
 	bool inputCalled = false;
 	bool updateCalled = false;
 	bool drawCalled = false;
-	bool initCalled = false;
+	bool ctorCalled = false;
+	bool dtorCalled = false;
 };
 
 enum class TestableStateBehaviour : std::size_t {
@@ -17,31 +17,39 @@ enum class TestableStateBehaviour : std::size_t {
 
 class TestableState : public dgm::AppState {
 protected:
-	Reporter& reporter;
+	Reporter* reporter = nullptr;
 	TestableStateBehaviour behaviour = TestableStateBehaviour::Default;
 	float dt = 0.f;
 
 public:
 	// Dědí se přes AppState.
 	virtual void input() override {
-		reporter.inputCalled = true;
+		reporter->inputCalled = true;
 	}
 	virtual void update() override {
-		reporter.updateCalled = true;
-		app->popState();
+		reporter->updateCalled = true;
+		
+		switch (behaviour) {
+		case TestableStateBehaviour::PopState:
+			app.popState();
+			break;
+		case TestableStateBehaviour::ExitApp:
+			app.exit();
+			break;
+		default:
+			break;
+		}
 	}
 	virtual void draw() override {
-		reporter.drawCalled = true;
-		dt = app->time.getDeltaTime();
-	}
-	virtual bool init() override {
-		reporter.initCalled = true;
-		return true;
+		reporter->drawCalled = true;
+		dt = app.time.getDeltaTime();
 	}
 
-	TestableState(Reporter& reporter, TestableStateBehaviour behaviour) : reporter(reporter), behaviour(behaviour) {}
+	TestableState(dgm::App &app, Reporter* reporter, TestableStateBehaviour behaviour) : dgm::AppState(app), reporter(reporter), behaviour(behaviour) {
+		reporter->ctorCalled = true;
+	}
 	virtual ~TestableState() {
-		reporter.destructorCalled = true;
+		reporter->dtorCalled = true;
 	}
 };
 
@@ -70,16 +78,14 @@ TEST_CASE("Push/pop state", "App") {
 	Reporter reporter;
 
 	dgm::App app(window);
-
-	app.pushState(new TestableState(reporter, TestableStateBehaviour::PopState));
-	REQUIRE(reporter.initCalled);
-
+	app.pushState<TestableState>(&reporter, TestableStateBehaviour::PopState);
 	app.run();
 
+	REQUIRE(reporter.ctorCalled);
 	REQUIRE(reporter.inputCalled);
 	REQUIRE(reporter.updateCalled);
 	REQUIRE(reporter.drawCalled);
-	REQUIRE(reporter.destructorCalled);
+	REQUIRE(reporter.dtorCalled);
 }
 
 TEST_CASE("Exit app", "App") {
@@ -87,12 +93,21 @@ TEST_CASE("Exit app", "App") {
 	Reporter reporter1, reporter2, reporter3;
 
 	dgm::App app(window);
-	app.pushState(new TestableState(reporter1, TestableStateBehaviour::Default));
-	app.pushState(new TestableState(reporter2, TestableStateBehaviour::Default));
-	app.pushState(new TestableState(reporter3, TestableStateBehaviour::ExitApp));
+	app.pushState<TestableState>(&reporter1, TestableStateBehaviour::Default);
+	app.pushState<TestableState>(&reporter2, TestableStateBehaviour::Default);
+	app.pushState<TestableState>(&reporter3, TestableStateBehaviour::ExitApp);
 	app.run();
 
-	REQUIRE(reporter1.destructorCalled);
-	REQUIRE(reporter2.destructorCalled);
-	REQUIRE(reporter3.destructorCalled);
+
+	REQUIRE(reporter1.ctorCalled);
+	REQUIRE(reporter1.dtorCalled);
+
+	REQUIRE(reporter2.ctorCalled);
+	REQUIRE(reporter2.dtorCalled);
+
+	REQUIRE(reporter3.ctorCalled);
+	REQUIRE(reporter3.inputCalled);
+	REQUIRE(reporter3.updateCalled);
+	REQUIRE(reporter3.drawCalled);
+	REQUIRE(reporter3.dtorCalled);
 }

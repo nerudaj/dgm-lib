@@ -1,59 +1,39 @@
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppState.hpp>
 
-void dgm::App::pushState(dgm::AppState * state) {
-	states.push(state);
-
-	topState()->setAppPointer(this);
-	if (not topState()->init()) {
-		std::cerr << "ERROR:App: State was not initialized properly.\n";
-		popState();
-	}
+void dgm::App::clearStack() {
+	while (not states.empty())
+		states.pop();
 }
 
-void dgm::App::popState() {
-	states.pop();
-	scheduleCleanup = true;
-}
+void dgm::App::performPostFrameCleanup() {
+	if (scheduledDestructionOfApp)
+		clearStack();
+	else
+		states.pop();
 
-dgm::AppState * dgm::App::topState() {
-	if (states.empty()) return nullptr;
-
-	return states.top();
+	scheduledDestructionOfApp = false;
+	scheduledDestructionOfTopState = false;
 }
 
 void dgm::App::run() {
 	while (window.isOpen() && not states.empty()) {
-		AppState *top = topState();
+		auto &top = topState();
 
-		top->input();
-		top->update();
-		top->draw();
+		top.input();
+		top.update();
+		top.draw();
+
+		if (scheduledDestructionOfTopState)
+			performPostFrameCleanup();
+
 		time.reset();
-
-		if (scheduleCleanup) {
-			delete top;
-			scheduleCleanup = false;
-		}
-	}
-}
-
-void dgm::App::exit() {
-	// Pop state at the top
-	// it will be deleted via scheduled cleanup
-	popState();
-
-	// Pop and delete the rest
-	while (not states.empty()) {
-		delete states.top();
-		states.pop();
 	}
 }
 
 dgm::App::App(dgm::Window &window) : window(window), outbuf("stdout.txt"), errbuf("stderr.txt") {
-	if (outbuf.rdbuf() == nullptr || errbuf.rdbuf() == nullptr) {
+	if (outbuf.rdbuf() == nullptr || errbuf.rdbuf() == nullptr)
 		throw dgm::GeneralException("Cannot redirect stdout/stderr to file");
-	}
 
 	stdoutBackup = std::cout.rdbuf();
 	stderrBackup = std::cerr.rdbuf();
@@ -65,10 +45,7 @@ dgm::App::App(dgm::Window &window) : window(window), outbuf("stdout.txt"), errbu
 }
 
 dgm::App::~App() {
-	while (not states.empty()) {
-		delete topState();
-		popState();
-	}
+	clearStack();
 
 	std::cout.rdbuf(stdoutBackup);
 	std::cerr.rdbuf(stderrBackup);
