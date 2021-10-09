@@ -31,5 +31,6 @@
 *.out
 *.app
 
-# Build folders
+# Build artifact folders
 vsbuild
+RELEASE
