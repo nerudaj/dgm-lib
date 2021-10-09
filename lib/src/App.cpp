@@ -1,28 +1,6 @@
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppState.hpp>
 
-#include <fstream>
-
-class AppEnvironment {
-private:
-	bool status = false;
-	std::ofstream outbuf;
-	std::ofstream errbuf;
-
-public:
-	bool isLoggingEnabled() const {
-		return status;
-	}
-
-	AppEnvironment() : outbuf("stdout.txt"), errbuf("stderr.txt") {
-		status = outbuf.rdbuf() != nullptr && errbuf.rdbuf() != nullptr;
-		std::cout.rdbuf(outbuf.rdbuf());
-		std::cerr.rdbuf(errbuf.rdbuf());
-	}
-};
-
-const AppEnvironment ENVIRONMENT;
-
 void dgm::App::pushState(dgm::AppState * state) {
 	states.push(state);
 
@@ -44,17 +22,6 @@ dgm::AppState * dgm::App::topState() {
 	return states.top();
 }
 
-void dgm::App::init() {
-	scheduleCleanup = false;
-}
-
-void dgm::App::deinit() {
-	while (not states.empty()) {
-		delete topState();
-		popState();
-	}
-}
-
 void dgm::App::run() {
 	while (window.isOpen() && not states.empty()) {
 		AppState *top = topState();
@@ -71,15 +38,38 @@ void dgm::App::run() {
 	}
 }
 
-dgm::App::App() {
-	if (!ENVIRONMENT.isLoggingEnabled()) {
-		exit(1);
+void dgm::App::exit() {
+	// Pop state at the top
+	// it will be deleted via scheduled cleanup
+	popState();
+
+	// Pop and delete the rest
+	while (not states.empty()) {
+		delete states.top();
+		states.pop();
+	}
+}
+
+dgm::App::App(dgm::Window &window) : window(window), outbuf("stdout.txt"), errbuf("stderr.txt") {
+	if (outbuf.rdbuf() == nullptr || errbuf.rdbuf() == nullptr) {
+		throw dgm::GeneralException("Cannot redirect stdout/stderr to file");
 	}
 
-	init();
+	stdoutBackup = std::cout.rdbuf();
+	stderrBackup = std::cerr.rdbuf();
+
+	std::cout.rdbuf(outbuf.rdbuf());
+	std::cerr.rdbuf(errbuf.rdbuf());
+
 	time.reset();
 }
 
 dgm::App::~App() {
-	deinit();
+	while (not states.empty()) {
+		delete topState();
+		popState();
+	}
+
+	std::cout.rdbuf(stdoutBackup);
+	std::cerr.rdbuf(stderrBackup);
 }

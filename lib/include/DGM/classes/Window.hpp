@@ -73,7 +73,7 @@ namespace dgm {
 		/**
 		 *  \brief Test whether window is still open
 		 */
-		bool isOpen() const { return window.isOpen(); }
+		virtual [[nodiscard]] bool isOpen() const { return window.isOpen(); }
 
 		/**
 		 *  \brief Test whether window is in fullscreen mode
