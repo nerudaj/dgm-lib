@@ -22,7 +22,7 @@ install (
 )
 
 install (
-	FILES       "${CMAKE_SOURCE_DIR}/LICENSE"
+	DIRECTORY   "${CMAKE_SOURCE_DIR}/licenses"
 	DESTINATION "."
 )
 

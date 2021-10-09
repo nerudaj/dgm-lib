@@ -5,7 +5,7 @@ set ( CATCH_VERSION "2.10.2" )
 
 set ( DSH_URL   "https://github.com/nerudaj/dsh/releases/download/v${DSH_VERSION}/dsh-${DSH_VERSION}-vc16-64-bit.zip" )
 set ( SFML_URL  "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc15-64-bit.zip" )
-set ( JSON_URL  "https://github.com/nlohmann/json/releases/download/v${JSON_VERSION}/json.hpp" )
+set ( JSON_URL  "https://github.com/nlohmann/json/releases/download/v${JSON_VERSION}/include.zip" )
 set ( CATCH_URL "https://github.com/catchorg/Catch2/releases/download/v${CATCH_VERSION}/catch.hpp" )
 
 include ( FetchContent )
@@ -38,7 +38,7 @@ endfunction ()
 # Download dependencies
 fetch_dependency ( DSH   ${DSH_URL}   FALSE )
 fetch_dependency ( SFML  ${SFML_URL}  FALSE )
-fetch_dependency ( JSON  ${JSON_URL}  TRUE )
+fetch_dependency ( JSON  ${JSON_URL}  FALSE )
 fetch_dependency ( CATCH ${CATCH_URL} TRUE )
 
 # Verify folder paths

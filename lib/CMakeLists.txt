@@ -56,7 +56,7 @@ target_include_directories ( ${PROJECT_NAME}
 	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
 	PUBLIC  "${SFML_FOLDER}/include"
 	PUBLIC  "${DSH_FOLDER}/include"
-	PRIVATE "${JSON_FOLDER}"
+	PRIVATE "${JSON_FOLDER}/single_include/nlohmann"
 )
 
 target_compile_features ( ${PROJECT_NAME}
