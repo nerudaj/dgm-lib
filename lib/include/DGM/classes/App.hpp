@@ -6,12 +6,13 @@
 #include <stack>
 #include <fstream>
 #include <cassert>
+#include <concepts>
 
 namespace dgm {
 	class AppState;
 
 	template<class T>
-	concept IsDerivedFromAppState = std::is_base_of<dgm::AppState, T>::value;
+	concept IsDerivedFromAppState = std::derived_from<T, dgm::AppState>;
 
 	class App {
 	public:
