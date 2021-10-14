@@ -17,7 +17,7 @@ add_subdirectory ( lib )
 
 # Installation
 install (
-	FILES       "${CMAKE_SOURCE_DIR}/Changelog.txt"
+	FILES       "${CMAKE_SOURCE_DIR}/changelog.txt"
 	DESTINATION "."
 )
 

@@ -23,16 +23,11 @@ namespace dgm {
 		 */
 		virtual void draw() = 0;
 		
-		/**
-		 *  \brief Initialize the state object
-		 */
-		/*virtual bool init() = 0;
-
-		void setAppPointer(App *appPtr) {
-			app = appPtr;
-		}*/
+		virtual [[nodiscard]] bool isTransparent() const noexcept = 0;
 
 		AppState(dgm::App& app) : app(app) {}
-		virtual ~AppState() {}
+		AppState(AppState&&) = delete;
+		AppState(AppState&) = delete;
+		virtual ~AppState() = default;
 	};
 };

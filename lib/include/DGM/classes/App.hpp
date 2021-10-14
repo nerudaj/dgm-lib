@@ -3,6 +3,9 @@
 #include <DGM/classes/Window.hpp>
 #include <DGM/classes/Time.hpp>
 
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 #include <stack>
 #include <fstream>
 #include <cassert>
@@ -27,6 +30,8 @@ namespace dgm {
 		std::stack<std::unique_ptr<AppState>> states;
 		bool scheduledDestructionOfTopState = false;
 		bool scheduledDestructionOfApp = false;
+		sf::Texture screenshot;
+		sf::Sprite screenshotSprite;
 
 	protected:
 		/**
@@ -39,6 +44,7 @@ namespace dgm {
 
 		void clearStack();
 		void performPostFrameCleanup();
+		void takeScreenshot();
 
 	public:
 
@@ -55,6 +61,7 @@ namespace dgm {
 		template<IsDerivedFromAppState T, class ... Args>
 		void pushState(Args ... args) {
 			states.push(std::make_unique<T>(*this, args...));
+			if (topState().isTransparent()) takeScreenshot();
 		}
 		
 		/**
@@ -87,6 +94,8 @@ namespace dgm {
 		}
 
 		App(dgm::Window& window);
+		App(App&&) = delete;
+		App(App&) = delete;
 		~App();
 	};
 }

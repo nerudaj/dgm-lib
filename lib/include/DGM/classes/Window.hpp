@@ -120,16 +120,20 @@ namespace dgm {
 		 *
 		 *  \param[in]  drawable  Reference to drawable object
 		 */
-		void draw(sf::Drawable &drawable) { window.draw(drawable); }
+		virtual void draw(sf::Drawable &drawable) { window.draw(drawable); }
 
 		/**
 		 *  \brief Finish drawing by rendering Window to screen
 		 */
 		void endDraw() { window.display(); }
 
-		Window() {}
+		virtual [[nodiscard]] sf::Image getScreenshot() const;
+
+		Window() = default;
 		Window(const cfg::Ini &config) { open(config); }
 		Window(const sf::Vector2u &resolution, const std::string &title, bool fullscreen) { open(resolution, title, fullscreen); }
-		~Window() { if (isOpen()) close(); }
+		Window(Window&&) = delete;
+		Window(Window&) = delete;
+		virtual ~Window() { if (isOpen()) close(); }
 	};
 };

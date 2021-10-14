@@ -16,12 +16,25 @@ void dgm::App::performPostFrameCleanup() {
 	scheduledDestructionOfTopState = false;
 }
 
+void dgm::App::takeScreenshot() {
+	auto&& capture = window.getScreenshot();
+	screenshot.loadFromImage(capture);
+	screenshotSprite.setTexture(screenshot);
+	screenshotSprite.setOrigin(sf::Vector2f(capture.getSize() / 2u));
+}
+
 void dgm::App::run() {
 	while (window.isOpen() && not states.empty()) {
 		auto &top = topState();
 
 		top.input();
 		top.update();
+
+		if (top.isTransparent()) {
+			screenshotSprite.setPosition(window.getWindowContext().getView().getCenter());
+			window.draw(screenshotSprite);
+		}
+
 		top.draw();
 
 		if (scheduledDestructionOfTopState)

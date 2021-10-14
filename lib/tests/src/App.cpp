@@ -7,12 +7,35 @@ struct Reporter {
 	bool drawCalled = false;
 	bool ctorCalled = false;
 	bool dtorCalled = false;
+	unsigned drawCallCount = 0;
+	bool screenshotTaken = false;
 };
 
 enum class TestableStateBehaviour : std::size_t {
 	Default,
 	PopState,
 	ExitApp
+};
+
+class TestableWindow_App : public dgm::Window {
+protected:
+	Reporter* reporter = nullptr;
+
+public:
+	virtual void draw(sf::Drawable& drawable) {
+		reporter->drawCallCount++;
+	}
+
+	virtual [[nodiscard]] sf::Image getScreenshot() const {
+		reporter->screenshotTaken = true;
+		sf::Image image;
+		image.create(1, 1, nullptr);
+		return image;
+	}
+
+	virtual [[nodiscard]] bool isOpen() const { return true; }
+
+	TestableWindow_App(Reporter* reporter) : reporter(reporter) {}
 };
 
 class TestableState : public dgm::AppState {
@@ -44,6 +67,9 @@ public:
 		reporter->drawCalled = true;
 		dt = app.time.getDeltaTime();
 	}
+	virtual [[nodiscard]] bool isTransparent() const noexcept override {
+		return false;
+	}
 
 	TestableState(dgm::App &app, Reporter* reporter, TestableStateBehaviour behaviour) : dgm::AppState(app), reporter(reporter), behaviour(behaviour) {
 		reporter->ctorCalled = true;
@@ -53,15 +79,23 @@ public:
 	}
 };
 
-class TestableWindow_App : public dgm::Window {
+class TestableTransparentState : public dgm::AppState {
 public:
-	virtual [[nodiscard]] bool isOpen() const { return true; }
+	virtual void input() {}
+	virtual void update() { app.exit(); }
+	virtual void draw() {}
+	virtual [[nodiscard]] bool isTransparent() const noexcept override {
+		return true;
+	}
+
+	TestableTransparentState(dgm::App& app) : dgm::AppState(app) {}
 };
 
 TEST_CASE("Cout/cerr restoration", "App") {
 	auto stdoutbackup = std::cout.rdbuf();
 
-	TestableWindow_App window;
+	Reporter reporter;
+	TestableWindow_App window(&reporter);
 	dgm::App *app = new dgm::App(window);
 
 	REQUIRE(std::cout.rdbuf() != nullptr);
@@ -74,8 +108,8 @@ TEST_CASE("Cout/cerr restoration", "App") {
 }
 
 TEST_CASE("Push/pop state", "App") {
-	TestableWindow_App window;
 	Reporter reporter;
+	TestableWindow_App window(&reporter);
 
 	dgm::App app(window);
 	app.pushState<TestableState>(&reporter, TestableStateBehaviour::PopState);
@@ -89,8 +123,8 @@ TEST_CASE("Push/pop state", "App") {
 }
 
 TEST_CASE("Exit app", "App") {
-	TestableWindow_App window;
-	Reporter reporter1, reporter2, reporter3;
+	Reporter reporter1, reporter2, reporter3, wr;
+	TestableWindow_App window(&wr);
 
 	dgm::App app(window);
 	app.pushState<TestableState>(&reporter1, TestableStateBehaviour::Default);
@@ -110,4 +144,17 @@ TEST_CASE("Exit app", "App") {
 	REQUIRE(reporter3.updateCalled);
 	REQUIRE(reporter3.drawCalled);
 	REQUIRE(reporter3.dtorCalled);
+}
+
+TEST_CASE("Transparent appstate", "App") {
+	Reporter reporter;
+	TestableWindow_App window(&reporter);
+
+	dgm::App app(window);
+	app.pushState<TestableState>(&reporter, TestableStateBehaviour::Default);
+	app.pushState<TestableTransparentState>();
+	app.run();
+
+	REQUIRE(reporter.screenshotTaken);
+	REQUIRE(reporter.drawCallCount == 1);
 }

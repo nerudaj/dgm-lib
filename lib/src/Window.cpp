@@ -1,5 +1,7 @@
 #include <DGM/classes/Window.hpp>
 
+#include <SFML/Graphics/Texture.hpp>
+
 void dgm::Window::open(const cfg::Ini & config) {
 	if (config.hasSection("Window")) {
 		auto section = config["Window"];
@@ -38,4 +40,12 @@ void dgm::Window::toggleFullscreen() {
 void dgm::Window::changeResolution(const sf::Vector2u& newResolution) {
 	close();
 	open(newResolution, title, fullscreen);
+}
+
+sf::Image dgm::Window::getScreenshot() const {
+	sf::Vector2u windowSize = window.getSize();
+	sf::Texture texture;
+	texture.create(windowSize.x, windowSize.y);
+	texture.update(window);
+	return texture.copyToImage();
 }
