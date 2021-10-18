@@ -1,3 +1,5 @@
+[![Build-Test-Package](https://github.com/nerudaj/dgm-lib/actions/workflows/cmake.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/cmake.yml)
+
 # Readme
 
 This project is an extension library for [SFML](http://sfml-dev.org). It isn't supposed to be used on its own but rather as a part of [dgm-sdk](https://github.com/nerudaj/dgm-lib) project.
