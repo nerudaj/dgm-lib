@@ -1,0 +1,43 @@
+name: CMake
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      working-directory: ${{github.workspace}}/build
+      run: cmake -B ${{github.workspace}}/build
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cmake --build . --config Debug
+        cmake --build . --config Release
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: |
+        ctest -C Debug
+        ctest -C Release
+      
+    - name: Pack
+      working-directory: ${{github.workspace}}/build
+      run: cpack
+      
+    - name: Store artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: dgm-lib
+        path: ${{github.workspace}}/build/*.zip
+        retention-days: 5
