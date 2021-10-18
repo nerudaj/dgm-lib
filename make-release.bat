@@ -1,7 +1,6 @@
 @echo off
 
 set BUILDDIR=vsbuild
-set MSVCDIR="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat"
 
 rem Sourcing path to cmake
 call /tools/doomsh.cmd
@@ -17,11 +16,10 @@ cmake.exe ..
 cd ..
 
 echo Phase 3 - Building
-call %MSVCDIR% 
 
 cd %BUILDDIR%
-devenv dgm-lib.sln /Build Debug
-devenv dgm-lib.sln /Build Release
+cmake --build . --config Debug
+cmake --build . --config Release
 
 echo Phase 4 - Run Tests
 

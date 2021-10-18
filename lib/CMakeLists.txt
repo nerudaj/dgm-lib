@@ -50,6 +50,7 @@ include_directories ( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 add_library ( ${PROJECT_NAME}
 	STATIC ${HEADERS} ${SOURCES}
+	"${CMAKE_CURRENT_SOURCE_DIR}/.editorconfig"
 )
 
 target_include_directories ( ${PROJECT_NAME}

@@ -1,2 +1,8 @@
 dgm-lib v1.0.0
- * INDEV
+ * Extracted library from DGM repo
+ * Added unit tests
+ * Reworked memory allocation for dgm::App
+ * Added transparent AppStates
+ * Reworked particle system implementation
+ * Behavioral bugfixes to dgm::Clip
+ * Interface keyword refactors
