@@ -1,4 +1,4 @@
-[![Build-Test-Package](https://github.com/nerudaj/dgm-lib/actions/workflows/cmake.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/cmake.yml)
+[![Build-Test-Package](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml)
 
 # Readme
 
