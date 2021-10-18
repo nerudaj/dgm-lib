@@ -36,8 +36,8 @@ function ( fetch_dependency name url headeronly )
 endfunction ()
 
 # Download dependencies
-fetch_dependency ( DSH   ${DSH_URL}   FALSE )
 fetch_dependency ( SFML  ${SFML_URL}  FALSE )
+fetch_dependency ( DSH   ${DSH_URL}   FALSE )
 fetch_dependency ( JSON  ${JSON_URL}  FALSE )
 fetch_dependency ( CATCH ${CATCH_URL} TRUE )
 
