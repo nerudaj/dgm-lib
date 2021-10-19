@@ -6,7 +6,7 @@ Library provides primitives for collisions, particle effects, animations and til
 
 ## Requirements
 
-* Cmake v3.19 or newer
+* CMake v3.19 (FetchContent is unstable in newer versions)
 * Microsoft Visual Studio 2019 v16.11.3 or newer
 
 ## Building
@@ -27,6 +27,8 @@ This will create file dgm-lib.sln under vsbuild folder. You can now open that fi
 ## Packaging
 
 To create full release package, just run the make-release.bat. It will configure the project, build it and run the tests prior to packaging. If everything goes well, you will end up with `RELEASE` with zipfile with full package.
+
+Version bump must be performed in both `changelog.txt` and `cmake/version.cmake`.
 
 ## Dependencies
 
