@@ -52,9 +52,15 @@ TEST_CASE("Clip", "init") {
 	}
 
 	SECTION("Frame size unspecified, nonzero frame offset, nonzero boundaries origin") {
-		dgm::Clip clip({ 32, 32 }, { 64, 64, 192, 192 }, 0, { 24, 24 });
+		dgm::Clip clip({ 32, 32 }, { 64, 64, 128, 128 }, 0, { 24, 24 });
 
 		REQUIRE(clip.getFrameCount() == 4u);
 		COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(32u, 32u));
+	}
+
+	SECTION("Just one frame") {
+		dgm::Clip clip({ 64, 80 }, { 0, 0, 64, 80 }, 0, { 8, 8 });
+
+		REQUIRE(clip.getFrameCount() == 1u);
 	}
 }
