@@ -1,5 +1,6 @@
 dgm-lib v1.x.x
  * Fix edge case in dgm::Clip when boundaries were the same as frame size and frame offset was nonzero
+ * Added dgm::AppState::restoreFocus
 
 dgm-lib v1.0.0
  * Extracted library from DGM repo

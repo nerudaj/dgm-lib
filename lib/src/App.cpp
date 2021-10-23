@@ -9,11 +9,12 @@ void dgm::App::clearStack() {
 void dgm::App::performPostFrameCleanup() {
 	if (scheduledDestructionOfApp)
 		clearStack();
-	else
+	else {
 		states.pop();
-
-	scheduledDestructionOfApp = false;
-	scheduledDestructionOfTopState = false;
+		scheduledDestructionOfTopState = false;
+		if (not states.empty())
+			topState().restoreFocus();
+	}
 }
 
 void dgm::App::takeScreenshot() {

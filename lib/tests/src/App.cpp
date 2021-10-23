@@ -79,6 +79,15 @@ public:
 	}
 };
 
+class TestableStateWithRestore : public TestableState {
+public:
+	virtual void restoreFocus() override {
+		app.exit();
+	}
+
+	TestableStateWithRestore(dgm::App& app, Reporter* reporter, TestableStateBehaviour behaviour) : TestableState(app, reporter, behaviour) {}
+};
+
 class TestableTransparentState : public dgm::AppState {
 public:
 	virtual void input() {}
@@ -157,4 +166,17 @@ TEST_CASE("Transparent appstate", "App") {
 
 	REQUIRE(reporter.screenshotTaken);
 	REQUIRE(reporter.drawCallCount == 1);
+}
+
+TEST_CASE("Exit on focus restore", "App") {
+	Reporter reporter, reporter2;
+	TestableWindow_App window(&reporter);
+
+	dgm::App app(window);
+	app.pushState<TestableStateWithRestore>(&reporter, TestableStateBehaviour::Default);
+	app.pushState<TestableState>(&reporter2, TestableStateBehaviour::PopState);
+	app.run();
+
+	REQUIRE(reporter.dtorCalled);
+	REQUIRE(reporter2.dtorCalled);
 }

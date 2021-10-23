@@ -22,6 +22,14 @@ namespace dgm {
 		 *  \brief Render state logic
 		 */
 		virtual void draw() = 0;
+
+		/**
+		 *  This method is called when stack of states has been
+		 *  popped and this state is now the top state.
+		 * 
+		 *  It is optional to override this method.
+		 */
+		virtual void restoreFocus() {}
 		
 		virtual [[nodiscard]] bool isTransparent() const noexcept = 0;
 
