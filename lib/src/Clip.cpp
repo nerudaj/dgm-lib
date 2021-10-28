@@ -8,19 +8,20 @@ void dgm::Clip::init(const sf::Vector2u & frameSize, const sf::IntRect & boundar
 	assert(frameSize.x > 0 and frameSize.y > 0);
 	assert(boundaries.left >= 0 and boundaries.top >= 0);
 	assert(boundaries.width > 0 and boundaries.height > 0);
+	assert(frameSize.x <= boundaries.width);
+	assert(frameSize.y <= boundaries.height);
 
-	// solve following expressions:
-	// K * frameSize.x + L * frameOffset.x <= boundaries.width - boundaries.top
-	// K - L <= 1
-	// K - L > 0
-	// =>
-	// x * frameSize.x + (x-1) * frameOffset.x <= B_W
-	// x * (frameSize.x + frameOffset.x) <= B_W + frameOffset.x
-
-	const std::size_t USABLE_WIDTH = static_cast<std::size_t>(boundaries.width) - static_cast<std::size_t>(boundaries.left);
-	const std::size_t USABLE_HEIGHT = static_cast<std::size_t>(boundaries.height) - static_cast<std::size_t>(boundaries.top);
-	const std::size_t X_FRAME_COUNT = USABLE_WIDTH / (static_cast<std::size_t>(frameSize.x) + static_cast<std::size_t>(frameOffset.x));
-	const std::size_t Y_FRAME_COUNT = USABLE_HEIGHT / (static_cast<std::size_t>(frameSize.y) + static_cast<std::size_t>(frameOffset.y));
+	// There will always be at least 1 frame, otherwise asserts will fail
+	// 
+	// To compute the rest we need to solve following equatations:
+	// BW >= frameSize.x * K + frameOffset.x * L
+	// K = L + 1
+	// BW >= L * frameSize.x + frameSize.x + L * frameOffset.x
+	// BW - frameSize.x >= L * ( frameSize.x + frameOffset.x )
+	const std::size_t X_FRAME_COUNT = 1 + (static_cast<std::size_t>(boundaries.width) - static_cast<std::size_t>(frameSize.x))
+		/ (static_cast<std::size_t>(frameSize.x) + static_cast<std::size_t>(frameOffset.x));
+	const std::size_t Y_FRAME_COUNT = 1 + (static_cast<std::size_t>(boundaries.height) - static_cast<std::size_t>(frameSize.y))
+		/ (static_cast<std::size_t>(frameSize.y) + static_cast<std::size_t>(frameOffset.y));
 	const std::size_t MAX_AVAILABLE_FRAMES = X_FRAME_COUNT * Y_FRAME_COUNT;
 
 	if (frameCount > MAX_AVAILABLE_FRAMES) {

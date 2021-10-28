@@ -44,7 +44,7 @@ void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int> 
 		throw dgm::GeneralException("You have to call dgm::TileMap::init prior to dgm::TileMap::build!");
 	}
 		
-	assert(imageData.size() == size_t(dataSize.x) * dataSize.y);
+	assert(imageData.size() == size_t(newDataSize.x) * newDataSize.y);
 
 	//TileMap::clip = clip;
 	tileSize = sf::Vector2f(float(newTileSize.x), float(newTileSize.y));

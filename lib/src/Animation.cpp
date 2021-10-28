@@ -129,7 +129,7 @@ std::shared_ptr<AnimationStates> Animation::loadStatesFromFile(const std::string
 	}
 
 	// Parse through states
-	for (auto& state : file["states"].items()) {
+	for (auto&& state : file["states"].items()) {
 		sf::Vector2u frameSize = defaultFrameSize;
 		sf::Vector2u frameOffset = defaultFrameOffset;
 		unsigned frameCount = 0;

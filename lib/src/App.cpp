@@ -9,11 +9,12 @@ void dgm::App::clearStack() {
 void dgm::App::performPostFrameCleanup() {
 	if (scheduledDestructionOfApp)
 		clearStack();
-	else
+	else {
 		states.pop();
-
-	scheduledDestructionOfApp = false;
-	scheduledDestructionOfTopState = false;
+		scheduledDestructionOfTopState = false;
+		if (not states.empty())
+			topState().restoreFocus();
+	}
 }
 
 void dgm::App::takeScreenshot() {
@@ -30,12 +31,16 @@ void dgm::App::run() {
 		top.input();
 		top.update();
 
+		window.beginDraw(top.getClearColor());
+
 		if (top.isTransparent()) {
 			screenshotSprite.setPosition(window.getWindowContext().getView().getCenter());
 			window.draw(screenshotSprite);
 		}
 
 		top.draw();
+
+		window.endDraw();
 
 		if (scheduledDestructionOfTopState)
 			performPostFrameCleanup();

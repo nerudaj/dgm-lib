@@ -1,3 +1,11 @@
+dgm-lib v1.1.0
+ * Fix edge case in dgm::Clip when boundaries were the same as frame size and frame offset was nonzero
+ * Added dgm::AppState::restoreFocus
+ * Bump to dsh 1.7.0 with LevelD::Path support
+ * Reworked dgm::AppState::draw logic
+	* Added dgm::AppState::getClearColor
+ * Fixed broken assert in TileMap.cpp
+
 dgm-lib v1.0.0
  * Extracted library from DGM repo
  * Added unit tests

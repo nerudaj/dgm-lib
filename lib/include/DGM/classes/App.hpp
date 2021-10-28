@@ -57,9 +57,15 @@ namespace dgm {
 		 *  passed to the state, then init method is
 		 *  called. If init succeeds, the state is
 		 *  pushed to app stack.
+		 * 
+		 *  \warn This method must NOT be called from any ctor
+		 *  derived from dgm::AppState. If you want to construct a
+		 *  state and immediately switch to a new one, postpone call
+		 *  to pustState into update method.
 		 */
 		template<IsDerivedFromAppState T, class ... Args>
-		void pushState(Args ... args) {
+		requires std::constructible_from<T, dgm::App&, Args...>
+		void pushState(Args&& ... args) {
 			states.push(std::make_unique<T>(*this, args...));
 			if (topState().isTransparent()) takeScreenshot();
 		}
@@ -77,6 +83,9 @@ namespace dgm {
 		 * 
 		 *  The actual removal will happen at the end of the frame
 		 *  so input/update/draw will be performed.
+		 * 
+		 *  Only one pop will be performed at the end of the frame,
+		 *  no matter how many times this method has been called prior.
 		 */
 		void popState() noexcept {
 			scheduledDestructionOfTopState = true;

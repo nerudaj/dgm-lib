@@ -42,3 +42,11 @@ This project depends on couple other projects:
 * catch2
 
 If you want to bump any of them, update `cmake/dependencies.cmake` file. First couple of lines contains versions of those dependencies. Just bumping the version should be sufficient to update it.
+
+## Versioning
+
+Following logic is employed when versioning:
+
+* Change to MAJOR version will only be mandated by a complete overhaul of the library
+* Change to MINOR is issued whenever potentially API breaking changes occur
+* Change to PATCH is basically any change that doesn't affect API
