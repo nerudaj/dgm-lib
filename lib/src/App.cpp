@@ -31,12 +31,16 @@ void dgm::App::run() {
 		top.input();
 		top.update();
 
+		window.beginDraw(top.getClearColor());
+
 		if (top.isTransparent()) {
 			screenshotSprite.setPosition(window.getWindowContext().getView().getCenter());
 			window.draw(screenshotSprite);
 		}
 
 		top.draw();
+
+		window.endDraw();
 
 		if (scheduledDestructionOfTopState)
 			performPostFrameCleanup();
