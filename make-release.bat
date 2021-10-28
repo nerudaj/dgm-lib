@@ -7,7 +7,6 @@ call /tools/doomsh.cmd
 
 echo Phase 1 - Purging
 rd /s /q %BUILDDIR%
-rd /s /q project-template\%BUILDDIR%
 
 echo Phase 2 - Configuring
 mkdir %BUILDDIR%
