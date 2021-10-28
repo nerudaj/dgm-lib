@@ -1,4 +1,4 @@
-dgm-lib v1.x.x
+dgm-lib v1.1.0
  * Fix edge case in dgm::Clip when boundaries were the same as frame size and frame offset was nonzero
  * Added dgm::AppState::restoreFocus
  * Bump to dsh 1.7.0 with LevelD::Path support
