@@ -7,7 +7,8 @@ void dgm::App::clearStack() {
 }
 
 void dgm::App::performPostFrameCleanup() {
-	while (numberOfStatesToPop-- > 0) {
+	while (numberOfStatesToPop > 0) {
+		numberOfStatesToPop--;
 		states.pop();
 		numberOfStatesToPop;
 	}
