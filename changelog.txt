@@ -1,3 +1,7 @@
+dgm-lib v1.1.1
+ * Added dgm::ps::Particle::despawn method
+ * Allow poping of arbitrary number of states per frame
+
 dgm-lib v1.1.0
  * Fix edge case in dgm::Clip when boundaries were the same as frame size and frame offset was nonzero
  * Added dgm::AppState::restoreFocus

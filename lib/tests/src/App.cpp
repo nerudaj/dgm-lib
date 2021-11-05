@@ -14,6 +14,7 @@ struct Reporter {
 enum class TestableStateBehaviour : std::size_t {
 	Default,
 	PopState,
+	PopState3,
 	ExitApp
 };
 
@@ -55,6 +56,10 @@ public:
 		switch (behaviour) {
 		case TestableStateBehaviour::PopState:
 			app.popState();
+			break;
+		case TestableStateBehaviour::PopState3:
+			app.popState();
+			app.popState(2);
 			break;
 		case TestableStateBehaviour::ExitApp:
 			app.exit();
@@ -179,4 +184,18 @@ TEST_CASE("Exit on focus restore", "App") {
 
 	REQUIRE(reporter.dtorCalled);
 	REQUIRE(reporter2.dtorCalled);
+}
+
+TEST_CASE("Aggregation of popState", "App") {
+	Reporter reporter, reporter2;
+	TestableWindow_App window(&reporter);
+
+	dgm::App app(window);
+	app.pushState<TestableState>(&reporter, TestableStateBehaviour::Default);
+	app.pushState<TestableState>(&reporter, TestableStateBehaviour::Default);
+	app.pushState<TestableState>(&reporter, TestableStateBehaviour::PopState3); // this pops three states in one frame
+	app.run();
+
+	// The fact that app.run() returns is enough for this test
+	REQUIRE(true);
 }

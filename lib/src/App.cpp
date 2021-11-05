@@ -7,14 +7,13 @@ void dgm::App::clearStack() {
 }
 
 void dgm::App::performPostFrameCleanup() {
-	if (scheduledDestructionOfApp)
-		clearStack();
-	else {
+	while (numberOfStatesToPop-- > 0) {
 		states.pop();
-		scheduledDestructionOfTopState = false;
-		if (not states.empty())
-			topState().restoreFocus();
+		numberOfStatesToPop;
 	}
+
+	if (not states.empty())
+		topState().restoreFocus();
 }
 
 void dgm::App::takeScreenshot() {
@@ -42,7 +41,7 @@ void dgm::App::run() {
 
 		window.endDraw();
 
-		if (scheduledDestructionOfTopState)
+		if (shouldPopStates())
 			performPostFrameCleanup();
 
 		time.reset();

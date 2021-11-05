@@ -28,8 +28,7 @@ namespace dgm {
 		std::streambuf* stdoutBackup = nullptr;
 		std::streambuf* stderrBackup = nullptr;
 		std::stack<std::unique_ptr<AppState>> states;
-		bool scheduledDestructionOfTopState = false;
-		bool scheduledDestructionOfApp = false;
+		unsigned numberOfStatesToPop = 0;
 		sf::Texture screenshot;
 		sf::Sprite screenshotSprite;
 
@@ -45,6 +44,10 @@ namespace dgm {
 		void clearStack();
 		void performPostFrameCleanup();
 		void takeScreenshot();
+
+		[[nodiscard]] constexpr bool shouldPopStates() const noexcept {
+			return numberOfStatesToPop > 0;
+		}
 
 	public:
 
@@ -79,16 +82,18 @@ namespace dgm {
 		void run();
 		
 		/**
-		 *  \brief Remove top state from app stack
+		 *  \brief Removes top N states from the app stack
 		 * 
 		 *  The actual removal will happen at the end of the frame
 		 *  so input/update/draw will be performed.
 		 * 
-		 *  Only one pop will be performed at the end of the frame,
-		 *  no matter how many times this method has been called prior.
+		 *  Calling this method multiple times per frame aggregates the
+		 *  number of states that will be popped
+		 * 
+		 *  \warn Don't mix with dgm::App::exit()
 		 */
-		void popState() noexcept {
-			scheduledDestructionOfTopState = true;
+		void popState(const unsigned count = 1) noexcept {
+			numberOfStatesToPop += count;
 		}
 
 		/**
@@ -96,10 +101,11 @@ namespace dgm {
 		 * 
 		 *  The actual termination will happen at the end of the frame
 		 *  so input/update/draw will be performed.
+		 * 
+		 *  \warn Don't mix with dgm::App::popState()
 		 */
 		void exit() {
-			scheduledDestructionOfTopState = true;
-			scheduledDestructionOfApp = true;
+			numberOfStatesToPop = states.size();
 		}
 
 		App(dgm::Window& window);

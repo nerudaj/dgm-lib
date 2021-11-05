@@ -49,4 +49,4 @@ Following logic is employed when versioning:
 
 * Change to MAJOR version will only be mandated by a complete overhaul of the library
 * Change to MINOR is issued whenever potentially API breaking changes occur
-* Change to PATCH is basically any change that doesn't affect API
+* Change to PATCH is basically any change that doesn't affect backwards API compatibility

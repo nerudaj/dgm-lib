@@ -96,6 +96,13 @@ namespace dgm {
 			virtual void spawn(const sf::Vector2f &position, const sf::Vector2f &size, const sf::Time &lifespan);
 
 			/**
+			 *  \brief Despawn the particle so it's no longer rendered
+			 */
+			virtual void despawn() {
+				spawn({ 0.f, 0.f }, { 0.f, 0.f }, sf::Time::Zero);
+			}
+
+			/**
 			 *  \brief Initialize the object with pointer to its vertices
 			 *
 			 *  \param [in] vertices Pointer to topleft vertex of particle
