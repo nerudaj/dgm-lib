@@ -68,7 +68,7 @@ namespace dgm {
 		/**
 		 *  \brief Set speed of animation in frames per second
 		 */
-		void setSpeed(int framesPerSecond);
+		void setSpeed(unsigned framesPerSecond);
 
 		constexpr void setLooping(bool enabled) noexcept {
 			looping = enabled;
@@ -77,8 +77,8 @@ namespace dgm {
 		/**
 		 *  \brief Get speed as number of frames per second
 		 */
-		[[nodiscard]] int getSpeed() const{
-			return static_cast<int>(1000.f / timePerFrame.asMilliseconds());
+		[[nodiscard]] unsigned getSpeed() const {
+			return static_cast<unsigned>(1000.f / timePerFrame.asMilliseconds());
 		}
 
 		/**
@@ -101,7 +101,7 @@ namespace dgm {
 			updateSpriteTextureRect();
 		}
 
-		static std::shared_ptr<AnimationStates> loadStatesFromFile(const std::string &filename);
+		[[nodiscard]] static std::shared_ptr<AnimationStates> loadStatesFromFile(const std::string &filename);
 
 		Animation();
 		Animation(const std::string &filename, int framesPerSecond = 30);

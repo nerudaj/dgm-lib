@@ -1,3 +1,6 @@
+dgm-lib vX.X.X
+ * Changed dgm::Animation::setSpeed/getSpeed to work with unsigned numbers
+
 dgm-lib v1.1.1
  * Added dgm::ps::Particle::despawn method
  * Allow poping of arbitrary number of states per frame
