@@ -19,6 +19,7 @@ set ( HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Particle.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/ParticleSystem.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/ParticleSystemRenderer.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Path.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/ResourceManager.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/RingBuffer.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Shell.hpp"
