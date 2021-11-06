@@ -1,8 +1,11 @@
 #pragma once
 
 #include <vector>
-#include <concepts>
+#include <type_traits>
+#include <cassert>
+#include <algorithm>
 #include "LevelD.hpp"
+#include <SFML/System/Vector2.hpp>
 
 namespace dgm {
 	/**
@@ -16,8 +19,7 @@ namespace dgm {
 	template<class T>
 	requires std::is_same<float, T>::value || std::is_same<unsigned long, T>::value
 	struct Navpoint {
-		T x; ///< X coordinate (world or tile)
-		T y; ///< Y coordinate (world or tile)
+		sf::Vector2<T> coord; ///< Coordinate of the point
 		uint32_t value = 0; ///< General purpose value ensuring compatibility with LevelD::Path format
 	};
 
@@ -45,9 +47,9 @@ namespace dgm {
 	requires std::is_same<TileNavpoint, T>::value || std::is_same<WorldNavpoint, T>::value
 	class Path {
 	protected:
-		std::vector<T> points; ///< List of points to travese
-		bool looping; ///< Whether the path loops
-		std::size_t currentPointIndex; ///< Index to currently processed navpoint
+		std::vector<T> points = {}; ///< List of points to travese
+		bool looping = false; ///< Whether the path loops
+		std::size_t currentPointIndex = 0; ///< Index to currently processed navpoint
 
 	public:
 		/**
@@ -55,7 +57,13 @@ namespace dgm {
 		 * 
 		 *  \note Path can never be traversed if it is a looping path
 		 */
-		[[nodiscard]] constexpr bool isTraversed() const noexcept;
+		[[nodiscard]] constexpr bool isTraversed() const noexcept {
+			return points.size() <= currentPointIndex;
+		}
+
+		[[nodiscard]] constexpr bool isLooping() const noexcept {
+			return looping;
+		}
 
 		/**
 		 *  \brief Get currently processed Navpoint
@@ -63,15 +71,30 @@ namespace dgm {
 		 *  Once you finish processing this navpoint (i.e.: you reach it)
 		 *  call advance() to move to next point.
 		 */
-		[[nodiscard]] const T& getCurrentPoint() const noexcept;
+		[[nodiscard]] constexpr const T& getCurrentPoint() const noexcept {
+			assert(not isTraversed());
+			return points[currentPointIndex];
+		}
 
 		/**
 		 *  \brief Move processing to next navpoint
 		 */
-		[[nodiscard]] void advance() noexcept;
+		[[nodiscard]] constexpr void advance() noexcept {
+			currentPointIndex++;
+			if (isLooping() && isTraversed())
+				currentPointIndex = 0;
+		}
 
-		Path(const std::vector<T>& points, bool looping);
-
-		Path(const LevelD::Path& lvdPath);
+		Path(const std::vector<T>& points, bool looping) : points(points), looping(looping) {}
+		Path(dgm::Path<T>&& other) = default;
+		Path(const LevelD::Path& lvdPath) {
+			using VectorType = decltype(T::coord);
+			using BaseType = decltype(VectorType::x);
+			std::transform(lvdPath.points.begin(), lvdPath.points.end(), std::back_inserter(points), [&lvdPath] (const LevelD::Path::Point &p) -> T {
+				return T{ VectorType(BaseType(p.x), BaseType(p.y)), p.value };
+			});
+			looping = lvdPath.looping;
+		}
+		~Path() = default;
 	};
 }
