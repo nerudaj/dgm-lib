@@ -1,11 +1,6 @@
-/**
- *  \file Buffer.hpp
- *  \author doomista
- */
-
 #pragma once
 
-#include <iostream>
+#include <cassert>
 
 namespace dgm {
 	/**
@@ -50,49 +45,58 @@ namespace dgm {
 			typedef value_type* pointer;
 			typedef std::random_access_iterator_tag iterator_category;
 
-			const reference &operator*() const {
+			[[nodiscard]] const reference &operator*() const noexcept {
 				return **ptr;
 			}
 
-			const_iterator &operator++() {
+			const_iterator &operator++() noexcept {
 				ptr++;
 				return *this;
 			}
 
-			const_iterator operator++(int) {
+			const_iterator operator++(int) noexcept {
 				const_iterator copy(*this);
 				ptr++;
 				return copy;
 			}
 
-			const_iterator &operator--() {
+			const_iterator &operator--() noexcept {
 				ptr--;
 				return *this;
 			}
 
-			const_iterator operator--(int) {
+			const_iterator operator--(int) noexcept {
 				const_iterator copy(*this);
 				ptr--;
 				return copy;
 			}
 
-			const_iterator &operator=(const const_iterator &other) {
+			const_iterator &operator=(const const_iterator &other) noexcept {
 				ptr = other.ptr;
+				return *this;
 			}
 
-			difference_type operator-(const const_iterator &other) const {
+			[[nodiscard]] difference_type operator-(const const_iterator &other) const noexcept {
 				return ptr - other.ptr;
 			}
 
-			difference_type operator+(const const_iterator &other) const {
+			[[nodiscard]] difference_type operator+(const const_iterator &other) const noexcept {
 				return ptr + other.ptr;
 			}
 
-			bool operator!=(const const_iterator &other) {
+			[[nodiscard]] bool operator==(const const_iterator& second) const noexcept {
+				return ptr == second.ptr;
+			}
+
+			[[nodiscard]] bool operator!=(const const_iterator &other) const noexcept {
 				return ptr != other.ptr;
 			}
 
-			friend void swap(const_iterator &first, const_iterator &second) {
+			[[nodiscard]] auto operator<=>(const const_iterator& other) const noexcept { 
+				return ptr <=> other.ptr;
+			}
+
+			friend void swap(const_iterator &first, const_iterator &second) noexcept {
 				std::swap(first.ptr, second.ptr);
 			}
 
@@ -113,52 +117,58 @@ namespace dgm {
 			typedef value_type* pointer;
 			typedef std::random_access_iterator_tag iterator_category;
 
-			reference &operator*() const {
+			[[nodiscard]] reference &operator*() const noexcept {
 				return **ptr;
 			}
 
-			iterator &operator++() {
-				ptr++;
+			iterator &operator++() noexcept {
+				++ptr;
 				return *this;
 			}
 
-			iterator operator++(int) {
+			iterator operator++(int) noexcept {
 				iterator copy(*this);
-				ptr++;
+				++ptr;
 				return copy;
 			}
 
-			iterator &operator--() {
-				ptr--;
+			iterator &operator--() noexcept {
+				--ptr;
 				return *this;
 			}
 
-			iterator operator--(int) {
+			iterator operator--(int) noexcept {
 				iterator copy(*this);
-				ptr--;
+				--ptr;
 				return copy;
 			}
 
-			iterator &operator=(const iterator &other) {
+			[[nodiscard]] iterator &operator=(const iterator &other) noexcept {
 				ptr = other.ptr;
+				return *this;
 			}
 
-			difference_type operator-(const const_iterator &other) const {
+			[[nodiscard]] difference_type operator-(const const_iterator &other) const noexcept {
 				return ptr - other.ptr;
 			}
 
-			difference_type operator+(const const_iterator &other) const {
+			[[nodiscard]] difference_type operator+(const const_iterator &other) const noexcept {
 				return ptr + other.ptr;
 			}
 
-			iterator &operator+=(int i) {
+			[[nodiscard]] bool operator==(const iterator& second) const noexcept {
+				return ptr == second.ptr;
 			}
 
-			bool operator!=(const iterator &second) {
+			[[nodiscard]] bool operator!=(const iterator &second) const noexcept {
 				return ptr != second.ptr;
 			}
 
-			friend void swap(iterator &first, iterator &second) {
+			[[nodiscard]] auto operator<=>(const iterator& other) const noexcept {
+				return ptr <=> other.ptr;
+			}
+
+			friend void swap(iterator &first, iterator &second) noexcept {
 				std::swap(first.ptr, second.ptr);
 			}
 
@@ -177,7 +187,7 @@ namespace dgm {
 		* N is total capacity of container. But those items are hidden until
 		* this function unhides them, making them included in range loops and such.
 		*/
-		bool expand() {
+		bool expand() noexcept {
 			if (dataSize == dataCapacity) return false;
 
 			return ++dataSize;
@@ -192,19 +202,16 @@ namespace dgm {
 		* with the last valid item and decrease size of the container,
 		* hiding the removed item.
 		*/
-		bool remove(std::size_t index) {
-			if (index >= dataSize) return false;
-
+		void remove(std::size_t index) noexcept {
+			assert(index < dataSize);
 			std::swap(data[index], data[--dataSize]);
-
-			return true;
 		}
 
-		void remove(const iterator &itr) {
+		void remove(const iterator &itr) noexcept {
 			remove(itr - begin());
 		}
 
-		void remove(const const_iterator &itr) {
+		void remove(const const_iterator &itr) noexcept {
 			remove(itr - begin());
 		}
 
@@ -215,7 +222,7 @@ namespace dgm {
 		* unless \ref remove was called. Use this immediately \ref expand
 		* to initialize the unhid item.
 		*/
-		T &last() { return *data[dataSize - 1]; }
+		[[nodiscard]] T &last() noexcept { return *data[dataSize - 1]; }
 
 		/**
 		* \brief Get element to last available item
@@ -224,7 +231,7 @@ namespace dgm {
 		* unless \ref remove was called. Use this immediately \ref expand
 		* to initialize the unhid item.
 		*/
-		const T &last() const { return *data[dataSize - 1]; }
+		[[nodiscard]] const T &last() const noexcept { return *data[dataSize - 1]; }
 
 		/**
 		* \brief Resize buffer array
@@ -250,7 +257,7 @@ namespace dgm {
 				if (newData == NULL) throw std::bad_alloc();
 
 				// Copy valid pointers
-				for (unsigned i = 0; i < dataCapacity; i++) {
+				for (size_t i = 0; i < dataCapacity; i++) {
 					newData[i] = data[i];
 				}
 
@@ -263,6 +270,7 @@ namespace dgm {
 				// Free old array, assign new array
 				delete[] data;
 				data = newData;
+				dataCapacity = maxSize;
 			}
 			// Creating buffer
 			else {
@@ -278,33 +286,33 @@ namespace dgm {
 			}
 		}
 
-		T &operator[] (std::size_t index) { return *data[index]; }
+		[[nodiscard]] T &operator[] (std::size_t index) { return *data[index]; }
 
-		const T &operator[] (std::size_t index) const { return *data[index]; }
+		[[nodiscard]] const T &operator[] (std::size_t index) const { return *data[index]; }
 
 		/**
 		* \brief Get number of used items
 		*/
-		std::size_t size() const { return dataSize; }
+		[[nodiscard]] constexpr std::size_t size() const noexcept { return dataSize; }
 
 		/**
 		* \brief Get total number of available items
 		*/
-		std::size_t capacity() const { return dataCapacity; }
+		[[nodiscard]] constexpr std::size_t capacity() const noexcept { return dataCapacity; }
 
 		/**
 		* \brief Test whether buffer is empty
 		*/
-		bool empty() const { return dataSize == 0; }
+		[[nodiscard]] constexpr bool empty() const noexcept { return dataSize == 0; }
 
 		/**
 		* \brief Test whether buffer is full
 		*/
-		bool full() const { return dataSize == dataCapacity; }
+		[[nodiscard]] constexpr bool full() const noexcept { return dataSize == dataCapacity; }
 
-		const_iterator begin() noexcept { return const_iterator(data); }
+		[[nodiscard]] const_iterator begin() const noexcept { return const_iterator(data); }
 
-		const_iterator end() noexcept { return const_iterator(data + dataSize); }
+		[[nodiscard]] const_iterator end() const noexcept { return const_iterator(data + dataSize); }
 
 		Buffer &operator=(Buffer other) = delete;
 
