@@ -34,3 +34,6 @@
 # Build artifact folders
 vsbuild
 RELEASE
+
+# GoogleBench
+lib/benchmarks/googlebench

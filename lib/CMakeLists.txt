@@ -92,6 +92,7 @@ add_custom_command ( TARGET ${PROJECT_NAME} POST_BUILD
 # Testing
 enable_testing()
 add_subdirectory ( tests )
+add_subdirectory ( benchmarks )
 
 # Instalation
 install (

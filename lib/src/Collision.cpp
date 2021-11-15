@@ -6,11 +6,7 @@ bool dgm::Collision::basic(const dgm::Rect &rect, const sf::Vector2i &point) {
 	sf::Vector2f pos = rect.getPosition();
 	sf::Vector2f sze = rect.getSize();
 
-	if (pos.x <= point.x && point.x <= (pos.x + sze.x) && pos.y <= point.y && point.y <= (pos.y + sze.y)) {
-		return true;
-	}
-	
-	return false;
+	return (pos.x <= point.x && point.x <= (pos.x + sze.x) && pos.y <= point.y && point.y <= (pos.y + sze.y));
 }
 		
 bool dgm::Collision::basic(const dgm::Circle &circle, const sf::Vector2i &point) {
@@ -19,11 +15,7 @@ bool dgm::Collision::basic(const dgm::Circle &circle, const sf::Vector2i &point)
 	float dX = abs(point.x - cpos.x);
 	float dY = abs(point.y - cpos.y);
 	
-	if ((dX * dX + dY * dY) < (circle.getRadius() * circle.getRadius())) {
-		return true;
-	}
-	
-	return false;
+	return (dX * dX + dY * dY) < (circle.getRadius() * circle.getRadius());
 }
 
 bool dgm::Collision::basic(const dgm::Circle &A, const dgm::Circle &B) {
@@ -45,7 +37,7 @@ bool dgm::Collision::basic(const dgm::Rect &A, const dgm::Circle &B) {
 	sf::Vector2f size = A.getSize();
 	sf::Vector2f bpos = B.getPosition();
 	// Closest coordinates to circle on border of the rect
-	// This Black Woman Magic is the courtesy of lazyfoo.net tutorials
+	// Courtesy of lazyfoo.net tutorials
 	float cX = 0.f, cY = 0.f;
 	
 	if (bpos.x < apos.x) {
@@ -98,6 +90,7 @@ static sf::IntRect normalizeBoundaries(const sf::IntRect &src, const dgm::Mesh &
 	sf::Vector2u meshSize = mesh.getDataSize();
 	sf::Vector2u tileSize = mesh.getVoxelSize();
 	
+	// TODO: revisit
 	dst.left	= src.left / tileSize.x;
 	dst.top		= src.top  / tileSize.y;
 	dst.width	= (src.left + src.width)  / tileSize.x;
