@@ -25,6 +25,7 @@ add_subdirectory ( "${GOOGLEBENCH_SOURCE_DIR}" )
 # Create compile target
 set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/Collision.cpp"
 )
 
 add_executable ( ${PROJECT_NAME}

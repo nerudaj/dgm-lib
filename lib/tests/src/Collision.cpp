@@ -27,6 +27,11 @@ TEST_CASE("Rect-to-rect", "Collision") {
 		dgm::Rect rect2(-5.f, -5.f, 10.f, 10.f);
 		REQUIRE(dgm::Collision::basic(rect, rect2));
 	}
+
+	SECTION("Almost touching") {
+		dgm::Rect rect2(-5.f, -5.f, 4.9f, 4.9f);
+		REQUIRE_FALSE(dgm::Collision::basic(rect, rect2));
+	}
 }
 
 TEST_CASE("Rect-to-circle", "Collision") {
