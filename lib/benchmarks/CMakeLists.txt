@@ -35,7 +35,10 @@ target_link_libraries ( ${PROJECT_NAME}
 	libdgm benchmark::benchmark
 )
 
+target_compile_features ( ${PROJECT_NAME}
+	INTERFACE ${MY_CXX_COMPILE_FEATURES}
+)
+
 target_compile_options ( ${PROJECT_NAME}
 	PRIVATE /W4 /MP
 )
-
