@@ -4,6 +4,7 @@ dgm-lib vX.X.X
  * Fixed a bug where resizing dgm::Buffer after initialization would not update capacity value
  * Added setRotation/getRotation/rotateBy methods to dgm::ps::Particle
  * Optimized all of dgm::Collision::basic code for speed
+ * PDB file is now packaged alongside library
  * Internal:
 	* Integrated with Google Benchmark
 	* Added sandbox project for visual testing

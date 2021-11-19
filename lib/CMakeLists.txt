@@ -106,6 +106,11 @@ install (
 )
 
 install (
+	FILES        "${DEBUG_BINARY_DIR}/libdgm-d.pdb"
+	DESTINATION  "lib"
+)
+
+install (
 	DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/include/DGM"
 	DESTINATION  "include"
 )
