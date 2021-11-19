@@ -14,6 +14,7 @@ include ( "${CMAKE_SOURCE_DIR}/cmake/utils.cmake" )
 
 # Subprojects
 add_subdirectory ( lib )
+add_subdirectory ( sandbox )
 
 # Installation
 install (

@@ -2,6 +2,11 @@ dgm-lib vX.X.X
  * Changed dgm::Animation::setSpeed/getSpeed to work with unsigned numbers
  * Updated dgm::Buffer interface with nodiscard, const and noexcept specifiers
  * Fixed a bug where resizing dgm::Buffer after initialization would not update capacity value
+ * Added setRotation/getRotation/rotateBy methods to dgm::ps::Particle
+ * Optimized all of dgm::Collision::basic code for speed
+ * Internal:
+	* Integrated with Google Benchmark
+	* Added sandbox project for visual testing
 
 dgm-lib v1.1.1
  * Added dgm::ps::Particle::despawn method
