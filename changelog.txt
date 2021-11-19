@@ -1,4 +1,4 @@
-dgm-lib vX.X.X
+dgm-lib v1.2.7
  * Changed dgm::Animation::setSpeed/getSpeed to work with unsigned numbers
  * Updated dgm::Buffer interface with nodiscard, const and noexcept specifiers
  * Fixed a bug where resizing dgm::Buffer after initialization would not update capacity value
