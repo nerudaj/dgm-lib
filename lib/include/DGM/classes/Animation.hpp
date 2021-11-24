@@ -63,7 +63,7 @@ namespace dgm {
 		/**
 		 *  \brief Bind sprite to animation
 		 */
-		void bindSprite(sf::Sprite *sprite);
+		void bindSprite(sf::Sprite &sprite);
 
 		/**
 		 *  \brief Set speed of animation in frames per second
