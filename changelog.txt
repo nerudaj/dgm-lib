@@ -1,5 +1,7 @@
-dgm-lib v1.x.x
+dgm-lib v1.3.0
  * Changed dgm::Animation::bindSprite to accept a reference
+ * Reimplemented dgm::AbstractController and dgm::Controller
+	* Xbox 360, Xbox One and Xbox Series controllers are now supported, including vibrations
 
 dgm-lib v1.2.7
  * Changed dgm::Animation::setSpeed/getSpeed to work with unsigned numbers
