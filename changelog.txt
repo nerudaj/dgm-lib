@@ -1,5 +1,6 @@
 dgm-lib v1.3.2
  * Fixed linkage of xinput.lib
+ * Google Benchmark is no longer bundled with release
 
 dgm-lib v1.3.0
  * Changed dgm::Animation::bindSprite to accept a reference
