@@ -28,14 +28,14 @@ float dgm::Controller::getValue(const int code) const {
 	case dgm::Xbox::Axis::LStickXpos: return std::clamp(int(xstate.Gamepad.sThumbLX), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
 	case dgm::Xbox::Axis::LStickXneg: return std::clamp(int(xstate.Gamepad.sThumbLX), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
 	//case dgm::Xbox::Axis::LStickY:    return std::clamp(int(xstate.Gamepad.sThumbLY), -HALF_SHORT_MAX, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
-	case dgm::Xbox::Axis::LStickYpos: return std::clamp(int(xstate.Gamepad.sThumbLY), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
-	case dgm::Xbox::Axis::LStickYneg: return std::clamp(int(xstate.Gamepad.sThumbLY), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
+	case dgm::Xbox::Axis::LStickYpos: return -std::clamp(int(xstate.Gamepad.sThumbLY), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
+	case dgm::Xbox::Axis::LStickYneg: return -std::clamp(int(xstate.Gamepad.sThumbLY), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
 	//case dgm::Xbox::Axis::RStickX:    return std::clamp(int(xstate.Gamepad.sThumbRX), -HALF_SHORT_MAX, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
 	case dgm::Xbox::Axis::RStickXpos: return std::clamp(int(xstate.Gamepad.sThumbRX), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
 	case dgm::Xbox::Axis::RStickXneg: return std::clamp(int(xstate.Gamepad.sThumbRX), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
 	//case dgm::Xbox::Axis::RStickY:    return std::clamp(int(xstate.Gamepad.sThumbRY), -HALF_SHORT_MAX, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
-	case dgm::Xbox::Axis::RStickYpos: return std::clamp(int(xstate.Gamepad.sThumbRY), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
-	case dgm::Xbox::Axis::RStickYneg: return std::clamp(int(xstate.Gamepad.sThumbRY), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
+	case dgm::Xbox::Axis::RStickYpos: return -std::clamp(int(xstate.Gamepad.sThumbRY), 0, HALF_SHORT_MAX) / float(HALF_SHORT_MAX);
+	case dgm::Xbox::Axis::RStickYneg: return -std::clamp(int(xstate.Gamepad.sThumbRY), -HALF_SHORT_MAX, 0) / float(HALF_SHORT_MAX);
 	case dgm::Xbox::Axis::LTrigger:   return xstate.Gamepad.bLeftTrigger / 255.f;
 	case dgm::Xbox::Axis::RTrigger:   return xstate.Gamepad.bRightTrigger / 255.f;
 	default: return 0.f;

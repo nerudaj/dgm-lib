@@ -1,6 +1,7 @@
-dgm-lib v1.3.3
+dgm-lib v1.3.4
  * Fixed linkage of xinput.lib
  * Fixed bug where LStickXneg binding did not invert button values in getValue function
+ * Inverted return value of dgm::Controller::getValue for Y axis of both sticks to conform to SFML's coordinate system
  * Google Benchmark is no longer bundled with release
 
 dgm-lib v1.3.0
