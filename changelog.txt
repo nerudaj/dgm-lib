@@ -1,5 +1,6 @@
-dgm-lib v1.3.2
+dgm-lib v1.3.3
  * Fixed linkage of xinput.lib
+ * Fixed bug where LStickXneg binding did not invert button values in getValue function
  * Google Benchmark is no longer bundled with release
 
 dgm-lib v1.3.0

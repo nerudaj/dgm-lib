@@ -71,6 +71,6 @@ void dgm::Controller::bindInput(const int code, dgm::Xbox::Axis axis) {
 	assert(bindings[code].xaxis != Xbox::Axis::Unknown || "Trying to rebind Xbox axis");
 	bindings[code].xaxis = axis;
 	// If enum code is for negative half of axis
-	if (static_cast<std::size_t>(axis) > 200)
+	if (static_cast<std::size_t>(axis) >= 200)
 		bindings[code].negateMultiplier = -1.f;
 }
