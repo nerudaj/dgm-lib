@@ -1,4 +1,4 @@
-dgm-lib v1.x.x
+dgm-lib v1.4.3
  * Added Traits.hpp header with concepts for detection smart pointers
  * Added Utility.hpp header with to_string method for serializing Vectors
  * Removed dgm::Math::lerp as std::lerp is available in <algorithm>
