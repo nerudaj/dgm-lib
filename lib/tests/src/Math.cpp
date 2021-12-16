@@ -8,12 +8,6 @@
 	REQUIRE(NUMBER_DISTANCE(v1.x, v2.x) < 0.0001f); \
 	REQUIRE(NUMBER_DISTANCE(v1.y, v2.y) < 0.0001f);
 
-TEST_CASE("Lerp", "Math") {
-	REQUIRE(dgm::Math::lerp(0.f, 1.f, 0.f) == 0.f);
-	REQUIRE(dgm::Math::lerp(0.f, 1.f, 1.f) == 1.f);
-	REQUIRE(dgm::Math::lerp(0.f, 1.f, 0.25f) == 0.25f);
-}
-
 TEST_CASE("RotateVector", "Math") {
 	auto v = dgm::Math::rotateVector({ 1.f, 0.f }, 90.f);
 	std::cout << v.x << ", " << v.y << std::endl;

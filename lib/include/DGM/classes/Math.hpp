@@ -50,20 +50,6 @@ namespace dgm {
 		}
 		
 		/**
-		 *  \brief Performs linear interpolation between start and end
-		 *  
-		 *  \param[in] start  Leftmost value
-		 *  \param[in] end    Rightmost value
-		 *  \param[in] t      Value between 0 and 1
-		 *
-		 *  \return If t = 0 then start, if t = 1 then end, if t is something between, then the value is interpolated
-		 */
-		static float lerp(const float start, const float end, const float t) {
-			assert(0.f <= t && t <= 1.f);
-			return (1.f - t) * start + t * end;
-		}
-		
-		/**
 		 *  \brief Map the value from interval X to interval Y (linearly)
 		 *  
 		 *  \param[in]  value   Value to map

@@ -1,6 +1,7 @@
 dgm-lib v1.x.x
  * Added Traits.hpp header with concepts for detection smart pointers
  * Added Utility.hpp header with to_string method for serializing Vectors
+ * Removed dgm::Math::lerp as std::lerp is available in <algorithm>
 dgm-lib v1.3.4
  * Fixed linkage of xinput.lib
  * Fixed bug where LStickXneg binding did not invert button values in getValue function
