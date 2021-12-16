@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include "Traits.hpp"
 
 namespace dgm {
 	/**

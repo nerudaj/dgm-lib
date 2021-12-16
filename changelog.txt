@@ -1,3 +1,5 @@
+dgm-lib v1.x.x
+ * Added Traits.hpp header with concepts for detection smart pointers
 dgm-lib v1.3.4
  * Fixed linkage of xinput.lib
  * Fixed bug where LStickXneg binding did not invert button values in getValue function

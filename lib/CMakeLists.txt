@@ -24,6 +24,7 @@ set ( HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Shell.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/TileMap.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Time.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Traits.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Window.hpp"
 )
 
