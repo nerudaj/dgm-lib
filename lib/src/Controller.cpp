@@ -43,8 +43,8 @@ float dgm::Controller::getValue(const int code) const {
 }
 
 void dgm::Controller::setControllerVibration(const float left, const float right) {
-	assert(0.f <= left && left <= 1.f || "Parameter left must be in <0.f, 1.f> range");
-	assert(0.f <= right && right <= 1.f || "Parameter right must be in <0.f, 1.f> range");
+	assert(0.f <= left && left <= 1.f && "Parameter left must be in <0.f, 1.f> range");
+	assert(0.f <= right && right <= 1.f && "Parameter right must be in <0.f, 1.f> range");
 
 	XINPUT_VIBRATION vibration;
 	vibration.wLeftMotorSpeed = static_cast<WORD>(left * 65535);
@@ -53,22 +53,22 @@ void dgm::Controller::setControllerVibration(const float left, const float right
 }
 
 void dgm::Controller::bindInput(const int code, sf::Keyboard::Key key) {
-	assert(bindings[code].key != sf::Keyboard::Unknown || "Trying to rebind keyboard key");
+	assert(bindings[code].key != sf::Keyboard::Unknown && "Trying to rebind keyboard key");
 	bindings[code].key = key;
 }
 
 void dgm::Controller::bindInput(const int code, sf::Mouse::Button btn) {
-	assert(bindings[code].btn != sf::Mouse::Button::ButtonCount || "Trying to rebind mouse button");
+	assert(bindings[code].btn != sf::Mouse::Button::ButtonCount && "Trying to rebind mouse button");
 	bindings[code].btn = btn;
 }
 
 void dgm::Controller::bindInput(const int code, dgm::Xbox::Button btn) {
-	assert(bindings[code].xbtn != Xbox::Button::Unknown || "Trying to rebind Xbox button");
+	assert(bindings[code].xbtn != Xbox::Button::Unknown && "Trying to rebind Xbox button");
 	bindings[code].xbtn = btn;
 }
 
 void dgm::Controller::bindInput(const int code, dgm::Xbox::Axis axis) {
-	assert(bindings[code].xaxis != Xbox::Axis::Unknown || "Trying to rebind Xbox axis");
+	assert(bindings[code].xaxis != Xbox::Axis::Unknown && "Trying to rebind Xbox axis");
 	bindings[code].xaxis = axis;
 	// If enum code is for negative half of axis
 	if (static_cast<std::size_t>(axis) >= 200)
