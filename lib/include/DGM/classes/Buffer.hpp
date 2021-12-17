@@ -27,17 +27,17 @@ namespace dgm {
 	* pointer is guaranteed to be valid until the container
 	* destructor is called.
 	*/
-	template<typename T, typename A = std::allocator<T>>
+	template<typename T, typename A = std::allocator<T>, bool SmartPtrUsed = IsSmartPtr<T>, class PointerType = std::conditional<SmartPtrUsed, T, T*>::type >
 	class Buffer {
 	protected:
-		T * *data; ///< Array of pointers to data
-		std::size_t dataSize; ///< Number of used items
-		std::size_t dataCapacity; ///< Number of allocated items
+		PointerType* data = nullptr; ///< Array of pointers to data
+		std::size_t dataSize = 0; ///< Number of used items
+		std::size_t dataCapacity = 0; ///< Number of allocated items
 
 	public:
 		class const_iterator {
 		protected:
-			T * *ptr; ///< Pointer to data
+			PointerType *ptr; ///< Pointer to data
 
 		public:
 			typedef ptrdiff_t difference_type;
@@ -47,7 +47,10 @@ namespace dgm {
 			typedef std::random_access_iterator_tag iterator_category;
 
 			[[nodiscard]] const reference &operator*() const noexcept {
-				return **ptr;
+				if constexpr (SmartPtrUsed)
+					return *ptr;
+				else
+					return **ptr;
 			}
 
 			const_iterator &operator++() noexcept {
@@ -101,7 +104,7 @@ namespace dgm {
 				std::swap(first.ptr, second.ptr);
 			}
 
-			const_iterator(value_type **value) { ptr = value; }
+			const_iterator(PointerType* value) { ptr = value; }
 			const_iterator(const_iterator &&other) { ptr = other.ptr; }
 			const_iterator(const const_iterator &other) { ptr = other.ptr; }
 			~const_iterator() {}
@@ -109,7 +112,7 @@ namespace dgm {
 
 		class iterator : public const_iterator {
 		protected:
-			T * *ptr; ///< Pointer to data
+			PointerType *ptr; ///< Pointer to data
 
 		public:
 			typedef ptrdiff_t difference_type;
@@ -119,7 +122,10 @@ namespace dgm {
 			typedef std::random_access_iterator_tag iterator_category;
 
 			[[nodiscard]] reference &operator*() const noexcept {
-				return **ptr;
+				if constexpr (SmartPtrUsed)
+					return *ptr;
+				else
+					return **ptr;
 			}
 
 			iterator &operator++() noexcept {
@@ -173,7 +179,7 @@ namespace dgm {
 				std::swap(first.ptr, second.ptr);
 			}
 
-			iterator(value_type **value) { ptr = value; }
+			iterator(PointerType* value) { ptr = value; }
 			iterator(const iterator &other) { ptr = other.ptr; }
 			iterator(iterator &&other) { ptr = other.ptr; }
 			~iterator() {}
@@ -189,8 +195,8 @@ namespace dgm {
 		* this function unhides them, making them included in range loops and such.
 		*/
 		bool expand() noexcept {
-			if (dataSize == dataCapacity) return false;
-
+			if (dataSize == dataCapacity)
+				return false;
 			return ++dataSize;
 		}
 
@@ -223,7 +229,9 @@ namespace dgm {
 		* unless \ref remove was called. Use this immediately \ref expand
 		* to initialize the unhid item.
 		*/
-		[[nodiscard]] T &last() noexcept { return *data[dataSize - 1]; }
+		[[nodiscard]] T &last() noexcept {
+			return this->operator[](dataSize - 1);
+		}
 
 		/**
 		* \brief Get element to last available item
@@ -232,7 +240,9 @@ namespace dgm {
 		* unless \ref remove was called. Use this immediately \ref expand
 		* to initialize the unhid item.
 		*/
-		[[nodiscard]] const T &last() const noexcept { return *data[dataSize - 1]; }
+		[[nodiscard]] const T &last() const noexcept {
+			return this->operator[](dataSize - 1);
+		}
 
 		/**
 		* \brief Resize buffer array
@@ -251,45 +261,56 @@ namespace dgm {
 		* your program is initializing.
 		*/
 		void resize(std::size_t maxSize) {
+			const std::size_t unallocatedSectionStart = data ? dataCapacity : 0;
+
 			// Upscaling buffer
 			if (data) {
 				// Allocate bigger array
-				T **newData = new T*[maxSize];
-				if (newData == NULL) throw std::bad_alloc();
+				PointerType *newData = new PointerType[maxSize];
+				if (!newData)
+					throw std::bad_alloc();
 
 				// Copy valid pointers
-				for (size_t i = 0; i < dataCapacity; i++) {
-					newData[i] = data[i];
-				}
-
-				// Allocate new pointers
-				for (size_t i = dataCapacity; i < maxSize; i++) {
-					newData[i] = new T;
-					if (newData[i] == NULL) throw std::bad_alloc();
-				}
+				for (size_t i = 0; i < dataCapacity; i++)
+					std::swap(newData[i], data[i]);
 
 				// Free old array, assign new array
 				delete[] data;
 				data = newData;
-				dataCapacity = maxSize;
 			}
 			// Creating buffer
 			else {
 				// Allocate bigger array
-				data = new T*[maxSize];
-				if (data == NULL) throw std::bad_alloc();
+				data = new PointerType[maxSize];
+				if (!data)
+					throw std::bad_alloc();
+			}
 
-				// Allocate all pointers
-				for (dataCapacity = 0; dataCapacity < maxSize; dataCapacity++) {
-					data[dataCapacity] = new T;
-					if (data[dataCapacity] == NULL) throw std::bad_alloc();
+			// Allocate pointers (only relevant when smart pointers are not involved)
+			if constexpr (!SmartPtrUsed) {
+				for (std::size_t i = unallocatedSectionStart; i < maxSize; i++) {
+					data[i] = new T;
+					if (!data[i])
+						throw std::bad_alloc();
 				}
 			}
+
+			dataCapacity = maxSize;
 		}
 
-		[[nodiscard]] T &operator[] (std::size_t index) { return *data[index]; }
+		[[nodiscard]] T &operator[] (std::size_t index) {
+			if constexpr (SmartPtrUsed)
+				return data[index];
+			else
+				return *data[index];
+		}
 
-		[[nodiscard]] const T &operator[] (std::size_t index) const { return *data[index]; }
+		[[nodiscard]] const T &operator[] (std::size_t index) const {
+			if constexpr (SmartPtrUsed)
+				return data[index];
+			else
+				return *data[index];
+		}
 
 		/**
 		* \brief Get number of used items
@@ -317,33 +338,23 @@ namespace dgm {
 
 		Buffer &operator=(Buffer other) = delete;
 
-		Buffer() {
-			data = NULL;
-			dataSize = 0;
-			dataCapacity = 0;
-		}
-
-		Buffer(std::size_t maxSize) {
-			data = NULL;
-			dataSize = 0;
-			dataCapacity = 0;
-
-			resize(maxSize);
-		}
-
+		Buffer() = default;
+		Buffer(std::size_t maxSize) { resize(maxSize); }
 		Buffer(const Buffer &buffer) = delete;
 		Buffer(Buffer &&buffer) = delete;
 
 		~Buffer() {
 			if (data) {
-				for (unsigned i = 0; i < dataCapacity; i++) {
-					delete data[i];
+				// Free each item pointer  (only relevant when smart pointers are not involved)
+				if constexpr (!SmartPtrUsed) {
+					for (unsigned i = 0; i < dataCapacity; i++)
+						delete data[i];
 				}
 
 				delete[] data;
 			}
 
-			data = NULL;
+			data = nullptr;
 			dataSize = 0;
 			dataCapacity = 0;
 		}

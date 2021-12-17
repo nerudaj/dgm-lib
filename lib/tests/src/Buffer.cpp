@@ -90,6 +90,37 @@ namespace BufferTests {
 		}
 	}
 
+	TEST_CASE("Smart pointers", "Buffer") {
+		SECTION("Pointer is stable when resizing") {
+			dgm::Buffer<std::unique_ptr<int>> ints(1);
+			
+			ints.expand();
+			ints.last() = std::make_unique<int>(10);
+			auto* ptrBackup = &(ints.last());
+			int* valuePtrBackup = ints.last().get();
+			
+			// After resize, unique_ptr object should be different
+			// but the managed pointer should stay the same
+			ints.resize(2);
+			REQUIRE(&ints[0] != ptrBackup);
+			REQUIRE(ints[0].get() == valuePtrBackup);
+		}
+
+		SECTION("Pointer is stable when removing data") {
+			dgm::Buffer<std::shared_ptr<int>> ints(2);
+			ints.expand();
+			ints.last() = std::make_shared<int>(42);
+			ints.expand();
+			ints.last() = std::make_shared<int>(69);
+
+			int* valuePtrBackup = ints.last().get();
+			ints.remove(ints.begin());
+
+			REQUIRE(*(*ints.begin()) == 69);
+			REQUIRE(ints.last().get() == valuePtrBackup);
+		}
+	}
+
 	/*TEST_CASE("Algorithm support", "Buffer") {
 		dgm::Buffer<int> ints(10);
 		for (unsigned i = 0; i < ints.capacity(); i++) {

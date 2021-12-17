@@ -1,6 +1,8 @@
-dgm-lib v1.4.3
+dgm-lib v1.4.4
  * Added Traits.hpp header with concepts for detection smart pointers
  * Added Utility.hpp header with to_string method for serializing Vectors
+ * Added optimizations for smart pointers to dgm::Buffer
+	* When template argument is unique_ptr, shared_ptr or weak_ptr, the underlying storage will skip one level of pointers
  * Removed dgm::Math::lerp as std::lerp is available in <algorithm>
  * Fixed broken static_asserts in Controller.cpp
 
