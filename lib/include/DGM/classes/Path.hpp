@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <cassert>
 #include <algorithm>
+#include <iterator>
 #include "LevelD.hpp"
 #include <SFML/System/Vector2.hpp>
 

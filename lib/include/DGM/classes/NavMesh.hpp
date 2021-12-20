@@ -1,5 +1,23 @@
 #include <SFML/System/Vector2.hpp>
 #include <DGM/classes/Path.hpp>
+#include <DGM/classes/Objects.hpp>
+
+#include <unordered_map>
+
+namespace std {
+    template<>
+    struct hash<sf::Vector2u> {
+        std::size_t operator()(const sf::Vector2u &vec) const {
+            using Unsigned = decltype(vec.x);
+            if constexpr (sizeof(Unsigned) * 2 <= sizeof(std::size_t)) {
+                return (static_cast<std::size_t>(vec.x) << (sizeof(Unsigned) * 8)) + vec.y;
+            }
+            else {
+                return vec.x ^ vec.y;
+            }
+        }
+    };
+};
 
 namespace dgm {
 
@@ -11,14 +29,11 @@ protected:
     dgm::Mesh mesh;
 
     struct Connection {
-        sf::Vector2u destination; ///< Destination node of the connectino
+        sf::Vector2u destination; ///< Destination node of the connection
         float distance; ///< Distance to destination
 
-        Connection() = delete;
-        Connection(const sf::Vector2u& desctination, const float distance)
+        Connection(const sf::Vector2u& destination, const float distance)
             : destination(destination), distance(distance) {}
-        Connection(Connnetion&& other) = default;
-        Connection(const Connection& other) = delete;
     };
 
     /**
@@ -29,7 +44,7 @@ protected:
      *
      *  Jump points are only relevant for computation of WorldNavpoints
      */
-    std::unordered_map<sf::Vector2u, std::vector<Connection> jumpPointConnections = {};
+    std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
 
 protected:
     /**
@@ -37,7 +52,7 @@ protected:
      *
      *  \pre discoverJumpPoints has been called
      */
-    [[nodiscard]] constexpr isJumpPoint(const sf::Vector2u& point) const noexcept {
+    [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) const noexcept {
         return jumpPointConnections.find(point) != jumpPointConnections.end();
     }
     /**
@@ -70,114 +85,9 @@ public:
     [[nodiscard]] Path<TileNavpoint> getPath(const sf::Vector2u& from, const sf::Vector2u& to);
 
     NavMesh() = delete;
-    NavMesh(const dgm::Mesh& mesh) : mesh(mesh) {}
+    NavMesh(const dgm::Mesh& mesh);
     NavMesh(NavMesh&& other) = default;
     NavMesh(const NavMesh& other) = delete;
 };
 
-}
-
-void dgm::NavMesh::connectTwoJumpPoints(const sf::Vector2u& a, const sf::Vector2u& b) {
-    const float dx = (static_cast<float>(a.x) - b.x) * mesh.getVoxelSize().x;
-    const float dy = (static_cast<float>(a.y) - b.y) * mesh.getVoxelSize().y;
-    const float distance = std::sqrt(dx * dx + dy * dy);
-    jumpPointConnections[a].push_back(Connection(a, distance));
-    jumpPointConnections[b].push_back(Connection(b, distance));
-}
-
-dgm::NavMesh::NavMesh(const dgm::Mesh& mesh) : mesh(mesh) {
-    discoverJumpPoints();
-
-    for (auto&& [point, _] : jumpPointConnections)
-        discoverConnectionsForJumpPoint(point);
-}
-
-void dgm::NavMesh::discoverJumpPoints() {
-    auto isCornerPoint = [&mesh] (const sf::Vector2u &point) -> bool {
-        /**
-         *  Test if this point is at the tip of some impassable tile, eg:
-         *  #   #
-         *  # p     <-- there the p is corner point
-         *  # # #
-         *  
-         *
-         *  #   #
-         *  # p #   <-- there p is not a corner point
-         *  #   # 
-         *
-         *  #   #
-         *    p     <-- multiple corners
-         *  # # #
-         */
-        const bool northWestCorner = mesh.at(point.x - 1, point.y - 1) > 0 && mesh.at(point.x - 1, point.y) <= 0 && mesh.at(point.x, point.y - 1);
-        const bool northEastCorner = mesh.at(point.x + 1, point.y - 1) > 0 && mesh.at(point.x + 1, point.y) <= 0 && mesh.at(point.x, point.y - 1);
-        const bool southWestCorner = mesh.at(point.x - 1, point.y + 1) > 0 && mesh.at(point.x - 1, point.y) <= 0 && mesh.at(point.x, point.y + 1);
-        const bool southEastCorner = mesh.at(point.x + 1, point.y + 1) > 0 && mesh.at(point.x + 1, point.y) <= 0 && mesh.at(point.x, point.y + 1);
-
-        return northWestCorner || northEastCorner || southWestCorner || southEastCorner;
-    };
-
-    for (unsigned y = 1; y < mesh.getDataSize().y - 1; y++) {
-        for (unsigned x = 1; x < mesh.getDataSize().x - 1; x++) {
-            // Skip impassable blocks
-            if (mesh.at(x, y) > 0) continue;
-
-            sf::Vector2u point(x, y);
-            if (isCornerPoint(point)) {
-                jumpPointConnections[point] = {};
-            }
-        }
-    }
-}
-
-class TestableNavMesh : public dgm::NavMesh {
-public:
-    [[nodiscard]] decltype(auto) getJumpPoints() const {
-        std::vector<sf::Vector2u> result;
-
-        using MapIteratorType = decltype(jumpPointConnections)::iterator;
-
-        std::tranform(jumpPointConnections.begin(), jumpPointConnections.end(), std::back_inserter(result), [] (MapIteratorType itr) -> sf::Vector2u {
-            return itr->first;
-        });
-
-        return result;
-    }
-
-    [[nodiscard]] const decltype(auto)& getJumpPointConnections() const noexcept {
-        return jumpPointConnections;
-    }
-
-    TestableNavMesh(const dgm::Mesh &mesh) : dgm::NavMesh(mesh) {}
-};
-
-TEST_CASE("Construction", "[NavMesh]") {
-    /*
-    {
-        1, 1, 1, 1, 1, 1, 1, 1,
-        1, 0, 0, 0, 0, 0, 1, 1,
-        1, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 1, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 1,
-        1, 1, 1, 1, 1, 1, 1, 1
-    }
-    */
-    LevelD::Mesh lvdmesh; // TODO: init
-    dgm::Mesh mesh(lvdmesh);
-    TestableNavMesh navmesh(mesh);
-
-    SECTION("Jump point discovery") {
-        auto conns = navmesh.getJumpPoints();
-
-        REQUIRE(conns.size() == 5);
-        REQUIRE(COMPARE_VECTORS(conns[0], sf::Vector2u(5, 2)));
-        REQUIRE(COMPARE_VECTORS(conns[1], sf::Vector2u(1, 2)));
-        REQUIRE(COMPARE_VECTORS(conns[2], sf::Vector2u(3, 2)));
-        REQUIRE(COMPARE_VECTORS(conns[3], sf::Vector2u(1, 4)));
-        REQUIRE(COMPARE_VECTORS(conns[4], sf::Vector2u(3, 4)));
-    }
-
-    SECTION("Jump point connections") {
-
-    }
 }

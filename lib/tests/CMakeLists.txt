@@ -14,6 +14,7 @@ set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Conversion.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Math.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/NavMesh.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp"
 )
 
