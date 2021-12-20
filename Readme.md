@@ -21,9 +21,10 @@ cd vsbuild
 cmake ..
 ```
 
-This will create file dgm-lib.sln under vsbuild folder. You can now open that file and build the project normally through visual studio. Solution contains two subprojects:
+This will create file dgm-lib.sln under vsbuild folder. You can now open that file and build the project normally through visual studio. Solution contains three important subprojects:
 
 * dgm-lib - The library itself
+* dgm-lib-benchmarks - Sandbox for benchmarking
 * lib-testrunner - Unit tests
 
 ## Packaging

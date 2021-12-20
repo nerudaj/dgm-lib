@@ -20,15 +20,16 @@ namespace dgm {
 		protected:
 			sf::Vertex *quad; ///< Pointer to first of the four quad vertices
 			float lifespan = 1.f; ///< How long till dead
+			float rotation = 0.f; ///< Current angle
+			float diagonalHalfLength = 1.f; ///< Each particle is a square with this being the half of diagonal length, used for rotation calculations
 			sf::Vector2f forward = { 0.f, 0.f }; ///< Direction of particle movement
-			sf::Vector2f size = { 1.f, 1.f }; ///< Particle render size. Must be set before calling spawn()
 
 		public:
 			/**
 			 *  \brief Get position of particle (center of the particle)
 			 */
 			[[nodiscard]] sf::Vector2f getPosition() const noexcept {
-				return quad[0].position + size / 2.f;
+				return (quad[0].position + quad[2].position) / 2.f;
 			}
 
 			/**
@@ -36,6 +37,10 @@ namespace dgm {
 			 */
 			[[nodiscard]] const sf::Vector2f &getForward() const noexcept {
 				return forward;
+			}
+
+			[[nodiscard]] constexpr float getRotation() const noexcept {
+				return rotation;
 			}
 
 			/**
@@ -61,6 +66,8 @@ namespace dgm {
 				forward = f;
 			}
 
+			virtual void setRotation(const float angle) noexcept;
+
 			/**
 			 *  \brief Sets the color of the particle
 			 */
@@ -81,10 +88,26 @@ namespace dgm {
 			}
 
 			/**
+			 *  \brief Rotate particle by a given angle
+			 */
+			virtual void rotateBy(const float angle) noexcept {
+				setRotation(rotation + angle);
+			}
+
+			/**
 			 *  \brief Decrement lifespan by given time difference
 			 */
 			virtual void updateLifespan(const sf::Time& deltaTime) noexcept {
 				lifespan -= deltaTime.asSeconds();
+			}
+
+			/**
+			 *  \brief Add value to forward
+			 * 
+			 *  Just shorthand for setForward(getForward() + fwd)
+			 */
+			virtual void addToForward(const sf::Vector2f& fwd) {
+				forward += fwd;
 			}
 
 			/**

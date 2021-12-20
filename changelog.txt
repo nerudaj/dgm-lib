@@ -1,7 +1,32 @@
-dgm-lib vX.X.X
+dgm-lib v1.4.4
+ * Added Traits.hpp header with concepts for detection smart pointers
+ * Added Utility.hpp header with to_string method for serializing Vectors
+ * Added optimizations for smart pointers to dgm::Buffer
+	* When template argument is unique_ptr, shared_ptr or weak_ptr, the underlying storage will skip one level of pointers
+ * Removed dgm::Math::lerp as std::lerp is available in <algorithm>
+ * Fixed broken static_asserts in Controller.cpp
+
+dgm-lib v1.3.4
+ * Fixed linkage of xinput.lib
+ * Fixed bug where LStickXneg binding did not invert button values in getValue function
+ * Inverted return value of dgm::Controller::getValue for Y axis of both sticks to conform to SFML's coordinate system
+ * Google Benchmark is no longer bundled with release
+
+dgm-lib v1.3.0
+ * Changed dgm::Animation::bindSprite to accept a reference
+ * Reimplemented dgm::AbstractController and dgm::Controller
+	* Xbox 360, Xbox One and Xbox Series controllers are now supported, including vibrations
+
+dgm-lib v1.2.7
  * Changed dgm::Animation::setSpeed/getSpeed to work with unsigned numbers
  * Updated dgm::Buffer interface with nodiscard, const and noexcept specifiers
  * Fixed a bug where resizing dgm::Buffer after initialization would not update capacity value
+ * Added setRotation/getRotation/rotateBy methods to dgm::ps::Particle
+ * Optimized all of dgm::Collision::basic code for speed
+ * PDB file is now packaged alongside library
+ * Internal:
+	* Integrated with Google Benchmark
+	* Added sandbox project for visual testing
 
 dgm-lib v1.1.1
  * Added dgm::ps::Particle::despawn method

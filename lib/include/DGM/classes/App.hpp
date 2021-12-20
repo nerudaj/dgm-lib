@@ -69,7 +69,7 @@ namespace dgm {
 		template<IsDerivedFromAppState T, class ... Args>
 		requires std::constructible_from<T, dgm::App&, Args...>
 		void pushState(Args&& ... args) {
-			states.push(std::make_unique<T>(*this, args...));
+			states.push(std::make_unique<T>(*this, std::forward<Args>(args)...));
 			if (topState().isTransparent()) takeScreenshot();
 		}
 		

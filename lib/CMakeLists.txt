@@ -25,6 +25,8 @@ set ( HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Shell.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/TileMap.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Time.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Traits.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Utility.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Window.hpp"
 )
 
@@ -70,7 +72,7 @@ target_compile_options ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-	${LIB_CFG} ${LIB_LVLD} ${LIB_STR} ${LIB_SFML_MAIN} ${LIB_SFML_SYSTEM} ${LIB_SFML_GRAPHICS} ${LIB_SFML_WINDOW} ${LIB_SFML_AUDIO}
+	${LIB_CFG} ${LIB_LVLD} ${LIB_STR} ${LIB_SFML_MAIN} ${LIB_SFML_SYSTEM} ${LIB_SFML_GRAPHICS} ${LIB_SFML_WINDOW} ${LIB_SFML_AUDIO} xinput.lib
 )
 
 set ( DEBUG_BINARY_DIR   "${CMAKE_CURRENT_BINARY_DIR}/Debug" )
@@ -86,13 +88,14 @@ set ( RESULT_R  "${RELEASE_BINARY_DIR}/${PROJECT_NAME}.lib" )
 # it respects debug/release versions
 add_custom_command ( TARGET ${PROJECT_NAME} POST_BUILD
 	COMMAND
-		lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:${LIB_CFG_D}>$<$<CONFIG:release>:${LIB_CFG_R}> $<$<CONFIG:debug>:${LIB_LVLD_D}>$<$<CONFIG:release>:${LIB_LVLD_R}> $<$<CONFIG:debug>:${LIB_STR_D}>$<$<CONFIG:release>:${LIB_STR_R}>
+		lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:${LIB_CFG_D}>$<$<CONFIG:release>:${LIB_CFG_R}> $<$<CONFIG:debug>:${LIB_LVLD_D}>$<$<CONFIG:release>:${LIB_LVLD_R}> $<$<CONFIG:debug>:${LIB_STR_D}>$<$<CONFIG:release>:${LIB_STR_R}> $<$<CONFIG:debug>:xinput.lib>$<$<CONFIG:release>:xinput.lib>
 	COMMENT "lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:${DSH_LIBS_D}>$<$<CONFIG:release>:${DSH_LIBS_R}>"
 )
 
 # Testing
 enable_testing()
 add_subdirectory ( tests )
+add_subdirectory ( benchmarks )
 
 # Instalation
 install (
@@ -102,6 +105,11 @@ install (
 
 install (
 	FILES        "${DEBUG_BINARY_DIR}/libdgm-d.lib"
+	DESTINATION  "lib"
+)
+
+install (
+	FILES        "${DEBUG_BINARY_DIR}/libdgm-d.pdb"
 	DESTINATION  "lib"
 )
 

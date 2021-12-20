@@ -47,9 +47,8 @@ void Animation::setState(const std::string &state, bool shouldLoop) {
 	reset();
 }
 
-void Animation::bindSprite(sf::Sprite *sprite) {
-	assert(sprite != nullptr);
-	boundSprite = sprite;
+void Animation::bindSprite(sf::Sprite &sprite) {
+	boundSprite = &sprite;
 }
 
 void Animation::setSpeed(unsigned framesPerSecond) {
