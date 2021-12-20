@@ -109,10 +109,47 @@ TEST_CASE("Computing Tile path", "[NavMesh]") {
     SECTION("Path exists, non trivial") {
         auto path = navmesh.getPath(sf::Vector2u(1, 4), sf::Vector2u(5, 1));
 
+        while (!path.isTraversed()) {
+            std::cout << dgm::Utility::to_string(path.getCurrentPoint().coord) << std::endl;
+            path.advance();
+        }
         // TODO: checks
     }
 
     SECTION("Path does not exist") {
         REQUIRE_THROWS_AS(navmesh.getPath(sf::Vector2u(1, 1), sf::Vector2u(8, 1)), dgm::GeneralException);
     }
+}
+
+TEST_CASE("Update open set with coord", "[NavMesh]") {
+    dgm::NavMesh::NodeSet openSet, closedSet;
+    closedSet.insertNode(dgm::NavMesh::Node(sf::Vector2u(1, 1), sf::Vector2u(2, 1), 0, dgm::NavMesh::Dir::Down));
+
+    TestableNavMesh navmesh(buildMeshForTesting());
+    navmesh.updateOpenSetWithCoord(openSet, sf::Vector2u(1, 1), closedSet, sf::Vector2u(2, 1));
+
+    REQUIRE(!openSet.isEmpty());
+    REQUIRE(!openSet.contains(sf::Vector2u(1, 0)));
+    REQUIRE(!openSet.contains(sf::Vector2u(0, 1)));
+    REQUIRE(openSet.contains(sf::Vector2u(1, 2)));
+    REQUIRE(openSet.contains(sf::Vector2u(2, 1)));
+}
+
+bool operator<(const sf::Vector2u& a, const sf::Vector2u& b) {
+    if (a.y < b.y) return true;
+    else if (a.y == b.y) return a.x < b.x;
+    return false;
+}
+
+TEST_CASE("Vector less", "[NavMesh]") {
+    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(1, 1));
+
+    REQUIRE(sf::Vector2u(1, 0) < sf::Vector2u(1, 1));
+    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(1, 0));
+
+    REQUIRE(sf::Vector2u(0, 1) < sf::Vector2u(1, 1));
+    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(0, 1));
+
+    REQUIRE(sf::Vector2u(2, 1) < sf::Vector2u(1, 2));
+    REQUIRE_FALSE(sf::Vector2u(1, 2) < sf::Vector2u(2, 1));
 }

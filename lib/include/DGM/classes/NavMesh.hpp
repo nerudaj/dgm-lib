@@ -3,6 +3,8 @@
 #include <DGM/classes/Objects.hpp>
 
 #include <unordered_map>
+#include <cmath>
+#include <map>
 
 namespace std {
     template<>
@@ -17,7 +19,30 @@ namespace std {
             }
         }
     };
+
+    template<>
+    struct less<sf::Vector2u> {
+        bool operator()(const sf::Vector2u& a, const sf::Vector2u& b) const {
+            if (a.y < b.y) return true;
+            else if (a.y == b.y) return a.x < b.x;
+            return false;
+        }
+    };
 };
+
+namespace custom {
+    constexpr [[nodiscard]] unsigned max(unsigned a, unsigned b) noexcept {
+        return a < b ? b : a;
+    }
+
+    constexpr [[nodiscard]] unsigned min(unsigned a, unsigned b) noexcept {
+        return a < b ? a : b;
+    }
+
+    constexpr [[nodiscard]] unsigned abs(unsigned a, unsigned b) noexcept {
+        return max(a, b) - min(a, b);
+    }
+}
 
 namespace dgm {
 
@@ -25,6 +50,75 @@ namespace dgm {
  *  \brief Class for computing path from collision mesh data
  */
 class NavMesh {
+public:
+    enum class Dir {
+        Up, Left, Down, Right
+    };
+
+    struct Node {
+    protected:
+        static constexpr [[nodiscard]] unsigned getDistance(const sf::Vector2u& a, const sf::Vector2u& b) noexcept {
+            return custom::abs(a.x, b.x) + custom::abs(a.y, b.y);
+        }
+
+    public:
+        sf::Vector2u point = {};
+        unsigned gcost = 0;
+        unsigned hcost = 0;
+        unsigned fcost = 0;
+        Dir backdir = Dir::Up;
+
+        Node() {}
+        Node(const sf::Vector2u& point, const sf::Vector2u& end, unsigned gcost, Dir backdir) {
+            this->point = point;
+            this->backdir = backdir;
+            this->gcost = gcost;
+            hcost = getDistance(point, end);
+            fcost = gcost + hcost;
+        }
+        Node(const Node& other) = default;
+
+        [[nodiscard]] bool isCloserThan(const Node& other) const noexcept {
+            return fcost < other.fcost || (fcost == other.fcost && hcost < other.hcost);
+        }
+    };
+
+    class NodeSet {
+    protected:
+        std::map<sf::Vector2u, Node> nodes;
+
+    public:
+        void insertNode(const Node& node) {
+            nodes[node.point] = node;
+        }
+
+        [[nodiscard]] bool isEmpty() const noexcept {
+            return nodes.empty();
+        }
+
+        [[nodiscard]] bool contains(const sf::Vector2u& p) const noexcept {
+            const auto itr = nodes.find(p);
+            return itr != nodes.end();
+        }
+
+        [[nodiscard]] Node popBestNode() {
+            auto minElem = nodes.begin();
+            for (auto itr = (++nodes.begin()); itr != nodes.end(); itr++) {
+                if (itr->second.isCloserThan(minElem->second)) {
+                    minElem = itr;
+                }
+            }
+
+            Node copy = minElem->second;
+            nodes.erase(minElem);
+            return copy;
+        }
+
+        [[nodiscard]] Node getNode(const sf::Vector2u& point) const {
+            return nodes.at(point);
+        }
+    };
+
 protected:
     dgm::Mesh mesh;
 
@@ -46,7 +140,7 @@ protected:
      */
     std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
 
-protected:
+protected: // WorldNavpoint helpers
     [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) noexcept;
 
     /**
@@ -68,6 +162,9 @@ protected:
     void discoverJumpPoints();
 
     void discoverConnectionsForJumpPoint(const sf::Vector2u& point);
+
+public: // TileNavpoint helpers
+    void updateOpenSetWithCoord(NodeSet& openSet, const sf::Vector2u& coord, const NodeSet& closedSet, const sf::Vector2u& destinationCoord);
 
 public:
     /**
