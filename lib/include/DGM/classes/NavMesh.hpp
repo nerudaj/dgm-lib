@@ -47,14 +47,17 @@ protected:
     std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
 
 protected:
+    [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) noexcept;
+
     /**
      *  \brief Test if point has been previously discovered as jump point
      *
      *  \pre discoverJumpPoints has been called
      */
-    [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) const noexcept {
+    /*[[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) const noexcept {
         return jumpPointConnections.find(point) != jumpPointConnections.end();
-    }
+    }*/
+
     /**
      *  \brief Mark two jump points as connected
      *
@@ -74,7 +77,7 @@ public:
      *  where each two neighbouring jump points have unobstructed visibility to each other,
      *  and direction between them can be of any angle, not only horizontal and vertical.
      */
-    [[nodiscard]] Path<WorldNavpoint> getPath(const sf::Vector2f& from, const sf::Vector2f& to);
+    [[nodiscard]] dgm::Path<WorldNavpoint> getPath(const sf::Vector2f& from, const sf::Vector2f& to);
 
     /**
      *  \brief Get path represented by tile indices to input mesh
@@ -82,7 +85,7 @@ public:
      *  All tiles along the path are returned, neighbouring tiles are always horizontal
      *  or vertical to each other, no diagonal transitions are allowed.
      */
-    [[nodiscard]] Path<TileNavpoint> getPath(const sf::Vector2u& from, const sf::Vector2u& to);
+    [[nodiscard]] dgm::Path<TileNavpoint> getPath(const sf::Vector2u& from, const sf::Vector2u& to);
 
     NavMesh() = delete;
     NavMesh(const dgm::Mesh& mesh);

@@ -18,7 +18,7 @@ namespace dgm {
 	 *  You can use TileNavpoint and WorldNavpoint specializations
 	 */
 	template<class T>
-	requires std::is_same<float, T>::value || std::is_same<unsigned long, T>::value
+	requires std::is_same<float, T>::value || std::is_same<unsigned, T>::value
 	struct Navpoint {
 		sf::Vector2<T> coord; ///< Coordinate of the point
 		uint32_t value = 0; ///< General purpose value ensuring compatibility with LevelD::Path format
@@ -27,7 +27,7 @@ namespace dgm {
 	/**
 	 *  \brief Navigation point within a tilemap
 	 */
-	using TileNavpoint = Navpoint<unsigned long>;
+	using TileNavpoint = Navpoint<unsigned>;
 
 	/**
 	 *  \brief Navigation point within world
