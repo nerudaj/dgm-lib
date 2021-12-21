@@ -1,6 +1,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <DGM/classes/Path.hpp>
 #include <DGM/classes/Objects.hpp>
+#include <DGM/classes/Utility.hpp>
 
 #include <unordered_map>
 #include <cmath>
@@ -17,15 +18,6 @@ namespace std {
             else {
                 return vec.x ^ vec.y;
             }
-        }
-    };
-
-    template<>
-    struct less<sf::Vector2u> {
-        bool operator()(const sf::Vector2u& a, const sf::Vector2u& b) const {
-            if (a.y < b.y) return true;
-            else if (a.y == b.y) return a.x < b.x;
-            return false;
         }
     };
 };
@@ -85,7 +77,7 @@ public:
 
     class NodeSet {
     protected:
-        std::map<sf::Vector2u, Node> nodes;
+        std::map<sf::Vector2u, Node, dgm::Utility::less<sf::Vector2u>> nodes;
 
     public:
         void insertNode(const Node& node) {

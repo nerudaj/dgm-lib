@@ -108,12 +108,27 @@ TEST_CASE("Computing Tile path", "[NavMesh]") {
 
     SECTION("Path exists, non trivial") {
         auto path = navmesh.getPath(sf::Vector2u(1, 4), sf::Vector2u(5, 1));
+        REQUIRE_FALSE(path.isLooping());
 
-        while (!path.isTraversed()) {
+        const std::vector<sf::Vector2u> refpoints = {
+            {1u, 3u},
+            {1u, 2u},
+            {1u, 1u},
+            {2u, 1u},
+            {3u, 1u},
+            {4u, 1u},
+            {5u, 1u},
+        };
+
+        std::cout << "Printing tile path:" << std::endl;
+        for (auto&& point : refpoints) {
             std::cout << dgm::Utility::to_string(path.getCurrentPoint().coord) << std::endl;
+            REQUIRE_SAME_VECTORS(point, path.getCurrentPoint().coord);
+            REQUIRE(path.getCurrentPoint().value == 0u);
             path.advance();
         }
-        // TODO: checks
+
+        REQUIRE(path.isTraversed());
     }
 
     SECTION("Path does not exist") {
@@ -133,23 +148,4 @@ TEST_CASE("Update open set with coord", "[NavMesh]") {
     REQUIRE(!openSet.contains(sf::Vector2u(0, 1)));
     REQUIRE(openSet.contains(sf::Vector2u(1, 2)));
     REQUIRE(openSet.contains(sf::Vector2u(2, 1)));
-}
-
-bool operator<(const sf::Vector2u& a, const sf::Vector2u& b) {
-    if (a.y < b.y) return true;
-    else if (a.y == b.y) return a.x < b.x;
-    return false;
-}
-
-TEST_CASE("Vector less", "[NavMesh]") {
-    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(1, 1));
-
-    REQUIRE(sf::Vector2u(1, 0) < sf::Vector2u(1, 1));
-    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(1, 0));
-
-    REQUIRE(sf::Vector2u(0, 1) < sf::Vector2u(1, 1));
-    REQUIRE_FALSE(sf::Vector2u(1, 1) < sf::Vector2u(0, 1));
-
-    REQUIRE(sf::Vector2u(2, 1) < sf::Vector2u(1, 2));
-    REQUIRE_FALSE(sf::Vector2u(1, 2) < sf::Vector2u(2, 1));
 }
