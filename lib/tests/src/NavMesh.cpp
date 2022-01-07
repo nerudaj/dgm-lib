@@ -31,11 +31,11 @@
     return dgm::Mesh(lvdmesh);
 }
 
-class TestableNavMesh : public dgm::NavMesh {
+class TestableNavMesh : public dgm::WorldNavMesh {
 public:
-    [[nodiscard]] bool isJumpPoint_Public(const sf::Vector2u& point) noexcept {
+    /*[[nodiscard]] bool isJumpPoint_Public(const sf::Vector2u& point) noexcept {
         return isJumpPoint(point);
-    }
+    }*/
 
     [[nodiscard]] decltype(auto) getJumpPoints() const {
         std::vector<sf::Vector2u> result;
@@ -49,14 +49,22 @@ public:
         return result;
     }
 
-    [[nodiscard]] const auto& getJumpPointConnections() const noexcept {
-        return jumpPointConnections;
+    [[nodiscard]] bool arePointsConnected(const sf::Vector2u& a, const sf::Vector2u& b) const {
+        auto& connections = jumpPointConnections.at(a);
+        for (auto&& p : connections) {
+            if (b == p.destination) return true;
+        }
+        return false;
     }
 
-    TestableNavMesh(const dgm::Mesh &mesh) : dgm::NavMesh(mesh) {}
+    /*[[nodiscard]] const auto& getJumpPointConnections() const noexcept {
+        return jumpPointConnections;
+    }*/
+
+    TestableNavMesh(const dgm::Mesh &mesh) : dgm::WorldNavMesh(mesh) {}
 };
 
-TEST_CASE("IsJumpPoint", "[NavMesh]") {
+/*TEST_CASE("IsJumpPoint", "[NavMesh]") {
     TestableNavMesh navmesh(buildMeshForTesting());
 
     SECTION("Valid jump points") {
@@ -74,7 +82,7 @@ TEST_CASE("IsJumpPoint", "[NavMesh]") {
         REQUIRE(!navmesh.isJumpPoint_Public({ 5, 1 }));
         REQUIRE(!navmesh.isJumpPoint_Public({ 6, 2 }));
     }
-}
+}*/
 
 TEST_CASE("Constructing NavMesh", "[NavMesh]") {
     TestableNavMesh navmesh(buildMeshForTesting());
@@ -94,12 +102,35 @@ TEST_CASE("Constructing NavMesh", "[NavMesh]") {
     }
 
     SECTION("Jump point connections") {
-        // TODO: this
+        CHECK(navmesh.arePointsConnected({ 1, 2 }, { 3, 2 }));
+        CHECK_FALSE(navmesh.arePointsConnected({ 1, 2 }, { 5, 2 }));
+        CHECK(navmesh.arePointsConnected({ 1, 2 }, { 1, 4 }));
+        CHECK_FALSE(navmesh.arePointsConnected({ 1, 2 }, { 3, 4 }));
+
+        CHECK(navmesh.arePointsConnected({ 3, 2 }, { 1, 2 }));
+        CHECK(navmesh.arePointsConnected({ 3, 2 }, { 5, 2 }));
+        CHECK(navmesh.arePointsConnected({ 3, 2 }, { 3, 4 }));
+        CHECK_FALSE(navmesh.arePointsConnected({ 3, 2 }, { 1, 4 }));
+
+        CHECK_FALSE(navmesh.arePointsConnected({5, 2}, {1, 2}));
+        CHECK(navmesh.arePointsConnected({5, 2}, {3, 2}));
+        CHECK(navmesh.arePointsConnected({5, 2}, {3, 4}));
+        CHECK_FALSE(navmesh.arePointsConnected({ 5, 2 }, { 1, 4 }));
+
+        CHECK(navmesh.arePointsConnected({ 1, 4 }, { 1, 2 }));
+        CHECK(navmesh.arePointsConnected({ 1, 4 }, { 3, 4 }));
+        CHECK_FALSE(navmesh.arePointsConnected({ 1, 4 }, { 3, 2 }));
+        CHECK_FALSE(navmesh.arePointsConnected({ 1, 4 }, { 5, 2 }));
+
+        CHECK_FALSE(navmesh.arePointsConnected({ 3, 4 }, { 1, 2 }));
+        CHECK(navmesh.arePointsConnected({ 3, 4 }, { 3, 2 }));
+        CHECK(navmesh.arePointsConnected({ 3, 4 }, { 5, 2 }));
+        CHECK(navmesh.arePointsConnected({ 3, 4 }, { 1, 4 }));
     }
 }
 
 TEST_CASE("Computing Tile path", "[NavMesh]") {
-    TestableNavMesh navmesh(buildMeshForTesting());
+    dgm::NavMesh navmesh(buildMeshForTesting());
 
     SECTION("Path exists, identity") {
         auto path = navmesh.getPath(sf::Vector2u(1, 1), sf::Vector2u(1, 1));
@@ -140,7 +171,7 @@ TEST_CASE("Update open set with coord", "[NavMesh]") {
     dgm::NavMesh::NodeSet openSet, closedSet;
     closedSet.insertNode(dgm::NavMesh::Node(sf::Vector2u(1, 1), sf::Vector2u(2, 1), 0, dgm::NavMesh::Dir::Down));
 
-    TestableNavMesh navmesh(buildMeshForTesting());
+    dgm::NavMesh navmesh(buildMeshForTesting());
     navmesh.updateOpenSetWithCoord(openSet, sf::Vector2u(1, 1), closedSet, sf::Vector2u(2, 1));
 
     REQUIRE(!openSet.isEmpty());

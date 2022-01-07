@@ -114,60 +114,13 @@ public:
 protected:
     dgm::Mesh mesh;
 
-    struct Connection {
-        sf::Vector2u destination; ///< Destination node of the connection
-        float distance; ///< Distance to destination
-
-        Connection(const sf::Vector2u& destination, const float distance)
-            : destination(destination), distance(distance) {}
-    };
-
-    /**
-     *  \brief Map of connections between jump points
-     *
-     *  Map is indexed by jump point coordinates and each jump point lists set of
-     *  jump points it is connected to, alonside with distance to each of them.
-     *
-     *  Jump points are only relevant for computation of WorldNavpoints
-     */
-    std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
-
 protected: // WorldNavpoint helpers
     [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) noexcept;
-
-    /**
-     *  \brief Test if point has been previously discovered as jump point
-     *
-     *  \pre discoverJumpPoints has been called
-     */
-    /*[[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) const noexcept {
-        return jumpPointConnections.find(point) != jumpPointConnections.end();
-    }*/
-
-    /**
-     *  \brief Mark two jump points as connected
-     *
-     *  Connections are symmetrical.
-     */
-    void connectTwoJumpPoints(const sf::Vector2u& a, const sf::Vector2u& b);
-
-    void discoverJumpPoints();
-
-    void discoverConnectionsForJumpPoint(const sf::Vector2u& point);
 
 public: // TileNavpoint helpers
     void updateOpenSetWithCoord(NodeSet& openSet, const sf::Vector2u& coord, const NodeSet& closedSet, const sf::Vector2u& destinationCoord);
 
 public:
-    /**
-     *  \brief Get path represented by world coordinates
-     *
-     *  The path only contains major "jump points" which can be far away from each other,
-     *  where each two neighbouring jump points have unobstructed visibility to each other,
-     *  and direction between them can be of any angle, not only horizontal and vertical.
-     */
-    [[nodiscard]] dgm::Path<WorldNavpoint> getPath(const sf::Vector2f& from, const sf::Vector2f& to);
-
     /**
      *  \brief Get path represented by tile indices to input mesh
      *
@@ -180,6 +133,47 @@ public:
     NavMesh(const dgm::Mesh& mesh);
     NavMesh(NavMesh&& other) = default;
     NavMesh(const NavMesh& other) = delete;
+};
+
+class WorldNavMesh {
+protected:
+    dgm::Mesh mesh;
+
+    struct Connection {
+        sf::Vector2u destination; ///< Destination node of the connection
+        float distance; ///< Distance to destination
+
+        Connection(const sf::Vector2u& destination, const float distance)
+            : destination(destination), distance(distance) {}
+    };
+    
+    /**
+     *  \brief Map of connections between jump points
+     *
+     *  Map is indexed by jump point coordinates and each jump point lists set of
+     *  jump points it is connected to, alonside with distance to each of them.
+     *
+     *  Jump points are only relevant for computation of WorldNavpoints
+     */
+    std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
+
+protected:
+    void discoverConnectionsForJumpPoint(const sf::Vector2u& point, bool fullSearch);
+
+public:
+    /**
+     *  \brief Get path represented by world coordinates
+     *
+     *  The path only contains major "jump points" which can be far away from each other,
+     *  where each two neighbouring jump points have unobstructed visibility to each other,
+     *  and direction between them can be of any angle, not only horizontal and vertical.
+     */
+    [[nodiscard]] dgm::Path<WorldNavpoint> getPath(const sf::Vector2f& from, const sf::Vector2f& to);
+
+    WorldNavMesh() = delete;
+    WorldNavMesh(const dgm::Mesh& mesh);
+    WorldNavMesh(WorldNavMesh&& other) = default;
+    WorldNavMesh(const WorldNavMesh& other) = delete;
 };
 
 }
