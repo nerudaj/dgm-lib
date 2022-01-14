@@ -4,13 +4,11 @@
 #include <DGM/classes/Utility.hpp>
 
 #include <unordered_map>
-#include <cmath>
-#include <map>
 
 namespace std {
     template<>
     struct hash<sf::Vector2u> {
-        std::size_t operator()(const sf::Vector2u &vec) const {
+        std::size_t operator()(const sf::Vector2u& vec) const {
             using Unsigned = decltype(vec.x);
             if constexpr (sizeof(Unsigned) * 2 <= sizeof(std::size_t)) {
                 return (static_cast<std::size_t>(vec.x) << (sizeof(Unsigned) * 8)) + vec.y;
@@ -22,130 +20,78 @@ namespace std {
     };
 };
 
-namespace custom {
-    constexpr [[nodiscard]] unsigned max(unsigned a, unsigned b) noexcept {
-        return a < b ? b : a;
-    }
-
-    constexpr [[nodiscard]] unsigned min(unsigned a, unsigned b) noexcept {
-        return a < b ? a : b;
-    }
-
-    constexpr [[nodiscard]] unsigned abs(unsigned a, unsigned b) noexcept {
-        return max(a, b) - min(a, b);
-    }
-}
-
 namespace dgm {
-
 /**
  *  \brief Class for computing path from collision mesh data
+ * 
+ *  This version of NavMesh computes sequence of tile indices
+ *  to get from tile A to tile B. Tiles are direct horizontal
+ *  or vertical neigbors, diagonal neighbors are ignored.
+ * 
+ *  Path is determined with regard to impassable tiles in dgm::Mesh provided.
+ *  If tile in mesh has value <= 0 then it is passible. Any value greater
+ *  than zero is considered impassable.
  */
-class NavMesh {
-public:
-    enum class Dir {
-        Up, Left, Down, Right
-    };
-
-    struct Node {
-    protected:
-        static constexpr [[nodiscard]] unsigned getDistance(const sf::Vector2u& a, const sf::Vector2u& b) noexcept {
-            return custom::abs(a.x, b.x) + custom::abs(a.y, b.y);
-        }
-
-    public:
-        sf::Vector2u point = {};
-        unsigned gcost = 0;
-        unsigned hcost = 0;
-        unsigned fcost = 0;
-        Dir backdir = Dir::Up;
-
-        Node() {}
-        Node(const sf::Vector2u& point, const sf::Vector2u& end, unsigned gcost, Dir backdir) {
-            this->point = point;
-            this->backdir = backdir;
-            this->gcost = gcost;
-            hcost = getDistance(point, end);
-            fcost = gcost + hcost;
-        }
-        Node(const Node& other) = default;
-
-        [[nodiscard]] bool isCloserThan(const Node& other) const noexcept {
-            return fcost < other.fcost || (fcost == other.fcost && hcost < other.hcost);
-        }
-    };
-
-    class NodeSet {
-    protected:
-        std::map<sf::Vector2u, Node, dgm::Utility::less<sf::Vector2u>> nodes;
-
-    public:
-        void insertNode(const Node& node) {
-            nodes[node.point] = node;
-        }
-
-        [[nodiscard]] bool isEmpty() const noexcept {
-            return nodes.empty();
-        }
-
-        [[nodiscard]] bool contains(const sf::Vector2u& p) const noexcept {
-            const auto itr = nodes.find(p);
-            return itr != nodes.end();
-        }
-
-        [[nodiscard]] Node popBestNode() {
-            auto minElem = nodes.begin();
-            for (auto itr = (++nodes.begin()); itr != nodes.end(); itr++) {
-                if (itr->second.isCloserThan(minElem->second)) {
-                    minElem = itr;
-                }
-            }
-
-            Node copy = minElem->second;
-            nodes.erase(minElem);
-            return copy;
-        }
-
-        [[nodiscard]] Node getNode(const sf::Vector2u& point) const {
-            return nodes.at(point);
-        }
-    };
-
-protected:
-    dgm::Mesh mesh;
-
-protected: // WorldNavpoint helpers
-    [[nodiscard]] bool isJumpPoint(const sf::Vector2u& point) noexcept;
-
-public: // TileNavpoint helpers
-    void updateOpenSetWithCoord(NodeSet& openSet, const sf::Vector2u& coord, const NodeSet& closedSet, const sf::Vector2u& destinationCoord);
-
+class TileNavMesh {
 public:
     /**
      *  \brief Get path represented by tile indices to input mesh
      *
-     *  All tiles along the path are returned, neighbouring tiles are always horizontal
-     *  or vertical to each other, no diagonal transitions are allowed.
+     *  The resulting path will not include 'from' coord, but it includes 'to' coord.
+     * 
+     *  If no path exists, dgm::GeneralException is thrown.
+     *  If from == to, then empty path (which returns true for isTraversed) is returned
      */
-    [[nodiscard]] dgm::Path<TileNavpoint> getPath(const sf::Vector2u& from, const sf::Vector2u& to);
-
-    NavMesh() = delete;
-    NavMesh(const dgm::Mesh& mesh);
-    NavMesh(NavMesh&& other) = default;
-    NavMesh(const NavMesh& other) = delete;
+    static [[nodiscard]] dgm::Path<TileNavpoint> getPath(const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh &mesh);
 };
 
+/**
+ *  Class for computing path from collision mesh data
+ * 
+ *  This version of NavMesh produces paths with only few key
+ *  "jump points". Those jump points are world coordinates placed
+ *  in the center of key tiles.
+ * 
+ *  Jump points are picked is a way that they allow for diagonal
+ *  movement (thus they produce shorter and more natural paths than TileNavMesh)
+ *  and there is no obstacle (impassable tile) between two subsequent ones.
+ * 
+ *  Example:
+ *  S 1 . .
+ *  # . . .
+ *  # . . E
+ * 
+ *  S is start, 1 is jump point, E is end. Your path will contain sequence [1, E].
+ * 
+ *  Example 2:
+ *  S 1 . 3
+ *  # . # .
+ *  # 2 . E
+ * 
+ *  In this case, path would contain sequence [1, 2, E] or [1, 3, E]
+ * 
+ *  Example 3:
+ *  S 1 # .
+ *  # 2 . 3
+ *  # . . E
+ * 
+ *  In this case, there is (partially) obstacle on direct route from 1 to E.
+ *  However, there is clear path from 2 to E. Thus, path will be sequence [1, 2, E].
+ *  Point 3 would be ignored in this case.
+ * 
+ *  This class makes a copy of source mesh because it needs to do some pre-processing
+ *  before it can do pathfinding. As long as your mesh data don't change, you can
+ *  reuse object of this class.
+ */
 class WorldNavMesh {
 protected:
-    dgm::Mesh mesh;
-
     struct Connection {
         sf::Vector2u destination; ///< Destination node of the connection
-        float distance; ///< Distance to destination
-
-        Connection(const sf::Vector2u& destination, const float distance)
-            : destination(destination), distance(distance) {}
+        unsigned distance; ///< Distance to destination
     };
+
+protected:
+    dgm::Mesh mesh;
     
     /**
      *  \brief Map of connections between jump points
@@ -158,15 +104,18 @@ protected:
     std::unordered_map<sf::Vector2u, std::vector<Connection>> jumpPointConnections = {};
 
 protected:
-    void discoverConnectionsForJumpPoint(const sf::Vector2u& point, bool fullSearch);
+    void discoverConnectionsForJumpPoint(const sf::Vector2u& point, bool fullSearch, bool symmetricConnections = true);
 
 public:
     /**
      *  \brief Get path represented by world coordinates
      *
-     *  The path only contains major "jump points" which can be far away from each other,
-     *  where each two neighbouring jump points have unobstructed visibility to each other,
-     *  and direction between them can be of any angle, not only horizontal and vertical.
+     *  The resulting path will not include 'from' coord, but it includes 'to' coord.
+     * 
+     *  If no path exists, dgm::GeneralException is thrown.
+     *  If from == to, then empty path (which returns true for isTraversed) is returned
+     * 
+     *  \warn This function is not thread-safe.
      */
     [[nodiscard]] dgm::Path<WorldNavpoint> getPath(const sf::Vector2f& from, const sf::Vector2f& to);
 

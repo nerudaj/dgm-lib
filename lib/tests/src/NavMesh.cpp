@@ -12,7 +12,7 @@
 	REQUIRE(NUMBER_DISTANCE(v1.y, v2.y) < 0.0001f);
 
 [[nodiscard]] dgm::Mesh buildMeshForTesting() {
-    const std::vector<int> map = {
+    const std::vector<uint16_t> map = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
         1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
@@ -24,6 +24,8 @@
     LevelD::Mesh lvdmesh;
     lvdmesh.layerWidth = 10;
     lvdmesh.layerHeight = 6;
+    lvdmesh.tileWidth = 32;
+    lvdmesh.tileHeight = 32;
     lvdmesh.layers.push_back(LevelD::TileLayer{
         std::vector<uint16_t>(map.begin(), map.end()),
         std::vector<bool>(map.begin(), map.end())
@@ -33,14 +35,8 @@
 
 class TestableNavMesh : public dgm::WorldNavMesh {
 public:
-    /*[[nodiscard]] bool isJumpPoint_Public(const sf::Vector2u& point) noexcept {
-        return isJumpPoint(point);
-    }*/
-
     [[nodiscard]] decltype(auto) getJumpPoints() const {
         std::vector<sf::Vector2u> result;
-
-        //using MapIteratorType = decltype(jumpPointConnections)::iterator;
 
         std::transform(jumpPointConnections.begin(), jumpPointConnections.end(), std::back_inserter(result), [] (const auto &itr) -> sf::Vector2u {
             return itr.first;
@@ -57,34 +53,10 @@ public:
         return false;
     }
 
-    /*[[nodiscard]] const auto& getJumpPointConnections() const noexcept {
-        return jumpPointConnections;
-    }*/
-
     TestableNavMesh(const dgm::Mesh &mesh) : dgm::WorldNavMesh(mesh) {}
 };
 
-/*TEST_CASE("IsJumpPoint", "[NavMesh]") {
-    TestableNavMesh navmesh(buildMeshForTesting());
-
-    SECTION("Valid jump points") {
-        REQUIRE(navmesh.isJumpPoint_Public({ 1, 2 }));
-        REQUIRE(navmesh.isJumpPoint_Public({ 1, 4 }));
-        REQUIRE(navmesh.isJumpPoint_Public({ 3, 2 }));
-        REQUIRE(navmesh.isJumpPoint_Public({ 3, 4 }));
-        REQUIRE(navmesh.isJumpPoint_Public({ 5, 2 }));
-    }
-
-    SECTION("Invalid jump points") {
-        REQUIRE(!navmesh.isJumpPoint_Public({ 1, 1 }));
-        REQUIRE(!navmesh.isJumpPoint_Public({ 1, 3 }));
-        REQUIRE(!navmesh.isJumpPoint_Public({ 2, 4 }));
-        REQUIRE(!navmesh.isJumpPoint_Public({ 5, 1 }));
-        REQUIRE(!navmesh.isJumpPoint_Public({ 6, 2 }));
-    }
-}*/
-
-TEST_CASE("Constructing NavMesh", "[NavMesh]") {
+TEST_CASE("Constructing TileNavMesh", "[TileNavMesh]") {
     TestableNavMesh navmesh(buildMeshForTesting());
 
     SECTION("Jump point discovery") {
@@ -127,18 +99,75 @@ TEST_CASE("Constructing NavMesh", "[NavMesh]") {
         CHECK(navmesh.arePointsConnected({ 3, 4 }, { 5, 2 }));
         CHECK(navmesh.arePointsConnected({ 3, 4 }, { 1, 4 }));
     }
+
+    SECTION("Computing path") {
+        auto toWorldCoord = [] (unsigned x, unsigned y) {
+            return sf::Vector2f((x + 0.5f) * 32.f, (y + 0.5f) * 32.f);
+        };
+
+        auto toTileCoord = [] (const sf::Vector2f& coord) {
+            return sf::Vector2u(static_cast<unsigned>(coord.x) / 32u, static_cast<unsigned>(coord.y) / 32u);
+        };
+
+        REQUIRE_SAME_VECTORS(toWorldCoord(1, 2), sf::Vector2f(48.f, 80.f));
+        REQUIRE_SAME_VECTORS(toTileCoord(sf::Vector2f(112.f, 48.f)), sf::Vector2u(3, 1));
+
+        SECTION("From-To identity") {
+            auto path = navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(1, 1));
+            REQUIRE(path.isTraversed());
+        }
+
+        SECTION("Direct path between from-to") {
+            auto path = navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(2, 1));
+            REQUIRE_FALSE(path.isLooping());
+            REQUIRE_FALSE(path.isTraversed());
+
+            REQUIRE_SAME_VECTORS(toWorldCoord(2, 1), path.getCurrentPoint().coord);
+            REQUIRE(path.getCurrentPoint().value == 0u);
+            path.advance();
+            REQUIRE(path.isTraversed());
+        }
+
+        SECTION("Normal path") {
+            auto path = navmesh.getPath(toWorldCoord(5, 1), toWorldCoord(1, 3));
+            REQUIRE_FALSE(path.isLooping());
+            REQUIRE_FALSE(path.isTraversed());
+
+            const std::vector<sf::Vector2u> refpoints = {
+                {3u, 2u},
+                {1u, 2u},
+                {1u, 3u},
+            };
+
+            std::cout << "Printing tile path:" << std::endl;
+            for (auto&& point : refpoints) {
+                auto&& coord = path.getCurrentPoint().coord;
+                auto worldPoint = toWorldCoord(point.x, point.y);
+                std::cout << dgm::Utility::to_string(coord) << " (" << dgm::Utility::to_string(toTileCoord(coord)) << ")" << std::endl;
+                REQUIRE_SAME_VECTORS(worldPoint, coord);
+                REQUIRE(path.getCurrentPoint().value == 0u);
+                path.advance();
+            }
+
+            REQUIRE(path.isTraversed());
+        }
+
+        SECTION("No viable path") {
+            REQUIRE_THROWS_AS(navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(8, 1)), dgm::GeneralException);
+        }
+    }
 }
 
-TEST_CASE("Computing Tile path", "[NavMesh]") {
-    dgm::NavMesh navmesh(buildMeshForTesting());
+TEST_CASE("Computing Tile path", "[TileNavMesh]") {
+    const auto mesh = buildMeshForTesting();
 
     SECTION("Path exists, identity") {
-        auto path = navmesh.getPath(sf::Vector2u(1, 1), sf::Vector2u(1, 1));
+        auto path = dgm::TileNavMesh::getPath(sf::Vector2u(1, 1), sf::Vector2u(1, 1), mesh);
         REQUIRE(path.isTraversed());
     }
 
     SECTION("Path exists, non trivial") {
-        auto path = navmesh.getPath(sf::Vector2u(1, 4), sf::Vector2u(5, 1));
+        auto path = dgm::TileNavMesh::getPath(sf::Vector2u(1, 4), sf::Vector2u(5, 1), mesh);
         REQUIRE_FALSE(path.isLooping());
 
         const std::vector<sf::Vector2u> refpoints = {
@@ -163,20 +192,6 @@ TEST_CASE("Computing Tile path", "[NavMesh]") {
     }
 
     SECTION("Path does not exist") {
-        REQUIRE_THROWS_AS(navmesh.getPath(sf::Vector2u(1, 1), sf::Vector2u(8, 1)), dgm::GeneralException);
+        REQUIRE_THROWS_AS(dgm::TileNavMesh::getPath(sf::Vector2u(1, 1), sf::Vector2u(8, 1), mesh), dgm::GeneralException);
     }
-}
-
-TEST_CASE("Update open set with coord", "[NavMesh]") {
-    dgm::NavMesh::NodeSet openSet, closedSet;
-    closedSet.insertNode(dgm::NavMesh::Node(sf::Vector2u(1, 1), sf::Vector2u(2, 1), 0, dgm::NavMesh::Dir::Down));
-
-    dgm::NavMesh navmesh(buildMeshForTesting());
-    navmesh.updateOpenSetWithCoord(openSet, sf::Vector2u(1, 1), closedSet, sf::Vector2u(2, 1));
-
-    REQUIRE(!openSet.isEmpty());
-    REQUIRE(!openSet.contains(sf::Vector2u(1, 0)));
-    REQUIRE(!openSet.contains(sf::Vector2u(0, 1)));
-    REQUIRE(openSet.contains(sf::Vector2u(1, 2)));
-    REQUIRE(openSet.contains(sf::Vector2u(2, 1)));
 }
