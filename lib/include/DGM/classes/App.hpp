@@ -28,7 +28,7 @@ namespace dgm {
 		std::streambuf* stdoutBackup = nullptr;
 		std::streambuf* stderrBackup = nullptr;
 		std::stack<std::unique_ptr<AppState>> states;
-		unsigned numberOfStatesToPop = 0;
+		std::size_t numberOfStatesToPop = 0;
 		sf::Texture screenshot;
 		sf::Sprite screenshotSprite;
 

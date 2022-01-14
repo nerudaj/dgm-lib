@@ -39,3 +39,7 @@
 #include "classes/ParticleSystemRenderer.hpp"
 #include "classes/Particle.hpp"
 #include "classes/ParticleSystem.hpp"
+
+// Navigation
+#include "classes/Path.hpp"
+#include "classes/NavMesh.hpp"
