@@ -1,4 +1,4 @@
-dgm-lib v1.X.X
+dgm-lib v1.5.0
  * Added dgm::Path, dgm::TileNavMesh and dgm::WorldNavMesh classes for pathfinding purposes
  * Added type trait for sf::Vector
  * Added dgm::Utility::less function for sf::Vector (usable for std::map template)
