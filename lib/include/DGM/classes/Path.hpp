@@ -86,6 +86,9 @@ namespace dgm {
 				currentPointIndex = 0;
 		}
 
+		Path<T>& operator=(dgm::Path<T>&& other) = default;
+
+		Path() : points({}), looping(false) {}
 		Path(const std::vector<T>& points, bool looping) : points(points), looping(looping) {}
 		Path(dgm::Path<T>&& other) = default;
 		Path(const LevelD::Path& lvdPath) {

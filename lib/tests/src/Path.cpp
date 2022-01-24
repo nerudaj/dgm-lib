@@ -1,8 +1,8 @@
 #include <catch.hpp>
 #include "DGM/classes/Path.hpp"
+#include "DGM/classes/NavMesh.hpp"
 
 namespace PathTests {
-
 	const std::vector<dgm::TileNavpoint> POINTS = {
 				{{0, 0}, 10}, {{1, 0}, 0}, {{2, 0}, 5}
 	};
@@ -18,6 +18,12 @@ namespace PathTests {
 	};
 
 	TEST_CASE("Construction", "Path") {
+		dgm::Path<dgm::WorldNavpoint> destinationPath;
+
+		SECTION("Empty ctor") {
+			auto path = dgm::Path<dgm::WorldNavpoint>();
+		}
+
 		SECTION("From vector") {
 			REQUIRE_NOTHROW(dgm::Path(POINTS, true));
 			REQUIRE_NOTHROW(dgm::Path(dgm::Path(POINTS, true)));
@@ -25,6 +31,14 @@ namespace PathTests {
 
 		SECTION("From LevelD") {
 			REQUIRE_NOTHROW(dgm::Path<dgm::WorldNavpoint>(LVD_PATH));
+		}
+
+		SECTION("Move assigment") {
+			dgm::Mesh mesh;
+			mesh.setVoxelSize(1u, 1u);
+			mesh.setDataSize(1u, 1u);
+			dgm::WorldNavMesh navmesh(mesh);
+			destinationPath = navmesh.getPath({ 0.f, 0.f }, { 0.f, 0.f });
 		}
 	}
 

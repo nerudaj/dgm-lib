@@ -1,3 +1,6 @@
+dgm-lib v1.5.1
+ * Added empty constructor and move assigment operator for dgm::Path
+
 dgm-lib v1.5.0
  * Added dgm::Path, dgm::TileNavMesh and dgm::WorldNavMesh classes for pathfinding purposes
  * Added type trait for sf::Vector

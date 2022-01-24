@@ -23,7 +23,7 @@ protected:
 	Reporter* reporter = nullptr;
 
 public:
-	virtual void draw(sf::Drawable& drawable) {
+	virtual void draw(sf::Drawable&) {
 		reporter->drawCallCount++;
 	}
 
