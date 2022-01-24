@@ -359,6 +359,8 @@ dgm::Path<dgm::WorldNavpoint> dgm::WorldNavMesh::getPath(const sf::Vector2f& fro
     
     if (tileFrom == tileTo)
         return dgm::Path<WorldNavpoint>({}, false);
+    else if (mesh.at(tileTo) >= 1)
+        throw dgm::GeneralException("No path was found");
 
     // Make auxiliary connections to rest of network
     discoverConnectionsForJumpPoint(tileTo, true, true); // First evaluate destination so start point can find direct connection

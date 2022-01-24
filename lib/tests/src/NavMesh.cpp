@@ -153,7 +153,11 @@ TEST_CASE("Constructing TileNavMesh", "[TileNavMesh]") {
         }
 
         SECTION("No viable path") {
+            // There is no path because each point lies in a separate section of the map
             REQUIRE_THROWS_AS(navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(8, 1)), dgm::GeneralException);
+
+            // There is no path because destination point is a wall
+            REQUIRE_THROWS_AS(navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(6, 1)), dgm::GeneralException);
         }
     }
 }

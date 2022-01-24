@@ -1,5 +1,6 @@
-dgm-lib v1.5.1
+dgm-lib v1.5.2
  * Added empty constructor and move assigment operator for dgm::Path
+ * Fixed edge case where path could be found even though it ended in solid wall
 
 dgm-lib v1.5.0
  * Added dgm::Path, dgm::TileNavMesh and dgm::WorldNavMesh classes for pathfinding purposes
