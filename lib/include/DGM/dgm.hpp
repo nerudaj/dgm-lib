@@ -43,3 +43,7 @@
 // Navigation
 #include "classes/Path.hpp"
 #include "classes/NavMesh.hpp"
+
+// Helpers
+#include "classes/Traits.hpp"
+#include "classes/Utility.hpp"
