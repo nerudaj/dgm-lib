@@ -79,7 +79,7 @@ namespace dgm {
 			ParticleSystemInterface() {}
 			ParticleSystemInterface(ParticleSystemInterface& other) = delete;
 			ParticleSystemInterface(ParticleSystemInterface&& other) = default;
-			~ParticleSystemInterface();
+			virtual ~ParticleSystemInterface();
 		};
 	};
 };
