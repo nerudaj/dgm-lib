@@ -1,3 +1,6 @@
+dgm-lib vX.X.X
+ * Added Math::radialDifference for computing difference between angles
+
 dgm-lib v1.5.2
  * Added empty constructor and move assigment operator for dgm::Path
  * Fixed edge case where path could be found even though it ended in solid wall
