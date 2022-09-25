@@ -95,13 +95,13 @@ namespace dgm {
 		 */
 		void build(const LevelD::Mesh& mesh, unsigned layerIndex = 0);
 
-		void init(sf::Texture &texture, const dgm::Clip &newClip) {
-			texturePtr = &texture;
-			clip = newClip;
-		}
-
 		[[nodiscard]] const dgm::Clip& getClip() const noexcept {
 			return clip;
 		}
+
+		TileMap() = default;
+		TileMap(sf::Texture& texture, dgm::Clip&& clip)
+			: texturePtr(&texture)
+			, clip(std::move(clip)) {}
 	};
 }

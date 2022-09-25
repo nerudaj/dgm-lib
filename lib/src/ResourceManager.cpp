@@ -2,111 +2,165 @@
 
 #include <stdexcept>
 #include <filesystem>
+#include <iostream>
 
 using dgm::ResourceManager;
 namespace fs = std::filesystem;
 
-void ResourceManager::loadResourceFromFile(const std::string &filename, sf::Texture &texture) {
-	if (not texture.loadFromFile(filename)) {
+void ResourceManager::loadResourceFromFile(const std::string& filename, sf::Texture& texture)
+{
+	if (not texture.loadFromFile(filename))
+	{
 		throw std::runtime_error("Cannot load texture");
 	}
 }
 
-void ResourceManager::loadResourceFromFile(const std::string &filename, sf::Font &font) {
-	if (not font.loadFromFile(filename)) {
+void ResourceManager::loadResourceFromFile(const std::string& filename, sf::Font& font)
+{
+	if (not font.loadFromFile(filename))
+	{
 		throw std::runtime_error("Cannot load font");
 	}
 }
 
-void ResourceManager::loadResourceFromFile(const std::string &filename, sf::SoundBuffer &sound) {
-	if (not sound.loadFromFile(filename)) {
+void ResourceManager::loadResourceFromFile(const std::string& filename, sf::SoundBuffer& sound)
+{
+	if (not sound.loadFromFile(filename))
+	{
 		throw std::runtime_error("Cannot load sound buffer");
 	}
 }
 
-void ResourceManager::loadResourceFromFile(const std::string &filename, std::shared_ptr<dgm::AnimationStates> &states) {
-	states = dgm::Animation::loadStatesFromFile(filename);
+void ResourceManager::loadResourceFromFile(const std::string& filename, std::shared_ptr<dgm::AnimationStates>& states)
+{
+	states = loader.loadAnimationsFromFile(filename);
 }
 
-std::string dgm::ResourceManager::getResourceName(const std::string & filename) {
+std::string dgm::ResourceManager::getResourceId(const std::string& filename)
+{
 	auto itr = filename.find_last_of('/');
 	return filename.substr(++itr);
 }
 
-template<typename T>
-void ResourceManager::loadResource(const std::string &filename) {
-	T *resource = new T;
-	if (!resource) {
+template<dgm::SupportedResourceType T>
+void ResourceManager::loadResource(const std::string& filename)
+{
+	T* resource = new T;
+	if (!resource)
+	{
 		throw dgm::EnvironmentException("Could not allocate memory for resource");
 	}
-	
-	try {
+
+	try
+	{
 		loadResourceFromFile(filename, *resource);
 	}
-	catch (std::exception &e) {
+	catch (std::exception& e)
+	{
 		delete resource;
-		throw dgm::GeneralException("Could not load resource '" + filename + "', reason: '" + std::string(e.what()) + "'");
+		throw dgm::GeneralException(std::format(
+			"Could not load resource '{}', reason: '{}'",
+			filename,
+			e.what()));
 	}
 
-	std::string name = getResourceName(filename);
-	if (isResourceInDatabase(name)) {
+	std::string id = getResourceId(filename);
+	if (isResourceInDatabase(id))
+	{
 		delete resource;
-		throw dgm::ResourceException("Resource called '" + name + "' is already in database!");
+		throw dgm::ResourceException(std::format(
+			"Resource called '{}' is already in database!",
+			id));
 	}
 
-	try {
-		database[name] = resource;
+	try
+	{
+		database[id] = resource;
 	}
-	catch (...) {
+	catch (...)
+	{
 		delete resource;
 		throw dgm::EnvironmentException("Could not insert resource into database");
 	}
 }
 
-template void ResourceManager::loadResource<sf::Texture>(const std::string &filename);
-template void ResourceManager::loadResource<sf::SoundBuffer>(const std::string &filename);
-template void ResourceManager::loadResource<sf::Font>(const std::string &filename);
-template void ResourceManager::loadResource<std::shared_ptr<dgm::AnimationStates>>(const std::string &filename);
+template void ResourceManager::loadResource<sf::Texture>(const std::string& filename);
+template void ResourceManager::loadResource<sf::SoundBuffer>(const std::string& filename);
+template void ResourceManager::loadResource<sf::Font>(const std::string& filename);
+template void ResourceManager::loadResource<std::shared_ptr<dgm::AnimationStates>>(const std::string& filename);
 
-template<typename T>
-void ResourceManager::loadResourceDir(const std::string &folder, bool recursive) {
-	fs::path path(folder);
-	if (not fs::is_directory(path)) {
-		throw dgm::ResourceException("Path '" + folder + "' does not exist!");
+template<dgm::SupportedResourceType T>
+void ResourceManager::loadResourceDir(
+	const std::string& folderPath,
+	const std::vector<std::string>& allowedExtensions,
+	bool recursive)
+{
+	if (allowedExtensions.empty())
+	{
+		throw dgm::ResourceException("Allowed extensions must not be empty!");
+	}
+
+	fs::path path(folderPath);
+	if (not fs::is_directory(path))
+	{
+		throw dgm::ResourceException(std::format("Path '{}' does not exist!", folderPath));
 	}
 
 	fs::directory_iterator itr(path);
-	for (auto item : itr) {
+	for (auto item : itr)
+	{
 		fs::path itemPath(item);
 
-		if (fs::is_directory(itemPath) && recursive) {
-			loadResourceDir<T>(itemPath.generic_string(), recursive);
+		if (fs::is_directory(itemPath))
+		{
+			if (recursive)
+				loadResourceDir<T>(itemPath.generic_string(), allowedExtensions, recursive);
+			else
+				continue;
 		}
 
-		try {
-			// FIX: Skip Thumbs.db file on Windows
-			if (itemPath.generic_string() == "Thumbs.db") continue;
+		if (std::find_if(
+			allowedExtensions.begin(),
+			allowedExtensions.end(),
+			[&itemPath] (const std::string& extension) -> bool
+			{
+				return itemPath.extension().string().ends_with(extension);
+			}) == allowedExtensions.end())
+		{
+			continue;
+		}
 
 			loadResource<T>(itemPath.generic_string());
-		}
-		catch (dgm::GeneralException &e) {
-			if (pedantic) throw e;
-		}
 	}
 }
 
-template void ResourceManager::loadResourceDir<sf::Texture>(const std::string &filename, bool recursive);
-template void ResourceManager::loadResourceDir<sf::SoundBuffer>(const std::string &filename, bool recursive);
-template void ResourceManager::loadResourceDir<sf::Font>(const std::string &filename, bool recursive);
-template void ResourceManager::loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(const std::string &filename, bool recursive);
+template void ResourceManager::loadResourceDir<sf::Texture>(
+	const std::string& folderPath,
+	const std::vector<std::string>& allowedExtensions,
+	bool recursive);
+template void ResourceManager::loadResourceDir<sf::SoundBuffer>(
+	const std::string& folderPath,
+	const std::vector<std::string>& allowedExtensions,
+	bool recursive);
+template void ResourceManager::loadResourceDir<sf::Font>(
+	const std::string& folderPath,
+	const std::vector<std::string>& allowedExtensions,
+	bool recursive);
+template void ResourceManager::loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
+	const std::string& folderPath,
+	const std::vector<std::string>& allowedExtensions,
+	bool recursive);
 
-ResourceManager::ResourceManager(ResourceManager &&other) {
+ResourceManager::ResourceManager(ResourceManager&& other) noexcept : loader(other.loader)
+{
 	database = other.database;
 	other.database.clear();
 }
 
-ResourceManager::~ResourceManager() {
-	for (auto&& [key, value] : database) {
+ResourceManager::~ResourceManager() noexcept
+{
+	for (auto&& [key, value] : database)
+	{
 		free(value);
 	}
 }

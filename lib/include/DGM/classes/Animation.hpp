@@ -22,8 +22,8 @@ namespace dgm {
 	 */
 	class Animation {
 	private:
-		std::shared_ptr<AnimationStates> states;
-		sf::Sprite *boundSprite;
+		std::shared_ptr<AnimationStates> states = { };
+		sf::Sprite *boundSprite = nullptr;
 		sf::Time elapsedTime;
 		sf::Time timePerFrame;
 		std::size_t currentFrameIndex;
@@ -34,7 +34,7 @@ namespace dgm {
 			return currentState != states->end();
 		}
 
-		void updateSpriteTextureRect() {
+		inline void updateSpriteTextureRect() {
 			boundSprite->setTextureRect(currentState->second.getFrame(currentFrameIndex));
 		}
 
@@ -100,8 +100,6 @@ namespace dgm {
 			elapsedTime = sf::Time::Zero;
 			updateSpriteTextureRect();
 		}
-
-		[[nodiscard]] static std::shared_ptr<AnimationStates> loadStatesFromFile(const std::string &filename);
 
 		Animation();
 		Animation(const std::string &filename, int framesPerSecond = 30);

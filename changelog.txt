@@ -1,5 +1,9 @@
-dgm-lib vX.X.X
+dgm-lib v1.6.0
  * Added Math::radialDifference for computing difference between angles
+ * dgm::Clip and dgm::AnimationStates can be now loaded from JSON via dgm::JsonLoader
+	* JSON syntax has been changed to be more readable
+ * dgm::ResourceManager now requires dgm::LoaderInterface implementation (dgm::JsonLoader or your custom one) to be able to load dgm::AnimationStates
+ * dgm::ResourceManager no longer has pedantic mode, instead you need to specify which extensions will be used for resource loading when loading directory
 
 dgm-lib v1.5.2
  * Added empty constructor and move assigment operator for dgm::Path

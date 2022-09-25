@@ -4,6 +4,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <vector>
+#include <string>
 
 namespace dgm {
 	/**
@@ -47,16 +48,25 @@ namespace dgm {
 		 *  \param [in] frameSize Size of the frame
 		 *  \param [in] boundaries Bounding box around all frames to load
 		 *  \param [in] frameCount Number of frames to load from boundaries
-		 *  \param [in] frameOffset Offset between two neighbouring frames
+		 *  \param [in] frameSpacing Offset between two neighbouring frames
 		 *
 		 *  \details This method must be called prior to any other method.
 		 *  If frameCount is 0, maximum number of frames is loaded within bounding box
 		 */
-		void init(const sf::Vector2u &frameSize, const sf::IntRect &boundaries, const std::size_t frameCount = 0, const sf::Vector2u &frameOffset = sf::Vector2u(0, 0));
+		void init(
+			const sf::Vector2u &frameSize, 
+			const sf::IntRect &boundaries, 
+			const std::size_t frameCount = 0, 
+			const sf::Vector2u &frameSpacing = sf::Vector2u(0, 0));
 
-		Clip() {}
-		Clip(const sf::Vector2u& frameSize, const sf::IntRect& boundaries, const std::size_t frameCount = 0, const sf::Vector2u& frameOffset = sf::Vector2u(0, 0)) {
-			init(frameSize, boundaries, frameCount, frameOffset);
+		Clip() = default;
+		Clip(
+			const sf::Vector2u& frameSize, 
+			const sf::IntRect& boundaries, 
+			const std::size_t frameCount = 0, 
+			const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0))
+		{
+			init(frameSize, boundaries, frameCount, frameSpacing);
 		}
 	};
 }

@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include <DGM/dgm.hpp>
+#include <sstream>
 
 #define COMPARE_UNSIGNED_VECTORS(v1, v2) \
 	REQUIRE(v1.x == v2.y); \
