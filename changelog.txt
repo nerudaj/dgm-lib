@@ -1,3 +1,6 @@
+dgm-lib v1.6.1
+ * Removed dgm::Animation constructor which accepts path to configuration file (use dgm::JsonLoader instead)
+
 dgm-lib v1.6.0
  * Added Math::radialDifference for computing difference between angles
  * dgm::Clip and dgm::AnimationStates can be now loaded from JSON via dgm::JsonLoader

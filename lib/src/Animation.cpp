@@ -62,8 +62,6 @@ void Animation::setSpeed(unsigned framesPerSecond)
 
 Animation::Animation()
 {
-	//states = NULL_STATES;
-
 	boundSprite = nullptr;
 	elapsedTime = sf::seconds(0);
 
@@ -73,21 +71,6 @@ Animation::Animation()
 
 	setLooping(false);
 }
-
-Animation::Animation(const std::string& filename, int framesPerSecond)
-{
-	// FIXME: states = Animation::loadStatesFromFile(filename);
-
-	boundSprite = nullptr;
-	elapsedTime = sf::seconds(0);
-
-	setSpeed(framesPerSecond);
-	currentFrameIndex = 0;
-	currentState = states->end();
-
-	setLooping(false);
-}
-
 
 Animation::Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond)
 {

@@ -9,32 +9,36 @@
 #include <functional>
 #include <memory>
 
-namespace dgm {
+namespace dgm
+{
 	typedef std::map<std::string, dgm::Clip> AnimationStates;
 
 	/**
 	 *  \brief Object animating a single sprite
-	 * 
+	 *
 	 *  \details Animation contains a database of animation states
 	 *  and a pointer to some sprite. When you set a certain named state
 	 *  and start calling update, then the image displayed on sprite
 	 *  will be changed.
 	 */
-	class Animation {
+	class Animation
+	{
 	private:
 		std::shared_ptr<AnimationStates> states = { };
-		sf::Sprite *boundSprite = nullptr;
+		sf::Sprite* boundSprite = nullptr;
 		sf::Time elapsedTime;
 		sf::Time timePerFrame;
 		std::size_t currentFrameIndex;
 		AnimationStates::const_iterator currentState;
 		bool looping;
 
-		[[nodiscard]] bool isCurrentStateValid() const noexcept {
+		[[nodiscard]] bool isCurrentStateValid() const noexcept
+		{
 			return currentState != states->end();
 		}
 
-		inline void updateSpriteTextureRect() {
+		inline void updateSpriteTextureRect()
+		{
 			boundSprite->setTextureRect(currentState->second.getFrame(currentFrameIndex));
 		}
 
@@ -48,7 +52,7 @@ namespace dgm {
 		 *  currently set state and looping is set to false, then
 		 *  update will return false. Otherwise it returns true.
 		 */
-		bool update(const dgm::Time &time);
+		bool update(const dgm::Time& time);
 
 		/**
 		 *  \brief Set the new animation state
@@ -58,51 +62,55 @@ namespace dgm {
 		 *  to true then animation will start over when it finishes
 		 *  and \ref update will always return true.
 		 */
-		void setState(const std::string &state, bool looping = false);
+		void setState(const std::string& state, bool looping = false);
 
 		/**
 		 *  \brief Bind sprite to animation
 		 */
-		void bindSprite(sf::Sprite &sprite);
+		void bindSprite(sf::Sprite& sprite);
 
 		/**
 		 *  \brief Set speed of animation in frames per second
 		 */
 		void setSpeed(unsigned framesPerSecond);
 
-		constexpr void setLooping(bool enabled) noexcept {
+		constexpr void setLooping(bool enabled) noexcept
+		{
 			looping = enabled;
 		}
 
 		/**
 		 *  \brief Get speed as number of frames per second
 		 */
-		[[nodiscard]] unsigned getSpeed() const {
+		[[nodiscard]] unsigned getSpeed() const
+		{
 			return static_cast<unsigned>(1000.f / timePerFrame.asMilliseconds());
 		}
 
 		/**
 		 *  \brief Get name of currently selected state
 		 */
-		[[nodiscard]] const std::string &getStateName() const noexcept {
+		[[nodiscard]] const std::string& getStateName() const noexcept
+		{
 			return currentState->first;
 		}
 
-		[[nodiscard]] constexpr bool isLooping() const noexcept {
+		[[nodiscard]] constexpr bool isLooping() const noexcept
+		{
 			return looping;
 		}
 
 		/**
 		 *  \brief Reset the current state of animation to frame 0
 		 */
-		void reset() {
+		void reset()
+		{
 			currentFrameIndex = 0;
 			elapsedTime = sf::Time::Zero;
 			updateSpriteTextureRect();
 		}
 
 		Animation();
-		Animation(const std::string &filename, int framesPerSecond = 30);
-		Animation(const std::shared_ptr<AnimationStates> &states, int framesPerSecond = 30);
+		Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond = 30);
 	};
 }
