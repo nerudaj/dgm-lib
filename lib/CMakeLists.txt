@@ -73,7 +73,7 @@ target_compile_features ( ${PROJECT_NAME}
 )
 
 target_compile_options ( ${PROJECT_NAME}
-	PRIVATE /W4 /MP
+	PRIVATE /W4 /MP /we4265
 )
 
 target_link_libraries ( ${PROJECT_NAME}
