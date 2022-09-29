@@ -3,7 +3,7 @@
 #include <DGM/classes/JsonLoader.hpp>
 #include "TestDataDir.hpp"
 
-class LoaderMock : public dgm::LoaderInterface
+class LoaderMock final : public dgm::LoaderInterface
 {
 public:
 	[[nodiscard]]
@@ -13,7 +13,7 @@ public:
 	}
 
 	[[nodiscard]]
-	virtual dgm::Clip loadClipFromStream(std::istream&) const override
+	dgm::Clip loadClipFromStream(std::istream&) const
 	{
 		return dgm::Clip();
 	}
@@ -25,7 +25,7 @@ public:
 	}
 
 	[[nodiscard]]
-	virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromStream(std::istream&) const override
+	std::shared_ptr<dgm::AnimationStates> loadAnimationsFromStream(std::istream&) const
 	{
 		return std::make_shared<dgm::AnimationStates>();
 	}

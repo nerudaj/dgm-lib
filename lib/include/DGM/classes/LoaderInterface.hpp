@@ -20,13 +20,9 @@ namespace dgm
 		virtual dgm::Clip loadClipFromFile(const std::string&) const = 0;
 
 		[[nodiscard]]
-		virtual dgm::Clip loadClipFromStream(std::istream&) const = 0;
-
-		[[nodiscard]]
 		virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromFile(const std::string&) const = 0;
 
-		[[nodiscard]]
-		virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromStream(std::istream&) const = 0;
+		virtual ~LoaderInterface() = default;
 	};
 
 }
