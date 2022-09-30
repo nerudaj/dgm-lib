@@ -1,6 +1,5 @@
 #pragma once
 
-#include <DGM/classes/Camera.hpp>
 #include <DGM/classes/Objects.hpp>
 #include <DGM/classes/Collision.hpp>
 
@@ -9,7 +8,8 @@
 
 #include <functional>
 
-namespace dgm {
+namespace dgm
+{
 	class Time;
 
 	/**
@@ -21,7 +21,8 @@ namespace dgm {
 	 *  don't know what that is, you can always start with identity
 	 *  function.
 	 */
-	class Camera {
+	class Camera
+	{
 	public:
 		/// Easing function. It is supposed to accept a number from 0..1 and return a number from 0..1
 		using EasingFunc = std::function<float(float)>;
@@ -34,7 +35,8 @@ namespace dgm {
 		 *  Container holding transform effect
 		 */
 		template<typename T>
-		struct Effect {
+		struct Effect
+		{
 			float elapsed = 0.f; // How much time elapsed in seconds
 			float duration = 0.f; // How much time effect should take in seconds
 			EasingFunc easing; // Easing functions for animation
@@ -51,7 +53,8 @@ namespace dgm {
 			/**
 			 * Is effect still animating?
 			 */
-			[[nodiscard]] constexpr bool isActive() const noexcept {
+			[[nodiscard]] constexpr bool isActive() const noexcept
+			{
 				return elapsed < duration;
 			}
 
@@ -66,7 +69,8 @@ namespace dgm {
 		 *  around a center point in random directions. For this purpose we use predefined
 		 *  set of randomly generated numbers.
 		 */
-		struct ShakeEffect : public Effect<sf::Vector2f> {
+		struct ShakeEffect : public Effect<sf::Vector2f>
+		{
 			float hold = 0.f; // how long should position be held before changing
 		};
 
@@ -75,7 +79,8 @@ namespace dgm {
 		Effect<float> rotationEffect;
 		ShakeEffect shakeEffect;
 
-		[[nodiscard]] dgm::Rect getVíewBoundingBox() const {
+		[[nodiscard]] dgm::Rect getVíewBoundingBox() const
+		{
 			return dgm::Rect(view.getCenter() - view.getSize() / 2.f, view.getSize());
 		}
 
@@ -83,36 +88,42 @@ namespace dgm {
 		/**
 		 *  \brief True if camera is animating movement
 		 */
-		[[nodiscard]] constexpr bool isMoving() const noexcept {
+		[[nodiscard]] constexpr bool isMoving() const noexcept
+		{
 			return moveEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating zooming
 		 */
-		[[nodiscard]] constexpr bool isZooming() const noexcept {
+		[[nodiscard]] constexpr bool isZooming() const noexcept
+		{
 			return zoomEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating rotation
 		 */
-		[[nodiscard]] constexpr bool isRotating() const noexcept{
+		[[nodiscard]] constexpr bool isRotating() const noexcept
+		{
 			return rotationEffect.isActive();
 		}
 
 		/**
 		 *  \brief True if camera is animating shaking
 		 */
-		[[nodiscard]] constexpr bool isShaking() const noexcept {
+		[[nodiscard]] constexpr bool isShaking() const noexcept
+		{
 			return shakeEffect.isActive();
 		}
 
-		[[nodiscard]] bool isObjectVisible(const dgm::Rect &object) const noexcept {
+		[[nodiscard]] bool isObjectVisible(const dgm::Rect& object) const noexcept
+		{
 			return dgm::Collision::basic(getVíewBoundingBox(), object);
 		}
 
-		[[nodiscard]] bool isObjectVisible(const dgm::Circle& object) const noexcept {
+		[[nodiscard]] bool isObjectVisible(const dgm::Circle& object) const noexcept
+		{
 			return dgm::Collision::basic(getVíewBoundingBox(), object);
 		}
 
@@ -126,7 +137,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isMoving
 		 */
-		inline void setPosition(const sf::Vector2f& position) {
+		inline void setPosition(const sf::Vector2f& position)
+		{
 			view.setCenter(position);
 		}
 
@@ -135,7 +147,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isMoving
 		 */
-		inline void setPosition(float x, float y) {
+		inline void setPosition(float x, float y)
+		{
 			view.setCenter(x, y);
 		}
 
@@ -144,7 +157,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isMoving
 		 */
-		inline void move(const sf::Vector2f& position) {
+		inline void move(const sf::Vector2f& position)
+		{
 			view.move(position);
 		}
 
@@ -153,7 +167,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isMoving
 		 */
-		inline void move(float x, float y) {
+		inline void move(float x, float y)
+		{
 			view.move(x, y);
 		}
 
@@ -167,7 +182,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isZooming
 		 */
-		inline void setZoom(float level) {
+		inline void setZoom(float level)
+		{
 			view.setSize(defaultZoomLevel);
 			view.zoom(level);
 		}
@@ -177,7 +193,8 @@ namespace dgm {
 		 *
 		 *  Will mess up if camera isRotating
 		 */
-		inline void setRotation(float angle) {
+		inline void setRotation(float angle)
+		{
 			view.setRotation(angle);
 		}
 
@@ -225,7 +242,8 @@ namespace dgm {
 		void shake(const sf::Time& duration, float amount,
 			EasingFunc f = [] (float) -> float { return 1.f; }, const sf::Time& hold = sf::milliseconds(20));
 
-		Camera(sf::View& view) : view(view) {
+		Camera(sf::View& view) : view(view)
+		{
 			defaultZoomLevel = view.getSize();
 		}
 	};

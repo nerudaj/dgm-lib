@@ -10,8 +10,6 @@
 
 // dsh libraries    
 #include <Config.hpp>
-
-#include <Strings.hpp>
 #include <LevelD.hpp>
 #pragma warning(pop)
 
