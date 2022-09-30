@@ -11,6 +11,7 @@ configure_file (
 )
 
 set ( SOURCES
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/Animation.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/App.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Buffer.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"

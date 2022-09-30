@@ -60,18 +60,6 @@ void Animation::setSpeed(unsigned framesPerSecond)
 	timePerFrame = sf::milliseconds(1000 / framesPerSecond);
 }
 
-Animation::Animation()
-{
-	boundSprite = nullptr;
-	elapsedTime = sf::seconds(0);
-
-	setSpeed(30);
-	currentFrameIndex = 0;
-	currentState = states->begin();
-
-	setLooping(false);
-}
-
 Animation::Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond)
 {
 	Animation::states = states;

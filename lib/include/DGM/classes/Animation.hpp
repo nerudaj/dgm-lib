@@ -24,13 +24,13 @@ namespace dgm
 	class Animation
 	{
 	private:
-		std::shared_ptr<AnimationStates> states = { };
+		std::shared_ptr<AnimationStates> states = nullptr;
 		sf::Sprite* boundSprite = nullptr;
-		sf::Time elapsedTime;
-		sf::Time timePerFrame;
-		std::size_t currentFrameIndex;
+		sf::Time elapsedTime = sf::seconds(0);
+		sf::Time timePerFrame = sf::seconds(0);
+		std::size_t currentFrameIndex = 0;
 		AnimationStates::const_iterator currentState;
-		bool looping;
+		bool looping = false;
 
 		[[nodiscard]] bool isCurrentStateValid() const noexcept
 		{
@@ -110,7 +110,18 @@ namespace dgm
 			updateSpriteTextureRect();
 		}
 
-		Animation();
+		/**
+		 *  \brief Construct empty animation
+		 *
+		 *  \warning Default constructor is meant only for cases when you cannot construct
+		 *  animation immediately and have to postpone it to later time, but you don't need
+		 *  to use the object in the meantime.
+		 */
+		Animation() = default;
+
+		/**
+		 *  \brief Construct animation object from states and required FPS
+		 */
 		Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond = 30);
 	};
 }
