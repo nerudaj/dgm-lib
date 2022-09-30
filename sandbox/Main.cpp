@@ -1,6 +1,7 @@
 ﻿#include <DGM/dgm.hpp>
 
-enum Action {
+enum Action
+{
 	Up, Down, Left, Right,
 	LeftStickVerticalPos, LeftStickVerticalNeg, LeftStickHorizontalPos, LeftStickHorizontalNeg,
 	RightStickVerticalPos, RightStickVerticalNeg, RightStickHorizontalPos, RightStickHorizontalNeg,
@@ -10,7 +11,8 @@ enum Action {
 	Back, Start
 };
 
-int main(int argc, char* argv[]) {
+int main(int, char* [])
+{
 	dgm::Window window({ 1920, 1080 }, "Sandbox", false);
 	sf::Event event;
 	dgm::Time time;
@@ -57,7 +59,8 @@ int main(int argc, char* argv[]) {
 	sf::RectangleShape a, b, x, y, back, start, lBumper, rBumper;
 	sf::CircleShape leftOutline, rightOutline, leftDot, rightDot;
 
-	auto getDirection = [&input] (const int hNeg, const int hPos, const int vNeg, const int vPos)->sf::Vector2f {
+	auto getDirection = [&input](const int hNeg, const int hPos, const int vNeg, const int vPos)->sf::Vector2f
+	{
 		return sf::Vector2f(
 			input.getValue(hNeg) + input.getValue(hPos),
 			-input.getValue(vNeg) - input.getValue(vPos)
@@ -77,11 +80,11 @@ int main(int argc, char* argv[]) {
 	dpadDown.setSize({ 10.f, 20.f });
 	dpadDown.setOrigin({ 5.f, 0.f });
 	dpadDown.setPosition({ 100.f, 100.f });
-	dpadLeft.setSize({20.f, 10.f});
-	dpadLeft.setOrigin({20.f, 5.f});
+	dpadLeft.setSize({ 20.f, 10.f });
+	dpadLeft.setOrigin({ 20.f, 5.f });
 	dpadLeft.setPosition({ 100.f, 100.f });
-	dpadRight.setSize({20.f, 10.f});
-	dpadRight.setOrigin({0.f, 5.f});
+	dpadRight.setSize({ 20.f, 10.f });
+	dpadRight.setOrigin({ 0.f, 5.f });
 	dpadRight.setPosition({ 100.f, 100.f });
 
 	y.setSize({ 10.f, 20.f });
@@ -118,8 +121,10 @@ int main(int argc, char* argv[]) {
 	rightDot.setRadius(3.f);
 	rightDot.setFillColor(sf::Color::White);
 
-	while (window.isOpen()) {
-		while (window.pollEvent(event)) {
+	while (window.isOpen())
+	{
+		while (window.pollEvent(event))
+		{
 			if (event.type == sf::Event::Closed) window.close();
 		}
 
