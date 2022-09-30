@@ -70,7 +70,7 @@ target_compile_features ( ${PROJECT_NAME}
 )
 
 target_compile_options ( ${PROJECT_NAME}
-	PRIVATE /W4 /MP /we4265
+	PRIVATE ${CXX_COMPILE_OPTIONS}
 )
 
 target_link_libraries ( ${PROJECT_NAME}

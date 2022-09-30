@@ -37,7 +37,7 @@ target_link_libraries ( ${PROJECT_NAME}
 )
 
 target_compile_options ( ${PROJECT_NAME}
-	PRIVATE /W4 /MP
+	PRIVATE ${CXX_COMPILE_OPTIONS}
 )
 
 add_test (
