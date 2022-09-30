@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 
 using dgm::ResourceManager;
 namespace fs = std::filesystem;

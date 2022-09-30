@@ -1,9 +1,8 @@
 #include <DGM/classes/JsonLoader.hpp>
+#include <DGM/classes/Error.hpp>
 #include <json.hpp>
-#include <iostream>
 #include <fstream>
 #include <format>
-#include <DGM/classes/Error.hpp>
 
 sf::Vector2u getFrameFromJson(const nlohmann::json& jsonFrame)
 {

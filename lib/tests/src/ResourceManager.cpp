@@ -19,7 +19,7 @@ public:
 	}
 
 	[[nodiscard]]
-	virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromFile(const std::string& filename) const override
+	virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromFile(const std::string&) const override
 	{
 		return std::make_shared<dgm::AnimationStates>();
 	}

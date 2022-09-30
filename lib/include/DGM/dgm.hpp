@@ -30,8 +30,10 @@
 #include "classes/AppState.hpp"
 #include "classes/Animation.hpp"
 #include "classes/TileMap.hpp"
+#include "classes/LoaderInterface.hpp"
 #include "classes/ResourceManager.hpp"
 #include "classes/Camera.hpp"
+#include "classes/JsonLoader.hpp"
 
 // Particle Systems
 #include "classes/ParticleSystemRenderer.hpp"

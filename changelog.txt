@@ -1,6 +1,7 @@
 dgm-lib v1.x.x
  * Fixed missing virtual destructors on interface classes
 	* Compiler now issues an error when that happens
+ * Fixed missing includes to LoaderInterface and JsonLoader in dgm.hpp
  * Fixed dgm::Animation crashing when default constructor was invoked
  * Removed RingBuffer and Shell modules as they were not used/finished anyway
 
