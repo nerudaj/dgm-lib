@@ -3,6 +3,7 @@ dgm-lib v1.x.x
 	* Compiler now issues an error when that happens
  * Fixed missing includes to LoaderInterface and JsonLoader in dgm.hpp
  * Fixed dgm::Animation crashing when default constructor was invoked
+ * Dropped noexcept requirement on dgm::Clip::getFrame
  * Removed RingBuffer and Shell modules as they were not used/finished anyway
 
 dgm-lib v1.6.1

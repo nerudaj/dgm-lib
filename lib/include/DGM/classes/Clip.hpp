@@ -6,14 +6,16 @@
 #include <vector>
 #include <string>
 
-namespace dgm {
+namespace dgm
+{
 	/**
 	 *  \brief Class representing array of sf::IntRect (frames) for purpose of clipping textures
-	 *  
+	 *
 	 *  This class is base building block for animations or tilesets.
 	 *  All frames must have the same size
 	 */
-	class Clip {
+	class Clip
+	{
 	protected:
 		std::vector<sf::IntRect> frames; /// Array of sprite frames
 		sf::Vector2u size;				 /// Size of each frame in pixels
@@ -23,22 +25,29 @@ namespace dgm {
 		 *  \brief Get reference to selected frame frame
 		 *
 		 *  \param [in] index Index of the frame
+		 *
+		 *  \pre Regular constructor or init were called prior to calling this function
+		 *
+		 *  This function throws if index is out of bounds.
 		 */
-		[[nodiscard]] const sf::IntRect &getFrame(const std::size_t index) const noexcept {
-			return frames[index];
+		[[nodiscard]] const sf::IntRect& getFrame(const std::size_t index) const
+		{
+			return frames.at(index);
 		}
-		
+
 		/**
 		 *  \brief Get number of frames stored in object
 		 */
-		[[nodiscard]] std::size_t getFrameCount() const noexcept {
+		[[nodiscard]] std::size_t getFrameCount() const noexcept
+		{
 			return frames.size();
 		}
-		
+
 		/**
 		 *  \brief Get resolution of every frame in object
 		 */
-		[[nodiscard]] const sf::Vector2u &getFrameSize() const noexcept {
+		[[nodiscard]] const sf::Vector2u& getFrameSize() const noexcept
+		{
 			return size;
 		}
 
@@ -54,16 +63,16 @@ namespace dgm {
 		 *  If frameCount is 0, maximum number of frames is loaded within bounding box
 		 */
 		void init(
-			const sf::Vector2u &frameSize, 
-			const sf::IntRect &boundaries, 
-			const std::size_t frameCount = 0, 
-			const sf::Vector2u &frameSpacing = sf::Vector2u(0, 0));
+			const sf::Vector2u& frameSize,
+			const sf::IntRect& boundaries,
+			const std::size_t frameCount = 0,
+			const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0));
 
 		Clip() = default;
 		Clip(
-			const sf::Vector2u& frameSize, 
-			const sf::IntRect& boundaries, 
-			const std::size_t frameCount = 0, 
+			const sf::Vector2u& frameSize,
+			const sf::IntRect& boundaries,
+			const std::size_t frameCount = 0,
 			const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0))
 		{
 			init(frameSize, boundaries, frameCount, frameSpacing);
