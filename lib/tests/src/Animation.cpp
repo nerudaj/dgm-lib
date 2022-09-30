@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <DGM/classes/Animation.hpp>
 
-TEST_CASE("Animation", "[Animation]")
+TEST_CASE("[Animation]")
 {
 	SECTION("Default constructor works")
 	{

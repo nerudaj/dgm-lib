@@ -25,6 +25,7 @@ set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/ResourceManager.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/TestDataDir.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/TileMap.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Traits.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Utility.cpp"
 )

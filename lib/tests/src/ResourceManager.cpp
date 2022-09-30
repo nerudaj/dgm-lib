@@ -41,7 +41,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 		SECTION("Non recursive")
 		{
 			resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
-				TEST_DATA_DIR,
+				TEST_DATA_DIR + "/resmgr_loading",
 				{ ".json" },
 				false);
 
@@ -53,7 +53,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 		SECTION("Recursive")
 		{
 			resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
-				TEST_DATA_DIR,
+				TEST_DATA_DIR + "/resmgr_loading",
 				{ ".json" },
 				true);
 
@@ -66,7 +66,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 	SECTION("Can deal with allowedExtensions without dots")
 	{
 		resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
-				TEST_DATA_DIR,
+				TEST_DATA_DIR + "/resmgr_loading",
 				{ "json" },
 				false);
 

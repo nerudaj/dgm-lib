@@ -3,6 +3,7 @@ dgm-lib v1.x.x
 	* Compiler now issues an error when that happens
  * Fixed missing includes to LoaderInterface and JsonLoader in dgm.hpp
  * Fixed dgm::Animation crashing when default constructor was invoked
+ * Fixed bug in dgm::NavMesh where getPath crashed after few queries because its internal structures got into inconsistent state
  * Removed noexcept requirement on dgm::Clip::getFrame so out-of-bounds indices are checked
  * Removed RingBuffer and Shell modules as they were not used/finished anyway
  * Removed dsh::Strings dependency as it was not used anymore
