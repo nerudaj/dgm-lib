@@ -1,3 +1,8 @@
+dgm-lib v1.x.x
+ * Fixed missing virtual destructors on interface classes
+	* Compiler now issues an error when that happens
+ * Removed RingBuffer and Shell modules as they were not used/finished anyway
+
 dgm-lib v1.6.1
  * Removed dgm::Animation constructor which accepts path to configuration file (use dgm::JsonLoader instead)
 

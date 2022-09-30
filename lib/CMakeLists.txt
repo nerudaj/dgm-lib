@@ -24,8 +24,6 @@ set ( HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/ParticleSystemRenderer.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Path.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/ResourceManager.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/RingBuffer.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Shell.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/TileMap.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Time.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Traits.hpp"
@@ -48,7 +46,6 @@ set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/ParticleSystem.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/ParticleSystemRenderer.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/ResourceManager.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Shell.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/TileMap.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Window.cpp"
 )
