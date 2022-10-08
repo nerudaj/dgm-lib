@@ -24,7 +24,7 @@ namespace dgm
 	class Animation
 	{
 	private:
-		std::shared_ptr<AnimationStates> states = nullptr;
+		std::reference_wrapper<const AnimationStates> states;
 		sf::Sprite* boundSprite = nullptr;
 		sf::Time elapsedTime = sf::seconds(0);
 		sf::Time timePerFrame = sf::seconds(0);
@@ -34,7 +34,7 @@ namespace dgm
 
 		[[nodiscard]] bool isCurrentStateValid() const noexcept
 		{
-			return currentState != states->end();
+			return currentState != states.get().end();
 		}
 
 		inline void updateSpriteTextureRect()
@@ -117,11 +117,11 @@ namespace dgm
 		 *  animation immediately and have to postpone it to later time, but you don't need
 		 *  to use the object in the meantime.
 		 */
-		Animation() = default;
+		Animation();
 
 		/**
 		 *  \brief Construct animation object from states and required FPS
 		 */
-		Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond = 30);
+		Animation(const AnimationStates& states, int framesPerSecond = 30);
 	};
 }

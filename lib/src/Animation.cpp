@@ -10,6 +10,8 @@
 using dgm::Animation;
 using dgm::AnimationStates;
 
+static inline AnimationStates NullStates = {};
+
 bool Animation::update(const dgm::Time& time)
 {
 	elapsedTime += time.getElapsed();
@@ -37,8 +39,8 @@ void Animation::setState(const std::string& state, bool shouldLoop)
 {
 	if (isCurrentStateValid() && currentState->first == state) return;
 
-	auto newState = states->find(state);
-	if (newState == states->end())
+	auto newState = states.get().find(state);
+	if (newState == states.get().end())
 	{
 		throw dgm::GeneralException("Cannot find animation state '" + state + "'");
 	}
@@ -60,16 +62,17 @@ void Animation::setSpeed(unsigned framesPerSecond)
 	timePerFrame = sf::milliseconds(1000 / framesPerSecond);
 }
 
-Animation::Animation(const std::shared_ptr<AnimationStates>& states, int framesPerSecond)
-{
-	Animation::states = states;
+Animation::Animation() : Animation(NullStates) {}
 
+Animation::Animation(const AnimationStates& inStates, int framesPerSecond)
+	:states(cref(inStates))
+{
 	boundSprite = nullptr;
 	elapsedTime = sf::seconds(0);
 
 	setSpeed(framesPerSecond);
 	currentFrameIndex = 0;
-	currentState = states->end();
+	currentState = states.get().end();
 
 	setLooping(false);
 }

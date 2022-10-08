@@ -18,9 +18,9 @@ namespace dgm
 		dgm::Clip loadClipFromStream(std::istream&) const;
 
 		[[nodiscard]]
-		virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromFile(const std::string&) const override;
+		virtual dgm::AnimationStates loadAnimationsFromFile(const std::string&) const override;
 
 		[[nodiscard]]
-		std::shared_ptr<dgm::AnimationStates> loadAnimationsFromStream(std::istream&) const;
+		dgm::AnimationStates loadAnimationsFromStream(std::istream&) const;
 	};
 }

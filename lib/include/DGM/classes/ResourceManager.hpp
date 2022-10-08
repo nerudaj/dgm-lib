@@ -17,7 +17,7 @@ namespace dgm
 		std::is_same_v<T, sf::Texture> ||
 		std::is_same_v<T, sf::Font> ||
 		std::is_same_v<T, sf::SoundBuffer> ||
-		std::is_same_v<T, std::shared_ptr<dgm::AnimationStates>>;
+		std::is_same_v<T, dgm::AnimationStates>;
 
 	/**
 	 *  \brief Class for managing resources
@@ -33,7 +33,7 @@ namespace dgm
 		void loadResourceFromFile(const std::string& filename, sf::Texture& texture);
 		void loadResourceFromFile(const std::string& filename, sf::Font& font);
 		void loadResourceFromFile(const std::string& filename, sf::SoundBuffer& sound);
-		void loadResourceFromFile(const std::string& filename, std::shared_ptr<dgm::AnimationStates>& states);
+		void loadResourceFromFile(const std::string& filename, dgm::AnimationStates& states);
 
 	public:
 		/**

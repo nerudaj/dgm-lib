@@ -53,13 +53,13 @@ dgm::Clip dgm::JsonLoader::loadClipFromStream(std::istream& stream) const
 	return dgm::Clip(frame, bounds, nframes, spacing);
 }
 
-std::shared_ptr<dgm::AnimationStates> dgm::JsonLoader::loadAnimationsFromFile(const std::string& filename) const
+dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(const std::string& filename) const
 {
 	std::ifstream load(filename);
 	return loadAnimationsFromStream(load);
 }
 
-std::shared_ptr<dgm::AnimationStates> dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
+dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
 {
 	nlohmann::json file;
 	stream >> file;
@@ -105,5 +105,5 @@ std::shared_ptr<dgm::AnimationStates> dgm::JsonLoader::loadAnimationsFromStream(
 		result[name].init(frame, bounds, frameCount, spacing);
 	}
 
-	return std::make_shared<AnimationStates>(result);
+	return result;
 }

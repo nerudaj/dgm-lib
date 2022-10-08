@@ -19,15 +19,15 @@ public:
 	}
 
 	[[nodiscard]]
-	virtual std::shared_ptr<dgm::AnimationStates> loadAnimationsFromFile(const std::string&) const override
+	virtual dgm::AnimationStates loadAnimationsFromFile(const std::string&) const override
 	{
-		return std::make_shared<dgm::AnimationStates>();
+		return dgm::AnimationStates();
 	}
 
 	[[nodiscard]]
-	std::shared_ptr<dgm::AnimationStates> loadAnimationsFromStream(std::istream&) const
+	dgm::AnimationStates loadAnimationsFromStream(std::istream&) const
 	{
-		return std::make_shared<dgm::AnimationStates>();
+		return dgm::AnimationStates();
 	}
 };
 
@@ -40,7 +40,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 	{
 		SECTION("Non recursive")
 		{
-			resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
+			resmgr.loadResourceDir<dgm::AnimationStates>(
 				TEST_DATA_DIR + "/resmgr_loading",
 				{ ".json" },
 				false);
@@ -52,7 +52,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 
 		SECTION("Recursive")
 		{
-			resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
+			resmgr.loadResourceDir<dgm::AnimationStates>(
 				TEST_DATA_DIR + "/resmgr_loading",
 				{ ".json" },
 				true);
@@ -65,7 +65,7 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 
 	SECTION("Can deal with allowedExtensions without dots")
 	{
-		resmgr.loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
+		resmgr.loadResourceDir<dgm::AnimationStates>(
 				TEST_DATA_DIR + "/resmgr_loading",
 				{ "json" },
 				false);

@@ -32,7 +32,7 @@ void ResourceManager::loadResourceFromFile(const std::string& filename, sf::Soun
 	}
 }
 
-void ResourceManager::loadResourceFromFile(const std::string& filename, std::shared_ptr<dgm::AnimationStates>& states)
+void ResourceManager::loadResourceFromFile(const std::string& filename, dgm::AnimationStates& states)
 {
 	states = loader.loadAnimationsFromFile(filename);
 }
@@ -88,7 +88,7 @@ void ResourceManager::loadResource(const std::string& filename)
 template void ResourceManager::loadResource<sf::Texture>(const std::string& filename);
 template void ResourceManager::loadResource<sf::SoundBuffer>(const std::string& filename);
 template void ResourceManager::loadResource<sf::Font>(const std::string& filename);
-template void ResourceManager::loadResource<std::shared_ptr<dgm::AnimationStates>>(const std::string& filename);
+template void ResourceManager::loadResource<dgm::AnimationStates>(const std::string& filename);
 
 template<dgm::SupportedResourceType T>
 void ResourceManager::loadResourceDir(
@@ -147,7 +147,7 @@ template void ResourceManager::loadResourceDir<sf::Font>(
 	const std::string& folderPath,
 	const std::vector<std::string>& allowedExtensions,
 	bool recursive);
-template void ResourceManager::loadResourceDir<std::shared_ptr<dgm::AnimationStates>>(
+template void ResourceManager::loadResourceDir<dgm::AnimationStates>(
 	const std::string& folderPath,
 	const std::vector<std::string>& allowedExtensions,
 	bool recursive);

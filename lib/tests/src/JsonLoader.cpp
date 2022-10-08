@@ -203,13 +203,13 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
 		auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states->size() == 2u);
-		REQUIRE(states->count("idle") == 1u);
-		REQUIRE(states->count("idle2") == 1u);
-		REQUIRE(states->at("idle").getFrameCount() == 3u);
-		COMPARE_UNSIGNED_VECTORS(states->at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(states->at("idle2").getFrameCount() == 7u);
-		COMPARE_UNSIGNED_VECTORS(states->at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
+		REQUIRE(states.size() == 2u);
+		REQUIRE(states.count("idle") == 1u);
+		REQUIRE(states.count("idle2") == 1u);
+		REQUIRE(states.at("idle").getFrameCount() == 3u);
+		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+		REQUIRE(states.at("idle2").getFrameCount() == 7u);
+		COMPARE_UNSIGNED_VECTORS(states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
 	}
 
 	SECTION("Loads JSON even if default not present and frame is defined per state")
@@ -257,13 +257,13 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
 		auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states->size() == 2u);
-		REQUIRE(states->count("idle") == 1u);
-		REQUIRE(states->count("idle2") == 1u);
-		REQUIRE(states->at("idle").getFrameCount() == 3u);
-		COMPARE_UNSIGNED_VECTORS(states->at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(states->at("idle2").getFrameCount() == 7u);
-		COMPARE_UNSIGNED_VECTORS(states->at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
+		REQUIRE(states.size() == 2u);
+		REQUIRE(states.count("idle") == 1u);
+		REQUIRE(states.count("idle2") == 1u);
+		REQUIRE(states.at("idle").getFrameCount() == 3u);
+		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+		REQUIRE(states.at("idle2").getFrameCount() == 7u);
+		COMPARE_UNSIGNED_VECTORS(states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
 	}
 
 	SECTION("Loads JSON even if nframes are missing")
@@ -294,10 +294,10 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
 		auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states->size() == 1u);
-		REQUIRE(states->count("idle") == 1u);
-		REQUIRE(states->at("idle").getFrameCount() == 4u);
-		COMPARE_UNSIGNED_VECTORS(states->at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+		REQUIRE(states.size() == 1u);
+		REQUIRE(states.count("idle") == 1u);
+		REQUIRE(states.at("idle").getFrameCount() == 4u);
+		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
 	}
 
 	SECTION("Throws if frame block is completely missing")
