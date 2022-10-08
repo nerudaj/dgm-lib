@@ -1,6 +1,7 @@
 dgm-lib v1.x.x
  * **IMPORTANT:** dgm-lib is now compiled with VS22 (version 17.x), toolset v143. Release artifact naming had changed to reflect this.
  * dgm::AnimationStates now work by their own instead of std::shared_ptr. dgm::ResourceManager returns references to them and dgm::Animation accepts a const reference to use them so it is still possible to reuse the same AnimationStates object between multiple Animation objects without ever making unneeded copies.
+ * Fixed dgm::Controller::bindInput throwing assert then trying to bind distinct inputs
  * Fixed missing virtual destructors on interface classes
 	* Compiler now issues an error when that happens
  * Fixed missing includes to LoaderInterface and JsonLoader in dgm.hpp
