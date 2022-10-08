@@ -1,4 +1,5 @@
 dgm-lib v1.x.x
+ * **IMPORTANT:** dgm-lib is now compiled with VS22 (version 17.x), toolset v143. Release artifact naming had changed to reflect this.
  * Fixed missing virtual destructors on interface classes
 	* Compiler now issues an error when that happens
  * Fixed missing includes to LoaderInterface and JsonLoader in dgm.hpp
