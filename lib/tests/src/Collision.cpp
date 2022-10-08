@@ -146,23 +146,135 @@ TEST_CASE("Mesh-to-circle", "Collision")
 	}
 }
 
-// NOTE: This test doesn't work because catch wrongly treats
-// pass-by-reference parameters
-/*
-TEST_CASE("Advanced Mesh-to-rect", "Collision") {
-	dgm::Mesh mesh;
-	mesh.setVoxelSize(10.f, 10.f);
-	mesh.setDataSize(2, 2);
-	mesh.at(0, 0) = 1;
-	mesh.at(1, 0) = 0;
-	mesh.at(0, 1) = 1;
-	mesh.at(1, 1) = 1;
+TEST_CASE("Circle-to-cone", "Collision")
+{
+	SECTION("Catches collision when circle lies on the forward line of cone")
+	{
+		dgm::VisionCone cone(100.f, 50.f);
+		dgm::Circle circle(0.f, 0.f, 20.f);
 
+		cone.setPosition(100.f, 100.f);
 
-	dgm::Rect rect(11.f, 11.f, 8.f, 8.f);
-	sf::Vector2f fwd(0.f, 10.f);
-	REQUIRE_FALSE(dgm::Collision::advanced(mesh, rect, fwd));
-	REQUIRE(fwd.y == 0.f);
-	REQUIRE(rect.getPosition().y == 2.f);
+		SECTION("Forward follows X axis")
+		{
+			SECTION("Circle is behind the cone")
+			{
+				circle.setPosition(50.f, 100.f);
+				REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is fully inside the cone")
+			{
+				circle.setPosition(150.f, 100.f);
+				REQUIRE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is partially inside the cone")
+			{
+				circle.setPosition(215.f, 100.f);
+				REQUIRE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is front of the cone")
+			{
+				circle.setPosition(250.f, 100.f);
+				REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+			}
+		}
+
+		SECTION("Forward is rotated")
+		{
+			cone.setRotation(45.f);
+
+			SECTION("Circle is behind the cone")
+			{
+				circle.setPosition(50.f, 50.f);
+				REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is fully inside the cone")
+			{
+				circle.setPosition(125.f, 125.f);
+				REQUIRE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is partially inside the cone")
+			{
+				circle.setPosition(150.f, 150.f);
+				REQUIRE(dgm::Collision::basic(circle, cone));
+			}
+
+			SECTION("Circle is front of the cone")
+			{
+				circle.setPosition(250.f, 250.f);
+				REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+			}
+		}
+	}
+
+	SECTION("When circle is on the right edge of the cone")
+	{
+		// Center.x of the circle is > cone.lenght, but center.x - radius < cone.length
+		dgm::VisionCone cone(100.f, 50.f);
+		dgm::Circle circle(0.f, 0.f, 20.f);
+		cone.setPosition(100.f, 100.f);
+
+		SECTION("Near enough to have collision")
+		{
+			circle.setPosition(95.f, 90.f);
+			REQUIRE(dgm::Collision::basic(circle, cone));
+		}
+
+		SECTION("Too far")
+		{
+			circle.setPosition(95.f, 80.f);
+			REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+		}
+
+	}
+
+	SECTION("When circle is on the left edge of the cone")
+	{
+		// Center.x of the circle is < 0, but center.x + radius > 0
+		dgm::VisionCone cone(100.f, 50.f);
+		dgm::Circle circle(0.f, 0.f, 20.f);
+		cone.setPosition(100.f, 100.f);
+
+		SECTION("Near enough to have collision")
+		{
+			circle.setPosition(205.f, 90.f);
+			REQUIRE(dgm::Collision::basic(circle, cone));
+		}
+
+		SECTION("Too far")
+		{
+			circle.setPosition(205.f, 50.f);
+			REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+		}
+	}
+
+	SECTION("When circle is somewhere next to the cone")
+	{
+		dgm::VisionCone cone(100.f, 50.f);
+		dgm::Circle circle(0.f, 0.f, 20.f);
+		cone.setPosition(100.f, 100.f);
+
+		SECTION("Far from cone")
+		{
+			circle.setPosition(150.f, 0.f);
+			REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+		}
+
+		SECTION("Above the cone, colliding")
+		{
+			circle.setPosition(150.f, 80.f);
+			REQUIRE(dgm::Collision::basic(circle, cone));
+		}
+
+		SECTION("Under the cone, colliding")
+		{
+			circle.setPosition(150.f, 120.f);
+			REQUIRE(dgm::Collision::basic(circle, cone));
+		}
+	}
 }
-*/

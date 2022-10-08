@@ -1,7 +1,7 @@
 #include <catch.hpp>
 #include <DGM/classes/Controller.hpp>
 
-TEST_CASE("All", "[Controller]")
+TEST_CASE("[Controller]")
 {
 	dgm::Controller input;
 
