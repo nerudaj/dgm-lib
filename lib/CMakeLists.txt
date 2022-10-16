@@ -61,7 +61,6 @@ add_library ( ${PROJECT_NAME}
 target_include_directories ( ${PROJECT_NAME}
 	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
 	PUBLIC  "${SFML_FOLDER}/include"
-	PUBLIC  "${DSH_FOLDER}/include"
 	PRIVATE "${JSON_FOLDER}/single_include/nlohmann"
 )
 
@@ -74,7 +73,7 @@ target_compile_options ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-	${LIB_CFG} ${LIB_LVLD} ${LIB_SFML_MAIN} ${LIB_SFML_SYSTEM} ${LIB_SFML_GRAPHICS} ${LIB_SFML_WINDOW} ${LIB_SFML_AUDIO} xinput.lib
+	${LIB_SFML_MAIN} ${LIB_SFML_SYSTEM} ${LIB_SFML_GRAPHICS} ${LIB_SFML_WINDOW} ${LIB_SFML_AUDIO} xinput.lib
 )
 
 set ( DEBUG_BINARY_DIR   "${CMAKE_CURRENT_BINARY_DIR}/Debug" )
@@ -86,11 +85,10 @@ set ( DGM_RAW_R "${RELEASE_BINARY_DIR}/${PROJECT_NAME}.lib" )
 set ( RESULT_D  "${DEBUG_BINARY_DIR}/${PROJECT_NAME}-d.lib" )
 set ( RESULT_R  "${RELEASE_BINARY_DIR}/${PROJECT_NAME}.lib" )
 
-# This glues static libraries of dsh into static library of DGM
-# it respects debug/release versions
+# This glues xinput static lib into static library of DGM
 add_custom_command ( TARGET ${PROJECT_NAME} POST_BUILD
 	COMMAND
-		lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:${LIB_CFG_D}>$<$<CONFIG:release>:${LIB_CFG_R}> $<$<CONFIG:debug>:${LIB_LVLD_D}>$<$<CONFIG:release>:${LIB_LVLD_R}> $<$<CONFIG:debug>:xinput.lib>$<$<CONFIG:release>:xinput.lib>
+		lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:xinput.lib>$<$<CONFIG:release>:xinput.lib>
 	COMMENT "lib.exe /OUT:$<$<CONFIG:debug>:${RESULT_D}>$<$<CONFIG:release>:${RESULT_R}> $<$<CONFIG:debug>:${DGM_RAW_D}>$<$<CONFIG:release>:${DGM_RAW_R}> $<$<CONFIG:debug>:${DSH_LIBS_D}>$<$<CONFIG:release>:${DSH_LIBS_R}>"
 )
 

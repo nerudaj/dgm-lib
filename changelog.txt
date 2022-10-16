@@ -1,3 +1,9 @@
+dgm-lib v1.7.x
+ * Removed dsh::Config dependency in dgm::Window
+	* Replaced with dgm::WindowSettings
+ * Removed dsh::LevelD dependency in dgm::Mesh, dgm::TileSet and dgm::Path
+	* This only affected overloaded convenience constructors
+
 dgm-lib v1.7.0
  * **IMPORTANT:** dgm-lib is now compiled with VS22 (version 17.x), toolset v143. Release artifact naming had changed to reflect this.
  * Added dgm::VisionCone object along with collision detection method between cones and circles

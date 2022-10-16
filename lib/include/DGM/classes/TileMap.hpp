@@ -5,8 +5,6 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include <LevelD.hpp>
-
 #include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Error.hpp>
 
@@ -14,13 +12,15 @@
 #include <cassert>
 #include <vector>
 
-namespace sf {
+namespace sf
+{
 	class Texture;
 	class RenderTarget;
 	class RenderStates;
 }
 
-namespace dgm {
+namespace dgm
+{
 	/**
 	 *  \brief Class for rendering tile based maps which has only one texture (so-called tileset)
 	 *
@@ -28,12 +28,13 @@ namespace dgm {
 	 *  coordinates for each tile in the texture) and an array of data (your map, where each cell
 	 *  is an index of a tile).
 	 */
-	class TileMap : public sf::Drawable, public sf::Transformable {
+	class TileMap : public sf::Drawable, public sf::Transformable
+	{
 	private:
-		virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	protected:
-		sf::Texture *texturePtr = nullptr;
+		sf::Texture* texturePtr = nullptr;
 		sf::VertexArray vertices;
 		sf::Vector2f tileSize;
 		sf::Vector2u dataSize;
@@ -53,10 +54,11 @@ namespace dgm {
 		 *  value of tileValue. tileX and tileY must lie within the tileset and tileValue
 		 *  must index valid clip frame. New value is stored and will be exported by
 		 *  SaveToFile() method.
-         *
+		 *
 		 *  \pre build was called
 		 */
-		void changeTile(uint32_t tileX, uint32_t tileY, uint32_t tileValue) {
+		void changeTile(uint32_t tileX, uint32_t tileY, uint32_t tileValue)
+		{
 			assert(texturePtr);
 			assert(tileX < uint32_t(dataSize.x) && tileY < uint32_t(dataSize.y));
 			assert(clip.getFrameCount() > tileValue);
@@ -78,30 +80,17 @@ namespace dgm {
 		 *
 		 *  \see changeTile
 		 */
-		void build(const sf::Vector2u tileSize, const std::vector<int> &imageData, const sf::Vector2u &dataSize);
+		void build(const sf::Vector2u tileSize, const std::vector<int>& imageData, const sf::Vector2u& dataSize);
 
-		/**
-		 *  \brief Build the internal vertex array
-		 *
-		 *  \param [in] lvd  Initialized LevelD object
-		 *
-		 *  \details You can call this function repeatedly without need to deinitialize this
-		 *  object. If you only need to change appearance of a couple of tiles, use changeTile()
-		 *  instead.
-		 *
-		 *  \pre You have to call init method prior to calling this one!
-		 *
-		 *  \see changeTile
-		 */
-		void build(const LevelD::Mesh& mesh, unsigned layerIndex = 0);
-
-		[[nodiscard]] const dgm::Clip& getClip() const noexcept {
+		[[nodiscard]] const dgm::Clip& getClip() const noexcept
+		{
 			return clip;
 		}
 
 		TileMap() = default;
 		TileMap(sf::Texture& texture, dgm::Clip&& clip)
 			: texturePtr(&texture)
-			, clip(std::move(clip)) {}
+			, clip(std::move(clip))
+		{}
 	};
 }

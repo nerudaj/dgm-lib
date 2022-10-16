@@ -5,7 +5,8 @@
 
 #include <cassert>
 
-void dgm::TileMap::draw(sf::RenderTarget & target, sf::RenderStates states) const {
+void dgm::TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
 	// apply the transform
 	states.transform *= getTransform();
 
@@ -16,15 +17,16 @@ void dgm::TileMap::draw(sf::RenderTarget & target, sf::RenderStates states) cons
 	target.draw(vertices, states);
 }
 
-void dgm::TileMap::changeTile(float x, float y, uint32_t tileIndex, uint32_t tileValue) {
+void dgm::TileMap::changeTile(float x, float y, uint32_t tileIndex, uint32_t tileValue)
+{
 	assert(tileValue < clip.getFrameCount());
 	assert(tileIndex * size_t(4) < vertices.getVertexCount());
 
 	// Find textureRect for this tile
-	const sf::IntRect &frame = clip.getFrame(tileValue);
+	const sf::IntRect& frame = clip.getFrame(tileValue);
 
 	// get a pointer to the current tile's quad
-	sf::Vertex *quad = &vertices[tileIndex * size_t(4)];
+	sf::Vertex* quad = &vertices[tileIndex * size_t(4)];
 
 	// Define corners
 	quad[0].position = sf::Vector2f(x * tileSize.x, y * tileSize.y);
@@ -39,11 +41,13 @@ void dgm::TileMap::changeTile(float x, float y, uint32_t tileIndex, uint32_t til
 	quad[3].texCoords = sf::Vector2f(float(frame.left), float(frame.top + frame.height));
 }
 
-void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int> &imageData, const sf::Vector2u &newDataSize) {
-	if (!texturePtr) {
+void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int>& imageData, const sf::Vector2u& newDataSize)
+{
+	if (!texturePtr)
+	{
 		throw dgm::GeneralException("You have to call dgm::TileMap::init prior to dgm::TileMap::build!");
 	}
-		
+
 	assert(imageData.size() == size_t(newDataSize.x) * newDataSize.y);
 
 	//TileMap::clip = clip;
@@ -53,23 +57,11 @@ void dgm::TileMap::build(const sf::Vector2u newTileSize, const std::vector<int> 
 	vertices = sf::VertexArray(sf::Quads, size_t(4) * dataSize.x * dataSize.y);
 
 	// Loop over all tiles
-	for (size_t y = 0; y < dataSize.y; y++) {
-		for (size_t x = 0; x < dataSize.x; x++) {
+	for (size_t y = 0; y < dataSize.y; y++)
+	{
+		for (size_t x = 0; x < dataSize.x; x++)
+		{
 			changeTile(x, y, imageData[y * dataSize.x + x]);
 		}
 	}
 }
-
-void dgm::TileMap::build(const LevelD::Mesh& mesh, unsigned layerIndex) {
-	if (mesh.layers.size() <= layerIndex) {
-		throw dgm::EnvironmentException("Requesting layer " + std::to_string(layerIndex) +
-			" in mesh which has only " + std::to_string(mesh.layers.size()) + " layers");
-	}
-
-	build(
-		{ mesh.tileWidth, mesh.tileHeight },
-		std::vector<int>(mesh.layers[layerIndex].tiles.begin(), mesh.layers[layerIndex].tiles.end()),
-		{ mesh.layerWidth, mesh.layerHeight }
-	);
-}
-

@@ -1,15 +1,23 @@
 #pragma once
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <Ini.hpp>
 
-namespace dgm {
+namespace dgm
+{
+	struct WindowSettings
+	{
+		sf::Vector2u resolution = { 0u, 0u };
+		std::string title = "";
+		bool useFullscreen = false;
+	};
+
 	/**
 	 *  \brief Wrapper around sf::RenderWindow
 	 *
 	 *  Class provides method for easier window management.
 	 */
-	class Window {
+	class Window
+	{
 	protected:
 		sf::RenderWindow window;
 		bool fullscreen = false;
@@ -25,7 +33,7 @@ namespace dgm {
 		 *  If [Window] section is not defined, defaults will be used.
 		 *  Defaults are: 1280x720, no title, no fullscreen.
 		 */
-		void open(const cfg::Ini &config);
+		void open(const WindowSettings& settings) { open(settings.resolution, settings.title, settings.useFullscreen); }
 
 		/**
 		 *  \brief Open a window
@@ -34,17 +42,12 @@ namespace dgm {
 		 *  \param[in]  title       Caption in systray
 		 *  \param[in]  fullscreen  Whether to start in fullscreen
 		 */
-		void open(const sf::Vector2u &resolution, const std::string &title, bool fullscreen);
+		void open(const sf::Vector2u& resolution, const std::string& title, bool fullscreen);
 
 		/**
-		 *  \brief Close the window
+		 *  \brief Close the Window and return configuration of closed window
 		 */
-		void close() { window.close(); }
-
-		/**
-		 *  \brief Close the Window and write configuration to Ini config object
-		 */
-		void close(cfg::Ini &config);
+		WindowSettings close();
 
 		/**
 		 *  \brief Poll next event from SFML
@@ -54,7 +57,7 @@ namespace dgm {
 		 *
 		 *  This function mimicks the behaviour of sf::RenderWindow::pollEvent
 		 */
-		bool pollEvent(sf::Event &event) { return window.pollEvent(event); }
+		bool pollEvent(sf::Event& event) { return window.pollEvent(event); }
 
 		/**
 		 *  \brief Toggle window between fullscreen and windowed mode
@@ -73,18 +76,21 @@ namespace dgm {
 		/**
 		 *  \brief Test whether window is still open
 		 */
-		virtual [[nodiscard]] bool isOpen() const { return window.isOpen(); }
+		[[nodiscard]]
+		virtual bool isOpen() const { return window.isOpen(); }
 
 		/**
 		 *  \brief Test whether window is in fullscreen mode
 		 */
-		bool isFullscreen() const { return fullscreen; }
+		[[nodiscard]]
+		constexpr bool isFullscreen() const noexcept { return fullscreen; }
 
 		/**
 		 *  \brief Get dimensions of the window
 		 *
 		 *  \return Width and height of window render area in pixels
 		 */
+		[[nodiscard]]
 		sf::Vector2u getSize() const { return window.getSize(); }
 
 		/**
@@ -93,7 +99,8 @@ namespace dgm {
 		 *  Use this method whether you need something from sf::RenderWindow API
 		 *  not supported directly by this class
 		 */
-		sf::RenderWindow &getWindowContext() { return window; }
+		[[nodiscard]]
+		sf::RenderWindow& getWindowContext() { return window; }
 
 		/**
 		 *  \brief Get handle to internal instance of sf::RenderWindow
@@ -101,37 +108,40 @@ namespace dgm {
 		 *  Use this method whether you need something from sf::RenderWindow API
 		 *  not supported directly by this class
 		 */
-		const sf::RenderWindow &getWindowContext() const { return window; }
+		[[nodiscard]]
+		const sf::RenderWindow& getWindowContext() const { return window; }
 
 		/**
 		 *  \brief Get title text of the window
 		 */
-		const std::string& getTitle() const { return title; }
+		[[nodiscard]]
+		const std::string& getTitle() const noexcept { return title; }
 
 		/**
 		 *  \brief Prepare for drawing by clearing the Window with color
 		 *
 		 *  \param[in]  color  Color to clear window to (Default: Black)
 		 */
-		void beginDraw(const sf::Color &color = sf::Color::Black) { window.clear(color); }
+		void beginDraw(const sf::Color& color = sf::Color::Black) { window.clear(color); }
 
 		/**
 		 *  \brief Draw object on the Window
 		 *
 		 *  \param[in]  drawable  Reference to drawable object
 		 */
-		virtual void draw(sf::Drawable &drawable) { window.draw(drawable); }
+		virtual void draw(sf::Drawable& drawable) { window.draw(drawable); }
 
 		/**
 		 *  \brief Finish drawing by rendering Window to screen
 		 */
 		void endDraw() { window.display(); }
 
-		virtual [[nodiscard]] sf::Image getScreenshot() const;
+		[[nodiscard]]
+		virtual sf::Image getScreenshot() const;
 
 		Window() = default;
-		Window(const cfg::Ini &config) { open(config); }
-		Window(const sf::Vector2u &resolution, const std::string &title, bool fullscreen) { open(resolution, title, fullscreen); }
+		Window(const WindowSettings& settings) { open(settings); }
+		Window(const sf::Vector2u& resolution, const std::string& title, bool fullscreen) { open(resolution, title, fullscreen); }
 		Window(Window&&) = delete;
 		Window(Window&) = delete;
 		virtual ~Window() { if (isOpen()) close(); }

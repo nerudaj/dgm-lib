@@ -8,7 +8,6 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
-#include <LevelD.hpp>
 
 #include <vector>
 
@@ -293,10 +292,10 @@ namespace dgm
 	class Mesh : public Object
 	{
 	protected:
-		std::vector<int> data;	///< Array for holding collision data
-		sf::Vector2f position;	///< Position of top-left corner
-		sf::Vector2u dataSize; ///< dataSize.x * dataSize.y is size of data array
-		sf::Vector2u voxelSize; ///< How big rectangle does single cell of data represents
+		std::vector<int> data = {};	///< Array for holding collision data
+		sf::Vector2f position = { 0.f, 0.f };	///< Position of top-left corner
+		sf::Vector2u dataSize = { 0u, 0u }; ///< dataSize.x * dataSize.y is size of data array
+		sf::Vector2u voxelSize = { 0u, 0u }; ///< How big rectangle does single cell of data represents
 
 	public:
 		/**
@@ -427,17 +426,34 @@ namespace dgm
 		 */
 		void move(const sf::Vector2f& forward);
 
-		Mesh();
+		Mesh() = default;
 
 		/**
-		 *  \brief Construct mesh object from LevelD
+		 *  \brief Construct mesh object from data array
 		 *
-		 *  This method uses LevelD::Mesh::tileWidth and tileHeight as voxelSize,
-		 *  LevelD::Mesh::layerWidth and layerHeight as dataSize and
-		 *  LevelD::TileLayer::blocks from selected layer as data (collision information)
+		 *  Data array is supposed to be row-major, meaning that
+		 *  for 2D map with items
+		 *
+		 *  1 2 3
+		 *  4 5 6
+		 *  7 8 9
+		 *
+		 *  the data will be layed out like: 1 2 3 4 5 6 7 8 9.
+		 *
+		 *  Size of data should be dataSize.x * dataSize.y.
 		 */
-		Mesh(const LevelD::Mesh& mesh, unsigned layerIndex = 0);
+		Mesh(
+			const std::vector<int>& data,
+			const sf::Vector2u& dataSize,
+			const sf::Vector2u& voxelSize);
 
-		virtual ~Mesh() {}
+		Mesh(
+			const std::vector<bool>& data,
+			const sf::Vector2u& dataSize,
+			const sf::Vector2u& voxelSize)
+			: Mesh(std::vector<int>(data.begin(), data.end()), dataSize, voxelSize)
+		{}
+
+		virtual ~Mesh() = default;
 	};
 }

@@ -6,11 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#include <ciso646>	// keywords: and, or, and_eq, or_eq, xor, xor_eq, bitand, bitor, not, compl, not_eq
-
-// dsh libraries    
-#include <Config.hpp>
-#include <LevelD.hpp>
+// dsh libraries
+//#include <LevelD.hpp>
 #pragma warning(pop)
 
 // DGM core

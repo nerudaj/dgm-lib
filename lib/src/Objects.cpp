@@ -66,18 +66,14 @@ void dgm::Mesh::move(const sf::Vector2f& forward)
 	position.y += forward.y;
 }
 
-dgm::Mesh::Mesh()
+dgm::Mesh::Mesh(
+	const std::vector<int>& data,
+	const sf::Vector2u& dataSize,
+	const sf::Vector2u& voxelSize)
+	:
+	data(data), dataSize(dataSize), voxelSize(voxelSize)
 {
-	position = sf::Vector2f(0.f, 0.f);
-	dataSize = sf::Vector2u(0, 0);
-	voxelSize = sf::Vector2u(0, 0);
-}
-
-dgm::Mesh::Mesh(const LevelD::Mesh& mesh, unsigned layerIndex)
-{
-	voxelSize = sf::Vector2u(mesh.tileWidth, mesh.tileHeight);
-	dataSize = sf::Vector2u(mesh.layerWidth, mesh.layerHeight);
-	data = std::vector<int>(mesh.layers[layerIndex].blocks.begin(), mesh.layers[layerIndex].blocks.end());
+	assert(data.size() == dataSize.x * dataSize.y && "Mesh data.size() must equal dataSize.x * dataSize.y");
 }
 
 // *******************

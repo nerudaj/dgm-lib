@@ -15,7 +15,7 @@
 
 [[nodiscard]] dgm::Mesh buildMeshForTesting()
 {
-	const std::vector<uint16_t> map = {
+	const std::vector<bool> map = {
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
 		1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
@@ -24,16 +24,7 @@
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 	};
 
-	LevelD::Mesh lvdmesh;
-	lvdmesh.layerWidth = 10;
-	lvdmesh.layerHeight = 6;
-	lvdmesh.tileWidth = 32;
-	lvdmesh.tileHeight = 32;
-	lvdmesh.layers.push_back(LevelD::TileLayer{
-		std::vector<uint16_t>(map.begin(), map.end()),
-		std::vector<bool>(map.begin(), map.end())
-	});
-	return dgm::Mesh(lvdmesh);
+	return dgm::Mesh(map, { 10u, 6u }, { 32, 32 });
 }
 
 class TestableNavMesh : public dgm::WorldNavMesh
@@ -229,7 +220,10 @@ TEST_CASE("[WorldNavMesh] - BUG: Crashing after several queries")
 {
 	LevelD lvd;
 	lvd.loadFromFile(TEST_DATA_DIR + "/navmesh_crashing_after_several_queries.lvd");
-	dgm::Mesh mesh(lvd.mesh, 0);
+	dgm::Mesh mesh(
+		lvd.mesh.layers[0].blocks,
+		{ lvd.mesh.layerWidth, lvd.mesh.layerHeight },
+		{ lvd.mesh.tileWidth, lvd.mesh.tileHeight });
 	dgm::WorldNavMesh navmesh(mesh);
 
 	REQUIRE_NOTHROW([&] ()

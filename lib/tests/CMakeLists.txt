@@ -34,8 +34,12 @@ add_executable ( ${PROJECT_NAME}
 	${SOURCES}
 )
 
+target_include_directories( ${PROJECT_NAME}
+	PUBLIC  "${DSH_FOLDER}/include"
+)
+
 target_link_libraries ( ${PROJECT_NAME}
-	libdgm
+	libdgm ${LIB_LVLD}
 )
 
 target_compile_options ( ${PROJECT_NAME}
