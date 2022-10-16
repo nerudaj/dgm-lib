@@ -253,15 +253,15 @@ namespace dgm
 			position = { x, y };
 		}
 
-		virtual void setPosition(const sf::Vector2f& position) override
+		virtual void setPosition(const sf::Vector2f& newPosition) override
 		{
-			VisionCone::position = position;
+			position = newPosition;
 		}
 
 		virtual void move(const float x, const float y) override;
-		virtual void move(const sf::Vector2f& position) override
+		virtual void move(const sf::Vector2f& direction) override
 		{
-			VisionCone::position += position;
+			position += direction;
 		}
 
 		[[nodiscard]]
