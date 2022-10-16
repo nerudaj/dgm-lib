@@ -1,7 +1,6 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Error.hpp>
 
-#include <Strings.hpp>
 #include <json.hpp>
 
 #include <cassert>
