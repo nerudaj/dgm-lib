@@ -1,4 +1,4 @@
-dgm-lib v1.7.x
+dgm-lib v1.8.0
  * Removed dsh::Config dependency in dgm::Window
 	* Replaced with dgm::WindowSettings
  * Removed dsh::LevelD dependency in dgm::Mesh, dgm::TileSet and dgm::Path
