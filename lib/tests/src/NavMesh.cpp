@@ -4,7 +4,6 @@
 #include <DGM/classes/Error.hpp>
 #include <algorithm>
 #include "TestDataDir.hpp"
-#include <LevelD.hpp>
 
 #define NUMBER_DISTANCE(a, b) \
 	(std::max(a, b) - std::min(a, b))
@@ -218,12 +217,28 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
 
 TEST_CASE("[WorldNavMesh] - BUG: Crashing after several queries")
 {
-	LevelD lvd;
-	lvd.loadFromFile(TEST_DATA_DIR + "/navmesh_crashing_after_several_queries.lvd");
+	std::vector<bool> blockMesh = {
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
+		1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+		1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1,
+		1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+		1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+		1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+	};
+
 	dgm::Mesh mesh(
-		lvd.mesh.layers[0].blocks,
-		{ lvd.mesh.layerWidth, lvd.mesh.layerHeight },
-		{ lvd.mesh.tileWidth, lvd.mesh.tileHeight });
+		blockMesh,
+		{ 15u, 15u },
+		{ 64u, 64u });
 	dgm::WorldNavMesh navmesh(mesh);
 
 	REQUIRE_NOTHROW([&] ()
