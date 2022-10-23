@@ -5,9 +5,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-
-// dsh libraries
-//#include <LevelD.hpp>
 #pragma warning(pop)
 
 // DGM core

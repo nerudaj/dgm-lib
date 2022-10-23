@@ -1,9 +1,7 @@
-set ( DSH_VERSION   "1.7.0" )
 set ( SFML_VERSION  "2.5.1" )
 set ( JSON_VERSION  "3.7.3" )
 set ( CATCH_VERSION "2.10.2" )
 
-set ( DSH_URL   "https://github.com/nerudaj/dsh/releases/download/v${DSH_VERSION}/dsh-${DSH_VERSION}-vc16-64-bit.zip" )
 set ( SFML_URL  "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc15-64-bit.zip" )
 set ( JSON_URL  "https://github.com/nlohmann/json/releases/download/v${JSON_VERSION}/include.zip" )
 set ( CATCH_URL "https://github.com/catchorg/Catch2/releases/download/v${CATCH_VERSION}/catch.hpp" )
@@ -37,36 +35,20 @@ endfunction ()
 
 # Download dependencies
 fetch_dependency ( SFML  ${SFML_URL}  FALSE )
-fetch_dependency ( DSH   ${DSH_URL}   FALSE )
 fetch_dependency ( JSON  ${JSON_URL}  FALSE )
 fetch_dependency ( CATCH ${CATCH_URL} TRUE )
 
 # Verify folder paths
 message ( "Dependencies downloaded to: " )
-message ( "  DSH:   ${DSH_FOLDER}" )
 message ( "  SFML:  ${SFML_FOLDER}" )
 message ( "  JSON:  ${JSON_FOLDER}" )
 message ( "  CATCH: ${CATCH_FOLDER}" )
 
 # Make libraries visible to cmake linker
-link_directories("${DSH_FOLDER}/lib")
 link_directories("${SFML_FOLDER}/lib")
 
-# Create symbols for linking libcfg, libstrings, libleveld and SFML
+# Create symbols for linking SFML
 
-message ( "Looking for dsh libs" )
-find_library(LIB_CFG_D config-d  NAMES config-d.lib  HINTS "${DSH_FOLDER}/lib")
-find_library(LIB_STR_D strings-d NAMES strings-d.lib HINTS "${DSH_FOLDER}/lib")
-find_library(LIB_LVLD_D leveld-d NAMES leveld-d.lib HINTS "${DSH_FOLDER}/lib")
-
-find_library(LIB_CFG_R config  NAMES config.lib  HINTS "${DSH_FOLDER}/lib")
-find_library(LIB_STR_R strings NAMES strings.lib HINTS "${DSH_FOLDER}/lib")
-find_library(LIB_LVLD_R leveld NAMES leveld.lib HINTS "${DSH_FOLDER}/lib")
-
-set(LIB_CFG optimized ${LIB_CFG_R} debug ${LIB_CFG_D})
-set(LIB_STR optimized ${LIB_STR_R} debug ${LIB_STR_D})
-set(LIB_LVLD optimized ${LIB_LVLD_R} debug ${LIB_LVLD_D})
-message ( "OK" )
 
 message ( "Looking for SFML" )
 find_library ( LIB_SFML_MAIN_D "sfml-main-d" NAMES "sfml-main-d.lib" HINTS "${SFML_FOLDER}/lib" )

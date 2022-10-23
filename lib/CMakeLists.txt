@@ -117,8 +117,3 @@ install (
 	DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/include/DGM"
 	DESTINATION  "include"
 )
-
-install (
-	DIRECTORY    "${DSH_FOLDER}/include"
-	DESTINATION  "include"
-)
