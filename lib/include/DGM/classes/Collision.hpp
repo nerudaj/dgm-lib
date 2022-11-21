@@ -84,6 +84,8 @@ namespace dgm
 
 		static bool basic(const dgm::Circle& c, const dgm::VisionCone& cone);
 
+		static bool basic(const sf::Vector2i& p, const dgm::VisionCone& cone);
+
 		/**
 		 *  \brief Elaborates movement of an object within a mesh
 		 *

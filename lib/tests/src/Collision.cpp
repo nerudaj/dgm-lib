@@ -278,3 +278,39 @@ TEST_CASE("Circle-to-cone", "Collision")
 		}
 	}
 }
+
+TEST_CASE("Point-to-cone", "Collision")
+{
+	dgm::VisionCone cone(20.f, 50.f);
+	cone.setPosition(20.f, 20.f);
+
+	SECTION("Point is behind origin")
+	{
+		sf::Vector2i point(0, 20);
+		REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+	}
+
+	SECTION("Point is atop of cone")
+	{
+		sf::Vector2i point(30, -60);
+		REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+	}
+
+	SECTION("Point is front of cone")
+	{
+		sf::Vector2i point(45, 20);
+		REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+	}
+
+	SECTION("Point is under cone")
+	{
+		sf::Vector2i point(30, 60);
+		REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+	}
+
+	SECTION("Point is inside cone")
+	{
+		sf::Vector2i point(30, 30);
+		REQUIRE(dgm::Collision::basic(point, cone));
+	}
+}

@@ -186,10 +186,10 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
 
 	// cone is symmetrical, we can only test positive side
 	transposedCirclePos.y = std::abs(transposedCirclePos.y);
-	const float coneRiseFactor = (cone.getWidth() / 2) / cone.getLength();
+	const float coneRiseFactor = (cone.getWidth() / 2.f) / cone.getLength();
 
 	// TODO: this one is broken
-	const sf::Vector2f rightTipPoint = { cone.getLength(), cone.getWidth() / 2 };
+	const sf::Vector2f rightTipPoint = { cone.getLength(), cone.getWidth() / 2.f };
 	if (dgm::Math::vectorSize(rightTipPoint - c.getPosition()) < c.getRadius()) return true;
 
 	// Last condition - circle center is somewhere on the interval <0, cone.length>
@@ -197,6 +197,20 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
 	// so y coordinate of the edge at circle.x is y = circle.x * (width / 2 / length)
 	// so if that y coordinate + radius is greater than circle.y, then we have collision
 	return transposedCirclePos.x * coneRiseFactor + c.getRadius() > transposedCirclePos.y;
+}
+
+bool dgm::Collision::basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
+{
+	auto transposedPointPos = dgm::Math::rotateVector(
+		sf::Vector2f(p) - cone.getPosition(),
+		-cone.getRotation());
+
+	if (transposedPointPos.x < 0 || transposedPointPos.x > cone.getLength()) return false;
+
+	transposedPointPos.y = std::abs(transposedPointPos.y);
+	const float coneRiseFactor = (cone.getWidth() / 2.f) / cone.getLength();
+
+	return transposedPointPos.x * coneRiseFactor > transposedPointPos.y;
 }
 
 template<typename T>

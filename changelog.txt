@@ -1,5 +1,8 @@
+dgm-lib v1.x.xinput
+ * Added basic collision detection between VisionCone and Point
+
 dgm-lib v1.8.1
- - Removed dshlibs includes from final package
+ * Removed dshlibs includes from final package
 
 dgm-lib v1.8.0
  * Removed dsh::Config dependency in dgm::Window
