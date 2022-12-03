@@ -41,6 +41,8 @@ namespace dgm
 		 *  \brief Returns analog value for given action code
 		 */
 		[[nodiscard]] virtual float getValue(const int code) const = 0;
+
+		virtual ~AbstractController() = default;
 	};
 
 	/**
@@ -230,7 +232,6 @@ namespace dgm
 		 */
 		void setControllerVibration(const float leftMotorForce, const float rightMotorForce);
 
-		Controller() {}
-		virtual ~Controller() = default;
+		Controller() = default;
 	};
 }

@@ -3,10 +3,6 @@
 
 using dgm::ps::ParticleSystemInterface;
 
-/*float dgm::ps::ParticleSystemInterface::randomFloat(float min, float max) {
-	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX) / (max - min)) + min;
-}*/
-
 dgm::ps::Particle* dgm::ps::ParticleSystemInterface::createParticle(sf::Vertex* vertices, unsigned) const {
 	return new dgm::ps::Particle(vertices);
 }
