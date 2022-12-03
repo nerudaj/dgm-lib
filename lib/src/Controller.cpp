@@ -9,7 +9,7 @@ void dgm::Controller::update(const dgm::Time&)
 
 bool dgm::Controller::isToggled(const int code) const
 {
-	const bool pressed = sf::Mouse::isButtonPressed(bindings.at(code).btn)
+	const bool pressed = ((bindings.at(code).btn != sf::Mouse::ButtonCount) && sf::Mouse::isButtonPressed(bindings.at(code).btn))
 		|| sf::Keyboard::isKeyPressed(bindings.at(code).key)
 		|| (controllerConnected && (xstate.Gamepad.wButtons & static_cast<WORD>(bindings.at(code).xbtn)));
 	return pressed

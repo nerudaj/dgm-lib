@@ -24,4 +24,10 @@ TEST_CASE("[Controller]")
 		input.bindInput(0, sf::Mouse::Button::Left);
 		input.bindInput(0, dgm::Xbox::Axis::LTrigger);
 	}
+
+	SECTION("BUG: Does not return true when mouse button is not bound")
+	{
+		input.bindInput(0, sf::Keyboard::A);
+		REQUIRE_FALSE(input.getValue(0));
+	}
 }

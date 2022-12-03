@@ -17,6 +17,7 @@ set ( SOURCES
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Clip.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Collision.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/Controller.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Conversion.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/JsonLoader.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
