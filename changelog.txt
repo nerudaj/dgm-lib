@@ -1,7 +1,9 @@
-dgm-lib v1.x
+dgm-lib v1.8.x
  * Added basic collision detection between VisionCone and Point
- * Fixed dgm::Controller::getValue returning 1 when mouse button wasn't bound to given input code
+ * Fixed dgm::Controller::getValue returning 1.f when mouse button wasn't bound to given input code
 	* NOTE: sf::Mouse::isButtonPressed(sf::Mouse::ButtonCount) can return true for whatever reason
+ * Fixed dgm::Controller::getValue returning 1.f when keyboard key wasn't bound to given input code
+	* NOTE: sf::Keybard::isKeyPressed(sf::Keyboard::Unknown) can return true for whatever reason
  * Fixed missing virtual destructor on dgm::AbstractController
 
 dgm-lib v1.8.1

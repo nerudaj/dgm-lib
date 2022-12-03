@@ -9,9 +9,16 @@ void dgm::Controller::update(const dgm::Time&)
 
 bool dgm::Controller::isToggled(const int code) const
 {
-	const bool pressed = ((bindings.at(code).btn != sf::Mouse::ButtonCount) && sf::Mouse::isButtonPressed(bindings.at(code).btn))
-		|| sf::Keyboard::isKeyPressed(bindings.at(code).key)
-		|| (controllerConnected && (xstate.Gamepad.wButtons & static_cast<WORD>(bindings.at(code).xbtn)));
+	// Extra checks on mouse and keyboard are needed because:
+	// sf::Mouse::isButtonPressed(sf::Mouse::ButtonCount) returns true
+	// sf::Keyboard::isKeyPressed(sf::Keyboard::Unknown) return true
+	const bool mousePressed = (bindings.at(code).btn != sf::Mouse::ButtonCount)
+		&& sf::Mouse::isButtonPressed(bindings.at(code).btn);
+	const bool keyPressed = (bindings.at(code).key != sf::Keyboard::Unknown)
+		&& sf::Keyboard::isKeyPressed(bindings.at(code).key);
+	const bool gamepadButtonPressed = controllerConnected
+		&& (xstate.Gamepad.wButtons & static_cast<WORD>(bindings.at(code).xbtn));
+	const bool pressed = mousePressed || keyPressed || gamepadButtonPressed;
 	return pressed
 		? not bindings.at(code).released
 		: (bindings.at(code).released = false); // assignment is on purpose

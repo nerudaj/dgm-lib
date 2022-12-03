@@ -25,9 +25,17 @@ TEST_CASE("[Controller]")
 		input.bindInput(0, dgm::Xbox::Axis::LTrigger);
 	}
 
-	SECTION("BUG: Does not return true when mouse button is not bound")
+	SECTION("BUG: Does not return false when mouse button is not bound and nothing is pressed")
 	{
 		input.bindInput(0, sf::Keyboard::A);
+		REQUIRE_FALSE(input.getValue(0.f));
+	}
+
+	SECTION("BUG: Does not return false when only gamepad input is bound and nothing is pressed")
+	{
+		input.bindInput(0, dgm::Xbox::Button::A);
+		input.bindInput(1, dgm::Xbox::Axis::LTrigger);
 		REQUIRE_FALSE(input.getValue(0));
+		REQUIRE_FALSE(input.getValue(1));
 	}
 }
