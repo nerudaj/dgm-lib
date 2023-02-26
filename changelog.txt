@@ -1,3 +1,7 @@
+dgm-lib v1.9.0
+ * Bumped nlohmann json to v3.11.2
+	* This resolves a warning about `<ciso646>` being removed in C++20
+
 dgm-lib v1.8.2
  * Added basic collision detection between VisionCone and Point
  * Fixed dgm::Controller::getValue returning 1.f when mouse button wasn't bound to given input code

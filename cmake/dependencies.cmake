@@ -1,5 +1,5 @@
 set ( SFML_VERSION  "2.5.1" )
-set ( JSON_VERSION  "3.7.3" )
+set ( JSON_VERSION  "3.11.2" )
 set ( CATCH_VERSION "2.10.2" )
 
 set ( SFML_URL  "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc15-64-bit.zip" )
