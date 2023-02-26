@@ -27,8 +27,6 @@ bool Animation::update(const dgm::Time& time)
 				return false;
 			}
 		}
-
-		updateSpriteTextureRect();
 	}
 
 	return true;
@@ -50,11 +48,6 @@ void Animation::setState(const std::string& state, bool shouldLoop)
 	reset();
 }
 
-void Animation::bindSprite(sf::Sprite& sprite)
-{
-	boundSprite = &sprite;
-}
-
 void Animation::setSpeed(unsigned framesPerSecond)
 {
 	assert(framesPerSecond > 0);
@@ -66,7 +59,6 @@ Animation::Animation() : Animation(NullStates) {}
 Animation::Animation(const AnimationStates& inStates, int framesPerSecond)
 	:states(cref(inStates))
 {
-	boundSprite = nullptr;
 	elapsedTime = sf::seconds(0);
 
 	setSpeed(framesPerSecond);

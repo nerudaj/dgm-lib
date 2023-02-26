@@ -1,4 +1,6 @@
 dgm-lib v1.9.0
+ * `dgm::Animation` no longer depends on `sf::Sprite`
+	* Use `dgm::Animation::getCurrentFrame()` instead
  * Bumped nlohmann json to v3.11.2
 	* This resolves a warning about `<ciso646>` being removed in C++20
 

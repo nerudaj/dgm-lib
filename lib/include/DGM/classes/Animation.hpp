@@ -25,7 +25,6 @@ namespace dgm
 	{
 	private:
 		std::reference_wrapper<const AnimationStates> states;
-		sf::Sprite* boundSprite = nullptr;
 		sf::Time elapsedTime = sf::seconds(0);
 		sf::Time timePerFrame = sf::seconds(0);
 		std::size_t currentFrameIndex = 0;
@@ -35,11 +34,6 @@ namespace dgm
 		[[nodiscard]] bool isCurrentStateValid() const noexcept
 		{
 			return currentState != states.get().end();
-		}
-
-		inline void updateSpriteTextureRect()
-		{
-			boundSprite->setTextureRect(currentState->second.getFrame(currentFrameIndex));
 		}
 
 	public:
@@ -63,11 +57,6 @@ namespace dgm
 		 *  and \ref update will always return true.
 		 */
 		void setState(const std::string& state, bool looping = false);
-
-		/**
-		 *  \brief Bind sprite to animation
-		 */
-		void bindSprite(sf::Sprite& sprite);
 
 		/**
 		 *  \brief Set speed of animation in frames per second
@@ -100,14 +89,18 @@ namespace dgm
 			return looping;
 		}
 
+		[[nodiscard]] sf::IntRect const& getCurrentFrame() const noexcept
+		{
+			return currentState->second.getFrame(currentFrameIndex);
+		}
+
 		/**
 		 *  \brief Reset the current state of animation to frame 0
 		 */
-		void reset()
+		void reset() noexcept
 		{
 			currentFrameIndex = 0;
 			elapsedTime = sf::Time::Zero;
-			updateSpriteTextureRect();
 		}
 
 		/**
