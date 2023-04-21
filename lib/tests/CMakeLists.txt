@@ -1,5 +1,10 @@
 cmake_minimum_required ( VERSION 3.19 )
 
+file (
+	COPY "${CMAKE_BINARY_DIR}/.clang-format"
+	DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 project ( lib-testrunner )
 
 include_directories ( ${CATCH_FOLDER} )
@@ -10,29 +15,22 @@ configure_file (
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/TestDataDir.hpp"
 )
 
-set ( SOURCES
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Animation.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/App.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Buffer.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Camera.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Clip.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Collision.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Controller.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Conversion.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/JsonLoader.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Main.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Math.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/NavMesh.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Path.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/ResourceManager.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/TestDataDir.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/TileMap.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Traits.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Utility.cpp"
+file (
+	GLOB_RECURSE HEADER_FILES
+	"*.hpp"
 )
 
+file (
+	GLOB_RECURSE SOURCE_FILES
+	"*.cpp"
+)
+
+message ( "${HEADER_FILES}" )
+message ( "${SOURCE_FILES}" )
+
 add_executable ( ${PROJECT_NAME}
-	${SOURCES}
+	${HEADER_FILES} ${SOURCE_FILES}
+	"${CMAKE_CURRENT_SOURCE_DIR}/.clang-format"
 )
 
 target_include_directories( ${PROJECT_NAME}

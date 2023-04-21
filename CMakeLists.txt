@@ -3,6 +3,13 @@ cmake_minimum_required ( VERSION 3.19 )
 # Enforce C++ standards and compiler behaviour
 include ( "${CMAKE_SOURCE_DIR}/cmake/cpp.cmake" )
 
+# Download some helper files
+file (
+	DOWNLOAD
+		"https://raw.githubusercontent.com/nerudaj/clang-format/main/.clang-format"
+		"${CMAKE_BINARY_DIR}/.clang-format"
+)
+
 # Project setup
 project ( dgm-lib)
 include ( "${CMAKE_SOURCE_DIR}/cmake/version.cmake" )

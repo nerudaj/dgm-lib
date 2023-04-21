@@ -6,454 +6,489 @@
 
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
-
+#include <SFML/System/Vector2.hpp>
 #include <vector>
 
 namespace dgm
 {
-	class Window;
+    class Window;
 
-	/**
-	 *  \brief Abstract class with interface
-	 *  common to all objects
-	 */
-	class Object
-	{
-	public:
-		virtual const sf::Vector2f& getPosition() const = 0;
+    /**
+     *  \brief Abstract class with interface
+     *  common to all objects
+     */
+    class Object
+    {
+    public:
+        virtual const sf::Vector2f& getPosition() const = 0;
 
-		virtual void setPosition(const float x, const float y) = 0;
+        virtual void setPosition(const float x, const float y) = 0;
 
-		virtual void setPosition(const sf::Vector2f& position) = 0;
+        virtual void setPosition(const sf::Vector2f& position) = 0;
 
-		virtual void move(const float x, const float y) = 0;
+        virtual void move(const float x, const float y) = 0;
 
-		virtual void move(const sf::Vector2f& position) = 0;
+        virtual void move(const sf::Vector2f& position) = 0;
 
-		virtual ~Object() = default;
-	};
+        virtual ~Object() = default;
+    };
 
-	/**
-	 *  \brief Logic class for circles
-	 *
-	 *  \details This class is basis for most of
-	 *  your characters and collidable objects in
-	 *  top-down games. Circle is defined by position
-	 *  of its center and radius.
-	 */
-	class Circle : public Object
-	{
-	protected:
-		sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
-		float radius = 0.f; ///< Radius of circle
+    /**
+     *  \brief Logic class for circles
+     *
+     *  \details This class is basis for most of
+     *  your characters and collidable objects in
+     *  top-down games. Circle is defined by position
+     *  of its center and radius.
+     */
+    class Circle : public Object
+    {
+    protected:
+        sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
+        float radius = 0.f;                   ///< Radius of circle
 
-	public:
-		/**
-		 *  \brief Displays object in the window
-		 *
-		 *  This method is slow and is reserved for debug purposes
-		 */
-		void debugRender(dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
+    public:
+        /**
+         *  \brief Displays object in the window
+         *
+         *  This method is slow and is reserved for debug purposes
+         */
+        void debugRender(
+            dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-		/**
-		 *  \brief Returns position of circle
-		 */
-		[[nodiscard]] const sf::Vector2f& getPosition() const noexcept
-		{
-			return position;
-		}
+        /**
+         *  \brief Returns position of circle
+         */
+        [[nodiscard]] const sf::Vector2f& getPosition() const noexcept
+        {
+            return position;
+        }
 
-		/**
-		 *  \brief Returns radius of circle
-		 */
-		[[nodiscard]] constexpr const float getRadius() const noexcept
-		{
-			return radius;
-		}
+        /**
+         *  \brief Returns radius of circle
+         */
+        [[nodiscard]] constexpr const float getRadius() const noexcept
+        {
+            return radius;
+        }
 
-		/**
-		 *  \brief Sets position of circle by setting new XY coordinates
-		 */
-		void setPosition(const float x, const float y)
-		{
-			position.x = x;
-			position.y = y;
-		}
+        /**
+         *  \brief Sets position of circle by setting new XY coordinates
+         */
+        void setPosition(const float x, const float y)
+        {
+            position.x = x;
+            position.y = y;
+        }
 
-		/**
-		 *  \brief Sets new position of circle with SFML vector
-		 */
-		void setPosition(const sf::Vector2f& newPosition) noexcept
-		{
-			position = newPosition;
-		}
+        /**
+         *  \brief Sets new position of circle with SFML vector
+         */
+        void setPosition(const sf::Vector2f& newPosition) noexcept
+        {
+            position = newPosition;
+        }
 
-		/**
-		 *  \brief Sets radius
-		 */
-		void setRadius(const float newRadius) noexcept
-		{
-			radius = newRadius;
-		}
+        /**
+         *  \brief Sets radius
+         */
+        void setRadius(const float newRadius) noexcept
+        {
+            radius = newRadius;
+        }
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const float x, const float y) noexcept
-		{
-			position.x += x;
-			position.y += y;
-		}
+        /**
+         *  \brief Moves object
+         */
+        void move(const float x, const float y) noexcept
+        {
+            position.x += x;
+            position.y += y;
+        }
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const sf::Vector2f& forward) noexcept
-		{
-			position += forward;
-		}
+        /**
+         *  \brief Moves object
+         */
+        void move(const sf::Vector2f& forward) noexcept
+        {
+            position += forward;
+        }
 
-		Circle() = default;
-		Circle(const float x, const float y, const float radius) : position(x, y), radius(radius) {}
-		Circle(const sf::Vector2f& position, const float radius) : position(position), radius(radius) {}
-	};
+        Circle() = default;
 
-	/**
-	 *  \brief Logic class for rectangle
-	 *
-	 *  \details Rectangle is defined by position
-	 *  of its top left corner and its dimesions.
-	 */
-	class Rect : public Object
-	{
-	protected:
-		sf::Vector2f position = { 0.f, 0.f }; ///< Position of the topleft corner
-		sf::Vector2f size = { 0.f, 0.f }; ///< Dimensions of the rectangle
+        Circle(const float x, const float y, const float radius)
+            : position(x, y), radius(radius)
+        {
+        }
 
-	public:
-		/**
-		 *  \brief Displays object in the window
-		 *
-		 *  This method is slow and is reserved for debug purposes
-		 */
-		void debugRender(dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
+        Circle(const sf::Vector2f& position, const float radius)
+            : position(position), radius(radius)
+        {
+        }
+    };
 
-		/**
-		 *  \brief Returns position of topleft vertex of rectangle
-		 */
-		[[nodiscard]] const sf::Vector2f& getPosition() const noexcept
-		{
-			return position;
-		}
+    /**
+     *  \brief Logic class for rectangle
+     *
+     *  \details Rectangle is defined by position
+     *  of its top left corner and its dimesions.
+     */
+    class Rect : public Object
+    {
+    protected:
+        sf::Vector2f position = { 0.f,
+                                  0.f };  ///< Position of the topleft corner
+        sf::Vector2f size = { 0.f, 0.f }; ///< Dimensions of the rectangle
 
-		/**
-		 *  \brief Returns dimensions of rectangle
-		 */
-		[[nodiscard]] const sf::Vector2f& getSize() const noexcept
-		{
-			return size;
-		}
+    public:
+        /**
+         *  \brief Displays object in the window
+         *
+         *  This method is slow and is reserved for debug purposes
+         */
+        void debugRender(
+            dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-		[[nodiscard]] const sf::Vector2f& getCenter() const noexcept
-		{
-			return getPosition() + getSize() / 2.f;
-		}
+        /**
+         *  \brief Returns position of topleft vertex of rectangle
+         */
+        [[nodiscard]] const sf::Vector2f& getPosition() const noexcept
+        {
+            return position;
+        }
 
-		/**
-		 *  \brief Set position of top-left corner
-		 */
-		void setPosition(const float x, const float y);
+        /**
+         *  \brief Returns dimensions of rectangle
+         */
+        [[nodiscard]] const sf::Vector2f& getSize() const noexcept
+        {
+            return size;
+        }
 
-		/**
-		 *  \brief Set position of top-left corner
-		 */
-		void setPosition(const sf::Vector2f& newPosition) noexcept
-		{
-			position = newPosition;
-		}
+        [[nodiscard]] const sf::Vector2f& getCenter() const noexcept
+        {
+            return getPosition() + getSize() / 2.f;
+        }
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const float x, const float y) noexcept
-		{
-			position.x += x;
-			position.y += y;
-		}
+        /**
+         *  \brief Set position of top-left corner
+         */
+        void setPosition(const float x, const float y);
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const sf::Vector2f& forward) noexcept
-		{
-			position += forward;
-		}
+        /**
+         *  \brief Set position of top-left corner
+         */
+        void setPosition(const sf::Vector2f& newPosition) noexcept
+        {
+            position = newPosition;
+        }
 
-		/**
-		 *  \brief Set dimensions of rectangle
-		 */
-		void setSize(const float width, const float height);
+        /**
+         *  \brief Moves object
+         */
+        void move(const float x, const float y) noexcept
+        {
+            position.x += x;
+            position.y += y;
+        }
 
-		/**
-		 *  \brief Set dimensions of rectangle
-		 */
-		constexpr void setSize(const sf::Vector2f& newSize) noexcept
-		{
-			size = newSize;
-		}
+        /**
+         *  \brief Moves object
+         */
+        void move(const sf::Vector2f& forward) noexcept
+        {
+            position += forward;
+        }
 
-		Rect() = default;
-		Rect(const float x, const float y, const float width, const float height) : position({ x, y }), size({ width, height }) {}
-		Rect(const sf::Vector2f& position, const sf::Vector2f& size) : position(position), size(size) {}
-	};
+        /**
+         *  \brief Set dimensions of rectangle
+         */
+        void setSize(const float width, const float height);
 
-	/**
-	 *  \brief Representation of a simple vision cone
-	 *
-	 *  Vision cone is represented by an isosceles triangle and has following properties:
-	 *
-	 *             #####  ^
-	 *        ##########  |
-	 *   ###############  width
-	 *        ##########  |
-	 *             #####  v
-	 *   <-- length  -->
-	 *
-	 *  Leftmost point on the image is an origin of the triange, so that is the point
-	 *  that is considered to be the 'position' and also the point around which cone
-	 *  rotates.
-	 *
-	 *  Currently, only collisions between circles and cones are supported
-	 */
-	class VisionCone final : public Object
-	{
-		sf::Vector2f position = { 0.f, 0.f };
-		sf::Vector2f forward = { 0.f, 0.f };
-		float width = 0.f;
-		float rotation = 0.f;
+        /**
+         *  \brief Set dimensions of rectangle
+         */
+        constexpr void setSize(const sf::Vector2f& newSize) noexcept
+        {
+            size = newSize;
+        }
 
-	public:
-		/**
-		 *  \brief Displays object in the window
-		 *
-		 *  This method is slow and is reserved for debug purposes
-		 */
-		void debugRender(dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
+        Rect() = default;
 
-		virtual const sf::Vector2f& getPosition() const override
-		{
-			return position;
-		}
+        Rect(
+            const float x, const float y, const float width, const float height)
+            : position({ x, y }), size({ width, height })
+        {
+        }
 
-		virtual void setPosition(const float x, const float y) override
-		{
-			position = { x, y };
-		}
+        Rect(const sf::Vector2f& position, const sf::Vector2f& size)
+            : position(position), size(size)
+        {
+        }
+    };
 
-		virtual void setPosition(const sf::Vector2f& newPosition) override
-		{
-			position = newPosition;
-		}
+    /**
+     *  \brief Representation of a simple vision cone
+     *
+     *  Vision cone is represented by an isosceles triangle and has following
+     * properties:
+     *
+     *             #####  ^
+     *        ##########  |
+     *   ###############  width
+     *        ##########  |
+     *             #####  v
+     *   <-- length  -->
+     *
+     *  Leftmost point on the image is an origin of the triange, so that is the
+     * point that is considered to be the 'position' and also the point around
+     * which cone rotates.
+     *
+     *  Currently, only collisions between circles and cones are supported
+     */
+    class VisionCone final : public Object
+    {
+        sf::Vector2f position = { 0.f, 0.f };
+        sf::Vector2f forward = { 0.f, 0.f };
+        float width = 0.f;
+        float rotation = 0.f;
 
-		virtual void move(const float x, const float y) override;
-		virtual void move(const sf::Vector2f& direction) override
-		{
-			position += direction;
-		}
+    public:
+        /**
+         *  \brief Displays object in the window
+         *
+         *  This method is slow and is reserved for debug purposes
+         */
+        void debugRender(
+            dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-		[[nodiscard]]
-		constexpr float getRotation() const noexcept { return rotation; }
-		void setRotation(const float angle);
-		void rotate(const float angle);
+        virtual const sf::Vector2f& getPosition() const override
+        {
+            return position;
+        }
 
-		[[nodiscard]]
-		float getLength() const;
+        virtual void setPosition(const float x, const float y) override
+        {
+            position = { x, y };
+        }
 
-		[[nodiscard]]
-		constexpr float getWidth() const noexcept { return width; }
+        virtual void setPosition(const sf::Vector2f& newPosition) override
+        {
+            position = newPosition;
+        }
 
-		VisionCone() = default;
-		VisionCone(const float length, const float width);
-	};
+        virtual void move(const float x, const float y) override;
 
-	/**
-	 *  \brief Logic class for representing level geometry or per-pixel collision hitboxes
-	 *
-	 *  Mesh is basically an integer array where in DGM logic each cell with value
-	 *  <= 0 is considered to be 'air' and any cell with value > 0 is impassable.
-	 *  If this object is send to DGM collision functions, it will be compared
-	 *  to the other object based on set voxelSize and dataSize. If your mesh
-	 *  represents a whole level, then voxelSize is size of a single block (64x64px for example).
-	 *  If mesh represents a per-pixel hitbox, then voxelSize should be 1 (each cell is single pixel).
-	 *  Access cell at [x, y] by y * dataSize.x + x.
-	 */
-	class Mesh : public Object
-	{
-	protected:
-		std::vector<int> data = {};	///< Array for holding collision data
-		sf::Vector2f position = { 0.f, 0.f };	///< Position of top-left corner
-		sf::Vector2u dataSize = { 0u, 0u }; ///< dataSize.x * dataSize.y is size of data array
-		sf::Vector2u voxelSize = { 0u, 0u }; ///< How big rectangle does single cell of data represents
+        virtual void move(const sf::Vector2f& direction) override
+        {
+            position += direction;
+        }
 
-	public:
-		/**
-		 *  \brief Read and Write access to *data
-		 *
-		 *  Access cell at [x, y] by y * dataSize.x + x.
-		 */
-		int& operator[] (std::size_t index)
-		{
-			return data[index];
-		}
+        [[nodiscard]] constexpr float getRotation() const noexcept
+        {
+            return rotation;
+        }
 
-		/**
-		 *  \brief Read-only access to *data
-		 *
-		 *  Access cell at [x, y] by y * dataSize.x + x.
-		 */
-		const int& operator[] (std::size_t index) const
-		{
-			return data[index];
-		}
+        void setRotation(const float angle);
+        void rotate(const float angle);
 
-		int& at(unsigned x, unsigned y)
-		{
-			return (*this)[y * dataSize.x + x];
-		}
+        [[nodiscard]] float getLength() const;
 
-		const int& at(unsigned x, unsigned y) const
-		{
-			return (*this)[y * dataSize.x + x];
-		}
+        [[nodiscard]] constexpr float getWidth() const noexcept
+        {
+            return width;
+        }
 
-		int& at(const sf::Vector2u& pos)
-		{
-			return at(pos.x, pos.y);
-		}
+        VisionCone() = default;
+        VisionCone(const float length, const float width);
+    };
 
-		const int& at(const sf::Vector2u& pos) const
-		{
-			return at(pos.x, pos.y);
-		}
+    /**
+     *  \brief Logic class for representing level geometry or per-pixel
+     * collision hitboxes
+     *
+     *  Mesh is basically an integer array where in DGM logic each cell with
+     * value
+     *  <= 0 is considered to be 'air' and any cell with value > 0 is
+     * impassable. If this object is send to DGM collision functions, it will be
+     * compared to the other object based on set voxelSize and dataSize. If your
+     * mesh represents a whole level, then voxelSize is size of a single block
+     * (64x64px for example). If mesh represents a per-pixel hitbox, then
+     * voxelSize should be 1 (each cell is single pixel). Access cell at [x, y]
+     * by y * dataSize.x + x.
+     */
+    class Mesh : public Object
+    {
+    protected:
+        std::vector<int> data = {}; ///< Array for holding collision data
+        sf::Vector2f position = { 0.f, 0.f }; ///< Position of top-left corner
+        sf::Vector2u dataSize = {
+            0u, 0u
+        }; ///< dataSize.x * dataSize.y is size of data array
+        sf::Vector2u voxelSize = {
+            0u, 0u
+        }; ///< How big rectangle does single cell of data represents
 
-		/**
-		 *  \brief get position of top-left corner
-		 */
-		const sf::Vector2f& getPosition() const
-		{
-			return position;
-		}
+    public:
+        /**
+         *  \brief Read and Write access to *data
+         *
+         *  Access cell at [x, y] by y * dataSize.x + x.
+         */
+        int& operator[](std::size_t index)
+        {
+            return data[index];
+        }
 
-		/**
-		 *  \brief get dimensions of *data array
-		 */
-		const sf::Vector2u& getDataSize() const
-		{
-			return dataSize;
-		}
+        /**
+         *  \brief Read-only access to *data
+         *
+         *  Access cell at [x, y] by y * dataSize.x + x.
+         */
+        const int& operator[](std::size_t index) const
+        {
+            return data[index];
+        }
 
-		/**
-		 *  \brief get dimensions of single voxel
-		 */
-		const sf::Vector2u& getVoxelSize() const
-		{
-			return voxelSize;
-		}
+        int& at(unsigned x, unsigned y)
+        {
+            return (*this)[y * dataSize.x + x];
+        }
 
-		/**
-		 *  \brief Set position of top-left corner
-		 */
-		void setPosition(const float x, const float y) noexcept
-		{
-			position.x = x;
-			position.y = y;
-		}
+        const int& at(unsigned x, unsigned y) const
+        {
+            return (*this)[y * dataSize.x + x];
+        }
 
-		/**
-		 *  \brief Set position of top-left corner
-		 */
-		void setPosition(const sf::Vector2f& newPosition) noexcept
-		{
-			position = newPosition;
-		}
+        int& at(const sf::Vector2u& pos)
+        {
+            return at(pos.x, pos.y);
+        }
 
-		/**
-		 *  \brief Set dimensions of single voxel
-		 */
-		void setVoxelSize(const unsigned width, const unsigned height) noexcept
-		{
-			voxelSize.x = width;
-			voxelSize.y = height;
-		}
+        const int& at(const sf::Vector2u& pos) const
+        {
+            return at(pos.x, pos.y);
+        }
 
-		/**
-		 *  \brief Set dimensions of single voxel
-		 */
-		void setVoxelSize(const sf::Vector2u& size)
-		{
-			voxelSize = size;
-		}
+        /**
+         *  \brief get position of top-left corner
+         */
+        const sf::Vector2f& getPosition() const
+        {
+            return position;
+        }
 
-		/**
-		 *  \brief Set dimensions of data array
-		 *
-		 *  \details This will allocate memory for data.
-		 *  Any data stored here prior to this call will be lost.
-		 */
-		void setDataSize(const unsigned width, const unsigned height)
-		{
-			setDataSize(sf::Vector2u(width, height));
-		}
+        /**
+         *  \brief get dimensions of *data array
+         */
+        const sf::Vector2u& getDataSize() const
+        {
+            return dataSize;
+        }
 
-		/**
-		 *  \brief Set dimensions of data array
-		 *
-		 *  \details This will allocate memory for data.
-		 *  Any data stored here prior to this call will be lost.
-		 *
-		 */
-		void setDataSize(const sf::Vector2u& size);
+        /**
+         *  \brief get dimensions of single voxel
+         */
+        const sf::Vector2u& getVoxelSize() const
+        {
+            return voxelSize;
+        }
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const float x, const float y);
+        /**
+         *  \brief Set position of top-left corner
+         */
+        void setPosition(const float x, const float y) noexcept
+        {
+            position.x = x;
+            position.y = y;
+        }
 
-		/**
-		 *  \brief Moves object
-		 */
-		void move(const sf::Vector2f& forward);
+        /**
+         *  \brief Set position of top-left corner
+         */
+        void setPosition(const sf::Vector2f& newPosition) noexcept
+        {
+            position = newPosition;
+        }
 
-		Mesh() = default;
+        /**
+         *  \brief Set dimensions of single voxel
+         */
+        void setVoxelSize(const unsigned width, const unsigned height) noexcept
+        {
+            voxelSize.x = width;
+            voxelSize.y = height;
+        }
 
-		/**
-		 *  \brief Construct mesh object from data array
-		 *
-		 *  Data array is supposed to be row-major, meaning that
-		 *  for 2D map with items
-		 *
-		 *  1 2 3
-		 *  4 5 6
-		 *  7 8 9
-		 *
-		 *  the data will be layed out like: 1 2 3 4 5 6 7 8 9.
-		 *
-		 *  Size of data should be dataSize.x * dataSize.y.
-		 */
-		Mesh(
-			const std::vector<int>& data,
-			const sf::Vector2u& dataSize,
-			const sf::Vector2u& voxelSize);
+        /**
+         *  \brief Set dimensions of single voxel
+         */
+        void setVoxelSize(const sf::Vector2u& size)
+        {
+            voxelSize = size;
+        }
 
-		Mesh(
-			const std::vector<bool>& data,
-			const sf::Vector2u& dataSize,
-			const sf::Vector2u& voxelSize)
-			: Mesh(std::vector<int>(data.begin(), data.end()), dataSize, voxelSize)
-		{}
+        /**
+         *  \brief Set dimensions of data array
+         *
+         *  \details This will allocate memory for data.
+         *  Any data stored here prior to this call will be lost.
+         */
+        void setDataSize(const unsigned width, const unsigned height)
+        {
+            setDataSize(sf::Vector2u(width, height));
+        }
 
-		virtual ~Mesh() = default;
-	};
-}
+        /**
+         *  \brief Set dimensions of data array
+         *
+         *  \details This will allocate memory for data.
+         *  Any data stored here prior to this call will be lost.
+         *
+         */
+        void setDataSize(const sf::Vector2u& size);
+
+        /**
+         *  \brief Moves object
+         */
+        void move(const float x, const float y);
+
+        /**
+         *  \brief Moves object
+         */
+        void move(const sf::Vector2f& forward);
+
+        Mesh() = default;
+
+        /**
+         *  \brief Construct mesh object from data array
+         *
+         *  Data array is supposed to be row-major, meaning that
+         *  for 2D map with items
+         *
+         *  1 2 3
+         *  4 5 6
+         *  7 8 9
+         *
+         *  the data will be layed out like: 1 2 3 4 5 6 7 8 9.
+         *
+         *  Size of data should be dataSize.x * dataSize.y.
+         */
+        Mesh(
+            const std::vector<int>& data,
+            const sf::Vector2u& dataSize,
+            const sf::Vector2u& voxelSize);
+
+        Mesh(
+            const std::vector<bool>& data,
+            const sf::Vector2u& dataSize,
+            const sf::Vector2u& voxelSize)
+            : Mesh(
+                std::vector<int>(data.begin(), data.end()), dataSize, voxelSize)
+        {
+        }
+
+        virtual ~Mesh() = default;
+    };
+} // namespace dgm

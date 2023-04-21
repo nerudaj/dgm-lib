@@ -2,6 +2,11 @@ cmake_minimum_required ( VERSION 3.19 )
 
 project ( libdgm )
 
+file (
+	COPY "${CMAKE_BINARY_DIR}/.clang-format"
+	DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 set ( HEADERS
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/dgm.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/include/DGM/classes/Animation.hpp"
@@ -55,7 +60,7 @@ include_directories ( "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 add_library ( ${PROJECT_NAME}
 	STATIC ${HEADERS} ${SOURCES}
-	"${CMAKE_CURRENT_SOURCE_DIR}/.editorconfig"
+	"${CMAKE_CURRENT_SOURCE_DIR}/.clang-format"
 )
 
 target_include_directories ( ${PROJECT_NAME}

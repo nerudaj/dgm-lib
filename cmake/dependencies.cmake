@@ -20,6 +20,7 @@ function ( fetch_dependency name url headeronly )
 	else ()
 		FetchContent_Declare ( ${name}
 			URL ${url}
+			DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 		)
 	endif ()
 	
@@ -28,6 +29,8 @@ function ( fetch_dependency name url headeronly )
 		message ( "Populating ${name}" )
 		FetchContent_Populate ( ${name} )
 		set ( "${name}_POPULATED" TRUE PARENT_SCOPE )
+	else ()
+		message ( "${name} already populated" )
 	endif ()
 	
 	set ( "${name}_FOLDER" "${${lname}_SOURCE_DIR}" PARENT_SCOPE )
@@ -48,8 +51,6 @@ message ( "  CATCH: ${CATCH_FOLDER}" )
 link_directories("${SFML_FOLDER}/lib")
 
 # Create symbols for linking SFML
-
-
 message ( "Looking for SFML" )
 find_library ( LIB_SFML_MAIN_D "sfml-main-d" NAMES "sfml-main-d.lib" HINTS "${SFML_FOLDER}/lib" )
 find_library ( LIB_SFML_SYSTEM_D "sfml-system-d" NAMES "sfml-system-d.lib" HINTS "${SFML_FOLDER}/lib" )
