@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/Animation.hpp>
+#include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Error.hpp>
 #include <DGM/classes/LoaderInterface.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -14,7 +15,8 @@ namespace dgm
     concept SupportedResourceType =
         std::is_same_v<T, sf::Texture> || std::is_same_v<T, sf::Font>
         || std::is_same_v<T, sf::SoundBuffer>
-        || std::is_same_v<T, dgm::AnimationStates>;
+        || std::is_same_v<T, dgm::AnimationStates>
+        || std::is_same_v<T, dgm::Clip>;
 
     /**
      *  \brief Class for managing resources
@@ -24,7 +26,6 @@ namespace dgm
     private:
         dgm::LoaderInterface& loader;
         std::map<std::string, void*> database = {};
-        std::string commonPrefix = "";
 
     private:
         void
@@ -34,6 +35,7 @@ namespace dgm
             const std::string& filename, sf::SoundBuffer& sound);
         void loadResourceFromFile(
             const std::string& filename, dgm::AnimationStates& states);
+        void loadResourceFromFile(const std::string& filename, dgm::Clip& clip);
 
     public:
         /**
@@ -90,12 +92,14 @@ namespace dgm
             const std::vector<std::string>& allowedExtensions,
             bool recursive = false);
 
-        ResourceManager(dgm::LoaderInterface& loader) noexcept : loader(loader)
+        [[nodiscard]] ResourceManager(dgm::LoaderInterface& loader) noexcept
+            : loader(loader)
         {
         }
 
         ResourceManager(const ResourceManager& other) = delete;
-        ResourceManager(ResourceManager&& other) noexcept;
+        [[nodiscard]] ResourceManager(ResourceManager&& other) noexcept =
+            default;
         ~ResourceManager() noexcept;
     };
 } // namespace dgm

@@ -40,6 +40,12 @@ void ResourceManager::loadResourceFromFile(
     states = loader.loadAnimationsFromFile(filename);
 }
 
+void dgm::ResourceManager::loadResourceFromFile(
+    const std::string& filename, dgm::Clip& clip)
+{
+    clip = loader.loadClipFromFile(filename);
+}
+
 std::string dgm::ResourceManager::getResourceId(const std::string& filename)
 {
     auto itr = filename.find_last_of('/');
@@ -95,6 +101,8 @@ template void
 ResourceManager::loadResource<sf::Font>(const std::string& filename);
 template void ResourceManager::loadResource<dgm::AnimationStates>(
     const std::string& filename);
+template void
+ResourceManager::loadResource<dgm::Clip>(const std::string& filename);
 
 template<dgm::SupportedResourceType T>
 void ResourceManager::loadResourceDir(
@@ -159,13 +167,10 @@ template void ResourceManager::loadResourceDir<dgm::AnimationStates>(
     const std::string& folderPath,
     const std::vector<std::string>& allowedExtensions,
     bool recursive);
-
-ResourceManager::ResourceManager(ResourceManager&& other) noexcept
-    : loader(other.loader)
-{
-    database = other.database;
-    other.database.clear();
-}
+template void ResourceManager::loadResourceDir<dgm::Clip>(
+    const std::string& folderPath,
+    const std::vector<std::string>& allowedExtensions,
+    bool recursive);
 
 ResourceManager::~ResourceManager() noexcept
 {

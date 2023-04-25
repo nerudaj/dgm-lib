@@ -1,17 +1,17 @@
-#include <catch.hpp>
 #include <DGM/classes/JsonLoader.hpp>
+#include <catch.hpp>
 
-#define COMPARE_UNSIGNED_VECTORS(v1, v2) \
-	REQUIRE(v1.x == v2.y); \
-	REQUIRE(v1.y == v2.y);
+#define COMPARE_UNSIGNED_VECTORS(v1, v2)                                       \
+    REQUIRE(v1.x == v2.y);                                                     \
+    REQUIRE(v1.y == v2.y);
 
 TEST_CASE("Loading Clip", "JsonLoader")
 {
-	dgm::JsonLoader loader;
+    dgm::JsonLoader loader;
 
-	SECTION("JSON ok, all keys defined")
-	{
-		std::stringstream stream(R"({
+    SECTION("JSON ok, all keys defined")
+    {
+        std::stringstream stream(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -29,15 +29,15 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			"nframes": 3
 		})");
 
-		dgm::Clip clip = loader.loadClipFromStream(stream);
+        dgm::Clip clip = loader.loadClipFromStream(stream);
 
-		COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(clip.getFrameCount() == 3u);
-	}
+        COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(clip.getFrameCount() == 3u);
+    }
 
-	SECTION("JSON ok, spacing is missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("JSON ok, spacing is missing")
+    {
+        std::stringstream stream(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -51,15 +51,15 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			"nframes": 3
 		})");
 
-		dgm::Clip clip = loader.loadClipFromStream(stream);
+        dgm::Clip clip = loader.loadClipFromStream(stream);
 
-		COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(clip.getFrameCount() == 3u);
-	}
+        COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(clip.getFrameCount() == 3u);
+    }
 
-	SECTION("JSON ok, nframes is missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("JSON ok, nframes is missing")
+    {
+        std::stringstream stream(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -76,15 +76,15 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			}
 		})");
 
-		dgm::Clip clip = loader.loadClipFromStream(stream);
+        dgm::Clip clip = loader.loadClipFromStream(stream);
 
-		COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(clip.getFrameCount() == 4u);
-	}
+        COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(clip.getFrameCount() == 4u);
+    }
 
-	SECTION("JSON ok, optional properties missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("JSON ok, optional properties missing")
+    {
+        std::stringstream stream(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -97,15 +97,15 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			}
 		})");
 
-		dgm::Clip clip = loader.loadClipFromStream(stream);
+        dgm::Clip clip = loader.loadClipFromStream(stream);
 
-		COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(clip.getFrameCount() == 4u);
-	}
+        COMPARE_UNSIGNED_VECTORS(clip.getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(clip.getFrameCount() == 4u);
+    }
 
-	SECTION("Throws if type mismatches")
-	{
-		std::stringstream stream(R"({
+    SECTION("Throws if type mismatches")
+    {
+        std::stringstream stream(R"({
 			"frame": {
 				"width": "sixteen",
 				"height": 16
@@ -118,15 +118,13 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			}
 		})");
 
-		REQUIRE_THROWS([&] ()
-		{
-			dgm::Clip clip = loader.loadClipFromStream(stream);
-		}());
-	}
+        REQUIRE_THROWS(
+            [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
+    }
 
-	SECTION("Throws if mandatory properties are missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("Throws if mandatory properties are missing")
+    {
+        std::stringstream stream(R"({
 			"bounds": {
 				"left": 10,
 				"top": 10,
@@ -135,30 +133,26 @@ TEST_CASE("Loading Clip", "JsonLoader")
 			}
 		})");
 
-		REQUIRE_THROWS([&] ()
-		{
-			dgm::Clip clip = loader.loadClipFromStream(stream);
-		}());
-	}
+        REQUIRE_THROWS(
+            [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
+    }
 
-	SECTION("Throws if JSON is not valid")
-	{
-		std::stringstream stream(R"(invalid)");
+    SECTION("Throws if JSON is not valid")
+    {
+        std::stringstream stream(R"(invalid)");
 
-		REQUIRE_THROWS([&] ()
-		{
-			dgm::Clip clip = loader.loadClipFromStream(stream);
-		}());
-	}
+        REQUIRE_THROWS(
+            [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
+    }
 }
 
 TEST_CASE("Loading AnimationStates", "JsonLoader")
 {
-	dgm::JsonLoader loader;
+    dgm::JsonLoader loader;
 
-	SECTION("JSON ok, all keys defined")
-	{
-		std::stringstream stream(R"({
+    SECTION("JSON ok, all keys defined")
+    {
+        std::stringstream stream(R"({
 			"defaults": {
 				"frame": {
 					"width": 16,
@@ -201,20 +195,23 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 			]
 		})");
 
-		auto states = loader.loadAnimationsFromStream(stream);
+        auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states.size() == 2u);
-		REQUIRE(states.count("idle") == 1u);
-		REQUIRE(states.count("idle2") == 1u);
-		REQUIRE(states.at("idle").getFrameCount() == 3u);
-		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(states.at("idle2").getFrameCount() == 7u);
-		COMPARE_UNSIGNED_VECTORS(states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
-	}
+        REQUIRE(states.size() == 2u);
+        REQUIRE(states.count("idle") == 1u);
+        REQUIRE(states.count("idle2") == 1u);
+        REQUIRE(states.at("idle").getFrameCount() == 3u);
+        COMPARE_UNSIGNED_VECTORS(
+            states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(states.at("idle2").getFrameCount() == 7u);
+        COMPARE_UNSIGNED_VECTORS(
+            states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
+    }
 
-	SECTION("Loads JSON even if default not present and frame is defined per state")
-	{
-		std::stringstream stream(R"({
+    SECTION(
+        "Loads JSON even if default not present and frame is defined per state")
+    {
+        std::stringstream stream(R"({
 			"states": [
 				{
 					"name": "idle",
@@ -255,20 +252,22 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 			]
 		})");
 
-		auto states = loader.loadAnimationsFromStream(stream);
+        auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states.size() == 2u);
-		REQUIRE(states.count("idle") == 1u);
-		REQUIRE(states.count("idle2") == 1u);
-		REQUIRE(states.at("idle").getFrameCount() == 3u);
-		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
-		REQUIRE(states.at("idle2").getFrameCount() == 7u);
-		COMPARE_UNSIGNED_VECTORS(states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
-	}
+        REQUIRE(states.size() == 2u);
+        REQUIRE(states.count("idle") == 1u);
+        REQUIRE(states.count("idle2") == 1u);
+        REQUIRE(states.at("idle").getFrameCount() == 3u);
+        COMPARE_UNSIGNED_VECTORS(
+            states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+        REQUIRE(states.at("idle2").getFrameCount() == 7u);
+        COMPARE_UNSIGNED_VECTORS(
+            states.at("idle2").getFrameSize(), sf::Vector2u(8u, 8u));
+    }
 
-	SECTION("Loads JSON even if nframes are missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("Loads JSON even if nframes are missing")
+    {
+        std::stringstream stream(R"({
 			"defaults": {
 				"frame": {
 					"width": 16,
@@ -292,17 +291,18 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 			]
 		})");
 
-		auto states = loader.loadAnimationsFromStream(stream);
+        auto states = loader.loadAnimationsFromStream(stream);
 
-		REQUIRE(states.size() == 1u);
-		REQUIRE(states.count("idle") == 1u);
-		REQUIRE(states.at("idle").getFrameCount() == 4u);
-		COMPARE_UNSIGNED_VECTORS(states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
-	}
+        REQUIRE(states.size() == 1u);
+        REQUIRE(states.count("idle") == 1u);
+        REQUIRE(states.at("idle").getFrameCount() == 4u);
+        COMPARE_UNSIGNED_VECTORS(
+            states.at("idle").getFrameSize(), sf::Vector2u(16u, 16u));
+    }
 
-	SECTION("Throws if frame block is completely missing")
-	{
-		std::stringstream stream(R"({
+    SECTION("Throws if frame block is completely missing")
+    {
+        std::stringstream stream(R"({
 			"states": [
 				{
 					"name": "idle",
@@ -317,19 +317,15 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 			]
 		})");
 
-		REQUIRE_THROWS([&] ()
-		{
-			auto states = loader.loadAnimationsFromStream(stream);
-		}());
-	}
+        REQUIRE_THROWS(
+            [&]() { auto states = loader.loadAnimationsFromStream(stream); }());
+    }
 
-	SECTION("Throws if JSON is not valid")
-	{
-		std::stringstream stream(R"(invalid)");
+    SECTION("Throws if JSON is not valid")
+    {
+        std::stringstream stream(R"(invalid)");
 
-		REQUIRE_THROWS([&] ()
-		{
-			auto states = loader.loadAnimationsFromStream(stream);
-		}());
-	}
+        REQUIRE_THROWS(
+            [&]() { auto states = loader.loadAnimationsFromStream(stream); }());
+    }
 }
