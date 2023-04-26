@@ -27,7 +27,9 @@ namespace dgm
      * (which contains coordinates for each tile in the texture) and an array of
      * data (your map, where each cell is an index of a tile).
      */
-    class TileMap : public sf::Drawable, public sf::Transformable
+    class TileMap
+        : public sf::Drawable
+        , public sf::Transformable
     {
     private:
         virtual void
@@ -96,10 +98,11 @@ namespace dgm
             return clip;
         }
 
-        TileMap() = default;
+        [[nodiscard]] TileMap() = default;
 
-        TileMap(sf::Texture& texture, dgm::Clip&& clip)
-            : texturePtr(&texture), clip(std::move(clip))
+        [[nodiscard]] explicit TileMap(
+            sf::Texture& texture, const dgm::Clip& clip)
+            : texturePtr(&texture), clip(clip)
         {
         }
     };
