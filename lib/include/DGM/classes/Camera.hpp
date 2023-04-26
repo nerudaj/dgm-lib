@@ -26,12 +26,20 @@ namespace dgm
         /// return a number from 0..1
         using EasingFunc = std::function<float(float)>;
 
-    protected:
-        sf::View&
-            view; /// Reference to view that should be manipulated by the Camera
-        sf::Vector2f defaultZoomLevel; /// Default resolution of the view (so
-                                       /// zoom can be reset)
+    public:
+        [[nodiscard]] explicit Camera(
+            const sf::FloatRect& viewport, const sf::Vector2f& resolution)
+            : view(view)
+        {
+            defaultView.setViewport(viewport);
+            defaultView.setSize(resolution);
+            view = defaultView;
+        }
 
+        Camera(const Camera&) = delete;
+        Camera(Camera&&) = delete;
+
+    protected:
         /**
          *  Container holding transform effect
          */
@@ -89,6 +97,16 @@ namespace dgm
         }
 
     public:
+        [[nodiscard]] constexpr const sf::View& getCurrentView() const noexcept
+        {
+            return view;
+        }
+
+        [[nodiscard]] constexpr const sf::View& getDefaultView() const noexcept
+        {
+            return view;
+        }
+
         /**
          *  \brief True if camera is animating movement
          */
@@ -178,6 +196,11 @@ namespace dgm
             view.move(x, y);
         }
 
+        void resetTransformations()
+        {
+            view = defaultView;
+        }
+
         /**
          *  \brief Changes zoom level of camera, relative to initial zoom level
          *
@@ -190,7 +213,7 @@ namespace dgm
          */
         inline void setZoom(float level)
         {
-            view.setSize(defaultZoomLevel);
+            view.setSize(defaultView.getSize());
             view.zoom(level);
         }
 
@@ -256,9 +279,8 @@ namespace dgm
             EasingFunc f = [](float) -> float { return 1.f; },
             const sf::Time& hold = sf::milliseconds(20));
 
-        Camera(sf::View& view) : view(view)
-        {
-            defaultZoomLevel = view.getSize();
-        }
+    protected:
+        sf::View view;
+        sf::View defaultView;
     };
 } // namespace dgm

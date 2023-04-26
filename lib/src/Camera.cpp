@@ -93,7 +93,7 @@ void dgm::Camera::zoomGradually(
 {
     if (isZooming()) return;
 
-    const float start = view.getSize().x / defaultZoomLevel.x;
+    const float start = view.getSize().x / defaultView.getSize().x;
     zoomEffect.init(start, level - start, duration, f);
 }
 
