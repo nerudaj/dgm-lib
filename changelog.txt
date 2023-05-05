@@ -1,4 +1,4 @@
-dgm-lib v1.x.x
+dgm-lib v1.10.0
  * `dgm::ResourceManager` can now load `dgm::Clip` from JSON files
  * `dgm:Clip` no longer has to be moved into `dgm::TileMap`
  * `dgm::Camera` no longer maintains a reference to `sf::View` and instead provides API `getCurrentView()` and `getDefaultView()`
