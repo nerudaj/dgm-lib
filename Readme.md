@@ -8,8 +8,8 @@ Library provides primitives for collisions, particle effects, animations and til
 
 ## Requirements
 
-* CMake v3.19 (FetchContent is unstable in newer versions)
-* Microsoft Visual Studio 2019 v16.11.3 or newer
+* CMake v3.26 (FetchContent is unstable in newer versions)
+* Microsoft Visual Studio 2022 v17.3 or newer
 
 ## Building
 
