@@ -1,3 +1,6 @@
+dgm-lib v1.x.x
+ * Added documentation for `dgm::JsonLoader`
+
 dgm-lib v1.10.0
  * `dgm::ResourceManager` can now load `dgm::Clip` from JSON files
  * `dgm:Clip` no longer has to be moved into `dgm::TileMap`
