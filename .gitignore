@@ -1,4 +1,5 @@
 lib/tests/src/TestDataDir.hpp
+_build
 
 # Prerequisites
 *.d

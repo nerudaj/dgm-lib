@@ -27,7 +27,8 @@ sf::IntRect getBoundsFromJson(const nlohmann::json& jsonBounds)
         jsonBounds["height"].get<int>());
 }
 
-dgm::Clip dgm::JsonLoader::loadClipFromFile(const std::string& filename) const
+dgm::Clip
+dgm::JsonLoader::loadClipFromFile(const std::filesystem::path& filename) const
 {
     std::ifstream load(filename);
     return loadClipFromStream(load);
@@ -49,8 +50,8 @@ dgm::Clip dgm::JsonLoader::loadClipFromStream(std::istream& stream) const
     return dgm::Clip(frame, bounds, nframes, spacing);
 }
 
-dgm::AnimationStates
-dgm::JsonLoader::loadAnimationsFromFile(const std::string& filename) const
+dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(
+    const std::filesystem::path& filename) const
 {
     std::ifstream load(filename);
     return loadAnimationsFromStream(load);

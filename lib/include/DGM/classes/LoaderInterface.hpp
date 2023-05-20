@@ -3,6 +3,7 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
 #include <istream>
+#include <filesystem>
 
 namespace dgm
 {
@@ -16,10 +17,10 @@ namespace dgm
     {
     public:
         [[nodiscard]] virtual dgm::Clip
-        loadClipFromFile(const std::string&) const = 0;
+        loadClipFromFile(const std::filesystem::path&) const = 0;
 
         [[nodiscard]] virtual dgm::AnimationStates
-        loadAnimationsFromFile(const std::string&) const = 0;
+        loadAnimationsFromFile(const std::filesystem::path&) const = 0;
 
         virtual ~LoaderInterface() = default;
     };

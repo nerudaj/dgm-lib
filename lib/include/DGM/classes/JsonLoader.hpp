@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/LoaderInterface.hpp>
+#include <filesystem>
 
 namespace dgm
 {
@@ -40,7 +41,7 @@ namespace dgm
 		 * and boundaries.
 		 */
         [[nodiscard]] virtual dgm::Clip
-        loadClipFromFile(const std::string&) const override;
+        loadClipFromFile(const std::filesystem::path&) const override;
 
         [[nodiscard]] dgm::Clip loadClipFromStream(std::istream&) const;
 
@@ -97,7 +98,7 @@ namespace dgm
 		 * frame size and common spacing.
 		 */
         [[nodiscard]] virtual dgm::AnimationStates
-        loadAnimationsFromFile(const std::string&) const override;
+        loadAnimationsFromFile(const std::filesystem::path&) const override;
 
         [[nodiscard]] dgm::AnimationStates
         loadAnimationsFromStream(std::istream&) const;

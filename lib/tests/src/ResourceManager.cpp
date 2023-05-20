@@ -7,7 +7,7 @@ class LoaderMock final : public dgm::LoaderInterface
 {
 public:
     [[nodiscard]] virtual dgm::Clip
-    loadClipFromFile(const std::string&) const override
+    loadClipFromFile(const std::filesystem::path&) const override
     {
         return dgm::Clip();
     }
@@ -18,7 +18,7 @@ public:
     }
 
     [[nodiscard]] virtual dgm::AnimationStates
-    loadAnimationsFromFile(const std::string&) const override
+    loadAnimationsFromFile(const std::filesystem::path&) const override
     {
         return dgm::AnimationStates();
     }
@@ -92,21 +92,22 @@ TEST_CASE("Can load and provide resources", "ResourceManager")
 
     SECTION("Throws if allowedExtensions are empty")
     {
-        REQUIRE_THROWS([&]() {
-            resmgr.loadResourceDir<sf::SoundBuffer>("nonexistent", {});
-        }());
+        REQUIRE_THROWS(
+            [&]()
+            { resmgr.loadResourceDir<sf::SoundBuffer>("nonexistent", {}); }());
     }
 
     SECTION("Throws if resource directory does not exist")
     {
-        REQUIRE_THROWS([&]() {
-            resmgr.loadResourceDir<sf::Texture>("nonexistent", { ".png" });
-        }());
+        REQUIRE_THROWS(
+            [&]() {
+                resmgr.loadResourceDir<sf::Texture>("nonexistent", { ".png" });
+            }());
     }
 
     SECTION("Throws if resource does not exist")
     {
-        REQUIRE_THROWS(
-            [&]() { resmgr.loadResource<sf::Font>("nonexistent.ttf"); }());
+        REQUIRE_THROWS([&]()
+                       { resmgr.loadResource<sf::Font>("nonexistent.ttf"); }());
     }
 }
