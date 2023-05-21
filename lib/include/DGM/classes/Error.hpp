@@ -1,6 +1,8 @@
 #pragma once
 
+#include <expected>
 #include <stdexcept>
+#include <string>
 
 namespace dgm
 {
@@ -36,4 +38,8 @@ namespace dgm
     public:
         ShellException(const std::string& msg) : std::runtime_error(msg) {}
     };
+
+    using ErrorMessage = std::string;
+
+    using ExpectedSuccess = std::expected<std::true_type, ErrorMessage>;
 } // namespace dgm
