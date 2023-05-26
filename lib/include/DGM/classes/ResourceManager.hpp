@@ -1,23 +1,27 @@
 #pragma once
 
-#include <DGM/classes/Animation.hpp>
-#include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Error.hpp>
-#include <DGM/classes/LoaderInterface.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Texture.hpp>
+#include <concepts>
 #include <expected>
 #include <filesystem>
+#include <format>
 #include <functional>
 #include <map>
-#include <utility>
+#include <string>
 
 namespace dgm
 {
     template<class T>
     concept CompatibleResourceType = std::is_constructible_v<T>;
 
+    /**
+    ResourceManager allows for loading any kind of
+    resource from a disk and only providing an API
+    to get an immutable reference to it.
+
+    Lifetime of all resources is limited by the lifetime
+    of this manager object.
+    */
     class ResourceManager final
     {
     private:
@@ -34,25 +38,25 @@ namespace dgm
 
     public:
         /**
-         *  Callback used to load a particular resource
-         *
-         *  It accepts a path to the original resource on a disk
-         *  and a reference to initialized variable that should
-         *  be filled with the loaded data.
-         *
-         *  Callback is expected to throw std::runtime_error if any error
-         *  occurs.
+         Callback used to load a particular resource
+
+         It accepts a path to the original resource on a disk
+         and a reference to initialized variable that should
+         be filled with the loaded data.
+
+         Callback is expected to throw std::runtime_error if
+         any error occurs.
          */
         template<CompatibleResourceType T>
         using LoadCallback =
             std::function<void(const std::filesystem::path&, T&)>;
 
         /**
-         *  Get a read-only reference to resource that has been previously
-         *  loaded.
-         *
-         *  If error occures, an error message is returned instead.
-         */
+        Get a read-only reference to resource that has
+        been previously loaded.
+
+        If error occures, an error message is returned instead.
+        */
         template<CompatibleResourceType T>
         [[nodiscard]] std::
             expected<std::reference_wrapper<const T>, ErrorMessage>
@@ -68,14 +72,15 @@ namespace dgm
         }
 
         /**
-         *  Loads resource into the database from the given path
-         *  using the loadCallback.
-         *
-         *  An ID will be assigned to the resource with \see getResourceId
-         *
-         *  Function returns std::true_type on success and error message
-         *  if anything fails (for example loadCallback throws an error)
-         */
+        Loads resource into the database from the given path
+        using the loadCallback.
+
+        An ID will be assigned to the resource with
+        \see getResourceId
+
+        Function returns std::true_type on success and error message
+        if anything fails (for example loadCallback throws an error)
+        */
         template<CompatibleResourceType T>
         [[nodiscard]] ExpectedSuccess loadResource(
             const std::filesystem::path& path,
@@ -110,20 +115,20 @@ namespace dgm
         }
 
         /**
-         *  Recursively loads resources from a directory.
-         *
-         *  Only files that have the \p allowedExtensions will be
-         *  loaded via provided \p loadCallback.
-         *
-         *  Each file will have an id computed by \see getResourceId.
-         *  You can use \see getLoadedResourceIds to list all ids that
-         *  have been loaded.
-         *
-         *  Function returns std::true_type on success and error message
-         *  if anything fails (for example loadCallback throws an error)
-         *
-         *  \warn \p allowedExtensions must not be empty!
-         */
+        Recursively loads resources from a directory.
+
+        Only files that have the \p allowedExtensions will be
+        loaded via provided \p loadCallback.
+
+        Each file will have an id computed by \see getResourceId.
+        You can use \see getLoadedResourceIds to list all ids that
+        have been loaded.
+
+        Function returns std::true_type on success and error message
+        if anything fails (for example loadCallback throws an error)
+
+        \warn \p allowedExtensions must not be empty!
+        */
         template<CompatibleResourceType T>
         [[nodiscard]] ExpectedSuccess loadResourcesFromDirectory(
             const std::filesystem::path& folderPath,
@@ -183,11 +188,11 @@ namespace dgm
         }
 
         /**
-         *  Returns a list of resource ids that have been loaded for
-         *  a particular template type.
-         *
-         *  If no resources has been loaded
-         */
+        Returns a list of resource ids that have been loaded for
+        a particular template type.
+
+        If no resources has been loaded
+        */
         template<CompatibleResourceType T>
         [[nodiscard]] std::expected<std::vector<std::string>, ErrorMessage>
         getLoadedResourceIds() const noexcept

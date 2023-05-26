@@ -1,7 +1,4 @@
 #include <DGM/classes/ResourceManager.hpp>
-#include <algorithm>
-#include <filesystem>
-#include <iostream>
 #include <stdexcept>
 
 using dgm::ErrorMessage;
