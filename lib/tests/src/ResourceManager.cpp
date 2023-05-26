@@ -1,6 +1,7 @@
 #include "TestDataDir.hpp"
 #include <DGM/classes/JsonLoader.hpp>
 #include <DGM/classes/ResourceManager.hpp>
+#include <array>
 #include <catch.hpp>
 
 class LoaderMock final : public dgm::LoaderInterface
@@ -30,84 +31,120 @@ public:
     }
 };
 
-TEST_CASE("Can load and provide resources", "ResourceManager")
+class LoggableResource
 {
-    LoaderMock loader;
-    dgm::ResourceManager resmgr(loader);
+public:
+    static inline unsigned ctorCalledCount = 0;
+    static inline unsigned dtorCalledCount = 0;
 
-    SECTION("Can load animation states")
+public:
+    LoggableResource()
     {
-        SECTION("Non recursive")
-        {
-            resmgr.loadResourceDir<dgm::AnimationStates>(
-                TEST_DATA_DIR + "/resmgr_loading", { ".json" }, false);
+        ctorCalledCount++;
+    }
 
-            REQUIRE(resmgr.isResourceInDatabase("statesA.json"));
-            REQUIRE(!resmgr.isResourceInDatabase("to_be_skipped.txt"));
-            REQUIRE(!resmgr.isResourceInDatabase("statesB.json"));
+    ~LoggableResource()
+    {
+        dtorCalledCount++;
+    }
+};
+
+TEST_CASE("[ResourceManager]")
+{
+    dgm::ResourceManager resmgr;
+    using path = std::filesystem::path;
+
+    SECTION("Properly computes resource ID")
+    {
+        SECTION("From plain filename")
+        {
+            auto&& id = resmgr.getResourceId("file.ext");
+            REQUIRE(id.has_value());
+            REQUIRE(*id == "file.ext");
+
+            auto&& id2 = resmgr.getResourceId("file_no_ext");
+            REQUIRE(id2.has_value());
+            REQUIRE(*id2 == "file_no_ext");
         }
 
-        SECTION("Recursive")
+        SECTION("From absolute path")
         {
-            resmgr.loadResourceDir<dgm::AnimationStates>(
-                TEST_DATA_DIR + "/resmgr_loading", { ".json" }, true);
+            auto&& id = resmgr.getResourceId("C:/folder/file.ext");
+            REQUIRE(id.has_value());
+            REQUIRE(*id == "file.ext");
+        }
 
-            REQUIRE(resmgr.isResourceInDatabase("statesA.json"));
-            REQUIRE(!resmgr.isResourceInDatabase("to_be_skipped.txt"));
-            REQUIRE(resmgr.isResourceInDatabase("statesB.json"));
+        SECTION("From relative path")
+        {
+            auto&& id = resmgr.getResourceId("../folder/file.ext");
+            REQUIRE(id.has_value());
+            REQUIRE(*id == "file.ext");
+        }
+
+        SECTION("Throws on empty path")
+        {
+            REQUIRE(!resmgr.getResourceId("").has_value());
         }
     }
 
-    SECTION("Can load dgm::Clip")
+    SECTION("When loading resource")
     {
-
-        SECTION("Non recursive")
+        SECTION("Resource ctor/dtor are called exactly once")
         {
-            resmgr.loadResourceDir<dgm::Clip>(
-                TEST_DATA_DIR + "/resmgr_loading", { ".json" }, false);
-            REQUIRE(resmgr.isResourceInDatabase("statesA.json"));
-            REQUIRE(!resmgr.isResourceInDatabase("to_be_skipped.txt"));
-            REQUIRE(!resmgr.isResourceInDatabase("statesB.json"));
-        }
+            {
+                dgm::ResourceManager resmgr2;
+                REQUIRE(resmgr2.loadResource<LoggableResource>(
+                    "path", [](const path&, auto&) {}));
+            }
 
-        SECTION("Recursive")
-        {
-            resmgr.loadResourceDir<dgm::Clip>(
-                TEST_DATA_DIR + "/resmgr_loading", { ".json" }, true);
-
-            REQUIRE(resmgr.isResourceInDatabase("statesA.json"));
-            REQUIRE(!resmgr.isResourceInDatabase("to_be_skipped.txt"));
-            REQUIRE(resmgr.isResourceInDatabase("statesB.json"));
+            // resmgr2 is now destroyed, dtors should have been called
+            REQUIRE(LoggableResource::ctorCalledCount == 1u);
+            REQUIRE(LoggableResource::dtorCalledCount == 1u);
         }
     }
 
-    SECTION("Can deal with allowedExtensions without dots")
+    SECTION("Can get reference to loaded resource")
     {
-        resmgr.loadResourceDir<dgm::AnimationStates>(
-            TEST_DATA_DIR + "/resmgr_loading", { "json" }, false);
-
-        REQUIRE(resmgr.isResourceInDatabase("statesA.json"));
-        REQUIRE(!resmgr.isResourceInDatabase("statesB.json"));
+        REQUIRE(resmgr.loadResource<int>(
+            "myint", [](const path&, int& val) { val = 42; }));
+        auto&& val = resmgr.get<int>("myint");
+        REQUIRE(val.has_value());
+        REQUIRE(val->get() == 42);
     }
 
-    SECTION("Throws if allowedExtensions are empty")
+    SECTION("Can list all resources of a given type")
     {
-        REQUIRE_THROWS(
-            [&]()
-            { resmgr.loadResourceDir<sf::SoundBuffer>("nonexistent", {}); }());
+        REQUIRE(resmgr.loadResource<int>("a", [](const path&, int&) {}));
+        REQUIRE(resmgr.loadResource<int>("b", [](const path&, int&) {}));
+        REQUIRE(resmgr.loadResource<int>("c", [](const path&, int&) {}));
+        REQUIRE(resmgr.loadResource<double>("d", [](const path&, double&) {}));
+
+        const auto&& names = resmgr.getLoadedResourceIds<int>();
+        REQUIRE(names.has_value());
+        REQUIRE(names->size() == 3u);
+        REQUIRE(names->at(0) == "a");
+        REQUIRE(names->at(1) == "b");
+        REQUIRE(names->at(2) == "c");
+
+        const auto&& names2 = resmgr.getLoadedResourceIds<char>();
+        REQUIRE(names2.has_value());
+        REQUIRE(names2->empty());
     }
 
-    SECTION("Throws if resource directory does not exist")
+    SECTION("Can recursively load a directory")
     {
-        REQUIRE_THROWS(
-            [&]() {
-                resmgr.loadResourceDir<sf::Texture>("nonexistent", { ".png" });
-            }());
-    }
+        dgm::JsonLoader loader;
+        const auto&& dirPath = path { TEST_DATA_DIR } / "resmgr_loading";
+        const auto&& loadClip = [](const path&, dgm::Clip&)
+        {
+            /* not loading anything, those files are mocks */
+        };
 
-    SECTION("Throws if resource does not exist")
-    {
-        REQUIRE_THROWS([&]()
-                       { resmgr.loadResource<sf::Font>("nonexistent.ttf"); }());
+        REQUIRE(resmgr.loadResourcesFromDirectory<dgm::Clip>(
+            dirPath, loadClip, { ".json" }));
+
+        REQUIRE(resmgr.hasResource<dgm::Clip>("statesA.json"));
+        REQUIRE(resmgr.hasResource<dgm::Clip>("statesB.json"));
+        REQUIRE(!resmgr.hasResource<dgm::Clip>("to_be_skipped.txt"));
     }
 }

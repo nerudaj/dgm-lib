@@ -2,6 +2,13 @@ dgm-lib v1.x.x
  * Added documentation for `dgm::JsonLoader`
  * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
  * Added type `dgm::ErrorMessage` which is an alias for returning `std::string` error messages wrapped in `std::expected`
+ * `dgm::ResourceManager` has been revamped
+	* It can be used to store almost any kind of resource by providing user callbacks that handle the loading. Only requirement is that the resource needs to be default-constructible.
+	* It is completely `noexcept` and `[[nodiscard]]`
+	* It properly invokes destructors
+	* It no longer depends on `dgm::LoaderInterface` as loading itself is handled by the callbacks
+	* It can list all resource ids tied to particular type
+	* It no longer prevents two resources of distinct types not be able to have the same ID
  * Warning about name shadowing has been turned into error
 
 dgm-lib v1.10.0
