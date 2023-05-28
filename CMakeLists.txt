@@ -1,23 +1,26 @@
 cmake_minimum_required ( VERSION 3.19 )
 
+set ( DGM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
+set ( DGM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
+
 # Enforce C++ standards and compiler behaviour
-include ( "${CMAKE_SOURCE_DIR}/cmake/cpp.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/cpp.cmake" )
 
 # Download some helper files
 file (
 	DOWNLOAD
 		"https://raw.githubusercontent.com/nerudaj/clang-format/main/.clang-format"
-		"${CMAKE_BINARY_DIR}/.clang-format"
+		"${DGM_BINARY_DIR}/.clang-format"
 )
 
 # Project setup
 project ( dgm-lib)
-include ( "${CMAKE_SOURCE_DIR}/cmake/version.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/version.cmake" )
 enable_testing()
 
 # Dependencies
-include ( "${CMAKE_SOURCE_DIR}/cmake/dependencies.cmake" )
-include ( "${CMAKE_SOURCE_DIR}/cmake/utils.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/dependencies.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/utils.cmake" )
 
 # Subprojects
 add_subdirectory ( lib )
@@ -25,12 +28,12 @@ add_subdirectory ( sandbox )
 
 # Installation
 install (
-	FILES       "${CMAKE_SOURCE_DIR}/changelog.txt"
+	FILES       "${DGM_SOURCE_DIR}/changelog.txt"
 	DESTINATION "."
 )
 
 install (
-	DIRECTORY   "${CMAKE_SOURCE_DIR}/licenses"
+	DIRECTORY   "${DGM_SOURCE_DIR}/licenses"
 	DESTINATION "."
 )
 

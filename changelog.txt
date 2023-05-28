@@ -1,4 +1,7 @@
 dgm-lib v1.x.x
+ * Replaced usage of `CMAKE_SOURCE_DIR` and `CMAKE_BINARY_DIR` with custom variables
+	* This way the library can be integrated from source with `FetchContent`
+	* LIMITATION: User has to copy all required DLLs distributed with SFML manually
  * Added documentation for `dgm::JsonLoader`
  * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
  * Added type `dgm::ErrorMessage` which is an alias for returning `std::string` error messages wrapped in `std::expected`
