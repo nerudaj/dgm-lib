@@ -2,30 +2,55 @@
 
 # Readme
 
-This project is an extension library for [SFML](http://sfml-dev.org). It isn't supposed to be used on its own but rather as a part of [dgm-sdk](https://github.com/nerudaj/dgm-lib) project.
+This project is an extension library for [SFML](http://sfml-dev.org). You can use it on its own, but recommended usage is as a part of [dgm-sdk](https://github.com/nerudaj/dgm-lib) project.
 
-Library provides primitives for collisions, particle effects, animations and tile based levels with their own file storage format. It also provides interfaces for putting together whole applications, etc.
+This library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation.
 
 ## Requirements
 
 * CMake v3.26 (FetchContent is unstable in newer versions)
 * Microsoft Visual Studio 2022 v17.3 or newer
 
-## Building
+## Integration
 
-All dependencies are pulled in via cmake so you first have to configure the project:
+### Integration using CMake
+
+You can use `FetchContent` to link this library to your application. Doing so will also bring SFML as a dependency. However, `dgm-lib` only needs `sfml-system`, `sfml-graphics` and `sfml-window` to link, so you need to link `sfml-main` target to your application manually (plus network and audio if applicable).
 
 ```
-mkdir vsbuild
-cd vsbuild
-cmake ..
+include (FetchContent)
+
+FetchContent_Declare ( LIBDGM_GIT
+    GIT_REPOSITORY "https://github.com/nerudaj/dgm-lib"
+    GIT_TAG "origin/main"
+)
+
+FetchContent_MakeAvailable ( LIBDGM_GIT )
+
+# Target setup
+project ( Demo )
+
+add_executable ( ${PROJECT_NAME}
+    "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
+)
+
+target_link_libraries ( ${PROJECT_NAME}
+    libdgm sfml-main
+)
 ```
 
-This will create file dgm-lib.sln under vsbuild folder. You can now open that file and build the project normally through visual studio. Solution contains three important subprojects:
+### Integration from releases
 
-* dgm-lib - The library itself
-* dgm-lib-benchmarks - Sandbox for benchmarking
-* lib-testrunner - Unit tests
+Under Releases section on Github you can find prepared releases. To integrate those, you need to properly include and link SFML and also link `xinput.lib`.
+
+## Development
+
+Dependencies are managed via CPM. Latest CPM script is downloaded during configure and written into the `cmake` folder.
+
+Project has following options:
+
+ * ENABLE_TESTS - Default: ON. When enabled, unit-tests target is created.
+ * ENABLE_SANDBOX - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
 
 ## Packaging
 
@@ -37,17 +62,13 @@ Version bump must be performed in both `changelog.txt` and `cmake/version.cmake`
 
 This project depends on couple other projects:
 
-* dshlibs
-* nlohmann/json
 * sfml
-* catch2
+* nlohmann/json
+* catch2 (unit-tests target)
 
-If you want to bump any of them, update `cmake/dependencies.cmake` file. First couple of lines contains versions of those dependencies. Just bumping the version should be sufficient to update it.
+If you want to bump any of them, update the `cmake/dependencies.cmake` file.
 
 ## Versioning
 
-Following logic is employed when versioning:
+This library is trying its best to follow the semantic versioning.
 
-* Change to MAJOR version will only be mandated by a complete overhaul of the library
-* Change to MINOR is issued whenever potentially API breaking changes occur
-* Change to PATCH is basically any change that doesn't affect backwards API compatibility

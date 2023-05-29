@@ -2,7 +2,7 @@
 #include <DGM/classes/JsonLoader.hpp>
 #include <format>
 #include <fstream>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 sf::Vector2u getFrameFromJson(const nlohmann::json& jsonFrame)
 {

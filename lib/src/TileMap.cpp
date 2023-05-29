@@ -69,7 +69,10 @@ void dgm::TileMap::build(
     {
         for (size_t x = 0; x < dataSize.x; x++)
         {
-            changeTile(x, y, imageData[y * dataSize.x + x]);
+            changeTile(
+                static_cast<uint32_t>(x),
+                static_cast<uint32_t>(y),
+                imageData[y * dataSize.x + x]);
         }
     }
 }

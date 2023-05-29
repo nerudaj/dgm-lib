@@ -2,7 +2,7 @@
 
 int main(int, char* [])
 {
-	dgm::Window window({ 1280,720 }, "Sandbox", false);
+	auto&& window = dgm::Window({ 1280,720 }, "Sandbox", false);
 	sf::Event event;
 	dgm::Time time;
 

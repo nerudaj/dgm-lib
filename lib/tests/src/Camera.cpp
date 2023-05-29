@@ -1,5 +1,8 @@
 #include <DGM/dgm.hpp>
-#include <catch.hpp>
+#include <catch2/catch_all.hpp>
+#include <catch2/catch_approx.hpp>
+
+using Catch::Approx;
 
 class TestableTime_Camera : public dgm::Time
 {

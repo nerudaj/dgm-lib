@@ -1,139 +1,155 @@
-#include <catch.hpp>
 #include "DGM/classes/Buffer.hpp"
+#include <catch2/catch_all.hpp>
 
-namespace BufferTests {
+namespace BufferTests
+{
 
-	TEST_CASE("Capacity/Size", "Buffer") {
-		dgm::Buffer<int> ints(2);
-		REQUIRE(ints.capacity() == 2);
-		REQUIRE(ints.size() == 0);
+    TEST_CASE("Capacity/Size", "Buffer")
+    {
+        dgm::Buffer<int> ints(2);
+        REQUIRE(ints.capacity() == 2);
+        REQUIRE(ints.size() == 0);
 
-		REQUIRE(ints.expand());
-		REQUIRE(ints.size() == 1);
+        REQUIRE(ints.expand());
+        REQUIRE(ints.size() == 1);
 
-		REQUIRE(ints.expand());
-		REQUIRE(ints.size() == 2);
+        REQUIRE(ints.expand());
+        REQUIRE(ints.size() == 2);
 
-		REQUIRE(!ints.expand());
-	}
+        REQUIRE(!ints.expand());
+    }
 
-	TEST_CASE("Late init", "Buffer") {
-		dgm::Buffer<int> ints;
-		REQUIRE_NOTHROW(ints.resize(3));
-	}
+    TEST_CASE("Late init", "Buffer")
+    {
+        dgm::Buffer<int> ints;
+        REQUIRE_NOTHROW(ints.resize(3));
+    }
 
-	TEST_CASE("Late resize", "Buffer") {
-		dgm::Buffer<int> ints(3);
-		for (unsigned i = 0; i < ints.capacity(); i++) {
-			REQUIRE(ints.expand());
-			ints.last() = i;
-		}
+    TEST_CASE("Late resize", "Buffer")
+    {
+        dgm::Buffer<int> ints(3);
+        for (unsigned i = 0; i < ints.capacity(); i++)
+        {
+            REQUIRE(ints.expand());
+            ints.last() = i;
+        }
 
-		REQUIRE_NOTHROW(ints.resize(6));
-		REQUIRE(ints.size() == 3);
-		REQUIRE(ints.capacity() == 6);
-		REQUIRE(ints[0] == 0);
-		REQUIRE(ints[1] == 1);
-		REQUIRE(ints[2] == 2);
-	}
+        REQUIRE_NOTHROW(ints.resize(6));
+        REQUIRE(ints.size() == 3);
+        REQUIRE(ints.capacity() == 6);
+        REQUIRE(ints[0] == 0);
+        REQUIRE(ints[1] == 1);
+        REQUIRE(ints[2] == 2);
+    }
 
-	TEST_CASE("Remove", "Buffer") {
-		dgm::Buffer<int> ints(3);
-		for (unsigned i = 0; i < ints.capacity(); i++) {
-			REQUIRE(ints.expand());
-			ints.last() = i;
-		}
+    TEST_CASE("Remove", "Buffer")
+    {
+        dgm::Buffer<int> ints(3);
+        for (unsigned i = 0; i < ints.capacity(); i++)
+        {
+            REQUIRE(ints.expand());
+            ints.last() = i;
+        }
 
-		int* first = &ints[0];
-		int* second = &ints[1];
-		int* third = &ints[2];
-		ints.remove(1);
+        int* first = &ints[0];
+        int* second = &ints[1];
+        int* third = &ints[2];
+        ints.remove(1);
 
-		REQUIRE(ints.size() == 2);
-		REQUIRE(ints[0] == 0);
-		REQUIRE(ints[1] == 2);
+        REQUIRE(ints.size() == 2);
+        REQUIRE(ints[0] == 0);
+        REQUIRE(ints[1] == 2);
 
-		// Still exists in memory, but is not iterated over
-		REQUIRE(ints[2] == 1);
+        // Still exists in memory, but is not iterated over
+        REQUIRE(ints[2] == 1);
 
-		// Pointer stability
-		REQUIRE(*first == 0);
-		REQUIRE(*second == 1);
-		REQUIRE(*third == 2);
-	}
+        // Pointer stability
+        REQUIRE(*first == 0);
+        REQUIRE(*second == 1);
+        REQUIRE(*third == 2);
+    }
 
-	TEST_CASE("Range loop", "Buffer") {
-		dgm::Buffer<int> ints(3);
-		REQUIRE(ints.empty());
-		for (unsigned i = 0; i < ints.capacity(); i++) {
-			REQUIRE(ints.expand());
-			ints.last() = 0;
-		}
-		REQUIRE(ints.full());
+    TEST_CASE("Range loop", "Buffer")
+    {
+        dgm::Buffer<int> ints(3);
+        REQUIRE(ints.empty());
+        for (unsigned i = 0; i < ints.capacity(); i++)
+        {
+            REQUIRE(ints.expand());
+            ints.last() = 0;
+        }
+        REQUIRE(ints.full());
 
-		SECTION("non-const") {
-			unsigned cnt = 0;
-			for (auto&& i : ints) {
-				REQUIRE(i == 0);
-				cnt++;
-			}
-			REQUIRE(cnt == 3);
-		}
+        SECTION("non-const")
+        {
+            unsigned cnt = 0;
+            for (auto&& i : ints)
+            {
+                REQUIRE(i == 0);
+                cnt++;
+            }
+            REQUIRE(cnt == 3);
+        }
 
-		SECTION("const") {
-			unsigned cnt = 0;
-			for (auto&& i : std::as_const(ints)) {
-				REQUIRE(i == 0);
-				cnt++;
-			}
-			REQUIRE(cnt == 3);
-		}
-	}
+        SECTION("const")
+        {
+            unsigned cnt = 0;
+            for (auto&& i : std::as_const(ints))
+            {
+                REQUIRE(i == 0);
+                cnt++;
+            }
+            REQUIRE(cnt == 3);
+        }
+    }
 
-	TEST_CASE("Smart pointers", "Buffer") {
-		SECTION("Pointer is stable when resizing") {
-			dgm::Buffer<std::unique_ptr<int>> ints(1);
-			
-			ints.expand();
-			ints.last() = std::make_unique<int>(10);
-			auto* ptrBackup = &(ints.last());
-			int* valuePtrBackup = ints.last().get();
-			
-			// After resize, unique_ptr object should be different
-			// but the managed pointer should stay the same
-			ints.resize(2);
-			REQUIRE(&ints[0] != ptrBackup);
-			REQUIRE(ints[0].get() == valuePtrBackup);
-		}
+    TEST_CASE("Smart pointers", "Buffer")
+    {
+        SECTION("Pointer is stable when resizing")
+        {
+            dgm::Buffer<std::unique_ptr<int>> ints(1);
 
-		SECTION("Pointer is stable when removing data") {
-			dgm::Buffer<std::shared_ptr<int>> ints(2);
-			ints.expand();
-			ints.last() = std::make_shared<int>(42);
-			ints.expand();
-			ints.last() = std::make_shared<int>(69);
+            ints.expand();
+            ints.last() = std::make_unique<int>(10);
+            auto* ptrBackup = &(ints.last());
+            int* valuePtrBackup = ints.last().get();
 
-			int* valuePtrBackup = ints.last().get();
-			ints.remove(ints.begin());
+            // After resize, unique_ptr object should be different
+            // but the managed pointer should stay the same
+            ints.resize(2);
+            REQUIRE(&ints[0] != ptrBackup);
+            REQUIRE(ints[0].get() == valuePtrBackup);
+        }
 
-			REQUIRE(*(*ints.begin()) == 69);
-			REQUIRE(ints.last().get() == valuePtrBackup);
-		}
-	}
+        SECTION("Pointer is stable when removing data")
+        {
+            dgm::Buffer<std::shared_ptr<int>> ints(2);
+            ints.expand();
+            ints.last() = std::make_shared<int>(42);
+            ints.expand();
+            ints.last() = std::make_shared<int>(69);
 
-	/*TEST_CASE("Algorithm support", "Buffer") {
-		dgm::Buffer<int> ints(10);
-		for (unsigned i = 0; i < ints.capacity(); i++) {
-			REQUIRE(ints.expand());
-			ints.last() = rand() % 256;
-		}
+            int* valuePtrBackup = ints.last().get();
+            ints.remove(ints.begin());
 
-		std::sort(ints.begin(), ints.end());
+            REQUIRE(*(*ints.begin()) == 69);
+            REQUIRE(ints.last().get() == valuePtrBackup);
+        }
+    }
 
-		REQUIRE(ints.size() == ints.capacity());
-		for (unsigned i = 1; i < ints.size(); i++) {
-			REQUIRE(ints[i - 1] < ints[i]);
-		}
-	}*/
-	
-}
+    /*TEST_CASE("Algorithm support", "Buffer") {
+            dgm::Buffer<int> ints(10);
+            for (unsigned i = 0; i < ints.capacity(); i++) {
+                    REQUIRE(ints.expand());
+                    ints.last() = rand() % 256;
+            }
+
+            std::sort(ints.begin(), ints.end());
+
+            REQUIRE(ints.size() == ints.capacity());
+            for (unsigned i = 1; i < ints.size(); i++) {
+                    REQUIRE(ints[i - 1] < ints[i]);
+            }
+    }*/
+
+} // namespace BufferTests

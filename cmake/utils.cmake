@@ -29,3 +29,15 @@ function(append_infile_to_outfile INFILE OUTFILE)
 	file(READ ${INFILE} CONTENTS)
 	file(APPEND ${OUTFILE} "${CONTENTS}")
 endfunction()
+
+# Looks into current source dir / include and recursively globs headers
+# Looks into current source dir / src and recursively globs sources
+# Then writes them into hdr_outvarname and src_outvarname
+function ( glob_headers_and_sources hdr_outvarname src_outvarname )
+    file ( GLOB_RECURSE LOCAL_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include**/*.hpp" )
+	file ( GLOB_RECURSE LOCAL_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src**/*.cpp" )
+	source_group ( TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${LOCAL_HEADERS})
+	source_group ( TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${LOCAL_SOURCES})
+	set ( ${hdr_outvarname} "${LOCAL_HEADERS}" PARENT_SCOPE )
+	set ( ${src_outvarname} "${LOCAL_SOURCES}" PARENT_SCOPE )
+endfunction ()

@@ -1,44 +1,31 @@
 cmake_minimum_required ( VERSION 3.19 )
 
+project ( unit-tests )
+
 file (
 	COPY "${DGM_BINARY_DIR}/.clang-format"
 	DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-project ( lib-testrunner )
-
-include_directories ( ${CATCH_FOLDER} )
-copy_dlls_to_build_folders ()
-
 configure_file (
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/TestDataDir.hpp.in"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/TestDataDir.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/TestDataDir.hpp.in"
+	"${CMAKE_CURRENT_SOURCE_DIR}/include/TestDataDir.hpp"
 )
 
-file (
-	GLOB_RECURSE HEADER_FILES
-	"*.hpp"
-)
-
-file (
-	GLOB_RECURSE SOURCE_FILES
-	"*.cpp"
-)
-
-message ( "${HEADER_FILES}" )
-message ( "${SOURCE_FILES}" )
+glob_headers_and_sources ( HEADERS SOURCES )
 
 add_executable ( ${PROJECT_NAME}
-	${HEADER_FILES} ${SOURCE_FILES}
+	${HEADERS} ${SOURCES}
 	"${CMAKE_CURRENT_SOURCE_DIR}/.clang-format"
 )
 
 target_include_directories( ${PROJECT_NAME}
-	PUBLIC  "${DSH_FOLDER}/include"
+	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-	libdgm ${LIB_LVLD}
+	LINK_PRIVATE libdgm
+	LINK_PRIVATE Catch2::Catch2WithMain
 )
 
 target_compile_options ( ${PROJECT_NAME}

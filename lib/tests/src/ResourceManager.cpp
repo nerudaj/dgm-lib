@@ -2,7 +2,7 @@
 #include <DGM/classes/JsonLoader.hpp>
 #include <DGM/classes/ResourceManager.hpp>
 #include <array>
-#include <catch.hpp>
+#include <catch2/catch_all.hpp>
 
 class LoaderMock final : public dgm::LoaderInterface
 {

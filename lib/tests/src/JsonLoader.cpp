@@ -1,5 +1,5 @@
 #include <DGM/classes/JsonLoader.hpp>
-#include <catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #define COMPARE_UNSIGNED_VECTORS(v1, v2)                                       \
     REQUIRE(v1.x == v2.y);                                                     \

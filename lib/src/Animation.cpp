@@ -2,7 +2,6 @@
 #include <DGM/classes/Error.hpp>
 #include <cassert>
 #include <fstream>
-#include <json.hpp>
 
 using dgm::Animation;
 using dgm::AnimationStates;
