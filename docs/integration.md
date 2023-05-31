@@ -37,6 +37,9 @@ This is the easiest way to integrate dgm-lib and SFML. Use FetchContent to clone
 ```
 cmake_minimum_required ( VERSION 3.26 )
 
+set ( CMAKE_CXX_STANDARD		23 )
+set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Compiled" )
+
 include (FetchContent)
 
 FetchContent_Declare ( LIBDGM_GIT
@@ -47,9 +50,6 @@ FetchContent_MakeAvailable ( LIBDGM_GIT )
 
 # Target setup
 project ( Demo )
-
-set ( CMAKE_CXX_STANDARD		23 )
-set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Compiled" )
 
 add_executable ( ${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
