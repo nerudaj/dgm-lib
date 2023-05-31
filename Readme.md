@@ -15,29 +15,7 @@ This library provides primitives for collision computations, vector manipulation
 
 ### Integration using CMake
 
-You can use `FetchContent` to link this library to your application. Doing so will also bring SFML as a dependency. However, `dgm-lib` only needs `sfml-system`, `sfml-graphics` and `sfml-window` to link, so you need to link `sfml-main` target to your application manually (plus network and audio if applicable).
-
-```
-include (FetchContent)
-
-FetchContent_Declare ( LIBDGM_GIT
-    GIT_REPOSITORY "https://github.com/nerudaj/dgm-lib"
-    GIT_TAG "origin/main"
-)
-
-FetchContent_MakeAvailable ( LIBDGM_GIT )
-
-# Target setup
-project ( Demo )
-
-add_executable ( ${PROJECT_NAME}
-    "${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
-)
-
-target_link_libraries ( ${PROJECT_NAME}
-    libdgm sfml-main
-)
-```
+`FetchContent` can be used to download `dgm-lib` from GitHub and integrated. See [integration guide](docs/integration.md) on how to do so.
 
 ### Integration from releases
 
@@ -51,6 +29,9 @@ Project has following options:
 
  * ENABLE_TESTS - Default: ON. When enabled, unit-tests target is created.
  * ENABLE_SANDBOX - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
+ * OVERRIDE_RUNTIME_OUTPUT_DIR - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (${CMAKE_BINARY_DIR}/Compiled). This way executables can be run right away without worrying about DLL lookup.
+
+All these options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts.
 
 ## Packaging
 
