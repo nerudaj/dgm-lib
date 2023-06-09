@@ -4,15 +4,9 @@ cmake_minimum_required ( VERSION 3.19 )
 set ( DGM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
 set ( DGM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
 
-
 option ( ENABLE_TESTS "Build unit test target" ON )
 option ( ENABLE_SANDBOX "Build sandbox target" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
-
-include ( "${DGM_SOURCE_DIR}/cmake/cpp.cmake" )
-include ( "${DGM_SOURCE_DIR}/cmake/dependencies.cmake" )
-include ( "${DGM_SOURCE_DIR}/cmake/utils.cmake" )
-include ( "${DGM_SOURCE_DIR}/cmake/version.cmake" )
 
 # Project setup
 project ( dgm-lib)
@@ -31,6 +25,12 @@ endif ()
 if ( ${ENABLE_TESTS} )
 	enable_testing()
 endif ()
+
+include ( "${DGM_SOURCE_DIR}/cmake/cpp.cmake" )
+# Dependencies must go after overriding runtime output directory
+include ( "${DGM_SOURCE_DIR}/cmake/dependencies.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/utils.cmake" )
+include ( "${DGM_SOURCE_DIR}/cmake/version.cmake" )
 
 # Subprojects
 add_subdirectory ( lib )
