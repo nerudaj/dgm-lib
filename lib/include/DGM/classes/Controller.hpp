@@ -230,6 +230,6 @@ namespace dgm
         void setControllerVibration(
             const float leftMotorForce, const float rightMotorForce);
 
-        Controller() = default;
+        [[nodiscard]] Controller() noexcept = default;
     };
 } // namespace dgm

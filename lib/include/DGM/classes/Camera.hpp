@@ -27,7 +27,7 @@ namespace dgm
         using EasingFunc = std::function<float(float)>;
 
     public:
-        [[nodiscard]] explicit Camera(
+        [[nodiscard]] Camera(
             const sf::FloatRect& viewport, const sf::Vector2f& resolution)
             : view(view)
         {

@@ -29,6 +29,7 @@ dgm-lib v1.x.x
 		* Added documentation for `dgm::JsonLoader`
 		* Added documentation on CMake integration
 	 * Warning about name shadowing has been turned into error
+	 * Many functions have been marked `explicit`, `[[nodiscard]]`, `constexpr`, or `noexcept`
 	 * Math constants have been removed, they are superseded by `std::numbers` from `<numbers>`
 
 dgm-lib v1.10.0

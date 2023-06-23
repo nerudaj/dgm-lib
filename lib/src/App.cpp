@@ -59,7 +59,7 @@ dgm::App::App(dgm::Window& window)
     : window(window), outbuf("stdout.txt"), errbuf("stderr.txt")
 {
     if (outbuf.rdbuf() == nullptr || errbuf.rdbuf() == nullptr)
-        throw dgm::GeneralException("Cannot redirect stdout/stderr to file");
+        throw dgm::Exception("Cannot redirect stdout/stderr to file");
 
     stdoutBackup = std::cout.rdbuf();
     stderrBackup = std::cerr.rdbuf();

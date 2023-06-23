@@ -100,14 +100,14 @@ namespace dgm
 
         Path<T>& operator=(dgm::Path<T>&& other) = default;
 
-        Path() = default;
+        [[nodiscard]] Path() = default;
 
-        Path(const std::vector<T>& points, bool looping)
+        [[nodiscard]] Path(const std::vector<T>& points, bool looping)
             : points(points), looping(looping)
         {
         }
 
-        Path(dgm::Path<T>&& other) = default;
+        [[nodiscard]] Path(dgm::Path<T>&& other) = default;
         ~Path() = default;
     };
 } // namespace dgm

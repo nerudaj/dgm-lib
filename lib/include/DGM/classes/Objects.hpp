@@ -42,7 +42,7 @@ namespace dgm
      *  top-down games. Circle is defined by position
      *  of its center and radius.
      */
-    class Circle : public Object
+    class Circle final : public Object
     {
     protected:
         sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
@@ -101,7 +101,7 @@ namespace dgm
         /**
          *  \brief Moves object
          */
-        void move(const float x, const float y) noexcept
+        constexpr void move(const float x, const float y) noexcept
         {
             position.x += x;
             position.y += y;
@@ -115,14 +115,16 @@ namespace dgm
             position += forward;
         }
 
-        Circle() = default;
+        [[nodiscard]] constexpr Circle() noexcept = default;
 
-        Circle(const float x, const float y, const float radius)
+        [[nodiscard]] Circle(
+            const float x, const float y, const float radius) noexcept
             : position(x, y), radius(radius)
         {
         }
 
-        Circle(const sf::Vector2f& position, const float radius)
+        [[nodiscard]] constexpr Circle(
+            const sf::Vector2f& position, const float radius) noexcept
             : position(position), radius(radius)
         {
         }
@@ -134,7 +136,7 @@ namespace dgm
      *  \details Rectangle is defined by position
      *  of its top left corner and its dimesions.
      */
-    class Rect : public Object
+    class Rect final : public Object
     {
     protected:
         sf::Vector2f position = { 0.f,
@@ -153,7 +155,7 @@ namespace dgm
         /**
          *  \brief Returns position of topleft vertex of rectangle
          */
-        [[nodiscard]] const sf::Vector2f& getPosition() const noexcept
+        [[nodiscard]] constexpr const sf::Vector2f& getPosition() const noexcept
         {
             return position;
         }
@@ -161,7 +163,7 @@ namespace dgm
         /**
          *  \brief Returns dimensions of rectangle
          */
-        [[nodiscard]] const sf::Vector2f& getSize() const noexcept
+        [[nodiscard]] constexpr const sf::Vector2f& getSize() const noexcept
         {
             return size;
         }
@@ -179,7 +181,7 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
         {
             position = newPosition;
         }
@@ -187,7 +189,7 @@ namespace dgm
         /**
          *  \brief Moves object
          */
-        void move(const float x, const float y) noexcept
+        constexpr void move(const float x, const float y) noexcept
         {
             position.x += x;
             position.y += y;
@@ -214,15 +216,19 @@ namespace dgm
             size = newSize;
         }
 
-        Rect() = default;
+        [[nodiscard]] constexpr Rect() noexcept = default;
 
-        Rect(
-            const float x, const float y, const float width, const float height)
+        [[nodiscard]] Rect(
+            const float x,
+            const float y,
+            const float width,
+            const float height) noexcept
             : position({ x, y }), size({ width, height })
         {
         }
 
-        Rect(const sf::Vector2f& position, const sf::Vector2f& size)
+        [[nodiscard]] constexpr Rect(
+            const sf::Vector2f& position, const sf::Vector2f& size) noexcept
             : position(position), size(size)
         {
         }
@@ -263,7 +269,7 @@ namespace dgm
         void debugRender(
             dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-        virtual const sf::Vector2f& getPosition() const override
+        virtual constexpr const sf::Vector2f& getPosition() const override
         {
             return position;
         }
@@ -273,7 +279,8 @@ namespace dgm
             position = { x, y };
         }
 
-        virtual void setPosition(const sf::Vector2f& newPosition) override
+        virtual constexpr void
+        setPosition(const sf::Vector2f& newPosition) override
         {
             position = newPosition;
         }
@@ -300,8 +307,8 @@ namespace dgm
             return width;
         }
 
-        VisionCone() = default;
-        VisionCone(const float length, const float width);
+        [[nodiscard]] constexpr VisionCone() noexcept = default;
+        [[nodiscard]] VisionCone(const float length, const float width);
     };
 
     /**
@@ -331,50 +338,29 @@ namespace dgm
         }; ///< How big rectangle does single cell of data represents
 
     public:
-        /**
-         *  \brief Read and Write access to *data
-         *
-         *  Access cell at [x, y] by y * dataSize.x + x.
-         */
-        int& operator[](std::size_t index)
+        [[nodiscard]] constexpr inline auto&&
+        operator[](this auto&& self, std::size_t index) noexcept
         {
-            return data[index];
+            return self.data[index];
         }
 
-        /**
-         *  \brief Read-only access to *data
-         *
-         *  Access cell at [x, y] by y * dataSize.x + x.
-         */
-        const int& operator[](std::size_t index) const
+        [[nodiscard]] constexpr inline auto&&
+        at(this auto&& self, unsigned x, unsigned y) noexcept
         {
-            return data[index];
+            return self[y * self.dataSize.x + x];
         }
 
-        int& at(unsigned x, unsigned y)
+        [[nodiscard]] constexpr inline auto&&
+        at(this auto&& self, const sf::Vector2u& pos) noexcept
         {
-            return (*this)[y * dataSize.x + x];
-        }
-
-        const int& at(unsigned x, unsigned y) const
-        {
-            return (*this)[y * dataSize.x + x];
-        }
-
-        int& at(const sf::Vector2u& pos)
-        {
-            return at(pos.x, pos.y);
-        }
-
-        const int& at(const sf::Vector2u& pos) const
-        {
-            return at(pos.x, pos.y);
+            return self.at(pos.x, pos.y);
         }
 
         /**
          *  \brief get position of top-left corner
          */
-        const sf::Vector2f& getPosition() const
+        [[nodiscard]] constexpr inline const sf::Vector2f&
+        getPosition() const noexcept
         {
             return position;
         }
@@ -382,7 +368,8 @@ namespace dgm
         /**
          *  \brief get dimensions of *data array
          */
-        const sf::Vector2u& getDataSize() const
+        [[nodiscard]] constexpr inline const sf::Vector2u&
+        getDataSize() const noexcept
         {
             return dataSize;
         }
@@ -390,7 +377,8 @@ namespace dgm
         /**
          *  \brief get dimensions of single voxel
          */
-        const sf::Vector2u& getVoxelSize() const
+        [[nodiscard]] constexpr inline const sf::Vector2u&
+        getVoxelSize() const noexcept
         {
             return voxelSize;
         }
@@ -398,7 +386,7 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        void setPosition(const float x, const float y) noexcept
+        constexpr void setPosition(const float x, const float y) noexcept
         {
             position.x = x;
             position.y = y;
@@ -407,7 +395,7 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
         {
             position = newPosition;
         }
@@ -415,7 +403,8 @@ namespace dgm
         /**
          *  \brief Set dimensions of single voxel
          */
-        void setVoxelSize(const unsigned width, const unsigned height) noexcept
+        constexpr void
+        setVoxelSize(const unsigned width, const unsigned height) noexcept
         {
             voxelSize.x = width;
             voxelSize.y = height;
@@ -424,7 +413,7 @@ namespace dgm
         /**
          *  \brief Set dimensions of single voxel
          */
-        void setVoxelSize(const sf::Vector2u& size)
+        constexpr void setVoxelSize(const sf::Vector2u& size)
         {
             voxelSize = size;
         }
@@ -459,7 +448,7 @@ namespace dgm
          */
         void move(const sf::Vector2f& forward);
 
-        Mesh() = default;
+        [[nodiscard]] constexpr Mesh() noexcept = default;
 
         /**
          *  \brief Construct mesh object from data array
@@ -475,12 +464,12 @@ namespace dgm
          *
          *  Size of data should be dataSize.x * dataSize.y.
          */
-        Mesh(
+        [[nodiscard]] Mesh(
             const std::vector<int>& data,
             const sf::Vector2u& dataSize,
             const sf::Vector2u& voxelSize);
 
-        Mesh(
+        [[nodiscard]] Mesh(
             const std::vector<bool>& data,
             const sf::Vector2u& dataSize,
             const sf::Vector2u& voxelSize)

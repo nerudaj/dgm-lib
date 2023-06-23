@@ -49,7 +49,10 @@ namespace dgm
 
         virtual [[nodiscard]] bool isTransparent() const noexcept = 0;
 
-        AppState(dgm::App& app) : app(app) {}
+        [[nodiscard]] constexpr explicit AppState(dgm::App& app) noexcept
+            : app(app)
+        {
+        }
 
         AppState(AppState&&) = delete;
         AppState(AppState&) = delete;

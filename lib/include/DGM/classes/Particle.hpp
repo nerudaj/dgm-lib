@@ -152,9 +152,13 @@ namespace dgm
              *
              *  \param [in] vertices Pointer to topleft vertex of particle
              */
-            Particle(sf::Vertex* vertices) : quad(vertices) {}
+            [[nodiscard]] constexpr explicit Particle(
+                sf::Vertex* vertices) noexcept
+                : quad(vertices)
+            {
+            }
 
-            virtual ~Particle() {}
+            virtual ~Particle() = default;
         };
     }; // namespace ps
 } // namespace dgm

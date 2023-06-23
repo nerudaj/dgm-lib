@@ -51,7 +51,7 @@ void dgm::TileMap::build(
 {
     if (!texturePtr)
     {
-        throw dgm::GeneralException(
+        throw dgm::Exception(
             "You have to call dgm::TileMap::init prior to "
             "dgm::TileMap::build!");
     }

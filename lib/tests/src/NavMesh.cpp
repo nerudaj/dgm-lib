@@ -170,12 +170,12 @@ TEST_CASE("Constructing TileNavMesh", "[TileNavMesh]")
             // the map
             REQUIRE_THROWS_AS(
                 navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(8, 1)),
-                dgm::GeneralException);
+                dgm::Exception);
 
             // There is no path because destination point is a wall
             REQUIRE_THROWS_AS(
                 navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(6, 1)),
-                dgm::GeneralException);
+                dgm::Exception);
         }
     }
 }
@@ -220,7 +220,7 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
         REQUIRE_THROWS_AS(
             dgm::TileNavMesh::getPath(
                 sf::Vector2u(1, 1), sf::Vector2u(8, 1), mesh),
-            dgm::GeneralException);
+            dgm::Exception);
     }
 }
 

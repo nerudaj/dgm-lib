@@ -40,13 +40,13 @@ namespace dgm
         /**
          *  \brief Reset the clock and store time elapsed
          */
-        void reset()
+        void reset() noexcept
         {
             elapsed = clock.restart();
             deltaTime = elapsed.asSeconds();
         }
 
-        Time()
+        [[nodiscard]] Time() noexcept
         {
             reset();
         }

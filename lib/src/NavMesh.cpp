@@ -179,10 +179,12 @@ dgm::Path<dgm::TileNavpoint> dgm::TileNavMesh::getPath(
     auto updateOpenSetWithCoord =
         [&](NodeSet<TileNode>& openSet,
             const sf::Vector2u& coord,
-            const NodeSet<TileNode>& closedSet) -> void {
+            const NodeSet<TileNode>& closedSet) -> void
+    {
         using NeighborType = std::pair<sf::Vector2u, Backdir>;
 
-        auto canVisit = [&](const sf::Vector2u& point) {
+        auto canVisit = [&](const sf::Vector2u& point)
+        {
             const bool notInClosedSet = !closedSet.contains(point);
             const bool emptyInMesh = mesh.at(point.x, point.y) <= 0;
             return notInClosedSet && emptyInMesh;
@@ -213,8 +215,7 @@ dgm::Path<dgm::TileNavpoint> dgm::TileNavMesh::getPath(
     const NodeSet<TileNode> closedSet = astarSearch<TileNode>(
         TileNode(from, to, 0, Backdir::Undefined), to, updateOpenSetWithCoord);
 
-    if (!closedSet.hasElements())
-        throw dgm::GeneralException("No path was found");
+    if (!closedSet.hasElements()) throw dgm::Exception("No path was found");
 
     std::vector<TileNavpoint> points;
     points.push_back(TileNavpoint(to, 0u));
@@ -305,14 +306,14 @@ void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
 {
     using Seeker = std::pair<sf::Vector2u, SeekDir>;
 
-    auto isJumpPoint = [&](const sf::Vector2u& p) {
-        return jumpPointConnections.find(p) != jumpPointConnections.end();
-    };
+    auto isJumpPoint = [&](const sf::Vector2u& p)
+    { return jumpPointConnections.find(p) != jumpPointConnections.end(); };
 
     // point is current seeker point, origin is jump point from which
     // connections are being discovered
-    auto isHorizontalNeighborOk = [&](const sf::Vector2u& point,
-                                      const sf::Vector2u& origin) {
+    auto isHorizontalNeighborOk =
+        [&](const sf::Vector2u& point, const sf::Vector2u& origin)
+    {
         // If point is not on the same axis as origin, then we need to check
         // horizontal neighbor that is closer to origin. If it is solid wall
         // then direct visibility to point is compromised and function returns
@@ -324,8 +325,9 @@ void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
         return true;
     };
 
-    auto isVerticalNeighborOk = [&](const sf::Vector2u& point,
-                                    const sf::Vector2u& origin) {
+    auto isVerticalNeighborOk =
+        [&](const sf::Vector2u& point, const sf::Vector2u& origin)
+    {
         // Same as test for horizontal neighbour, just for Y axis
         if (point.y < origin.y && mesh.at(point.x, point.y + 1) > 0)
             return false;
@@ -334,16 +336,15 @@ void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
         return true;
     };
 
-    auto isVerticalSeekDir = [&](SeekDir dir) {
-        return static_cast<uint8_t>(dir) & 0b10000000;
-    };
+    auto isVerticalSeekDir = [&](SeekDir dir)
+    { return static_cast<uint8_t>(dir) & 0b10000000; };
 
-    auto isHorizontalSeekDir = [&](SeekDir dir) {
-        return static_cast<uint8_t>(dir) & 0b01000000;
-    };
+    auto isHorizontalSeekDir = [&](SeekDir dir)
+    { return static_cast<uint8_t>(dir) & 0b01000000; };
 
-    auto connectTwoJumpPoints = [&](const sf::Vector2u& a,
-                                    const sf::Vector2u& b) {
+    auto connectTwoJumpPoints =
+        [&](const sf::Vector2u& a, const sf::Vector2u& b)
+    {
         const float dx =
             (static_cast<float>(a.x) - b.x) * mesh.getVoxelSize().x;
         const float dy =
@@ -455,7 +456,7 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
     if (tileFrom == tileTo)
         return dgm::Path<WorldNavpoint>({}, false);
     else if (mesh.at(tileTo) >= 1)
-        throw dgm::GeneralException("No path was found");
+        throw dgm::Exception("No path was found");
 
     // Make auxiliary connections to rest of network, unless source/target point
     // is already a jump point
@@ -472,7 +473,8 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
     auto updateOpenSetWithCoord =
         [&](NodeSet<WorldNode>& openSet,
             const sf::Vector2u& coord,
-            const NodeSet<WorldNode>& closedSet) -> void {
+            const NodeSet<WorldNode>& closedSet) -> void
+    {
         const auto node = closedSet.getNode(coord);
         for (auto&& conn : jumpPointConnections[coord])
         {
@@ -504,10 +506,10 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
         if (not fromIsJumpPoint) jumpPointConnections.erase(tileFrom);
     }
 
-    if (!closedSet.hasElements())
-        throw dgm::GeneralException("No path was found");
+    if (!closedSet.hasElements()) throw dgm::Exception("No path was found");
 
-    auto getWorldNavpoint = [&](const sf::Vector2u& coord) {
+    auto getWorldNavpoint = [&](const sf::Vector2u& coord)
+    {
         return WorldNavpoint(
             sf::Vector2f(
                 (coord.x + 0.5f) * mesh.getVoxelSize().x,
@@ -533,7 +535,8 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
 
 dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
 {
-    auto isJumpPoint = [&](const sf::Vector2u& point) {
+    auto isJumpPoint = [&](const sf::Vector2u& point)
+    {
         /**
          *  Test if this point is at the tip of some impassable tile, eg:
          *  #   #
@@ -567,7 +570,8 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
                || southEastCorner;
     };
 
-    auto discoverJumpPoints = [&]() {
+    auto discoverJumpPoints = [&]()
+    {
         for (unsigned y = 1; y < mesh.getDataSize().y - 1; y++)
         {
             for (unsigned x = 1; x < mesh.getDataSize().x - 1; x++)

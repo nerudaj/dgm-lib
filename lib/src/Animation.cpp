@@ -36,8 +36,7 @@ void Animation::setState(const std::string& state, bool shouldLoop)
     auto newState = states.get().find(state);
     if (newState == states.get().end())
     {
-        throw dgm::GeneralException(
-            "Cannot find animation state '" + state + "'");
+        throw dgm::Exception("Cannot find animation state '" + state + "'");
     }
 
     currentState = newState;

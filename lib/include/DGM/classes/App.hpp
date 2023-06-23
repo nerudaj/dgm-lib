@@ -113,7 +113,7 @@ namespace dgm
             numberOfStatesToPop = states.size();
         }
 
-        App(dgm::Window& window);
+        [[nodiscard]] explicit App(dgm::Window& window);
         App(App&&) = delete;
         App(App&) = delete;
         ~App();

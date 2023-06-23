@@ -83,9 +83,9 @@ namespace dgm
              */
             virtual void update(const dgm::Time& time) = 0;
 
-            ParticleSystemInterface() = default;
+            [[nodiscard]] ParticleSystemInterface() = default;
             ParticleSystemInterface(ParticleSystemInterface& other) = delete;
-            ParticleSystemInterface(ParticleSystemInterface&& other) = default;
+            [nodiscard]] ParticleSystemInterface(ParticleSystemInterface&& other) = default;
             virtual ~ParticleSystemInterface();
         };
     }; // namespace ps

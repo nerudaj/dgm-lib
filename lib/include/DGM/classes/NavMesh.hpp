@@ -145,8 +145,8 @@ namespace dgm
         getPath(const sf::Vector2f& from, const sf::Vector2f& to);
 
         WorldNavMesh() = delete;
-        WorldNavMesh(const dgm::Mesh& mesh);
-        WorldNavMesh(WorldNavMesh&& other) = default;
+        [[nodiscard]] explicit WorldNavMesh(const dgm::Mesh& mesh);
+        [[nodiscard]] WorldNavMesh(WorldNavMesh&& other) = default;
         WorldNavMesh(const WorldNavMesh& other) = delete;
     };
 

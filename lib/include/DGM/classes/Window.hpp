@@ -53,7 +53,7 @@ namespace dgm
         /**
          *  \brief Close the Window and return configuration of closed window
          */
-        WindowSettings close();
+        [[nodiscard]] WindowSettings close();
 
         /**
          *  \brief Poll next event from SFML
@@ -64,7 +64,7 @@ namespace dgm
          *
          *  This function mimicks the behaviour of sf::RenderWindow::pollEvent
          */
-        bool pollEvent(sf::Event& event)
+        [[nodiscard]] bool pollEvent(sf::Event& event)
         {
             return window.pollEvent(event);
         }
@@ -169,14 +169,14 @@ namespace dgm
 
         [[nodiscard]] virtual sf::Image getScreenshot() const;
 
-        Window() = default;
+        [[nodiscard]] Window() = default;
 
-        Window(const WindowSettings& settings)
+        [[nodiscard]] explicit Window(const WindowSettings& settings)
         {
             open(settings);
         }
 
-        Window(
+        [[nodiscard]] Window(
             const sf::Vector2u& resolution,
             const std::string& title,
             bool fullscreen)
