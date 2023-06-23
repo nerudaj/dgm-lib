@@ -4,7 +4,9 @@ dgm-lib v1.x.x
 	* Dependencies are managed with CMake Package Manager
 	* Can be used as a subproject of another project which correctly handles linkage of all dependencies
  * Added type `dgm::ErrorMessage` which is an alias for returning `std::string` error messages wrapped in `std::expected`
- * Added documentation for `dgm::JsonLoader`
+ * Documentation changes:
+	* Added documentation for `dgm::JsonLoader`
+	* Added documentation on CMake integration
  * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
  * `dgm::ResourceManager` has been revamped
 	* It can be used to store almost any kind of resource by providing user callbacks that handle the loading. Only requirement is that the resource needs to be default-constructible.
