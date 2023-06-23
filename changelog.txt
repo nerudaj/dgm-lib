@@ -22,6 +22,7 @@ dgm-lib v1.x.x
 	* It can list all resource ids tied to particular type
 	* It no longer prevents two resources of distinct types not be able to have the same ID
  * Warning about name shadowing has been turned into error
+	 * Math constants have been removed, they are superseded by `std::numbers` from `<numbers>`
 
 dgm-lib v1.10.0
  * `dgm::ResourceManager` can now load `dgm::Clip` from JSON files

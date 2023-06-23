@@ -3,6 +3,7 @@
 #include <DGM\dgm.hpp>
 #include <cassert>
 #include <cmath>
+#include <numbers>
 
 namespace dgm
 {
@@ -12,12 +13,6 @@ namespace dgm
     class Math
     {
     public:
-        constexpr static float PI = 3.1415926536f;
-        constexpr static float PIOVER180 =
-            PI / 180.f; /// multiply this with degrees to get radians
-        constexpr static float _180OVERPI =
-            180.f / PI; /// multiply this with radians to get degrees
-
         /**
          *  \brief Compute size of the vector
          *
@@ -37,7 +32,7 @@ namespace dgm
 
         static sf::Vector2f rotateVector(const sf::Vector2f& vec, float angle)
         {
-            const float rad = angle * PIOVER180;
+            const float rad = angle * std::numbers::pi_v<float> / 180.f;
             return sf::Vector2f(
                 vec.x * std::cos(rad) - vec.y * std::sin(rad),
                 vec.x * std::sin(rad) + vec.y * std::cos(rad));
