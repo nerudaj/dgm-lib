@@ -1,27 +1,34 @@
 dgm-lib v1.x.x
- * SFML 2.6.0 is now used
- * C++23 is required
-	* [Deducing this](https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/) is used by `dgm::Buffer`
- * CMakeLists.txt overhauled:
-	* Dependencies are managed with CMake Package Manager
-	* Can be used as a subproject of another project which correctly handles linkage of all dependencies
- * Added type `dgm::ErrorMessage` which is an alias for returning `std::string` error messages wrapped in `std::expected`
- * Documentation changes:
-	* Added documentation for `dgm::JsonLoader`
-	* Added documentation on CMake integration
- * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
- * `dgm::Buffer` has been revamped
-	* It no longer guarantees stability of iterators, instead it is faster
-	* Template type is now required to be default-constructible and swappable via concepts
-	* The class is fully `constexpr` and mostly `noexcept`
- * `dgm::ResourceManager` has been revamped
-	* It can be used to store almost any kind of resource by providing user callbacks that handle the loading. Only requirement is that the resource needs to be default-constructible.
-	* It is completely `noexcept` and `[[nodiscard]]`
-	* It properly invokes destructors
-	* It no longer depends on `dgm::LoaderInterface` as loading itself is handled by the callbacks
-	* It can list all resource ids tied to particular type
-	* It no longer prevents two resources of distinct types not be able to have the same ID
- * Warning about name shadowing has been turned into error
+ * Major changes:
+	 * SFML 2.6.0 is now used
+	 * C++23 is required
+		* [Deducing this](https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/) is used by `dgm::Buffer`
+		* `std::stacktrace` is used by `dgm::GeneralException`
+	 * CMakeLists.txt has been revamped:
+		* Dependencies are managed with CMake Package Manager
+		* Can be used as a subproject of another project which correctly handles linkage of all dependencies
+	 * Error handling has been revamped:
+		* `dgm::GeneralException` renamed to `dgm::Exception`
+		* Stacktrace is appended to error message in `dgm::Exception`
+		* `dgm::ResourceException`, `dgm::EnvironmentException` and `dgm::ShellExceptions` were removed, because they were not used
+		* Added type `dgm::ErrorMessage` which is an alias for returning `std::string` error messages wrapped in `std::expected`
+	 * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
+	 * `dgm::Buffer` has been revamped:
+		* It no longer guarantees stability of iterators, instead it is faster
+		* Template type is now required to be default-constructible and swappable via concepts
+		* The class is fully `constexpr` and mostly `noexcept`
+	 * `dgm::ResourceManager` has been revamped:
+		* It can be used to store almost any kind of resource by providing user callbacks that handle the loading. Only requirement is that the resource needs to be default-constructible.
+		* It is completely `noexcept` and `[[nodiscard]]`
+		* It properly invokes destructors
+		* It no longer depends on `dgm::LoaderInterface` as loading itself is handled by the callbacks
+		* It can list all resource ids tied to particular type
+		* It no longer prevents two resources of distinct types not be able to have the same ID
+ * Minor changes:
+	 * Documentation changes:
+		* Added documentation for `dgm::JsonLoader`
+		* Added documentation on CMake integration
+	 * Warning about name shadowing has been turned into error
 	 * Math constants have been removed, they are superseded by `std::numbers` from `<numbers>`
 
 dgm-lib v1.10.0
