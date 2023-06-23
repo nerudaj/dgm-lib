@@ -1,5 +1,7 @@
 dgm-lib v1.x.x
  * SFML 2.6.0 is now used
+ * C++23 is required
+	* [Deducing this](https://devblogs.microsoft.com/cppblog/cpp23-deducing-this/) is used by `dgm::Buffer`
  * CMakeLists.txt overhauled:
 	* Dependencies are managed with CMake Package Manager
 	* Can be used as a subproject of another project which correctly handles linkage of all dependencies
@@ -8,6 +10,10 @@ dgm-lib v1.x.x
 	* Added documentation for `dgm::JsonLoader`
 	* Added documentation on CMake integration
  * Changed `dgm::LoaderInterface` to require `std::filesystem::path` instead of `std::string`
+ * `dgm::Buffer` has been revamped
+	* It no longer guarantees stability of iterators, instead it is faster
+	* Template type is now required to be default-constructible and swappable via concepts
+	* The class is fully `constexpr` and mostly `noexcept`
  * `dgm::ResourceManager` has been revamped
 	* It can be used to store almost any kind of resource by providing user callbacks that handle the loading. Only requirement is that the resource needs to be default-constructible.
 	* It is completely `noexcept` and `[[nodiscard]]`

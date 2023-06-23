@@ -51,9 +51,6 @@ namespace BufferTests
             ints.last() = i;
         }
 
-        int* first = &ints[0];
-        int* second = &ints[1];
-        int* third = &ints[2];
         ints.remove(1);
 
         REQUIRE(ints.size() == 2);
@@ -62,11 +59,6 @@ namespace BufferTests
 
         // Still exists in memory, but is not iterated over
         REQUIRE(ints[2] == 1);
-
-        // Pointer stability
-        REQUIRE(*first == 0);
-        REQUIRE(*second == 1);
-        REQUIRE(*third == 2);
     }
 
     TEST_CASE("Range loop", "Buffer")
@@ -135,6 +127,22 @@ namespace BufferTests
             REQUIRE(*(*ints.begin()) == 69);
             REQUIRE(ints.last().get() == valuePtrBackup);
         }
+    }
+
+    constexpr bool constexprUsage()
+    {
+        auto&& buffer = dgm::Buffer<int>(10);
+        buffer.expand();
+        buffer.last() = 42;
+        buffer.expand();
+        buffer.last() = 24;
+        buffer.remove(0);
+        return buffer[0] == 24;
+    }
+
+    TEST_CASE("constexpr", "Buffer")
+    {
+        static_assert(constexprUsage());
     }
 
     /*TEST_CASE("Algorithm support", "Buffer") {

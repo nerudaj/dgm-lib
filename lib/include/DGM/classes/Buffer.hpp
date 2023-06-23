@@ -5,47 +5,37 @@
 
 namespace dgm
 {
+    template<class T>
+    concept TrivialOrSmartPointer = IsSmartPtr<T>
+                                    || (std::is_default_constructible_v<T>
+                                        && std::is_swappable_v<T>);
+
     /**
      * \brief Dynamic buffer array with add/remove operations
      *
-     * \details This class is useful for cases where you need
-     * constant-sized memory block (dynamically allocated),
-     * which has O(1) for addition/deletion of items and where
-     * order of items doesn't matter.
+     * \details This is a collection in vein of std::array
+     * that has O(1) addition and deletion, but order of items
+     * or stability of iterators are not guaranteed after
+     * removing an element.
      *
-     * In addition, constructor of each item is called only
-     * once when the container is allocated. This way, you
-     * always have to manually initialize data each time you
-     * get a reference to "new" item, but you can elide
-     * initialization which would remain constant anyways and
-     * take a lot of time. (An example: if you have array of
-     * enemies and all enemies use the same spritesheet. Even
-     * though you always have to set their initial lives, position
-     * and such, you don't have to load the texture each time,
-     * saving you a lot of time).
-     *
-     * Also, if you obtain pointer to stored item once, this
-     * pointer is guaranteed to be valid until the container
-     * destructor is called.
+     * Unlike std::array, this collection can be manually resized
+     * if needed. The template type should be default-constructible
+     * and swappable. If it isn't, wrap it in smart pointer.
      */
     template<
-        typename T,
-        typename A = std::allocator<T>,
-        bool SmartPtrUsed = IsSmartPtr<T>,
-        class PointerType = std::conditional<SmartPtrUsed, T, T*>::type>
+        TrivialOrSmartPointer T,
+        typename Allocator = std::allocator<T>,
+        bool SmartPtrUsed = IsSmartPtr<T>>
     class Buffer
     {
     protected:
-        PointerType* data = nullptr;  ///< Array of pointers to data
+        T* data = nullptr;            ///< Array of pointers to data
         std::size_t dataSize = 0;     ///< Number of used items
         std::size_t dataCapacity = 0; ///< Number of allocated items
 
     public:
         class const_iterator
         {
-        protected:
-            PointerType* ptr; ///< Pointer to data
-
         public:
             typedef ptrdiff_t difference_type;
             typedef T value_type;
@@ -53,12 +43,22 @@ namespace dgm
             typedef value_type* pointer;
             typedef std::random_access_iterator_tag iterator_category;
 
+        public:
+            [[nodiscard]] constexpr explicit const_iterator(T* value) noexcept
+                : ptr(value)
+            {
+            }
+
+            [[nodiscard]] constexpr const_iterator(const_iterator&& other) =
+                default;
+            [[nodiscard]] constexpr const_iterator(
+                const const_iterator& other) = default;
+            [[nodiscard]] constexpr ~const_iterator() = default;
+
+        public:
             [[nodiscard]] const reference& operator*() const noexcept
             {
-                if constexpr (SmartPtrUsed)
-                    return *ptr;
-                else
-                    return **ptr;
+                return *ptr;
             }
 
             const_iterator& operator++() noexcept
@@ -67,91 +67,62 @@ namespace dgm
                 return *this;
             }
 
-            const_iterator operator++(int) noexcept
+            [[nodiscard]] constexpr const_iterator operator++(int) noexcept
             {
-                const_iterator copy(*this);
+                auto&& copy = const_iterator(*this);
                 ptr++;
                 return copy;
             }
 
-            const_iterator& operator--() noexcept
+            [[nodiscard]] constexpr const_iterator& operator--() noexcept
             {
                 ptr--;
                 return *this;
             }
 
-            const_iterator operator--(int) noexcept
+            [[nodiscard]] constexpr const_iterator operator--(int) noexcept
             {
-                const_iterator copy(*this);
+                auto&& copy = const_iterator(*this);
                 ptr--;
                 return copy;
             }
 
-            const_iterator& operator=(const const_iterator& other) noexcept
-            {
-                ptr = other.ptr;
-                return *this;
-            }
-
-            [[nodiscard]] difference_type
+            [[nodiscard]] constexpr difference_type
             operator-(const const_iterator& other) const noexcept
             {
                 return ptr - other.ptr;
             }
 
-            [[nodiscard]] difference_type
+            [[nodiscard]] constexpr difference_type
             operator+(const const_iterator& other) const noexcept
             {
                 return ptr + other.ptr;
             }
 
-            [[nodiscard]] bool
+            [[nodiscard]] constexpr bool
             operator==(const const_iterator& second) const noexcept
             {
                 return ptr == second.ptr;
             }
 
-            [[nodiscard]] bool
+            [[nodiscard]] constexpr bool
             operator!=(const const_iterator& other) const noexcept
             {
                 return ptr != other.ptr;
             }
 
-            [[nodiscard]] auto
+            [[nodiscard]] constexpr auto
             operator<=>(const const_iterator& other) const noexcept
             {
                 return ptr <=> other.ptr;
             }
 
-            friend void
-            swap(const_iterator& first, const_iterator& second) noexcept
-            {
-                std::swap(first.ptr, second.ptr);
-            }
-
-            const_iterator(PointerType* value)
-            {
-                ptr = value;
-            }
-
-            const_iterator(const_iterator&& other)
-            {
-                ptr = other.ptr;
-            }
-
-            const_iterator(const const_iterator& other)
-            {
-                ptr = other.ptr;
-            }
-
-            ~const_iterator() {}
+        protected:
+            T* ptr; ///< Pointer to data
         };
 
-        class iterator : public const_iterator
+        class iterator final : public const_iterator
         {
-        protected:
-            PointerType* ptr; ///< Pointer to data
-
         public:
             typedef ptrdiff_t difference_type;
             typedef T value_type;
@@ -159,96 +130,112 @@ namespace dgm
             typedef value_type* pointer;
             typedef std::random_access_iterator_tag iterator_category;
 
-            [[nodiscard]] reference& operator*() const noexcept
+        public:
+            [[nodiscard]] constexpr iterator(T* value) noexcept
+                : const_iterator(value)
             {
-                if constexpr (SmartPtrUsed)
-                    return *ptr;
-                else
-                    return **ptr;
             }
 
-            iterator& operator++() noexcept
+            [[nodiscard]] constexpr iterator(const iterator& other) noexcept =
+                default;
+            [[nodiscard]] constexpr iterator(iterator&& other) noexcept =
+                default;
+            constexpr ~iterator() = default;
+
+        public:
+            [[nodiscard]] constexpr reference& operator*() const noexcept
             {
-                ++ptr;
+                return *super::ptr;
+            }
+
+            [[nodiscard]] constexpr iterator& operator++() noexcept
+            {
+                ++super::ptr;
                 return *this;
             }
 
-            iterator operator++(int) noexcept
+            [[nodiscard]] constexpr iterator operator++(int) noexcept
             {
                 iterator copy(*this);
-                ++ptr;
+                ++super::ptr;
                 return copy;
             }
 
-            iterator& operator--() noexcept
+            [[nodiscard]] constexpr iterator& operator--() noexcept
             {
-                --ptr;
+                --super::ptr;
                 return *this;
             }
 
-            iterator operator--(int) noexcept
+            [[nodiscard]] constexpr iterator operator--(int) noexcept
             {
-                iterator copy(*this);
-                --ptr;
+                auto&& copy = iterator(*this);
+                --super::ptr;
                 return copy;
             }
 
-            [[nodiscard]] iterator& operator=(const iterator& other) noexcept
+            [[nodiscard]] constexpr iterator&
+            operator=(const iterator& other) noexcept
             {
-                ptr = other.ptr;
+                super::ptr = other.ptr;
                 return *this;
             }
 
-            [[nodiscard]] difference_type
+            [[nodiscard]] constexpr difference_type
             operator-(const const_iterator& other) const noexcept
             {
-                return ptr - other.ptr;
+                return super::ptr - other.ptr;
             }
 
-            [[nodiscard]] difference_type
+            [[nodiscard]] constexpr difference_type
             operator+(const const_iterator& other) const noexcept
             {
-                return ptr + other.ptr;
+                return super::ptr + other.ptr;
             }
 
-            [[nodiscard]] bool operator==(const iterator& second) const noexcept
+            [[nodiscard]] constexpr bool
+            operator==(const iterator& second) const noexcept
             {
-                return ptr == second.ptr;
+                return super::ptr == second.ptr;
             }
 
-            [[nodiscard]] bool operator!=(const iterator& second) const noexcept
+            [[nodiscard]] constexpr bool
+            operator!=(const iterator& second) const noexcept
             {
-                return ptr != second.ptr;
+                return super::ptr != second.ptr;
             }
 
-            [[nodiscard]] auto operator<=>(const iterator& other) const noexcept
+            [[nodiscard]] constexpr auto
+            operator<=>(const iterator& other) const noexcept
             {
-                return ptr <=> other.ptr;
+                return super::ptr <=> other.ptr;
             }
 
-            friend void swap(iterator& first, iterator& second) noexcept
-            {
-                std::swap(first.ptr, second.ptr);
-            }
-
-            iterator(PointerType* value)
-            {
-                ptr = value;
-            }
-
-            iterator(const iterator& other)
-            {
-                ptr = other.ptr;
-            }
-
-            iterator(iterator&& other)
-            {
-                ptr = other.ptr;
-            }
-
-            ~iterator() {}
+        private:
+            using super = const_iterator;
         };
 
+    public:
+        [[nodiscard]] constexpr Buffer() noexcept = default;
+
+        [[nodiscard]] constexpr explicit Buffer(std::size_t maxSize)
+        {
+            resize(maxSize);
+        }
+
+        Buffer& operator=(Buffer other) = delete;
+        Buffer(const Buffer& buffer) = delete;
+        Buffer(Buffer&& buffer) = delete;
+
+        constexpr ~Buffer() noexcept
+        {
+            delete[] data;
+            data = nullptr;
+            dataSize = 0;
+            dataCapacity = 0;
+        }
+
+    public:
         /**
          * \brief Add an item to buffer
          *
@@ -260,7 +247,7 @@ namespace dgm
          * until this function unhides them, making them included in range loops
          * and such.
          */
-        bool expand() noexcept
+        constexpr bool expand() noexcept
         {
             if (dataSize == dataCapacity) return false;
             return ++dataSize;
@@ -275,18 +262,18 @@ namespace dgm
          * with the last valid item and decrease size of the container,
          * hiding the removed item.
          */
-        void remove(std::size_t index) noexcept
+        constexpr void remove(std::size_t index) noexcept
         {
             assert(index < dataSize);
             std::swap(data[index], data[--dataSize]);
         }
 
-        void remove(const iterator& itr) noexcept
+        constexpr void remove(const iterator& itr) noexcept
         {
             remove(itr - begin());
         }
 
-        void remove(const const_iterator& itr) noexcept
+        constexpr void remove(const const_iterator& itr) noexcept
         {
             remove(itr - begin());
         }
@@ -298,7 +285,7 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        [[nodiscard]] T& last() noexcept
+        [[nodiscard]] constexpr T& last() noexcept
         {
             return this->operator[](dataSize - 1);
         }
@@ -310,7 +297,7 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        [[nodiscard]] const T& last() const noexcept
+        [[nodiscard]] constexpr const T& last() const noexcept
         {
             return this->operator[](dataSize - 1);
         }
@@ -331,18 +318,16 @@ namespace dgm
          * \note This method is expensive. The best way is to use it once when
          * your program is initializing.
          */
-        void resize(std::size_t maxSize)
+        constexpr void resize(std::size_t maxSize)
         {
-            const std::size_t unallocatedSectionStart = data ? dataCapacity : 0;
-
             // Upscaling buffer
             if (data)
             {
                 // Allocate bigger array
-                PointerType* newData = new PointerType[maxSize];
+                auto&& newData = new T[maxSize];
                 if (!newData) throw std::bad_alloc();
 
-                // Copy valid pointers
+                // Copy valid items
                 for (size_t i = 0; i < dataCapacity; i++)
                     std::swap(newData[i], data[i]);
 
@@ -354,38 +339,30 @@ namespace dgm
             else
             {
                 // Allocate bigger array
-                data = new PointerType[maxSize];
+                data = new T[maxSize];
                 if (!data) throw std::bad_alloc();
-            }
-
-            // Allocate pointers (only relevant when smart pointers are not
-            // involved)
-            if constexpr (!SmartPtrUsed)
-            {
-                for (std::size_t i = unallocatedSectionStart; i < maxSize; i++)
-                {
-                    data[i] = new T;
-                    if (!data[i]) throw std::bad_alloc();
-                }
             }
 
             dataCapacity = maxSize;
         }
 
-        [[nodiscard]] T& operator[](std::size_t index)
+        /*T& operator[](std::size_t index) noexcept
         {
-            if constexpr (SmartPtrUsed)
-                return data[index];
-            else
-                return *data[index];
+            return data[index];
         }
 
-        [[nodiscard]] const T& operator[](std::size_t index) const
+        [[nodiscard]] constexpr const T&
+        operator[](std::size_t index) const noexcept
         {
-            if constexpr (SmartPtrUsed)
-                return data[index];
-            else
-                return *data[index];
+            return data[index];
+        }*/
+
+        // Deducing this getter
+        template<class Self>
+        [[nodiscard]] constexpr auto&&
+        operator[](this Self&& self, std::size_t index) noexcept
+        {
+            return self.data[index];
         }
 
         /**
@@ -420,46 +397,14 @@ namespace dgm
             return dataSize == dataCapacity;
         }
 
-        [[nodiscard]] const_iterator begin() const noexcept
+        [[nodiscard]] constexpr const_iterator begin() const noexcept
         {
             return const_iterator(data);
         }
 
-        [[nodiscard]] const_iterator end() const noexcept
+        [[nodiscard]] constexpr const_iterator end() const noexcept
         {
             return const_iterator(data + dataSize);
-        }
-
-        Buffer& operator=(Buffer other) = delete;
-
-        Buffer() = default;
-
-        Buffer(std::size_t maxSize)
-        {
-            resize(maxSize);
-        }
-
-        Buffer(const Buffer& buffer) = delete;
-        Buffer(Buffer&& buffer) = delete;
-
-        ~Buffer()
-        {
-            if (data)
-            {
-                // Free each item pointer  (only relevant when smart pointers
-                // are not involved)
-                if constexpr (!SmartPtrUsed)
-                {
-                    for (unsigned i = 0; i < dataCapacity; i++)
-                        delete data[i];
-                }
-
-                delete[] data;
-            }
-
-            data = nullptr;
-            dataSize = 0;
-            dataCapacity = 0;
         }
     };
 } // namespace dgm
