@@ -1,4 +1,5 @@
 dgm-lib v1.x.x
+ * SFML 2.6.0 is now used
  * CMakeLists.txt overhauled:
 	* Dependencies are managed with CMake Package Manager
 	* Can be used as a subproject of another project which correctly handles linkage of all dependencies
