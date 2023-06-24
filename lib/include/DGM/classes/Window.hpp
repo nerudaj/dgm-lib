@@ -189,7 +189,7 @@ namespace dgm
 
         virtual ~Window()
         {
-            if (isOpen()) close();
+            if (isOpen()) std::ignore = close();
         }
     };
 }; // namespace dgm

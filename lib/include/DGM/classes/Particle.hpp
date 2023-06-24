@@ -152,8 +152,7 @@ namespace dgm
              *
              *  \param [in] vertices Pointer to topleft vertex of particle
              */
-            [[nodiscard]] constexpr explicit Particle(
-                sf::Vertex* vertices) noexcept
+            [[nodiscard]] explicit Particle(sf::Vertex* vertices) noexcept
                 : quad(vertices)
             {
             }

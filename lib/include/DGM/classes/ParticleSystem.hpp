@@ -85,7 +85,8 @@ namespace dgm
 
             [[nodiscard]] ParticleSystemInterface() = default;
             ParticleSystemInterface(ParticleSystemInterface& other) = delete;
-            [nodiscard]] ParticleSystemInterface(ParticleSystemInterface&& other) = default;
+            [[nodiscard]] ParticleSystemInterface(
+                ParticleSystemInterface&& other) = default;
             virtual ~ParticleSystemInterface();
         };
     }; // namespace ps

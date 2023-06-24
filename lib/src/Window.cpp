@@ -30,14 +30,14 @@ dgm::WindowSettings dgm::Window::close()
 void dgm::Window::toggleFullscreen()
 {
     auto size = getSize();
-    close();
+    std::ignore = close();
     fullscreen = !fullscreen;
     open(size, title, fullscreen);
 }
 
 void dgm::Window::changeResolution(const sf::Vector2u& newResolution)
 {
-    close();
+    std::ignore = close();
     open(newResolution, title, fullscreen);
 }
 
