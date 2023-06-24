@@ -1,4 +1,4 @@
-dgm-lib v1.x.x
+dgm-lib v2.0.0
  * Major changes:
 	 * SFML 2.6.0 is now used
 	 * C++23 is required
