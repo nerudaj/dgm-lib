@@ -1,14 +1,17 @@
 #pragma once
 
-#include "Traits.hpp"
 #include <cassert>
+#include <concepts>
+#include <memory>
 
 namespace dgm
 {
+    /**
+     *  Default constructible and swappable
+     */
     template<class T>
-    concept TrivialOrSmartPointer = IsSmartPtr<T>
-                                    || (std::is_default_constructible_v<T>
-                                        && std::is_swappable_v<T>);
+    concept TrivialType =
+        std::is_default_constructible_v<T> && std::is_swappable_v<T>;
 
     /**
      * \brief Dynamic buffer array with add/remove operations
@@ -22,16 +25,12 @@ namespace dgm
      * if needed. The template type should be default-constructible
      * and swappable. If it isn't, wrap it in smart pointer.
      */
-    template<
-        TrivialOrSmartPointer T,
-        typename Allocator = std::allocator<T>,
-        bool SmartPtrUsed = IsSmartPtr<T>>
-    class Buffer
+    template<TrivialType T, unsigned Capacity>
+    class Buffer final
     {
     protected:
-        T* data = nullptr;            ///< Array of pointers to data
-        std::size_t dataSize = 0;     ///< Number of used items
-        std::size_t dataCapacity = 0; ///< Number of allocated items
+        T* data = nullptr;        ///< Array of pointers to data
+        std::size_t dataSize = 0; ///< Number of used items
 
     public:
         class const_iterator
@@ -216,11 +215,10 @@ namespace dgm
         };
 
     public:
-        [[nodiscard]] constexpr Buffer() noexcept = default;
-
-        [[nodiscard]] constexpr explicit Buffer(std::size_t maxSize)
+        [[nodiscard]] constexpr Buffer()
         {
-            resize(maxSize);
+            data = new T[Capacity];
+            if (!data) throw std::bad_alloc();
         }
 
         Buffer& operator=(Buffer other) = delete;
@@ -232,7 +230,6 @@ namespace dgm
             delete[] data;
             data = nullptr;
             dataSize = 0;
-            dataCapacity = 0;
         }
 
     public:
@@ -247,10 +244,22 @@ namespace dgm
          * until this function unhides them, making them included in range loops
          * and such.
          */
-        constexpr bool expand() noexcept
+        constexpr bool grow() noexcept
         {
-            if (dataSize == dataCapacity) return false;
+            if (dataSize == Capacity) return false;
             return ++dataSize;
+        }
+
+        /**
+         *  \brief Add item to buffer and return reference to it
+         *
+         *  \details Does the same thing as grow, but it always returns
+         *  result of getLast even if capacity was reached.
+         */
+        [[nodiscard]] constexpr T& growUnchecked() noexcept
+        {
+            grow();
+            return getLast();
         }
 
         /**
@@ -261,6 +270,8 @@ namespace dgm
          * \details This will swap the item at position \p index
          * with the last valid item and decrease size of the container,
          * hiding the removed item.
+         *
+         * All iterators must be discarded after calling this function.
          */
         constexpr void remove(std::size_t index) noexcept
         {
@@ -268,26 +279,14 @@ namespace dgm
             std::swap(data[index], data[--dataSize]);
         }
 
-        constexpr void remove(const iterator& itr) noexcept
-        {
-            remove(itr - begin());
-        }
-
         constexpr void remove(const const_iterator& itr) noexcept
         {
             remove(itr - begin());
         }
 
-        /**
-         * \brief Get element to last available item
-         *
-         * \details Last item equals to last added item with \ref expand
-         * unless \ref remove was called. Use this immediately \ref expand
-         * to initialize the unhid item.
-         */
-        [[nodiscard]] constexpr T& last() noexcept
+        constexpr void remove(const iterator& itr) noexcept
         {
-            return this->operator[](dataSize - 1);
+            remove(itr - begin());
         }
 
         /**
@@ -297,65 +296,11 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        [[nodiscard]] constexpr const T& last() const noexcept
+        template<class Self>
+        [[nodiscard]] constexpr auto&& getLast(this Self&& self) noexcept
         {
-            return this->operator[](dataSize - 1);
+            return self.operator[](self.dataSize - 1);
         }
-
-        /**
-         * \brief Resize buffer array
-         *
-         * \param [in] maxSize New capacity for array
-         *
-         * \details This method is used for setting new size of the
-         * buffer array. If \p newSize is bigger than current \ref capacity
-         * then new items will be constructed. If \p newSize is less, then
-         * some items on high indices will be invalidated and deleted.
-         *
-         * If items are not deleted via this function, any pointers to them
-         * are still valid, even after resize.
-         *
-         * \note This method is expensive. The best way is to use it once when
-         * your program is initializing.
-         */
-        constexpr void resize(std::size_t maxSize)
-        {
-            // Upscaling buffer
-            if (data)
-            {
-                // Allocate bigger array
-                auto&& newData = new T[maxSize];
-                if (!newData) throw std::bad_alloc();
-
-                // Copy valid items
-                for (size_t i = 0; i < dataCapacity; i++)
-                    std::swap(newData[i], data[i]);
-
-                // Free old array, assign new array
-                delete[] data;
-                data = newData;
-            }
-            // Creating buffer
-            else
-            {
-                // Allocate bigger array
-                data = new T[maxSize];
-                if (!data) throw std::bad_alloc();
-            }
-
-            dataCapacity = maxSize;
-        }
-
-        /*T& operator[](std::size_t index) noexcept
-        {
-            return data[index];
-        }
-
-        [[nodiscard]] constexpr const T&
-        operator[](std::size_t index) const noexcept
-        {
-            return data[index];
-        }*/
 
         // Deducing this getter
         template<class Self>
@@ -368,7 +313,7 @@ namespace dgm
         /**
          * \brief Get number of used items
          */
-        [[nodiscard]] constexpr std::size_t size() const noexcept
+        [[nodiscard]] constexpr std::size_t getSize() const noexcept
         {
             return dataSize;
         }
@@ -376,15 +321,15 @@ namespace dgm
         /**
          * \brief Get total number of available items
          */
-        [[nodiscard]] constexpr std::size_t capacity() const noexcept
+        [[nodiscard]] constexpr std::size_t getCapacity() const noexcept
         {
-            return dataCapacity;
+            return Capacity;
         }
 
         /**
          * \brief Test whether buffer is empty
          */
-        [[nodiscard]] constexpr bool empty() const noexcept
+        [[nodiscard]] constexpr bool isEmpty() const noexcept
         {
             return dataSize == 0;
         }
@@ -392,9 +337,9 @@ namespace dgm
         /**
          * \brief Test whether buffer is full
          */
-        [[nodiscard]] constexpr bool full() const noexcept
+        [[nodiscard]] constexpr bool isFull() const noexcept
         {
-            return dataSize == dataCapacity;
+            return dataSize == Capacity;
         }
 
         [[nodiscard]] constexpr const_iterator begin() const noexcept

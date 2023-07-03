@@ -1,3 +1,13 @@
+dgm-lib v2.1.0
+ * `dgm::Buffer` has been revamped even further
+	* Capacity is now part of the template and it cannot be resized
+	* Methods were renamed to make sense and not to blindly follow `std`
+		* `grow` instead of `expand`
+		* `getSize`, `getCapacity`, `getLast`, `isEmpty`, `isFull` instead of `size`, `capacity`, `last`, `empty` and `full`
+ * `dgm::ParticleSystemInterface` now requires template parameter for particle count
+	* This is because it internally uses `dgm::Buffer`
+	* `init` method was removed and logic moved to constructor
+
 dgm-lib v2.0.0
  * Major changes:
 	 * SFML 2.6.0 is now used
