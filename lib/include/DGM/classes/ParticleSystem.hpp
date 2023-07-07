@@ -7,6 +7,7 @@
 #include <DGM/classes/Window.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <concepts>
 
 namespace dgm
 {
@@ -28,7 +29,6 @@ namespace dgm
             {
                 try
                 {
-                    renderer.init(ParticleCount);
                     for (unsigned i = 0; i < particles.getCapacity(); i++)
                     {
                         particles[i] =
@@ -50,7 +50,7 @@ namespace dgm
             /**
              *  \brief Render particle system to target window
              */
-            void draw(dgm::Window& window)
+            inline void draw(dgm::Window& window)
             {
                 window.draw(renderer);
             }
@@ -64,7 +64,7 @@ namespace dgm
              *  All particles must share the same texture, however they can be
              * textured/animated via clipping the texture.
              */
-            void setTexture(sf::Texture& texture) noexcept
+            constexpr void setTexture(sf::Texture& texture) noexcept
             {
                 renderer.setTexture(texture);
             }
@@ -78,13 +78,19 @@ namespace dgm
             virtual void update(const dgm::Time& time) = 0;
 
         protected:
+            [[nodiscard]] inline std::unique_ptr<dgm::ps::Particle>
+            createParticle(sf::Vertex* vertices, unsigned index) const
+            {
+                return createParticleImpl(vertices, index);
+            }
+
             /**
              *  \brief Method for creating particle objects
              *
              *  \param [in] vertices  Vertices for particle from VBO
              *  \param [in] id        Unique ID of particle
              *
-             *  This method is called automatically during init() and
+             *  This method is called automatically in constructor and
              *  serves the purpose of allocating memory for particles.
              *  If you can work with dgm::ps::Particle, you can ignore
              *  it, if you need ParticleSystem to work with your custom
@@ -93,17 +99,19 @@ namespace dgm
              *  Index denotes the index in particles buffer.
              *
              *  \warn Do not call this method by yourself! It is only
-             *  supposed to be called during init() to populate particles array.
+             *  supposed to be called during construction to populate particles
+             * array.
              */
-            virtual std::unique_ptr<dgm::ps::Particle>
-            createParticle(sf::Vertex* vertices, unsigned) const
+            [[nodiscard]] virtual std::unique_ptr<dgm::ps::Particle>
+            createParticleImpl(sf::Vertex* vertices, unsigned) const
             {
                 return std::make_unique<Particle>(vertices);
             }
 
         protected:
-            dgm::ps::ParticleSystemRenderer renderer;
-            Buffer<std::unique_ptr<dgm::ps::Particle>, ParticleCount> particles;
+            dgm::ps::ParticleSystemRenderer<ParticleCount> renderer;
+            dgm::StaticBuffer<std::unique_ptr<Particle>, ParticleCount>
+                particles;
         };
     }; // namespace ps
 };     // namespace dgm

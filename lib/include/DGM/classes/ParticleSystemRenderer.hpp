@@ -1,31 +1,28 @@
 #pragma once
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <cassert>
-
-namespace sf
-{
-    class RenderTarget;
-    class RenderStates;
-    class Texture;
-} // namespace sf
 
 namespace dgm
 {
     namespace ps
     {
-        class ParticleSystemRenderer : public sf::Drawable,
-                                       public sf::Transformable
+        template<unsigned ParticleCount>
+        class ParticleSystemRenderer final
+            : public sf::Drawable
+            , public sf::Transformable
         {
-        private:
-            virtual void
-            draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-        protected:
-            sf::VertexArray vertices;
-            sf::Texture* texture = nullptr;
+        public:
+            [[nodiscard]] constexpr ParticleSystemRenderer()
+                : sf::Drawable(), sf::Transformable()
+            {
+                vertices = sf::VertexArray(sf::Quads, ParticleCount * 4);
+            }
 
         public:
             /**
@@ -34,21 +31,11 @@ namespace dgm
              *  \param[in] index  Index of particle
              *  \return Pointer to array of four vertices
              */
-            sf::Vertex* getParticleVertices(const std::size_t index) noexcept
+            [[nodiscard]] constexpr sf::Vertex*
+            getParticleVertices(const std::size_t index) noexcept
             {
                 assert(index < vertices.getVertexCount() / 4);
                 return &vertices[index * 4];
-            }
-
-            /**
-             *  \brief Initialize the object
-             *
-             *  \param[in]  particleCount  How many particles will renderer hold
-             *  \return TRUE on success
-             */
-            void init(const std::size_t particleCount)
-            {
-                vertices = sf::VertexArray(sf::Quads, particleCount * 4);
             }
 
             /**
@@ -60,10 +47,28 @@ namespace dgm
              *  Particle system does not interface directly with bound texture,
              * it only has access to clipping data.
              */
-            void setTexture(sf::Texture& newTexture) noexcept
+            constexpr void setTexture(sf::Texture& newTexture) noexcept
             {
                 texture = &newTexture;
             }
+
+        private:
+            virtual void
+            draw(sf::RenderTarget& target, sf::RenderStates states) const
+            {
+                // apply the transform
+                states.transform *= getTransform();
+
+                // apply the tileset texture
+                states.texture = texture;
+
+                // draw the vertex array
+                target.draw(vertices, states);
+            }
+
+        private:
+            sf::VertexArray vertices;
+            sf::Texture* texture = nullptr;
         };
     }; // namespace ps
 };     // namespace dgm

@@ -137,7 +137,7 @@ namespace dgm
             virtual void spawn(
                 const sf::Vector2f& position,
                 const sf::Vector2f& size,
-                const sf::Time& lifespan);
+                const sf::Time& lifespan = sf::Time::Zero);
 
             /**
              *  \brief Despawn the particle so it's no longer rendered

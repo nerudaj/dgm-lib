@@ -1,18 +1,10 @@
 #pragma once
 
+#include <DGM/classes/Traits.hpp>
 #include <cassert>
-#include <concepts>
-#include <memory>
 
 namespace dgm
 {
-    /**
-     *  Default constructible and swappable
-     */
-    template<class T>
-    concept TrivialType =
-        std::is_default_constructible_v<T> && std::is_swappable_v<T>;
-
     /**
      * \brief Dynamic buffer array with add/remove operations
      *
@@ -21,12 +13,11 @@ namespace dgm
      * or stability of iterators are not guaranteed after
      * removing an element.
      *
-     * Unlike std::array, this collection can be manually resized
-     * if needed. The template type should be default-constructible
-     * and swappable. If it isn't, wrap it in smart pointer.
+     * The template type should be default-constructible
+     * and swappable. If it isn't, wrap it in a smart pointer.
      */
     template<TrivialType T, unsigned Capacity>
-    class Buffer final
+    class StaticBuffer final // TODO: rename to static
     {
     protected:
         T* data = nullptr;        ///< Array of pointers to data
@@ -215,17 +206,17 @@ namespace dgm
         };
 
     public:
-        [[nodiscard]] constexpr Buffer()
+        [[nodiscard]] constexpr StaticBuffer()
         {
             data = new T[Capacity];
             if (!data) throw std::bad_alloc();
         }
 
-        Buffer& operator=(Buffer other) = delete;
-        Buffer(const Buffer& buffer) = delete;
-        Buffer(Buffer&& buffer) = delete;
+        StaticBuffer& operator=(StaticBuffer other) = delete;
+        StaticBuffer(const StaticBuffer& buffer) = delete;
+        StaticBuffer(StaticBuffer&& buffer) = delete;
 
-        constexpr ~Buffer() noexcept
+        constexpr ~StaticBuffer() noexcept
         {
             delete[] data;
             data = nullptr;
@@ -352,4 +343,20 @@ namespace dgm
             return const_iterator(data + dataSize);
         }
     };
+
+    namespace traits
+    {
+        template<class T>
+        struct is_static_buffer : std::false_type
+        {
+        };
+
+        template<TrivialType T, unsigned C>
+        struct is_static_buffer<dgm::StaticBuffer<T, C>> : std::true_type
+        {
+        };
+    } // namespace traits
+
+    template<class T>
+    concept StaticBufferType = traits::is_static_buffer<T>::value;
 } // namespace dgm

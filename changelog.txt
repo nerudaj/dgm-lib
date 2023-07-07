@@ -1,12 +1,29 @@
 dgm-lib v2.1.0
  * `dgm::Buffer` has been revamped even further
+	* Renamed to `dgm::StaticBuffer`
 	* Capacity is now part of the template and it cannot be resized
 	* Methods were renamed to make sense and not to blindly follow `std`
 		* `grow` instead of `expand`
 		* `getSize`, `getCapacity`, `getLast`, `isEmpty`, `isFull` instead of `size`, `capacity`, `last`, `empty` and `full`
- * `dgm::ParticleSystemInterface` now requires template parameter for particle count
+ * Added class `dgm::DynamicBuffer`
+	* Has constant time insertion and deletion and stable iterators
+	* Doesn't have upper cap on the item count
+ * Added class `dgm::SpatialBuffer`
+	* Can perform fast lookups for items based on their position (something like QuadTree, but simpler)
+	* Has somewhat constant time insertion and deletion
+		* Spatially huge items will take longer than tiny ones
+ * `dgm::ps::ParticleSystemInterface` now requires template parameter for particle count
 	* This is because it internally uses `dgm::Buffer`
 	* `init` method was removed and logic moved to constructor
+	* `createParticle` is no longer virtual, instead it wraps call to virtual `createParticleImpl`
+ * `dgm::ps::ParticleSystemRenderer` now requires template parameter for particle count
+	* `init` method was removed and logic moved to constructor
+ * Traits
+	* Renamed `IsSmartPtr` to `SmartPtrType`
+	* Renamed `IsSfVector` to `SfmlVectorType`
+	* Added concept for `TrivialType`, used by container types
+ * KNOWN LIMITATIONS:
+	* Neither dynamic and spatial buffers support iterating
 
 dgm-lib v2.0.0
  * Major changes:

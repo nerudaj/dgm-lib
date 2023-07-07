@@ -4,9 +4,9 @@
 namespace BufferTests
 {
 
-    TEST_CASE("Capacity/Size", "Buffer")
+    TEST_CASE("Capacity/Size", "StaticBuffer")
     {
-        dgm::Buffer<int, 2> ints;
+        dgm::StaticBuffer<int, 2> ints;
         REQUIRE(ints.getCapacity() == 2);
         REQUIRE(ints.getSize() == 0);
 
@@ -19,9 +19,9 @@ namespace BufferTests
         REQUIRE(!ints.grow());
     }
 
-    TEST_CASE("Remove", "Buffer")
+    TEST_CASE("Remove", "StaticBuffer")
     {
-        dgm::Buffer<int, 3> ints;
+        dgm::StaticBuffer<int, 3> ints;
         for (unsigned i = 0; i < ints.getCapacity(); i++)
         {
             REQUIRE(ints.grow());
@@ -38,9 +38,9 @@ namespace BufferTests
         REQUIRE(ints[2] == 1);
     }
 
-    TEST_CASE("Range loop", "Buffer")
+    TEST_CASE("Range loop", "StaticBuffer")
     {
-        dgm::Buffer<int, 3> ints;
+        dgm::StaticBuffer<int, 3> ints;
         REQUIRE(ints.isEmpty());
         for (unsigned i = 0; i < ints.getCapacity(); i++)
         {
@@ -72,11 +72,11 @@ namespace BufferTests
         }
     }
 
-    TEST_CASE("Smart pointers", "Buffer")
+    TEST_CASE("Smart pointers", "StaticBuffer")
     {
         SECTION("Shared pointer is stable when removing data")
         {
-            dgm::Buffer<std::shared_ptr<int>, 2> ints;
+            dgm::StaticBuffer<std::shared_ptr<int>, 2> ints;
             ints.grow();
             ints.getLast() = std::make_shared<int>(42);
             ints.grow();
@@ -92,7 +92,7 @@ namespace BufferTests
 
     constexpr bool constexprUsage()
     {
-        auto&& buffer = dgm::Buffer<int, 10>();
+        auto&& buffer = dgm::StaticBuffer<int, 10>();
         buffer.grow();
         buffer.getLast() = 42;
         buffer.grow();
@@ -101,13 +101,13 @@ namespace BufferTests
         return buffer[0] == 24;
     }
 
-    TEST_CASE("constexpr", "Buffer")
+    TEST_CASE("constexpr", "StaticBuffer")
     {
         static_assert(constexprUsage());
     }
 
-    /*TEST_CASE("Algorithm support", "Buffer") {
-            dgm::Buffer<int> ints(10);
+    /*TEST_CASE("Algorithm support", "StaticBuffer") {
+            dgm::StaticBuffer<int> ints(10);
             for (unsigned i = 0; i < ints.capacity(); i++) {
                     REQUIRE(ints.grow());
                     ints.last() = rand() % 256;
