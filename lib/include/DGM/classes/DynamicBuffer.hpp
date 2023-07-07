@@ -7,9 +7,15 @@
 
 namespace dgm
 {
-    template<TrivialType T>
+    template<TrivialType T, unsigned PreallocatedMemoryAmount = 128>
     class DynamicBuffer final
     {
+    public:
+        [[nodiscard]] constexpr DynamicBuffer()
+        {
+            data.reserve(PreallocatedMemoryAmount);
+        }
+
     public:
         template<class Self>
         [[nodiscard]] constexpr auto&&
@@ -42,7 +48,8 @@ namespace dgm
         }
 
     private:
-        [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept {
+        [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept
+        {
             return firstFreeSlot == std::numeric_limits<std::size_t>::max();
         }
 

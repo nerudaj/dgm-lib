@@ -179,7 +179,7 @@ public:
 	}
 
 private:
-	dgm::SpatialBuffer<dgm::Circle, 1000> collisionBoxes;
+	dgm::SpatialBuffer<dgm::Circle, 640> collisionBoxes;
 };
 
 int main(int, char* [])
@@ -188,11 +188,12 @@ int main(int, char* [])
 	sf::Event event;
 	dgm::Time time;
 
-	auto&& agentsViz = AgentParticleSystemLogarithmic<2000>();
-	//auto&& agentsViz = AgentParticleSystemQuadratic<1000>();
+	auto&& agentsViz = AgentParticleSystemLogarithmic<10000>();
+	//auto&& agentsViz = AgentParticleSystemQuadratic<2000>();
 
 	sf::Font font;
-	assert(font.loadFromFile("../../sandbox/segoe_ui.ttf"));
+	std::cout << std::filesystem::current_path().string() << std::endl;
+	font.loadFromFile("../../sandbox/segoe_ui.ttf");
 	sf::Text text;
 	text.setFont(font);
 

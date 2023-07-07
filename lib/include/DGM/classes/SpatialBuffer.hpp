@@ -99,12 +99,12 @@ namespace dgm
                          (coord.x - boundingBox.left) * FineResolution
                              / boundingBox.width,
                          0.f,
-                         static_cast<float>(FineResolution))),
+                         static_cast<float>(FineResolution - 1))),
                      static_cast<unsigned>(std::clamp(
                          (coord.y - boundingBox.top) * FineResolution
                              / boundingBox.height,
                          0.f,
-                         static_cast<float>(FineResolution))) };
+                         static_cast<float>(FineResolution - 1))) };
         }
 
         GridRect convertBoxToGridRect(const AABB& box)
@@ -118,7 +118,7 @@ namespace dgm
         }
 
         constexpr void foreachMatchingCellDo(
-            const AABB& box, std::function<constexpr void(IndexList&)> callback)
+            const AABB& box, std::function<void(IndexList&)> callback)
         {
             auto&& gridRect = convertBoxToGridRect(box);
 
