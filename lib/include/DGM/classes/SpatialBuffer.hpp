@@ -5,85 +5,210 @@
 #include <DGM/classes/Traits.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <functional>
-#include <list>
-#include <set>
-#include <unordered_map>
 #include <vector>
 
 namespace dgm
 {
+    /**
+     * \brief Concept for type that is recognized by
+     * the spatial buffer for AABB collision testing.
+     */
+    template<class T>
+    concept AaBbType =
+        std::is_same_v<T, sf::Vector2f> || std::is_same_v<T, dgm::Circle>
+        || std::is_same_v<T, dgm::Rect>;
 
-    // mid and coarse will be automatically computed
-    template<TrivialType T, unsigned FineResolution>
+    // clang-format off
+    /**
+     * \brief Data storage container that provides efficient 2D spatial lookup
+     * for items
+     *
+     * \tparam T Type of the objects stored in the buffer. They have to be
+     * default-constructible and swappable
+     *
+     * \tparam FineResolution Resolution of
+     * inner indexing grid. Should be the half of the bounding box
+     *
+     * \tparam IndexType This structure uses a lot of numerical indexes. You can
+     * specify narrower type than std::size_t to save on some memory and
+     * potentially improve cache locations
+     *
+     * Similar to quad tree, you can use this structure to store items
+     * and look them up based on given collision box. This buffer will provide
+     * you with a list of items that might collide with provided collision box.
+     *
+     * Use insert/eraseAtIndex methods to add and remove items, similar to any
+     * other collection. When you want to move an item spatially, first call
+     * removeFromLookup, move the item and then call returnToLookup, you don't
+     * have to eraseAtIndex/reinsert completely.
+     *
+     * Internally, a dgm::DynamicBuffer is used to store the items themselves
+     * and a dense grid is used to handle the spatial indexing. Indices are
+     * stable - if you delete an item, all other indices remain unaffected.
+     * However, calling operator[] with index of a deleted item will crash the
+     * program.
+     *
+     * Recommended way of using this structure:
+     *
+     * \code
+     * for (auto&& [item, id] : buffer)
+     * {
+     *     buffer.removeFromLookup(id, item.collisionBox);
+     *     for (auto&& candidateId : buffer.getOverlapCandidates(item.collisionBox))
+     *     {
+     *          auto&& candidate = buffer[candidateId];
+     *          // compute collisions, move item
+     *     }
+     *     buffer.returnToLookup(id, item.collisionBox);
+     * }
+     * \endcode
+     */
+    // clang-format on
+    template<TrivialType T, typename IndexType = std::size_t>
     class SpatialBuffer final
     {
     public:
-        using AABB = dgm::Circle;
-        using Index = std::size_t;
-        using IndexList = std::list<Index>;
+        using IndexList = dgm::DynamicBuffer<IndexType, 16, IndexType>;
 
     public:
-        SpatialBuffer(sf::FloatRect boundingBox)
-            : boundingBox(std::move(boundingBox))
+        [[nodiscard]] constexpr SpatialBuffer(
+            dgm::Rect boundingBox, unsigned gridResolution)
+            : BOUNDING_BOX(std::move(boundingBox))
+            , GRID_RESOLUTION(gridResolution)
+            , COORD_TO_GRID_X(gridResolution / BOUNDING_BOX.getSize().x)
+            , COORD_TO_GRID_Y(gridResolution / BOUNDING_BOX.getSize().y)
         {
-            static_assert(FineResolution > 0);
+            grid = std::vector<IndexList>(GRID_RESOLUTION * GRID_RESOLUTION);
         }
 
+        [[nodiscard]] SpatialBuffer(SpatialBuffer&&) = default;
+        SpatialBuffer(const SpatialBuffer&) = delete;
+        ~SpatialBuffer() = default;
+
     public:
-        void removeFromLookup(std::size_t id, const AABB& box)
+        /**
+         * \brief Remove an item stored at given index from
+         * the spatial lookup so it is not returned by getOverlapCandidates
+         *
+         * \param id Index of the object within the buffer
+         * \param box Collision box of the object
+         *
+         * It is recommended to call this function rather than eraseAtIndex
+         * if you just want to move the item in 2D space.
+         */
+        template<AaBbType AABB>
+        void removeFromLookup(IndexType id, const AABB& box)
         {
             foreachMatchingCellDo(
                 box,
                 [id](IndexList& list) constexpr
                 {
-                    // erase id from list
-                    list.remove(id);
+                    for (auto&& [item, index] : list)
+                    {
+                        if (item == id)
+                        {
+                            list.eraseAtIndex(index);
+                            break;
+                        }
+                    }
                 });
         }
 
-        inline void addToLookup(std::size_t id, const AABB& box)
+        /**
+         * \brief Return previously removed item to lookup
+         *
+         * \warn Only call this function after previous call
+         * to removeFromLookup with the same id!
+         */
+        template<AaBbType AABB>
+        inline void returnToLookup(IndexType id, const AABB& box)
         {
             foreachMatchingCellDo(
                 box,
                 [id](IndexList& list) constexpr
                 {
                     // insert cell id into cell list
-                    list.push_back(id);
+                    list.emplaceBack(id);
                 });
         }
 
-        std::size_t insert(T item, const AABB& box)
+        /**
+         * \brief Add a new item to collection
+         *
+         * \param item Item to insert
+         * \param box Collision box of the item
+         *
+         * \return Index of the inserted item
+         * that can be used with calls to
+         * removeFromLookup, returnToLookup, eraseAtIndex or
+         * operator[]. This index can also be retrieved from
+         * iterators.
+         */
+        template<AaBbType AABB>
+        IndexType insert(T item, const AABB& box)
         {
-            auto&& index = items.pushBack(item);
-            addToLookup(index, box);
+            auto&& index = items.emplaceBack(item);
+            returnToLookup(index, box);
             return index;
         }
 
-        void erase(std::size_t id, const AABB& box)
+        /**
+         * \brief Delete an item with given id and collision box from
+         * the memory
+         *
+         * \param id Index of the item
+         * \param box Collision box of the item
+         *
+         * Only use this method when you want to get rid of an item
+         * completely. If you just want to move it, use removeFromLookup
+         * insted.
+         */
+        template<AaBbType AABB>
+        void eraseAtIndex(IndexType id, const AABB& box)
         {
-            items.erase(id);
+            items.eraseAtIndex(id);
             removeFromLookup(id, box);
         }
 
-        std::set<std::size_t> getOverlapCandidates(const AABB& box)
+        template<AaBbType AABB>
+        std::vector<IndexType> getOverlapCandidates(const AABB& box)
         {
-            auto&& result = std::set<std::size_t> {};
+            if (!dgm::Collision::basic(BOUNDING_BOX, box)) return {};
+
+            auto&& result = std::vector<IndexType> {};
+            result.reserve(100);
 
             foreachMatchingCellDo(
                 box,
                 [&result](IndexList& list) constexpr
                 {
-                    // set will make sure ids are deduped
-                    result.insert(list.begin(), list.end());
+                    for (auto&& [item, _] : list)
+                    {
+                        result.push_back(item);
+                    }
                 });
 
+            // Using sort+unique is faster than set or unordered_set
+            std::sort(result.begin(), result.end());
+            result.erase(
+                std::unique(result.begin(), result.end()), result.end());
             return result;
         }
 
         template<class Self>
-        auto&& operator[](this Self&& self, std::size_t id)
+        auto&& operator[](this Self&& self, IndexType id)
         {
             return self.items[id];
+        }
+
+        [[nodiscard]] constexpr auto&& begin() noexcept
+        {
+            return items.begin();
+        }
+
+        [[nodiscard]] constexpr auto&& end() noexcept
+        {
+            return items.end();
         }
 
     private:
@@ -95,71 +220,71 @@ namespace dgm
         [[nodiscard]] constexpr sf::Vector2u
         getGridIndexFromCoord(const sf::Vector2f& coord) noexcept
         {
-            return { static_cast<unsigned>(std::clamp(
-                         (coord.x - boundingBox.left) * FineResolution
-                             / boundingBox.width,
-                         0.f,
-                         static_cast<float>(FineResolution - 1))),
-                     static_cast<unsigned>(std::clamp(
-                         (coord.y - boundingBox.top) * FineResolution
-                             / boundingBox.height,
-                         0.f,
-                         static_cast<float>(FineResolution - 1))) };
+            return {
+                static_cast<unsigned>(std::clamp(
+                    (coord.x - BOUNDING_BOX.getPosition().x) * COORD_TO_GRID_X,
+                    0.f,
+                    static_cast<float>(GRID_RESOLUTION - 1))),
+                static_cast<unsigned>(std::clamp(
+                    (coord.y - BOUNDING_BOX.getPosition().y) * COORD_TO_GRID_Y,
+                    0.f,
+                    static_cast<float>(GRID_RESOLUTION - 1)))
+            };
         }
 
-        GridRect convertBoxToGridRect(const AABB& box)
+        [[nodiscard]] GridRect
+        convertBoxToGridRect(const sf::Vector2f& point) noexcept
+        {
+            const auto&& coord = getGridIndexFromCoord(point);
+            return { coord.x, coord.y, coord.x, coord.y };
+        }
+
+        [[nodiscard]] GridRect
+        convertBoxToGridRect(const dgm::Circle& box) noexcept
         {
             auto&& center = box.getPosition();
-            auto&& radius = sf::Vector2f { box.getRadius(), box.getRadius() };
-            auto&& topLft = getGridIndexFromCoord(center - radius);
-            auto&& btmRgt = getGridIndexFromCoord(center + radius);
+            const auto&& radius =
+                sf::Vector2f { box.getRadius(), box.getRadius() };
+            const auto&& topLft = getGridIndexFromCoord(center - radius);
+            const auto&& btmRgt = getGridIndexFromCoord(center + radius);
 
             return { topLft.x, topLft.y, btmRgt.x, btmRgt.y };
         }
 
+        [[nodiscard]] GridRect
+        convertBoxToGridRect(const dgm::Rect& box) noexcept
+        {
+            const auto&& topLft = getGridIndexFromCoord(box.getPosition());
+            const auto&& btmRgt =
+                getGridIndexFromCoord(box.getPosition() + box.getSize());
+
+            return { topLft.x, topLft.y, btmRgt.x, btmRgt.y };
+        }
+
+        template<class AABB>
         constexpr void foreachMatchingCellDo(
             const AABB& box, std::function<void(IndexList&)> callback)
         {
-            auto&& gridRect = convertBoxToGridRect(box);
+            const auto&& gridRect = convertBoxToGridRect(box);
 
-            for (auto&& y = gridRect.y1; y <= gridRect.y2; y++)
+            for (auto y = gridRect.y1; y <= gridRect.y2; y++)
             {
-                for (auto&& x = gridRect.x1; x <= gridRect.x2; x++)
+                for (auto x = gridRect.x1; x <= gridRect.x2; x++)
                 {
-                    auto&& index = y * FineResolution + x;
+                    auto&& index = y * GRID_RESOLUTION + x;
                     callback(grid[index]);
                 }
             }
         }
 
     private:
-        const sf::FloatRect boundingBox;
-        DynamicBuffer<T> items;
-        std::vector<IndexList> grid =
-            std::vector<IndexList>(FineResolution * FineResolution);
+        const dgm::Rect BOUNDING_BOX;
+        const unsigned GRID_RESOLUTION;
+        const float COORD_TO_GRID_X;
+        const float COORD_TO_GRID_Y;
+        DynamicBuffer<T, 1024, IndexType> items;
+        std::vector<IndexList> grid;
+        // TODO: hierarchical lookup
     };
 
 } // namespace dgm
-
-/*
-SpatialBuffer<Actor, 1000> actors(areaBoundingBox);
-
-for (unsigned i = 0; i < 100; i++)
-    actors.insert(getActor(i));
-
-for (auto&& [actor, id] : actors)
-{
-    actors.removeFromLookup(id);
-
-    // transformation done to the actor
-    if (actors.hasOverlap(actor.body))
-        // do something else
-
-    if (actor.isDead())
-        actors.erase(id);
-    else
-        actors.addToLookup(id);
-}
-
-// when item is erased, it must be taken from lookup
-*/

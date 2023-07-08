@@ -1,8 +1,8 @@
 #pragma once
 
-#include <DGM/classes/Buffer.hpp>
 #include <DGM/classes/Error.hpp>
 #include <DGM/classes/ParticleSystemRenderer.hpp>
+#include <DGM/classes/StaticBuffer.hpp>
 #include <DGM/classes/Time.hpp>
 #include <DGM/classes/Window.hpp>
 #include <SFML/Graphics/Texture.hpp>

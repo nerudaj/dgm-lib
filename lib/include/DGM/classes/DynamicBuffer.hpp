@@ -7,7 +7,10 @@
 
 namespace dgm
 {
-    template<TrivialType T, unsigned PreallocatedMemoryAmount = 128>
+    template<
+        TrivialType T,
+        unsigned PreallocatedMemoryAmount = 128,
+        typename IndexType = std::size_t>
     class DynamicBuffer final
     {
     public:
@@ -16,21 +19,91 @@ namespace dgm
             data.reserve(PreallocatedMemoryAmount);
         }
 
+        DynamicBuffer(const DynamicBuffer&) = delete;
+        DynamicBuffer(DynamicBuffer&&) = delete;
+        ~DynamicBuffer() = default;
+
+    public:
+        class iterator
+        {
+        public:
+            using iterator_category = std::forward_iterator_tag;
+            using difference_type = ptrdiff_t;
+            using value_type = T;
+            using reference = value_type&;
+            using pointer = value_type*;
+
+        public:
+            [[nodiscard]] constexpr iterator(
+                IndexType index,
+                DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>&
+                    backref) noexcept
+                : index(index), backref(backref)
+            {
+                skipDeletedElements();
+            }
+
+        public:
+            [[nodiscard]] constexpr std::pair<reference, IndexType>
+            operator*() noexcept
+            {
+                return { backref[index], index };
+            }
+
+            constexpr iterator operator++() noexcept
+            {
+                ++index;
+                skipDeletedElements();
+                return *this;
+            }
+
+            constexpr iterator operator++(int) noexcept
+            {
+                auto copy = iterator(*this);
+                ++*this;
+                return copy;
+            }
+
+            [[nodiscard]] constexpr bool
+            operator==(const iterator& other) const noexcept
+            {
+                return index == other.index;
+            }
+
+            [[nodiscard]] constexpr bool
+            operator!=(const iterator& other) const noexcept
+            {
+                return index != other.index;
+            }
+
+        private:
+            constexpr void skipDeletedElements() noexcept
+            {
+                while (index != backref.data.size()
+                       && std::holds_alternative<Index>(backref.data[index]))
+                    ++index;
+            }
+
+        private:
+            IndexType index;
+            DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>& backref;
+        };
+
     public:
         template<class Self>
         [[nodiscard]] constexpr auto&&
-        operator[](this Self&& self, std::size_t index) noexcept
+        operator[](this Self&& self, IndexType index) noexcept
         {
             return std::get<T>(self.data[index]);
         }
 
         template<class... Args>
-        [[nodiscard]] constexpr std::size_t pushBack(Args&&... args)
+        constexpr IndexType emplaceBack(Args&&... args)
         {
             if (hasNoDeletedItems())
             {
                 data.emplace_back(T { std::forward<Args>(args)... });
-                return data.size() - 1;
+                return static_cast<IndexType>(data.size() - 1);
             }
             else
             {
@@ -41,27 +114,39 @@ namespace dgm
             }
         }
 
-        void erase(std::size_t index)
+        constexpr void eraseAtIndex(IndexType index) noexcept
         {
+            assert(std::holds_alternative<T>(
+                data[index])); // Trying to delete an already deleted item
             data[index] = Index { firstFreeSlot };
             firstFreeSlot = index;
+        }
+
+        [[nodiscard]] constexpr iterator begin() noexcept
+        {
+            return iterator(0, *this);
+        }
+
+        [[nodiscard]] constexpr iterator end() noexcept
+        {
+            return iterator(static_cast<IndexType>(data.size()), *this);
         }
 
     private:
         [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept
         {
-            return firstFreeSlot == std::numeric_limits<std::size_t>::max();
+            return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }
 
     private:
         struct Index
         {
-            std::size_t nextFreeSlot;
+            IndexType nextFreeSlot;
         };
 
         using Element = std::variant<T, Index>;
 
         std::vector<Element> data;
-        std::size_t firstFreeSlot = std::numeric_limits<std::size_t>::max();
+        IndexType firstFreeSlot = std::numeric_limits<IndexType>::max();
     };
 } // namespace dgm

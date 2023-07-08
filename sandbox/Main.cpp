@@ -97,7 +97,7 @@ public:
 	using super = dgm::ps::ParticleSystemInterface<ParticleCount>;
 
 public:
-	AgentParticleSystemLogarithmic() : super(), collisionBoxes(sf::FloatRect(0.f, 0.f, 1280.f, 1280.f))
+	AgentParticleSystemLogarithmic() : super(), collisionBoxes(dgm::Rect(0.f, 0.f, 1280.f, 1280.f), 640)
 	{
 		for (unsigned i = 0; i < super::particles.getCapacity(); i++)
 		{
@@ -174,12 +174,12 @@ public:
 			particle->moveForwardBy(tickForward);
 			body.move(tickForward);
 
-			collisionBoxes.addToLookup(i, body);
+			collisionBoxes.returnToLookup(i, body);
 		}
 	}
 
 private:
-	dgm::SpatialBuffer<dgm::Circle, 640> collisionBoxes;
+	dgm::SpatialBuffer<dgm::Circle, std::uint32_t> collisionBoxes;
 };
 
 int main(int, char* [])
@@ -189,7 +189,6 @@ int main(int, char* [])
 	dgm::Time time;
 
 	auto&& agentsViz = AgentParticleSystemLogarithmic<10000>();
-	//auto&& agentsViz = AgentParticleSystemQuadratic<2000>();
 
 	sf::Font font;
 	std::cout << std::filesystem::current_path().string() << std::endl;

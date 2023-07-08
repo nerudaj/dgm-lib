@@ -1,4 +1,4 @@
-#include "DGM/classes/Buffer.hpp"
+#include "DGM/classes/StaticBuffer.hpp"
 #include <catch2/catch_all.hpp>
 
 namespace BufferTests

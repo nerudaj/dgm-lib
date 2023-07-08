@@ -22,8 +22,6 @@ dgm-lib v2.1.0
 	* Renamed `IsSmartPtr` to `SmartPtrType`
 	* Renamed `IsSfVector` to `SfmlVectorType`
 	* Added concept for `TrivialType`, used by container types
- * KNOWN LIMITATIONS:
-	* Neither dynamic and spatial buffers support iterating
 
 dgm-lib v2.0.0
  * Major changes:
