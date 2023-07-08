@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/Traits.hpp>
+#include <cassert>
 #include <limits>
 #include <variant>
 #include <vector>

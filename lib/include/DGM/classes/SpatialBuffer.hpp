@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Collision.hpp>
 #include <DGM/classes/DynamicBuffer.hpp>
 #include <DGM/classes/Objects.hpp>
 #include <DGM/classes/Traits.hpp>
@@ -69,6 +70,7 @@ namespace dgm
     {
     public:
         using IndexList = dgm::DynamicBuffer<IndexType, 16, IndexType>;
+        using StorageType = dgm::DynamicBuffer<T, 1024, IndexType>;
 
     public:
         [[nodiscard]] constexpr SpatialBuffer(
@@ -201,12 +203,12 @@ namespace dgm
             return self.items[id];
         }
 
-        [[nodiscard]] constexpr auto&& begin() noexcept
+        [[nodiscard]] constexpr StorageType::iterator begin() noexcept
         {
             return items.begin();
         }
 
-        [[nodiscard]] constexpr auto&& end() noexcept
+        [[nodiscard]] constexpr StorageType::iterator end() noexcept
         {
             return items.end();
         }
@@ -282,7 +284,7 @@ namespace dgm
         const unsigned GRID_RESOLUTION;
         const float COORD_TO_GRID_X;
         const float COORD_TO_GRID_Y;
-        DynamicBuffer<T, 1024, IndexType> items;
+        StorageType items;
         std::vector<IndexList> grid;
         // TODO: hierarchical lookup
     };

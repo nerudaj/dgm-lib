@@ -18,7 +18,7 @@ TEST_CASE("[DynamicBuffer]")
             buffer.emplaceBack(3);
 
             int value = 1;
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
             {
                 REQUIRE(value == dummy.value);
                 ++value;
@@ -33,7 +33,7 @@ TEST_CASE("[DynamicBuffer]")
             buffer.eraseAtIndex(0);
 
             int value = 2;
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
             {
                 REQUIRE(value == dummy.value);
                 ++value;
@@ -52,7 +52,7 @@ TEST_CASE("[DynamicBuffer]")
             buffer.eraseAtIndex(2);
 
             int value = 1;
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
             {
                 REQUIRE(value == dummy.value);
                 ++value;
@@ -68,7 +68,7 @@ TEST_CASE("[DynamicBuffer]")
             buffer.eraseAtIndex(2);
 
             int value = 1;
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
             {
                 REQUIRE(value == dummy.value);
                 ++value;
@@ -80,26 +80,10 @@ TEST_CASE("[DynamicBuffer]")
             dgm::DynamicBuffer<Dummy> buffer;
             buffer.emplaceBack(1);
 
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
                 dummy.value = 42;
 
             REQUIRE(buffer[0].value == 42);
-        }
-
-        SECTION("Can convert into std containers")
-        {
-            dgm::DynamicBuffer<Dummy> buffer;
-            buffer.emplaceBack(1);
-            buffer.emplaceBack(24);
-            buffer.emplaceBack(69);
-            buffer.emplaceBack(2);
-            buffer.emplaceBack(42);
-
-            std::list<Dummy> list1(buffer.begin(), buffer.end());
-            std::vector<Dummy> vec1(buffer.begin(), buffer.end());
-
-            REQUIRE(list1.size() == 5);
-            REQUIRE(vec1.size() == 5);
         }
     }
 
@@ -114,7 +98,7 @@ TEST_CASE("[DynamicBuffer]")
             buffer.emplaceBack(3);
 
             int value = 3;
-            for (auto&& dummy : buffer)
+            for (auto&& [dummy, _] : buffer)
             {
                 REQUIRE(value == dummy.value);
                 --value;
