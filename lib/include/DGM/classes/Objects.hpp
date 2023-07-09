@@ -60,7 +60,7 @@ namespace dgm
         /**
          *  \brief Returns position of circle
          */
-        [[nodiscard]] const sf::Vector2f& getPosition() const noexcept
+        [[nodiscard]] constexpr const sf::Vector2f& getPosition() const noexcept
         {
             return position;
         }

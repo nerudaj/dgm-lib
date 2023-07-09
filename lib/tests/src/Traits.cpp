@@ -15,36 +15,36 @@ public:
     }
 };
 
-TEST_CASE("IsSmartPtr", "[Traits]")
+TEST_CASE("SmartPtrType", "[Traits]")
 {
-    static_assert(!dgm::IsSmartPtr<int>);
-    static_assert(!dgm::IsSmartPtr<A>);
-    static_assert(!dgm::IsSmartPtr<B>);
-    static_assert(!dgm::IsSmartPtr<B*>);
+    static_assert(!dgm::SmartPtrType<int>);
+    static_assert(!dgm::SmartPtrType<A>);
+    static_assert(!dgm::SmartPtrType<B>);
+    static_assert(!dgm::SmartPtrType<B*>);
 
-    static_assert(dgm::IsSmartPtr<std::unique_ptr<int>>);
-    static_assert(dgm::IsSmartPtr<std::unique_ptr<A>>);
-    static_assert(dgm::IsSmartPtr<std::unique_ptr<B>>);
-    static_assert(dgm::IsSmartPtr<std::unique_ptr<B*>>);
+    static_assert(dgm::SmartPtrType<std::unique_ptr<int>>);
+    static_assert(dgm::SmartPtrType<std::unique_ptr<A>>);
+    static_assert(dgm::SmartPtrType<std::unique_ptr<B>>);
+    static_assert(dgm::SmartPtrType<std::unique_ptr<B*>>);
 
-    static_assert(dgm::IsSmartPtr<std::shared_ptr<int>>);
-    static_assert(dgm::IsSmartPtr<std::shared_ptr<A>>);
-    static_assert(dgm::IsSmartPtr<std::shared_ptr<B>>);
-    static_assert(dgm::IsSmartPtr<std::shared_ptr<B*>>);
+    static_assert(dgm::SmartPtrType<std::shared_ptr<int>>);
+    static_assert(dgm::SmartPtrType<std::shared_ptr<A>>);
+    static_assert(dgm::SmartPtrType<std::shared_ptr<B>>);
+    static_assert(dgm::SmartPtrType<std::shared_ptr<B*>>);
 
-    static_assert(dgm::IsSmartPtr<std::weak_ptr<int>>);
-    static_assert(dgm::IsSmartPtr<std::weak_ptr<A>>);
-    static_assert(dgm::IsSmartPtr<std::weak_ptr<B>>);
-    static_assert(dgm::IsSmartPtr<std::weak_ptr<B*>>);
+    static_assert(dgm::SmartPtrType<std::weak_ptr<int>>);
+    static_assert(dgm::SmartPtrType<std::weak_ptr<A>>);
+    static_assert(dgm::SmartPtrType<std::weak_ptr<B>>);
+    static_assert(dgm::SmartPtrType<std::weak_ptr<B*>>);
 }
 
-TEST_CASE("IsSfVector", "[Traits]")
+TEST_CASE("SfmlVectorType", "[Traits]")
 {
-    static_assert(!dgm::IsSfVector<int>);
-    static_assert(!dgm::IsSfVector<A>);
-    static_assert(!dgm::IsSfVector<std::pair<int, int>>);
+    static_assert(!dgm::SfmlVectorType<int>);
+    static_assert(!dgm::SfmlVectorType<A>);
+    static_assert(!dgm::SfmlVectorType<std::pair<int, int>>);
 
-    static_assert(dgm::IsSfVector<sf::Vector2<int>>);
-    static_assert(dgm::IsSfVector<sf::Vector2u>);
-    static_assert(dgm::IsSfVector<sf::Vector2f>);
+    static_assert(dgm::SfmlVectorType<sf::Vector2<int>>);
+    static_assert(dgm::SfmlVectorType<sf::Vector2u>);
+    static_assert(dgm::SfmlVectorType<sf::Vector2f>);
 }

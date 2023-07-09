@@ -11,14 +11,14 @@ namespace dgm
     class Utility
     {
     public:
-        template<IsSfVector T>
+        template<SfmlVectorType T>
         static std::string to_string(const T& vec)
         {
             return "[" + std::to_string(vec.x) + ", " + std::to_string(vec.y)
                    + "]";
         }
 
-        template<IsSfVector T>
+        template<SfmlVectorType T>
         struct less
         {
             [[nodiscard]] constexpr inline bool
