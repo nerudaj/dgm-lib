@@ -103,10 +103,10 @@ public:
 		{
 			auto&& particle = this->particles.growUnchecked();
 
-			auto&& x = (i % 80) * 16;
-			auto&& y = (i / 80) * 16;
+			auto&& x = (i % 160) * 8;
+			auto&& y = (i / 160) * 8;
 			auto&& size = static_cast<float>(i % 5 + 1);
-			auto&& position = sf::Vector2f(x + 8.f, y + 8.f);
+			auto&& position = sf::Vector2f(x + 4.f, y + 4.f);
 
 			particle->spawn(
 				position, sf::Vector2f(1.f, 1.f) * size);
@@ -188,13 +188,18 @@ int main(int, char* [])
 	sf::Event event;
 	dgm::Time time;
 
-	auto&& agentsViz = AgentParticleSystemLogarithmic<10000>();
+	auto&& agentsViz = AgentParticleSystemLogarithmic<20000>();
 
 	sf::Font font;
 	std::cout << std::filesystem::current_path().string() << std::endl;
 	font.loadFromFile("../../sandbox/segoe_ui.ttf");
 	sf::Text text;
 	text.setFont(font);
+	text.setFillColor(sf::Color::Red);
+	text.setStyle(sf::Text::Bold);
+
+	float elapsed = 0.f;
+	unsigned maxFps = 0;
 
 	while (window.isOpen())
 	{
@@ -207,7 +212,14 @@ int main(int, char* [])
 		time.reset();
 
 		agentsViz.update(time);
-		text.setString(std::to_string(static_cast<unsigned>(1.f / time.getDeltaTime())));
+		maxFps = std::max(static_cast<unsigned>(1.f / time.getDeltaTime()), maxFps);
+		elapsed += time.getDeltaTime();
+		if (elapsed > 1.f)
+		{
+			text.setString(std::to_string(maxFps));
+			maxFps = 0;
+			elapsed = 0.f;
+		}
 
 		// Draw
 		window.beginDraw();

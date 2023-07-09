@@ -8,8 +8,16 @@
 
 namespace dgm
 {
+    /**
+     * \brief std::vector replacement with O(1) insertions and deletions
+     * and stable iterators.
+     *
+     * \warn This class is mainly used as an underlying type for
+     * dgm::SpatialBuffer. For your projects, consider using plf::colony
+     * instead.
+     */
     template<
-        TrivialType T,
+        class T,
         unsigned PreallocatedMemoryAmount = 128,
         typename IndexType = std::size_t>
     class DynamicBuffer final

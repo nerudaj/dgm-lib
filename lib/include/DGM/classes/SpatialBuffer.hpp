@@ -3,7 +3,6 @@
 #include <DGM/classes/Collision.hpp>
 #include <DGM/classes/DynamicBuffer.hpp>
 #include <DGM/classes/Objects.hpp>
-#include <DGM/classes/Traits.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <functional>
 #include <vector>
@@ -65,22 +64,26 @@ namespace dgm
      * \endcode
      */
     // clang-format on
-    template<TrivialType T, typename IndexType = std::size_t>
+    template<
+        class T,
+        typename IndexType = std::size_t,
+        typename GridResolutionType = unsigned>
     class SpatialBuffer final
     {
     public:
-        using IndexList = dgm::DynamicBuffer<IndexType, 16, IndexType>;
+        using IndexListType = std::vector<IndexType>;
         using StorageType = dgm::DynamicBuffer<T, 1024, IndexType>;
 
     public:
         [[nodiscard]] constexpr SpatialBuffer(
-            dgm::Rect boundingBox, unsigned gridResolution)
+            dgm::Rect boundingBox, GridResolutionType gridResolution)
             : BOUNDING_BOX(std::move(boundingBox))
             , GRID_RESOLUTION(gridResolution)
             , COORD_TO_GRID_X(gridResolution / BOUNDING_BOX.getSize().x)
             , COORD_TO_GRID_Y(gridResolution / BOUNDING_BOX.getSize().y)
         {
-            grid = std::vector<IndexList>(GRID_RESOLUTION * GRID_RESOLUTION);
+            grid =
+                std::vector<IndexListType>(GRID_RESOLUTION * GRID_RESOLUTION);
         }
 
         [[nodiscard]] SpatialBuffer(SpatialBuffer&&) = default;
@@ -103,13 +106,14 @@ namespace dgm
         {
             foreachMatchingCellDo(
                 box,
-                [id](IndexList& list) constexpr
+                [id](IndexListType& list) constexpr
                 {
-                    for (auto&& [item, index] : list)
+                    for (unsigned i = 0; i < list.size(); i++)
                     {
-                        if (item == id)
+                        if (list[i] == id)
                         {
-                            list.eraseAtIndex(index);
+                            list[i] = list[list.size() - 1];
+                            list.pop_back();
                             break;
                         }
                     }
@@ -125,12 +129,12 @@ namespace dgm
         template<AaBbType AABB>
         inline void returnToLookup(IndexType id, const AABB& box)
         {
-            foreachMatchingCellDo(
+            foreachMatchingCellDo<AABB, false>(
                 box,
-                [id](IndexList& list) constexpr
+                [id](IndexListType& list) constexpr
                 {
                     // insert cell id into cell list
-                    list.emplaceBack(id);
+                    list.push_back(id);
                 });
         }
 
@@ -172,23 +176,30 @@ namespace dgm
             removeFromLookup(id, box);
         }
 
+        /**
+         * \brief Get collection of ids of items that might be colliding with
+         * given bounding box.
+         *
+         * If you don't want id of currently tested item to pop up in this
+         * list, remove it first using removeFromLookup method.
+         *
+         * It is safe to call operator[] on every id returned by this method
+         * until next call to erase that might delete given id.
+         */
         template<AaBbType AABB>
         std::vector<IndexType> getOverlapCandidates(const AABB& box)
         {
             if (!dgm::Collision::basic(BOUNDING_BOX, box)) return {};
 
             auto&& result = std::vector<IndexType> {};
-            result.reserve(100);
+            result.reserve(32);
 
             foreachMatchingCellDo(
                 box,
-                [&result](IndexList& list) constexpr
-                {
-                    for (auto&& [item, _] : list)
-                    {
-                        result.push_back(item);
-                    }
-                });
+                [&result](IndexListType& list) constexpr
+                { result.insert(result.end(), list.begin(), list.end()); });
+
+            if (result.empty()) return result;
 
             // Using sort+unique is faster than set or unordered_set
             std::sort(result.begin(), result.end());
@@ -263,30 +274,38 @@ namespace dgm
             return { topLft.x, topLft.y, btmRgt.x, btmRgt.y };
         }
 
-        template<class AABB>
+        template<class AABB, bool skipEmpty = true>
         constexpr void foreachMatchingCellDo(
-            const AABB& box, std::function<void(IndexList&)> callback)
+            const AABB& box, std::function<void(IndexListType&)> callback)
         {
             const auto&& gridRect = convertBoxToGridRect(box);
 
-            for (auto y = gridRect.y1; y <= gridRect.y2; y++)
+            for (GridResolutionType y = gridRect.y1; y <= gridRect.y2; y++)
             {
-                for (auto x = gridRect.x1; x <= gridRect.x2; x++)
+                for (GridResolutionType x = gridRect.x1,
+                                        index = y * GRID_RESOLUTION + x;
+                     x <= gridRect.x2;
+                     ++x, ++index)
                 {
-                    auto&& index = y * GRID_RESOLUTION + x;
-                    callback(grid[index]);
+                    if constexpr (skipEmpty)
+                    {
+                        if (!grid[index].empty()) callback(grid[index]);
+                    }
+                    else
+                    {
+                        callback(grid[index]);
+                    }
                 }
             }
         }
 
     private:
         const dgm::Rect BOUNDING_BOX;
-        const unsigned GRID_RESOLUTION;
+        const GridResolutionType GRID_RESOLUTION;
         const float COORD_TO_GRID_X;
         const float COORD_TO_GRID_Y;
         StorageType items;
-        std::vector<IndexList> grid;
-        // TODO: hierarchical lookup
+        std::vector<IndexListType> grid;
     };
 
 } // namespace dgm
