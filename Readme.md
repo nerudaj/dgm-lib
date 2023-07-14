@@ -27,15 +27,15 @@ Dependencies are managed via CPM. Latest CPM script is downloaded during configu
 
 Project has following options:
 
- * ENABLE_TESTS - Default: ON. When enabled, unit-tests target is created.
- * ENABLE_SANDBOX - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
- * OVERRIDE_RUNTIME_OUTPUT_DIR - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (${CMAKE_BINARY_DIR}/Compiled). This way executables can be run right away without worrying about DLL lookup.
+ * `ENABLE_TESTS` - Default: ON. When enabled, unit-tests target is created.
+ * `ENABLE_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
+ * `OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
 
 All these options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts.
 
 ## Packaging
 
-To create full release package, just run the make-release.bat. It will configure the project, build it and run the tests prior to packaging. If everything goes well, you will end up with `RELEASE` with zipfile with full package.
+To create full release package, just run the `make-release.bat`. It will configure the project, build it and run the tests prior to packaging. If everything goes well, you will end up with `RELEASE` with zipfile with full package.
 
 Version bump must be performed in both `changelog.txt` and `cmake/version.cmake`.
 
