@@ -151,6 +151,11 @@ namespace dgm
         struct Index
         {
             IndexType nextFreeSlot;
+
+            [[nodiscard]] constexpr explicit Index(IndexType nfs) noexcept
+                : nextFreeSlot(nfs)
+            {
+            }
         };
 
         using Element = std::variant<T, Index>;

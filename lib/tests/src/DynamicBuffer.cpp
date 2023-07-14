@@ -4,6 +4,8 @@
 struct Dummy
 {
     int value;
+
+    Dummy(int value) : value(value) {}
 };
 
 TEST_CASE("[DynamicBuffer]")

@@ -2,6 +2,7 @@
 
 #include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Error.hpp>
+#include <DGM/classes/Traits.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
@@ -36,7 +37,7 @@ namespace dgm
         draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     protected:
-        sf::Texture* texturePtr = nullptr;
+        const sf::Texture* texturePtr = nullptr;
         sf::VertexArray vertices;
         sf::Vector2f tileSize;
         sf::Vector2u dataSize;
@@ -100,9 +101,9 @@ namespace dgm
 
         [[nodiscard]] TileMap() = default;
 
-        [[nodiscard]] explicit TileMap(
-            sf::Texture& texture, const dgm::Clip& clip)
-            : texturePtr(&texture), clip(clip)
+        template<UniversalReference<dgm::Clip> _Clip>
+        [[nodiscard]] explicit TileMap(const sf::Texture& texture, _Clip&& clip)
+            : texturePtr(&texture), clip(std::forward<_Clip>(clip))
         {
         }
     };

@@ -53,5 +53,11 @@ TEST_CASE("[SpatialBuffer]")
                 REQUIRE(candidateIds.front() == 0u);
             }
         }
+
+        SECTION("Can insert std::unique_ptr")
+        {
+            dgm::DynamicBuffer<std::unique_ptr<Dummy>> dummies;
+            dummies.emplaceBack(std::make_unique<Dummy>(1));
+        }
     }
 }

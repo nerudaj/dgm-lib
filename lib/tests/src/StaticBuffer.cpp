@@ -6,7 +6,7 @@ namespace BufferTests
 
     TEST_CASE("Capacity/Size", "StaticBuffer")
     {
-        dgm::StaticBuffer<int, 2> ints;
+        auto&& ints = dgm::StaticBuffer<int>(2);
         REQUIRE(ints.getCapacity() == 2);
         REQUIRE(ints.getSize() == 0);
 
@@ -21,7 +21,7 @@ namespace BufferTests
 
     TEST_CASE("Remove", "StaticBuffer")
     {
-        dgm::StaticBuffer<int, 3> ints;
+        auto&& ints = dgm::StaticBuffer<int>(3);
         for (unsigned i = 0; i < ints.getCapacity(); i++)
         {
             REQUIRE(ints.grow());
@@ -40,7 +40,7 @@ namespace BufferTests
 
     TEST_CASE("Range loop", "StaticBuffer")
     {
-        dgm::StaticBuffer<int, 3> ints;
+        auto&& ints = dgm::StaticBuffer<int>(3);
         REQUIRE(ints.isEmpty());
         for (unsigned i = 0; i < ints.getCapacity(); i++)
         {
@@ -76,7 +76,7 @@ namespace BufferTests
     {
         SECTION("Shared pointer is stable when removing data")
         {
-            dgm::StaticBuffer<std::shared_ptr<int>, 2> ints;
+            auto&& ints = dgm::StaticBuffer<std::shared_ptr<int>>(3);
             ints.grow();
             ints.getLast() = std::make_shared<int>(42);
             ints.grow();
@@ -92,7 +92,7 @@ namespace BufferTests
 
     constexpr bool constexprUsage()
     {
-        auto&& buffer = dgm::StaticBuffer<int, 10>();
+        auto&& buffer = dgm::StaticBuffer<int>(10);
         buffer.grow();
         buffer.getLast() = 42;
         buffer.grow();
@@ -105,20 +105,5 @@ namespace BufferTests
     {
         static_assert(constexprUsage());
     }
-
-    /*TEST_CASE("Algorithm support", "StaticBuffer") {
-            dgm::StaticBuffer<int> ints(10);
-            for (unsigned i = 0; i < ints.capacity(); i++) {
-                    REQUIRE(ints.grow());
-                    ints.last() = rand() % 256;
-            }
-
-            std::sort(ints.begin(), ints.end());
-
-            REQUIRE(ints.getSize() == ints.capacity());
-            for (unsigned i = 1; i < ints.getSize(); i++) {
-                    REQUIRE(ints[i - 1] < ints[i]);
-            }
-    }*/
 
 } // namespace BufferTests
