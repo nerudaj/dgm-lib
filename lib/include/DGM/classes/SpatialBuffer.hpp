@@ -208,6 +208,11 @@ namespace dgm
             return result;
         }
 
+        [[nodiscard]] const constexpr dgm::Rect& getBoundingBox() const noexcept
+        {
+            return BOUNDING_BOX;
+        }
+
         template<class Self>
         auto&& operator[](this Self&& self, IndexType id)
         {
