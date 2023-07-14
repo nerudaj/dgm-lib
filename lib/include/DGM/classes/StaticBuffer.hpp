@@ -16,13 +16,9 @@ namespace dgm
      * The template type should be default-constructible
      * and swappable. If it isn't, wrap it in a smart pointer.
      */
-    template<TrivialType T, unsigned Capacity>
-    class StaticBuffer final // TODO: rename to static
+    template<TrivialType T>
+    class StaticBuffer final
     {
-    protected:
-        T* data = nullptr;        ///< Array of pointers to data
-        std::size_t dataSize = 0; ///< Number of used items
-
     public:
         class const_iterator
         {
@@ -206,10 +202,11 @@ namespace dgm
         };
 
     public:
-        [[nodiscard]] constexpr StaticBuffer()
+        [[nodiscard]] constexpr explicit StaticBuffer(unsigned maxCapacity)
         {
-            data = new T[Capacity];
+            data = new T[maxCapacity];
             if (!data) throw std::bad_alloc();
+            capacity = maxCapacity;
         }
 
         StaticBuffer& operator=(StaticBuffer other) = delete;
@@ -237,7 +234,7 @@ namespace dgm
          */
         constexpr bool grow() noexcept
         {
-            if (dataSize == Capacity) return false;
+            if (dataSize == capacity) return false;
             return ++dataSize;
         }
 
@@ -314,7 +311,7 @@ namespace dgm
          */
         [[nodiscard]] constexpr std::size_t getCapacity() const noexcept
         {
-            return Capacity;
+            return capacity;
         }
 
         /**
@@ -330,7 +327,7 @@ namespace dgm
          */
         [[nodiscard]] constexpr bool isFull() const noexcept
         {
-            return dataSize == Capacity;
+            return dataSize == capacity;
         }
 
         [[nodiscard]] constexpr const_iterator begin() const noexcept
@@ -342,6 +339,11 @@ namespace dgm
         {
             return const_iterator(data + dataSize);
         }
+
+    protected:
+        T* data = nullptr;        ///< Array of pointers to data
+        std::size_t dataSize = 0; ///< Number of used items
+        std::size_t capacity = 0; ///< Total number of available items
     };
 
     namespace traits
@@ -351,8 +353,8 @@ namespace dgm
         {
         };
 
-        template<TrivialType T, unsigned C>
-        struct is_static_buffer<dgm::StaticBuffer<T, C>> : std::true_type
+        template<TrivialType T>
+        struct is_static_buffer<dgm::StaticBuffer<T>> : std::true_type
         {
         };
     } // namespace traits

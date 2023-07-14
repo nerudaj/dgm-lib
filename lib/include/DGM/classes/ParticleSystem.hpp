@@ -21,11 +21,11 @@ namespace dgm
          *  \details Always inherit from this class when creating new
          *  particle system.
          */
-        template<unsigned ParticleCount>
         class ParticleSystemInterface
         {
         public:
-            [[nodiscard]] ParticleSystemInterface()
+            [[nodiscard]] ParticleSystemInterface(unsigned particleCount)
+                : renderer(particleCount), particles(particleCount)
             {
                 try
                 {
@@ -64,7 +64,7 @@ namespace dgm
              *  All particles must share the same texture, however they can be
              * textured/animated via clipping the texture.
              */
-            constexpr void setTexture(sf::Texture& texture) noexcept
+            constexpr void setTexture(const sf::Texture& texture) noexcept
             {
                 renderer.setTexture(texture);
             }
@@ -109,9 +109,8 @@ namespace dgm
             }
 
         protected:
-            dgm::ps::ParticleSystemRenderer<ParticleCount> renderer;
-            dgm::StaticBuffer<std::unique_ptr<Particle>, ParticleCount>
-                particles;
+            dgm::ps::ParticleSystemRenderer renderer;
+            dgm::StaticBuffer<std::unique_ptr<Particle>> particles;
         };
     }; // namespace ps
 };     // namespace dgm

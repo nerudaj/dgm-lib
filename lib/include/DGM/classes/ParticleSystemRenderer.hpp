@@ -12,16 +12,16 @@ namespace dgm
 {
     namespace ps
     {
-        template<unsigned ParticleCount>
         class ParticleSystemRenderer final
             : public sf::Drawable
             , public sf::Transformable
         {
         public:
-            [[nodiscard]] constexpr ParticleSystemRenderer()
+            [[nodiscard]] explicit ParticleSystemRenderer(
+                unsigned particleCount)
                 : sf::Drawable(), sf::Transformable()
             {
-                vertices = sf::VertexArray(sf::Quads, ParticleCount * 4);
+                vertices = sf::VertexArray(sf::Quads, particleCount * 4);
             }
 
         public:
@@ -31,7 +31,7 @@ namespace dgm
              *  \param[in] index  Index of particle
              *  \return Pointer to array of four vertices
              */
-            [[nodiscard]] constexpr sf::Vertex*
+            [[nodiscard]] sf::Vertex*
             getParticleVertices(const std::size_t index) noexcept
             {
                 assert(index < vertices.getVertexCount() / 4);
@@ -47,7 +47,7 @@ namespace dgm
              *  Particle system does not interface directly with bound texture,
              * it only has access to clipping data.
              */
-            constexpr void setTexture(sf::Texture& newTexture) noexcept
+            constexpr void setTexture(const sf::Texture& newTexture) noexcept
             {
                 texture = &newTexture;
             }
@@ -68,7 +68,7 @@ namespace dgm
 
         private:
             sf::VertexArray vertices;
-            sf::Texture* texture = nullptr;
+            const sf::Texture* texture = nullptr;
         };
     }; // namespace ps
 };     // namespace dgm
