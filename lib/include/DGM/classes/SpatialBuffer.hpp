@@ -151,9 +151,9 @@ namespace dgm
          * iterators.
          */
         template<AaBbType AABB>
-        IndexType insert(T item, const AABB& box)
+        IndexType insert(T&& item, const AABB& box)
         {
-            auto&& index = items.emplaceBack(item);
+            auto&& index = items.emplaceBack(std::forward<T>(item));
             returnToLookup(index, box);
             return index;
         }

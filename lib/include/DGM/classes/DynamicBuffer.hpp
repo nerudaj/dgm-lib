@@ -111,7 +111,7 @@ namespace dgm
         {
             if (hasNoDeletedItems())
             {
-                data.emplace_back(T { std::forward<Args>(args)... });
+                data.emplace_back(std::forward<Args>(args)...);
                 return static_cast<IndexType>(data.size() - 1);
             }
             else
