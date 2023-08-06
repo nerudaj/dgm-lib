@@ -4,33 +4,6 @@
 #include <array>
 #include <catch2/catch_all.hpp>
 
-class LoaderMock final : public dgm::LoaderInterface
-{
-public:
-    [[nodiscard]] virtual dgm::Clip
-    loadClipFromFile(const std::filesystem::path&) const override
-    {
-        return dgm::Clip();
-    }
-
-    [[nodiscard]] dgm::Clip loadClipFromStream(std::istream&) const
-    {
-        return dgm::Clip();
-    }
-
-    [[nodiscard]] virtual dgm::AnimationStates
-    loadAnimationsFromFile(const std::filesystem::path&) const override
-    {
-        return dgm::AnimationStates();
-    }
-
-    [[nodiscard]] dgm::AnimationStates
-    loadAnimationsFromStream(std::istream&) const
-    {
-        return dgm::AnimationStates();
-    }
-};
-
 class LoggableResource
 {
 public:
@@ -48,6 +21,8 @@ public:
         dtorCalledCount++;
     }
 };
+
+void loadLoggable(const std::filesystem::path&, LoggableResource&) {}
 
 TEST_CASE("[ResourceManager]")
 {
@@ -94,7 +69,7 @@ TEST_CASE("[ResourceManager]")
             {
                 dgm::ResourceManager resmgr2;
                 REQUIRE(resmgr2.loadResource<LoggableResource>(
-                    "path", [](const path&, auto&) {}));
+                    "path", loadLoggable));
             }
 
             // resmgr2 is now destroyed, dtors should have been called
@@ -146,5 +121,17 @@ TEST_CASE("[ResourceManager]")
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesA.json"));
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesB.json"));
         REQUIRE(!resmgr.hasResource<dgm::Clip>("to_be_skipped.txt"));
+    }
+
+    SECTION("Can unload resource")
+    {
+        unsigned loadedCnt = LoggableResource::ctorCalledCount;
+        unsigned unloadedCnt = LoggableResource::dtorCalledCount;
+        REQUIRE(
+            resmgr.loadResource<LoggableResource>("unloadable", loadLoggable));
+        resmgr.unloadResource<LoggableResource>("unloadable");
+
+        REQUIRE(loadedCnt + 1u == LoggableResource::ctorCalledCount);
+        REQUIRE(unloadedCnt + 1u == LoggableResource::dtorCalledCount);
     }
 }

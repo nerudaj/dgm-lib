@@ -115,6 +115,35 @@ namespace dgm
         }
 
         /**
+         *  Remove resource with a given id from the database
+         *
+         *  If no resource of given type or with given id is in
+         *  the database, this function throws an exception.
+         */
+        template<CompatibleResourceType T>
+        void unloadResource(const std::string& id)
+        {
+            try
+            {
+                const auto&& tid = typeid(T).hash_code();
+                auto&& resources = data.at(tid);
+                auto&& itr = resources.find(id);
+                if (itr == resources.end())
+                    throw std::runtime_error(
+                        std::format("Id {} is not loaded", id));
+
+                destructors.at(tid)(itr->second);
+                ::operator delete(itr->second);
+                resources.erase(itr);
+            }
+            catch (std::exception& e)
+            {
+                throw dgm::Exception(std::format(
+                    "Unloading resource failed. Reason: {}", e.what()));
+            }
+        }
+
+        /**
         Recursively loads resources from a directory.
 
         Only files that have the \p allowedExtensions will be

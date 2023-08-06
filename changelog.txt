@@ -7,6 +7,7 @@ dgm v2.x.x
 	* `getIntersection(line, line)` - for finding intersection of two lines
 	* `getIntersection(line, circle)` - for finding intersections between a line and a circle
 	* `hasIntersection(line, circle)` - faster check whether line intersects a circle
+ * `dgm::ResourceManager` now supports unloading resources via `unloadResource` method
 
 dgm-lib v2.1.0
  * `dgm::Buffer` has been revamped even further
