@@ -1,3 +1,6 @@
+dgm v2.x.x
+ * `dgm::Animation` is initialized with a random state when constructed with animation states
+
 dgm-lib v2.1.0
  * `dgm::Buffer` has been revamped even further
 	* Renamed to `dgm::StaticBuffer`

@@ -60,7 +60,7 @@ Animation::Animation(const AnimationStates& inStates, int framesPerSecond)
 
     setSpeed(framesPerSecond);
     currentFrameIndex = 0;
-    currentState = states.get().end();
+    currentState = states.get().begin();
 
     setLooping(false);
 }
