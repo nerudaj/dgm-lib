@@ -65,9 +65,11 @@ namespace dgm
         std::is_default_constructible_v<T> && std::is_swappable_v<T>;
 
     template<class T, class Base>
-    concept UniversalReference = std::is_same_v<
-        typename std::remove_const<
-            typename std::remove_reference<T>::type>::type,
-        Base>;
+    concept UniversalReference =
+        std::is_same_v<
+            typename std::remove_const<
+                typename std::remove_reference<T>::type>::type,
+            Base>
+        || std::convertible_to<T, Base>;
 
 } // namespace dgm
