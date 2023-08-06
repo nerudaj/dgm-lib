@@ -2,6 +2,11 @@ dgm v2.x.x
  * `dgm::Animation` is initialized with a random state when constructed with animation states
 	* This way the program doesn't immediately throw an exception when programmer forgets to set some state
  * `UniversalReference` trait can handle implicit conversions
+ * Adding bunch of math functions
+	* `getClosestPointOnLine` - useful for finding out distance of a point from a line
+	* `getIntersection(line, line)` - for finding intersection of two lines
+	* `getIntersection(line, circle)` - for finding intersections between a line and a circle
+	* `hasIntersection(line, circle)` - faster check whether line intersects a circle
 
 dgm-lib v2.1.0
  * `dgm::Buffer` has been revamped even further
