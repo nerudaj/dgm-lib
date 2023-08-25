@@ -15,6 +15,21 @@ namespace dgm
     {
     public:
         /**
+         *  \brief Get unit vector that has the same direction
+         *  as provided vector
+         *
+         *  \return Either valid unit vector or [0, 0] if the source
+         *  vector was also [0, 0]
+         */
+        [[nodiscard]] static sf::Vector2f
+        getUnitVector(const sf::Vector2f& vec) noexcept
+        {
+            const float size = vectorSize(vec);
+            if (size == 0.f) return vec;
+            return vec / size;
+        }
+
+        /**
          *  \brief Compute size of the vector
          *
          *  \param[in]  vect  Vector object
