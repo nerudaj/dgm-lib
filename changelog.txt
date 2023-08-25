@@ -1,5 +1,7 @@
 dgm v2.1.2
  * Added `getUnitVector` math function
+ * Fixed `getClosestPointOnLine` returning bad values for most lines
+
 dgm v2.1.1
  * `dgm::Animation` is initialized with a random state when constructed with animation states
 	* This way the program doesn't immediately throw an exception when programmer forgets to set some state

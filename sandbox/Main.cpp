@@ -1,50 +1,81 @@
 ﻿#include <DGM/dgm.hpp>
 
-
-int main(int, char* [])
+void drawLine(
+	dgm::Window& window,
+	const sf::Vector2f& a,
+	const sf::Vector2f& b,
+	dgm::UniversalReference<sf::Color> auto&& color)
 {
-	auto&& window = dgm::Window({ 1280, 720 }, "Sandbox", false);
-	sf::Event event;
-	dgm::Time time;
+	sf::Vertex line[] =
+	{
+		sf::Vertex(a),
+		sf::Vertex(b)
+	};
 
-	auto&& circle = dgm::Circle(sf::Vector2f(1000.f, 500.f), 100.f);
-	auto&& dot = dgm::Circle(sf::Vector2f(0.f, 0.f), 5.f);
+	line[0].color = color;
+	line[1].color = color;
+
+	window.getWindowContext().draw(line, 2, sf::Lines);
+}
+
+void drawDot(dgm::Window& window, const sf::Vector2f& position, const sf::Color& color = sf::Color::Red)
+{
+	auto&& dot = dgm::Circle(position, 3.f);
+	dot.debugRender(window, color);
+}
+
+int main()
+{
+	auto&& window = dgm::Window({ 1280, 720 }, "Example: App", false);
+	sf::Event event;
+
+	auto&& circle = dgm::Circle(1000.f, 500.f, 140.f);
+
+	// Line is defined as direction and position
+	auto&& center = sf::Vector2f(window.getSize() / 2u);
+	auto&& point1 = sf::Vector2f(100.f, 0.f);
+	auto&& point2 = sf::Vector2f(300.f, 720.f);
+	auto&& line = dgm::Math::Line(point2 - point1, point1);
 
 	while (window.isOpen())
 	{
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed) std::ignore = window.close();
+			if (event.type == sf::Event::Closed)
+				std::ignore = window.close();
 		}
-
-		// Logic
-		time.reset();
 
 		auto&& mousePos = sf::Vector2f(sf::Mouse::getPosition(window.getWindowContext()));
+		auto&& mouseDir = dgm::Math::getUnitVector(mousePos - center);
+		auto&& mouseLine = dgm::Math::Line(mouseDir, center);
 
-		sf::Vertex line[] =
-		{
-			sf::Vertex(sf::Vector2f(0.f, 0.f)),
-			sf::Vertex(sf::Vector2f(mousePos.x, mousePos.y))
-		};
+		auto&& lineIntersection = dgm::Math::getIntersection(mouseLine, line);
+		auto&& circleIntersections = dgm::Math::getIntersection(mouseLine, circle);
+		auto&& closestLinePoint = dgm::Math::getClosestPointOnLine(line, mousePos);
 
-		auto&& intersects = dgm::Math::getIntersection(
-			dgm::Math::Line(mousePos, sf::Vector2f(0.f, 0.f)), circle);
-
-		// Draw
 		window.beginDraw();
 
-		window.getWindowContext().draw(line, 2, sf::Lines);
-		circle.debugRender(window);
+		circle.debugRender(window, sf::Color::White);
+		drawLine(window, point1, point2, sf::Color::White);
+		drawLine(
+			window,
+			center - mouseDir * 1080.f,
+			center + mouseDir * 1080.f,
+			sf::Color::Yellow);
 
-		if (intersects)
+		if (lineIntersection)
 		{
-			auto&& pair = intersects.value();
-			dot.setPosition(pair.first);
-			dot.debugRender(window, sf::Color::Red);
-			dot.setPosition(pair.second);
-			dot.debugRender(window, sf::Color::Red);
+			drawDot(window, *lineIntersection);
 		}
+
+		if (circleIntersections)
+		{
+			drawDot(window, circleIntersections->first);
+			drawDot(window, circleIntersections->second);
+		}
+
+		drawDot(window, closestLinePoint, sf::Color::Green);
+		drawLine(window, mousePos, closestLinePoint, sf::Color::Blue);
 
 		window.endDraw();
 	}

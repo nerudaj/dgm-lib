@@ -11,10 +11,12 @@ namespace dgm
         else if (line.b == 0.f)
             return { 0.f, point.y };
 
-        const float c2 = -line.b * point.x + line.a * point.y;
-        float y = (line.a * c2 + line.b * line.c)
-                  / (line.a * line.a + line.b * line.b);
-        return sf::Vector2f { (-line.b * y - line.c) / line.a, y };
+        const float c2 = line.b * point.x - line.a * point.y;
+        const float y = -(line.a * c2 + line.b * line.c)
+                        / (line.a * line.a + line.b * line.b);
+        const auto&& result =
+            sf::Vector2f { (-line.b * y - line.c) / line.a, y };
+        return result;
     }
 
     std::optional<sf::Vector2f> Math::getIntersection(
