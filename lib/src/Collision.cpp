@@ -181,7 +181,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
             c.getPosition(),
             -cone.getRotation())
             - cone.getPosition();*/
-    auto transposedCirclePos = dgm::Math::rotateVector(
+    auto transposedCirclePos = dgm::Math::getRotated(
         c.getPosition() - cone.getPosition(), -cone.getRotation());
 
     // It is "behind" the cone, not touching it
@@ -190,7 +190,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
     else if (transposedCirclePos.x - c.getRadius() > cone.getLength())
         return false;
     // It is intersecting origin position of the cone
-    else if (dgm::Math::vectorSize(transposedCirclePos) < c.getRadius())
+    else if (dgm::Math::getSize(transposedCirclePos) < c.getRadius())
         return true;
 
     // cone is symmetrical, we can only test positive side
@@ -200,7 +200,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
     // TODO: this one is broken
     const sf::Vector2f rightTipPoint = { cone.getLength(),
                                          cone.getWidth() / 2.f };
-    if (dgm::Math::vectorSize(rightTipPoint - c.getPosition()) < c.getRadius())
+    if (dgm::Math::getSize(rightTipPoint - c.getPosition()) < c.getRadius())
         return true;
 
     // Last condition - circle center is somewhere on the interval <0,
@@ -214,7 +214,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
 
 bool dgm::Collision::basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
 {
-    auto transposedPointPos = dgm::Math::rotateVector(
+    auto transposedPointPos = dgm::Math::getRotated(
         sf::Vector2f(p) - cone.getPosition(), -cone.getRotation());
 
     if (transposedPointPos.x < 0 || transposedPointPos.x > cone.getLength())

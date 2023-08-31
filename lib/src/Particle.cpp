@@ -27,7 +27,7 @@ void dgm::ps::Particle::setRotation(const float angle) noexcept
     // vertex positions
     const auto POS = getPosition();
     const auto BASE_VEC =
-        dgm::Math::rotateVector(VEC_45_DEG, rotation) * diagonalHalfLength;
+        dgm::Math::getRotated(VEC_45_DEG, rotation) * diagonalHalfLength;
 
     // So the first vertex is just offset from center POS in direction of
     // BASE_VEC Each subsequent vertex is perpendicular to the previous one so
@@ -46,7 +46,7 @@ void Particle::spawn(
     lifespan = newLifespan.asSeconds();
     const auto halfSize = newSize / 2.f;
     rotation = 0.f;
-    diagonalHalfLength = dgm::Math::vectorSize(halfSize);
+    diagonalHalfLength = dgm::Math::getSize(halfSize);
 
     sf::Vector2f offsets[] = { { -halfSize.x, -halfSize.y },
                                { halfSize.x, -halfSize.y },

@@ -96,9 +96,22 @@ namespace dgm
 
     bool Math::hasIntersection(const Line& line, const dgm::Circle& circle)
     {
-        return vectorSize(
+        return getSize(
                    getClosestPointOnLine(line, circle.getPosition())
                    - circle.getPosition())
                < circle.getRadius();
     }
+
+    float Math::getAngle(const float x, const float y) {
+        if (x == 0.f && y < 0.f)
+            return 3.f * std::numbers::pi_v<float> / 2.f;
+        else if (x == 0.f && y >= 0.f)
+            return std::numbers::pi_v<float> / 2.f;
+        else if (y == 0.f && x < 0.f)
+            return std::numbers::pi_v<float>;
+        else if (y == 0.f && x >= 0.f)
+            return 0.f;
+        return std::atan2(y, x);
+    }
+
 } // namespace dgm

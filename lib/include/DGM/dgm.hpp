@@ -14,7 +14,6 @@
 #include "classes/Clip.hpp"
 #include "classes/Collision.hpp"
 #include "classes/Controller.hpp"
-#include "classes/Conversion.hpp"
 #include "classes/DynamicBuffer.hpp"
 #include "classes/Error.hpp"
 #include "classes/JsonLoader.hpp"
