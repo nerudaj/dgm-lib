@@ -1,5 +1,4 @@
-﻿#include <DGM/classes/Conversion.hpp>
-#include <DGM/classes/Math.hpp>
+﻿#include <DGM/classes/Math.hpp>
 #include <DGM/classes/Objects.hpp>
 #include <DGM/classes/Window.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -81,7 +80,7 @@ dgm::Mesh::Mesh(
 // *******************
 void dgm::VisionCone::debugRender(dgm::Window& window, sf::Color color) const
 {
-    const sf::Vector2f unit = forward / dgm::Math::vectorSize(forward);
+    const sf::Vector2f unit = forward / dgm::Math::getSize(forward);
     const sf::Vector2f plane = sf::Vector2f(unit.y, -unit.x) * width / 2.f;
 
     sf::ConvexShape shape(3);
@@ -102,19 +101,19 @@ void dgm::VisionCone::move(const float x, const float y)
 void dgm::VisionCone::setRotation(const float angle)
 {
     rotation = angle;
-    forward = dgm::Conversion::polarToCartesian(
-        angle, dgm::Math::vectorSize(forward));
+    forward = dgm::Math::polarToCartesian(
+        angle, dgm::Math::getSize(forward));
 }
 
 void dgm::VisionCone::rotate(const float angle)
 {
     rotation += angle;
-    forward = dgm::Math::rotateVector(forward, angle);
+    forward = dgm::Math::getRotated(forward, angle);
 }
 
 float dgm::VisionCone::getLength() const
 {
-    return dgm::Math::vectorSize(forward);
+    return dgm::Math::getSize(forward);
 }
 
 dgm::VisionCone::VisionCone(const float length, const float width)
