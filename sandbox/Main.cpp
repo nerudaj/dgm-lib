@@ -46,7 +46,7 @@ int main()
 		}
 
 		auto&& mousePos = sf::Vector2f(sf::Mouse::getPosition(window.getWindowContext()));
-		auto&& mouseDir = dgm::Math::getUnitVector(mousePos - center);
+		auto&& mouseDir = dgm::Math::toUnit(mousePos - center);
 		auto&& mouseLine = dgm::Math::Line(mouseDir, center);
 
 		auto&& lineIntersection = dgm::Math::getIntersection(mouseLine, line);
