@@ -2,7 +2,7 @@ dgm-lib v2.2.0
  * Removed `Conversion` class, implementation moved to `Math`
 	* `PIOVER180` and `_180OVERPI` are now defined using std::numbers::pi_v
 	* `cartesianToPolar` now returns struct `PolarCoords`
-	* `polarToCartesian` now accepts `PolarCoords`
+	* `polarToCartesian` now accepts struct `PolarCoords`
  * Overhauled `Math` class
 	* `vectorSize` renamed to `getSize`
 	* `getUnitVector` renamed to `toUnit`
@@ -12,6 +12,8 @@ dgm-lib v2.2.0
 	* `approxEqual` renamed to `isApproxEqual`
 	* `radialDifference` renamed to `getRadialDifference`
 	* With the exception of `getRadialDifference`, all functions that work with angles by default work with degrees, but this can be changed to radians using a function template so it is optimized during compilation, like `dgm::Math::getRotated<dgm::Math::AngleType::Radians>(...)`
+ * `dgm::DynamicBuffer` is now movable
+ * `dgm::SpatialBuffer` is now movable
 
 dgm-lib v2.1.2
  * Added `getUnitVector` math function

@@ -29,7 +29,7 @@ namespace dgm
         }
 
         DynamicBuffer(const DynamicBuffer&) = delete;
-        DynamicBuffer(DynamicBuffer&&) = delete;
+        DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
     public:
