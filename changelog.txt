@@ -15,6 +15,7 @@ dgm-lib v2.2.0
  * `dgm::DynamicBuffer` is now movable
  * `dgm::SpatialBuffer` is now movable
  * `dgm::SpatialBuffe::getOverlapCandidates` is now `const`
+ * `dgm::DynamicBuffer` and `dgm::SpatialBuffer` now expose `DataType` and `IndexingType`
 
 dgm-lib v2.1.2
  * Added `getUnitVector` math function

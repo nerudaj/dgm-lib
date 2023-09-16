@@ -23,6 +23,10 @@ namespace dgm
     class DynamicBuffer final
     {
     public:
+        using DataType = T;
+        using IndexingType = IndexType;
+
+    public:
         [[nodiscard]] constexpr DynamicBuffer()
         {
             data.reserve(PreallocatedMemoryAmount);

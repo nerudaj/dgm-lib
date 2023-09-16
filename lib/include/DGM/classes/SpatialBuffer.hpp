@@ -71,6 +71,8 @@ namespace dgm
     class SpatialBuffer final
     {
     public:
+        using DataType = T;
+        using IndexingType = IndexType;
         using IndexListType = std::vector<IndexType>;
         using StorageType = dgm::DynamicBuffer<T, 1024, IndexType>;
 
