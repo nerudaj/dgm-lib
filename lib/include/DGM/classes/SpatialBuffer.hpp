@@ -187,7 +187,7 @@ namespace dgm
          * until next call to erase that might delete given id.
          */
         template<AaBbType AABB>
-        std::vector<IndexType> getOverlapCandidates(const AABB& box)
+        std::vector<IndexType> getOverlapCandidates(const AABB& box) const
         {
             if (!dgm::Collision::basic(BOUNDING_BOX, box)) return {};
 
@@ -196,7 +196,7 @@ namespace dgm
 
             foreachMatchingCellDo(
                 box,
-                [&result](IndexListType& list) constexpr
+                [&result](const IndexListType& list) constexpr
                 { result.insert(result.end(), list.begin(), list.end()); });
 
             if (result.empty()) return result;
@@ -236,7 +236,7 @@ namespace dgm
         };
 
         [[nodiscard]] constexpr sf::Vector2u
-        getGridIndexFromCoord(const sf::Vector2f& coord) noexcept
+        getGridIndexFromCoord(const sf::Vector2f& coord) const noexcept
         {
             return {
                 static_cast<unsigned>(std::clamp(
@@ -251,14 +251,14 @@ namespace dgm
         }
 
         [[nodiscard]] GridRect
-        convertBoxToGridRect(const sf::Vector2f& point) noexcept
+        convertBoxToGridRect(const sf::Vector2f& point) const noexcept
         {
             const auto&& coord = getGridIndexFromCoord(point);
             return { coord.x, coord.y, coord.x, coord.y };
         }
 
         [[nodiscard]] GridRect
-        convertBoxToGridRect(const dgm::Circle& box) noexcept
+        convertBoxToGridRect(const dgm::Circle& box) const noexcept
         {
             auto&& center = box.getPosition();
             const auto&& radius =
@@ -270,7 +270,7 @@ namespace dgm
         }
 
         [[nodiscard]] GridRect
-        convertBoxToGridRect(const dgm::Rect& box) noexcept
+        convertBoxToGridRect(const dgm::Rect& box) const noexcept
         {
             const auto&& topLft = getGridIndexFromCoord(box.getPosition());
             const auto&& btmRgt =
@@ -282,6 +282,31 @@ namespace dgm
         template<class AABB, bool skipEmpty = true>
         constexpr void foreachMatchingCellDo(
             const AABB& box, std::function<void(IndexListType&)> callback)
+        {
+            const auto&& gridRect = convertBoxToGridRect(box);
+
+            for (GridResolutionType y = gridRect.y1; y <= gridRect.y2; y++)
+            {
+                for (GridResolutionType x = gridRect.x1,
+                                        index = y * GRID_RESOLUTION + x;
+                     x <= gridRect.x2;
+                     ++x, ++index)
+                {
+                    if constexpr (skipEmpty)
+                    {
+                        if (!grid[index].empty()) callback(grid[index]);
+                    }
+                    else
+                    {
+                        callback(grid[index]);
+                    }
+                }
+            }
+        }
+
+        template<class AABB, bool skipEmpty = true>
+        constexpr void foreachMatchingCellDo(
+            const AABB& box, std::function<void(const IndexListType&)> callback) const
         {
             const auto&& gridRect = convertBoxToGridRect(box);
 

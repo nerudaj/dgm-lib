@@ -106,5 +106,20 @@ TEST_CASE("[DynamicBuffer]")
                 --value;
             }
         }
+
+        SECTION("Can insert std::unique_ptr")
+        {
+            dgm::DynamicBuffer<std::unique_ptr<Dummy>> dummies;
+            dummies.emplaceBack(std::make_unique<Dummy>(1));
+        }
+    }
+
+    SECTION("decltype")
+    {
+        dgm::DynamicBuffer<Dummy, 64, std::uint8_t> buffer;
+        static_assert(std::is_same_v<Dummy, decltype(buffer)::DataType>);
+        static_assert(
+            std::is_same_v<std::uint8_t, decltype(buffer)::IndexingType>);
+        
     }
 }

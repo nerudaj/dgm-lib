@@ -52,12 +52,17 @@ TEST_CASE("[SpatialBuffer]")
                 REQUIRE(candidateIds.size() == 1u);
                 REQUIRE(candidateIds.front() == 0u);
             }
-        }
 
-        SECTION("Can insert std::unique_ptr")
-        {
-            dgm::DynamicBuffer<std::unique_ptr<Dummy>> dummies;
-            dummies.emplaceBack(std::make_unique<Dummy>(1));
+            SECTION("getOverlapCandidates is const")
+            {
+                const auto& constDummies = dummies;
+                std::ignore = constDummies.getOverlapCandidates(box);
+            }
         }
+    }
+
+    SECTION("Can be moved") {
+        auto&& buffer = dgm::SpatialBuffer<int>(dgm::Rect(0, 0, 16, 16), 8);
+        std::ignore = std::move(buffer);
     }
 }
