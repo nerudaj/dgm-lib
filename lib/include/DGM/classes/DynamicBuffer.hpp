@@ -33,8 +33,15 @@ namespace dgm
         }
 
         DynamicBuffer(const DynamicBuffer&) = delete;
-        DynamicBuffer(DynamicBuffer&&) = default;
+        [[nodiscard]] DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
+
+        [[nodiscard]] constexpr DynamicBuffer clone() const
+        {
+            return DynamicBuffer(data, firstFreeSlot);
+        }
+
+        [[nodiscard]] DynamicBuffer& operator=(DynamicBuffer&&) = default;
 
     public:
         class iterator
@@ -163,6 +170,12 @@ namespace dgm
         };
 
         using Element = std::variant<T, Index>;
+
+        [[nodiscard]] constexpr DynamicBuffer(
+            std::vector<Element> data, IndexType firstFreeSlot)
+            : data(data), firstFreeSlot(firstFreeSlot)
+        {
+        }
 
         std::vector<Element> data;
         IndexType firstFreeSlot = std::numeric_limits<IndexType>::max();

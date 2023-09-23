@@ -1,3 +1,6 @@
+dgm-lib v2.2.1
+ * `dgm::DynamicBuffer` has method `clone` for explicit copying and is move-assignable
+
 dgm-lib v2.2.0
  * Removed `Conversion` class, implementation moved to `Math`
 	* `PIOVER180` and `_180OVERPI` are now defined using std::numbers::pi_v
