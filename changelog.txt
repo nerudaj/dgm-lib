@@ -1,5 +1,7 @@
 dgm-lib v2.2.1
  * `dgm::DynamicBuffer` has method `clone` for explicit copying and is move-assignable
+ * Introduced `dgm::SpatialIndex` which acts as a base class for `dgm::SpatialBuffer` and contains only interface for spatial lookup, not the physical storage
+	* It also has a `clear` method for removing all items from lookup
 
 dgm-lib v2.2.0
  * Removed `Conversion` class, implementation moved to `Math`
