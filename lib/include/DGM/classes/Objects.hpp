@@ -168,7 +168,7 @@ namespace dgm
             return size;
         }
 
-        [[nodiscard]] const sf::Vector2f& getCenter() const noexcept
+        [[nodiscard]] sf::Vector2f getCenter() const noexcept
         {
             return getPosition() + getSize() / 2.f;
         }
