@@ -1,5 +1,5 @@
 dgm-lib v2.2.1
- * `dgm::DynamicBuffer` has method `clone` for explicit copying and is move-assignable
+ * `dgm::DynamicBuffer` and `dgm::StaticBuffer` have method `clone` for explicit copying and are movable and move-assignable
  * Introduced `dgm::SpatialIndex` which acts as a base class for `dgm::SpatialBuffer` and contains only interface for spatial lookup, not the physical storage
 	* It also has a `clear` method for removing all items from lookup
  * Fixed signature of `dgm::Rect::getCircle` - it returned a reference to a temporary

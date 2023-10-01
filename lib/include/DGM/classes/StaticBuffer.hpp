@@ -209,15 +209,53 @@ namespace dgm
             capacity = maxCapacity;
         }
 
-        StaticBuffer& operator=(StaticBuffer other) = delete;
-        StaticBuffer(const StaticBuffer& buffer) = delete;
-        StaticBuffer(StaticBuffer&& buffer) = delete;
+        StaticBuffer(const StaticBuffer&) = delete;
+
+        [[nodiscard]] constexpr StaticBuffer(StaticBuffer&& other) noexcept
+        {
+            std::swap(data, other.data);
+            std::swap(capacity, other.capacity);
+            std::swap(dataSize, other.dataSize);
+        }
 
         constexpr ~StaticBuffer() noexcept
         {
             delete[] data;
             data = nullptr;
             dataSize = 0;
+        }
+
+        StaticBuffer& operator=(StaticBuffer&&) = default;
+
+        /**
+         *  Create a copy of buffer
+         *
+         *  This function runs reasonably fast if T is trivially copyable.
+         *  If T is not trivially copyable then the array is iterated and
+         *  the copy constructor is called per each item.
+         */
+        [[nodiscard]] constexpr StaticBuffer clone()
+        {
+            auto clonedData = new T[capacity];
+            if (!clonedData) throw std::bad_alloc();
+
+            if constexpr (std::is_trivially_copyable_v<T>)
+            {
+                std::memcpy(clonedData, data, sizeof(T) * capacity);
+            }
+            else
+            {
+                for (unsigned i = 0; i < capacity; i++)
+                    clonedData[i] = data[i];
+            }
+            return StaticBuffer(clonedData, dataSize, capacity);
+        }
+
+    private:
+        [[nodiscard]] constexpr StaticBuffer(
+            T* data, std::size_t dataSize, std::size_t capacity) noexcept
+            : data(data), dataSize(dataSize), capacity(capacity)
+        {
         }
 
     public:

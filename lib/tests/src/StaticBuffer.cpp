@@ -106,4 +106,37 @@ namespace BufferTests
         static_assert(constexprUsage());
     }
 
+    dgm::StaticBuffer<int> createBuffer()
+    {
+        auto&& result = dgm::StaticBuffer<int>(3);
+        result.growUnchecked() = 1;
+        result.growUnchecked() = 2;
+        result.growUnchecked() = 3;
+        return result;
+    }
+
+    TEST_CASE("Can be moved", "StaticBuffer")
+    {
+        auto buffer1 = createBuffer();
+        auto buffer2 = std::move(buffer1);
+        REQUIRE(buffer1.getSize() == 0u);
+        REQUIRE(buffer2.getSize() == 3u);
+        REQUIRE(buffer2[0] == 1);
+        REQUIRE(buffer2[1] == 2);
+        REQUIRE(buffer2[2] == 3);
+    }
+
+    TEST_CASE("Can be cloned", "StaticBuffer")
+    {
+        auto buffer1 = createBuffer();
+        auto buffer2 = buffer1.clone();
+        REQUIRE(buffer1.getSize() == 3u);
+        REQUIRE(buffer2.getSize() == 3u);
+
+        for (unsigned i = 0; i < buffer1.getSize(); i++)
+        {
+            REQUIRE(buffer1[i] == buffer2[i]);
+        }
+    }
+
 } // namespace BufferTests

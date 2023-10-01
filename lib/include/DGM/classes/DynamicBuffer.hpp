@@ -41,7 +41,7 @@ namespace dgm
             return DynamicBuffer(data, firstFreeSlot);
         }
 
-        [[nodiscard]] DynamicBuffer& operator=(DynamicBuffer&&) = default;
+        DynamicBuffer& operator=(DynamicBuffer&&) = default;
 
     public:
         class iterator
