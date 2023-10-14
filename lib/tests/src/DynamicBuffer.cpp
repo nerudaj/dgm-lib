@@ -130,4 +130,17 @@ TEST_CASE("[DynamicBuffer]")
         buffer.eraseAtIndex(0);
         REQUIRE_FALSE(buffer.isIndexValid(0));
     }
+
+    SECTION("Can get reference to item safely with at()")
+    {
+        dgm::DynamicBuffer<Dummy> buffer;
+        buffer.emplaceBack(Dummy { 1 });
+        buffer.emplaceBack(Dummy { 2 });
+        buffer.eraseAtIndex(0);
+        REQUIRE_FALSE(buffer.at(0).has_value());
+        REQUIRE(buffer.at(1).has_value());
+
+        buffer.at(1).value().get().value = 10;
+        REQUIRE(buffer[1].value == 10);
+    }
 }

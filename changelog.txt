@@ -1,5 +1,6 @@
 dgm-lib v2.2.2
  * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
+ * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`
  * Fixed `dgm::SpatialIndex::clear` being in private interface (now public)
 
 dgm-lib v2.2.1

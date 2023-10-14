@@ -3,6 +3,7 @@
 #include <DGM/classes/Traits.hpp>
 #include <cassert>
 #include <limits>
+#include <optional>
 #include <variant>
 #include <vector>
 
@@ -121,6 +122,19 @@ namespace dgm
         operator[](this Self&& self, IndexType index) noexcept
         {
             return std::get<T>(self.data[index]);
+        }
+
+        [[nodiscard]] constexpr std::optional<std::reference_wrapper<T>>
+        at(IndexType index) noexcept
+        {
+            try
+            {
+                return std::get<T>(data[index]);
+            }
+            catch (...)
+            {
+                return std::nullopt;
+            }
         }
 
         template<class... Args>
