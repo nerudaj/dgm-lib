@@ -110,6 +110,12 @@ namespace dgm
         };
 
     public:
+        [[nodiscard]] constexpr bool
+        isIndexValid(IndexType index) const noexcept
+        {
+            return std::holds_alternative<T>(data[index]);
+        }
+
         template<class Self>
         [[nodiscard]] constexpr auto&&
         operator[](this Self&& self, IndexType index) noexcept
@@ -136,8 +142,8 @@ namespace dgm
 
         constexpr void eraseAtIndex(IndexType index) noexcept
         {
-            assert(std::holds_alternative<T>(
-                data[index])); // Trying to delete an already deleted item
+            assert(isIndexValid(
+                index)); // Trying to delete an already deleted item
             data[index] = Index { firstFreeSlot };
             firstFreeSlot = index;
         }

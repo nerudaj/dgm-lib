@@ -120,6 +120,14 @@ TEST_CASE("[DynamicBuffer]")
         static_assert(std::is_same_v<Dummy, decltype(buffer)::DataType>);
         static_assert(
             std::is_same_v<std::uint8_t, decltype(buffer)::IndexingType>);
-        
+    }
+
+    SECTION("Can test existence of an item")
+    {
+        dgm::DynamicBuffer<Dummy> buffer;
+        buffer.emplaceBack(Dummy { 1 });
+        buffer.emplaceBack(Dummy { 2 });
+        buffer.eraseAtIndex(0);
+        REQUIRE_FALSE(buffer.isIndexValid(0));
     }
 }
