@@ -128,6 +128,12 @@ namespace dgm
             return BOUNDING_BOX;
         }
 
+        void clear()
+        {
+            for (auto&& cell : grid)
+                cell.clear();
+        }
+
     private:
         struct GridRect
         {
@@ -227,12 +233,6 @@ namespace dgm
                     }
                 }
             }
-        }
-
-        void clear()
-        {
-            for (auto&& cell : grid)
-                cell.clear();
         }
 
     private:

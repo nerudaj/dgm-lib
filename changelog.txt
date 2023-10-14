@@ -1,5 +1,6 @@
 dgm-lib v2.2.2
  * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
+ * Fixed `dgm::SpatialIndex::clear` being in private interface (now public)
 
 dgm-lib v2.2.1
  * `dgm::DynamicBuffer` and `dgm::StaticBuffer` have method `clone` for explicit copying and are movable and move-assignable
