@@ -41,40 +41,6 @@ void dgm::Rect::setSize(const float width, const float height)
     size.x = width;
     size.y = height;
 }
-
-// ************
-// *** MESH ***
-// ************
-void dgm::Mesh::setDataSize(const sf::Vector2u& size)
-{
-    data.clear();
-    data.resize(size.x * size.y, 0);
-    dataSize = size;
-}
-
-void dgm::Mesh::move(const float x, const float y)
-{
-    position.x += x;
-    position.y += y;
-}
-
-void dgm::Mesh::move(const sf::Vector2f& forward)
-{
-    position.x += forward.x;
-    position.y += forward.y;
-}
-
-dgm::Mesh::Mesh(
-    const std::vector<int>& data,
-    const sf::Vector2u& dataSize,
-    const sf::Vector2u& voxelSize)
-    : data(data), dataSize(dataSize), voxelSize(voxelSize)
-{
-    assert(
-        data.size() == dataSize.x * dataSize.y
-        && "Mesh data.size() must equal dataSize.x * dataSize.y");
-}
-
 // *******************
 // *** VISION CONE ***
 // *******************

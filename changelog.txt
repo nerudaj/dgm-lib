@@ -1,3 +1,10 @@
+dgm-lib v2.2.3
+ * `dgm::Mesh` was turned into templated `dgm::GenericMesh` where the internal data type can be comfigured by the template
+	* Convenience back-compatible alias of `dgm::Mesh` was also introduced
+	* Default constructor is marked `[[deprecated]]`
+	* Added convenience constructor for cases where data array should be defaulted
+	* `move` methods are `constexpr` and `noexcept`
+	* `setVoxelSize(const sf::Vector2u&) is `noexcept`
 dgm-lib v2.2.2
  * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
  * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`

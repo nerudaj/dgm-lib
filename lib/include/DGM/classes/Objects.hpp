@@ -8,6 +8,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cassert>
 #include <vector>
 
 namespace dgm
@@ -325,10 +326,14 @@ namespace dgm
      * voxelSize should be 1 (each cell is single pixel). Access cell at [x, y]
      * by y * dataSize.x + x.
      */
-    class Mesh : public Object
+    template<class T>
+    class GenericMesh final : public Object
     {
+    public:
+        using DataType = T;
+
     protected:
-        std::vector<int> data = {}; ///< Array for holding collision data
+        std::vector<DataType> data = {}; ///< Array for holding collision data
         sf::Vector2f position = { 0.f, 0.f }; ///< Position of top-left corner
         sf::Vector2u dataSize = {
             0u, 0u
@@ -413,7 +418,7 @@ namespace dgm
         /**
          *  \brief Set dimensions of single voxel
          */
-        constexpr void setVoxelSize(const sf::Vector2u& size)
+        constexpr void setVoxelSize(const sf::Vector2u& size) noexcept
         {
             voxelSize = size;
         }
@@ -436,19 +441,31 @@ namespace dgm
          *  Any data stored here prior to this call will be lost.
          *
          */
-        void setDataSize(const sf::Vector2u& size);
+        void setDataSize(const sf::Vector2u& size)
+        {
+            data.clear();
+            data.resize(size.x * size.y, 0);
+            dataSize = size;
+        }
 
         /**
          *  \brief Moves object
          */
-        void move(const float x, const float y);
+        constexpr void move(const float x, const float y) noexcept
+        {
+            position.x += x;
+            position.y += y;
+        }
 
         /**
          *  \brief Moves object
          */
-        void move(const sf::Vector2f& forward);
+        constexpr void move(const sf::Vector2f& forward) noexcept
+        {
+            position += forward;
+        }
 
-        [[nodiscard]] constexpr Mesh() noexcept = default;
+        [[nodiscard]] [[deprecated]] constexpr GenericMesh() noexcept = default;
 
         /**
          *  \brief Construct mesh object from data array
@@ -464,20 +481,40 @@ namespace dgm
          *
          *  Size of data should be dataSize.x * dataSize.y.
          */
-        [[nodiscard]] Mesh(
-            const std::vector<int>& data,
-            const sf::Vector2u& dataSize,
-            const sf::Vector2u& voxelSize);
-
-        [[nodiscard]] Mesh(
-            const std::vector<bool>& data,
+        [[nodiscard]] GenericMesh(
+            const std::vector<DataType>& data,
             const sf::Vector2u& dataSize,
             const sf::Vector2u& voxelSize)
-            : Mesh(
-                std::vector<int>(data.begin(), data.end()), dataSize, voxelSize)
+            : data(data), dataSize(dataSize), voxelSize(voxelSize)
+        {
+            assert(
+                data.size() == dataSize.x * dataSize.y
+                && "Mesh data.size() must equal dataSize.x * dataSize.y");
+        }
+
+        [[nodiscard]] GenericMesh(
+            const sf::Vector2u& dataSize, const sf::Vector2u& voxelSize)
+            : GenericMesh(
+                std::vector<DataType>(dataSize.x * dataSize.y, DataType {}),
+                dataSize,
+                voxelSize)
         {
         }
 
-        virtual ~Mesh() = default;
+        [[nodiscard]] GenericMesh(
+            const std::vector<bool>& data,
+            const sf::Vector2u& dataSize,
+            const sf::Vector2u& voxelSize)
+            : GenericMesh(
+                std::vector<DataType>(data.begin(), data.end()),
+                dataSize,
+                voxelSize)
+        {
+        }
+
+        // TODO: Upcoming minor version update should delete copy constructor
+        // and replace it with a clone method
     };
+
+    using Mesh = GenericMesh<int>;
 } // namespace dgm
