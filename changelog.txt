@@ -8,6 +8,7 @@ dgm-lib v2.2.3
  * All of `dgm::Object` interface is `noexcept`
 	* Also most of the concrete implementations are now `constexpr`
 	* All default constructors are marked `[[deprecated]]`
+ * Added `dgm::Path::clone` so the paths can be explicitly copied
  * Fixed `dgm::DynamicBuffer::isIndexValid` not checking array boundaries
 
 dgm-lib v2.2.2

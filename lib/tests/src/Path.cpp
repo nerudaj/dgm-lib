@@ -25,11 +25,18 @@ namespace PathTests
 
         SECTION("Move assigment")
         {
-            dgm::Mesh mesh;
-            mesh.setVoxelSize(1u, 1u);
-            mesh.setDataSize(1u, 1u);
+            auto mesh = dgm::Mesh({ 1u, 1u }, { 1u, 1u });
             dgm::WorldNavMesh navmesh(mesh);
             destinationPath = navmesh.getPath({ 0.f, 0.f }, { 0.f, 0.f });
+        }
+
+        SECTION("Can be cloned")
+        {
+            auto path1 = dgm::Path(POINTS, true);
+            path1.advance();
+            auto path2 = path1.clone();
+            REQUIRE(
+                path1.getCurrentPoint().coord == path2.getCurrentPoint().coord);
         }
     }
 

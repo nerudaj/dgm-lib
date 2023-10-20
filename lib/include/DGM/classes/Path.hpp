@@ -53,13 +53,29 @@ namespace dgm
     template<class T>
         requires std::is_same<TileNavpoint, T>::value
                  || std::is_same<WorldNavpoint, T>::value
-    class Path
+    class Path final
     {
-    protected:
-        std::vector<T> points = {}; ///< List of points to travese
-        bool looping = false;       ///< Whether the path loops
-        std::size_t currentPointIndex =
-            0; ///< Index to currently processed navpoint
+    public:
+        [[nodiscard]] [[deprecated]] Path() = default;
+
+        [[nodiscard]] Path(const std::vector<T>& points, bool looping)
+            : points(points), looping(looping)
+        {
+        }
+
+        [[nodiscard]] Path(dgm::Path<T>&& other) = default;
+
+        ~Path() = default;
+
+        Path<T>& operator=(dgm::Path<T>&& other) = default;
+
+        [[nodiscard]] Path<T> clone() const
+        {
+            return Path(*this);
+        }
+
+    private:
+        [[nodiscard]] explicit Path(const Path&) = default;
 
     public:
         /**
@@ -98,16 +114,10 @@ namespace dgm
             if (isLooping() && isTraversed()) currentPointIndex = 0;
         }
 
-        Path<T>& operator=(dgm::Path<T>&& other) = default;
-
-        [[nodiscard]] Path() = default;
-
-        [[nodiscard]] Path(const std::vector<T>& points, bool looping)
-            : points(points), looping(looping)
-        {
-        }
-
-        [[nodiscard]] Path(dgm::Path<T>&& other) = default;
-        ~Path() = default;
+    protected:
+        std::vector<T> points = {}; ///< List of points to travese
+        bool looping = false;       ///< Whether the path loops
+        std::size_t currentPointIndex =
+            0; ///< Index to currently processed navpoint
     };
 } // namespace dgm
