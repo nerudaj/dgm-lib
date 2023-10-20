@@ -22,15 +22,15 @@ namespace dgm
     class Object
     {
     public:
-        virtual const sf::Vector2f& getPosition() const = 0;
+        virtual const sf::Vector2f& getPosition() const noexcept = 0;
 
-        virtual void setPosition(const float x, const float y) = 0;
+        virtual void setPosition(const float x, const float y) noexcept = 0;
 
-        virtual void setPosition(const sf::Vector2f& position) = 0;
+        virtual void setPosition(const sf::Vector2f& position) noexcept = 0;
 
-        virtual void move(const float x, const float y) = 0;
+        virtual void move(const float x, const float y) noexcept = 0;
 
-        virtual void move(const sf::Vector2f& position) = 0;
+        virtual void move(const sf::Vector2f& position) noexcept = 0;
 
         virtual ~Object() = default;
     };
@@ -77,7 +77,7 @@ namespace dgm
         /**
          *  \brief Sets position of circle by setting new XY coordinates
          */
-        void setPosition(const float x, const float y)
+        constexpr void setPosition(const float x, const float y) noexcept
         {
             position.x = x;
             position.y = y;
@@ -86,7 +86,7 @@ namespace dgm
         /**
          *  \brief Sets new position of circle with SFML vector
          */
-        void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
         {
             position = newPosition;
         }
@@ -94,7 +94,7 @@ namespace dgm
         /**
          *  \brief Sets radius
          */
-        void setRadius(const float newRadius) noexcept
+        constexpr void setRadius(const float newRadius) noexcept
         {
             radius = newRadius;
         }
@@ -116,7 +116,7 @@ namespace dgm
             position += forward;
         }
 
-        [[nodiscard]] constexpr Circle() noexcept = default;
+        [[nodiscard]] [[deprecated]] constexpr Circle() noexcept = default;
 
         [[nodiscard]] Circle(
             const float x, const float y, const float radius) noexcept
@@ -177,7 +177,11 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        void setPosition(const float x, const float y);
+        constexpr void setPosition(const float x, const float y) noexcept
+        {
+            position.x = x;
+            position.y = y;
+        }
 
         /**
          *  \brief Set position of top-left corner
@@ -207,7 +211,11 @@ namespace dgm
         /**
          *  \brief Set dimensions of rectangle
          */
-        void setSize(const float width, const float height);
+        constexpr void setSize(const float width, const float height) noexcept
+        {
+            size.x = width;
+            size.y = height;
+        }
 
         /**
          *  \brief Set dimensions of rectangle
@@ -217,7 +225,7 @@ namespace dgm
             size = newSize;
         }
 
-        [[nodiscard]] constexpr Rect() noexcept = default;
+        [[nodiscard]] [[deprecated]] constexpr Rect() noexcept = default;
 
         [[nodiscard]] Rect(
             const float x,
@@ -270,25 +278,31 @@ namespace dgm
         void debugRender(
             dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-        virtual constexpr const sf::Vector2f& getPosition() const override
+        virtual constexpr const sf::Vector2f&
+        getPosition() const noexcept override
         {
             return position;
         }
 
-        virtual void setPosition(const float x, const float y) override
+        virtual void setPosition(const float x, const float y) noexcept override
         {
             position = { x, y };
         }
 
         virtual constexpr void
-        setPosition(const sf::Vector2f& newPosition) override
+        setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
         }
 
-        virtual void move(const float x, const float y) override;
+        constexpr virtual void
+        move(const float x, const float y) noexcept override
+        {
+            position.x += x;
+            position.y += y;
+        }
 
-        virtual void move(const sf::Vector2f& direction) override
+        virtual void move(const sf::Vector2f& direction) noexcept override
         {
             position += direction;
         }
@@ -298,17 +312,17 @@ namespace dgm
             return rotation;
         }
 
-        void setRotation(const float angle);
-        void rotate(const float angle);
+        void setRotation(const float angle) noexcept;
+        void rotate(const float angle) noexcept;
 
-        [[nodiscard]] float getLength() const;
+        [[nodiscard]] float getLength() const noexcept;
 
         [[nodiscard]] constexpr float getWidth() const noexcept
         {
             return width;
         }
 
-        [[nodiscard]] constexpr VisionCone() noexcept = default;
+        [[nodiscard]] [[deprecated]] constexpr VisionCone() noexcept = default;
         [[nodiscard]] VisionCone(const float length, const float width);
     };
 

@@ -30,17 +30,6 @@ void dgm::Rect::debugRender(dgm::Window& window, sf::Color color) const
     window.draw(shape);
 }
 
-void dgm::Rect::setPosition(const float x, const float y)
-{
-    position.x = x;
-    position.y = y;
-}
-
-void dgm::Rect::setSize(const float width, const float height)
-{
-    size.x = width;
-    size.y = height;
-}
 // *******************
 // *** VISION CONE ***
 // *******************
@@ -58,26 +47,19 @@ void dgm::VisionCone::debugRender(dgm::Window& window, sf::Color color) const
     window.draw(shape);
 }
 
-void dgm::VisionCone::move(const float x, const float y)
-{
-    position.x += x;
-    position.y += y;
-}
-
-void dgm::VisionCone::setRotation(const float angle)
+void dgm::VisionCone::setRotation(const float angle) noexcept
 {
     rotation = angle;
-    forward = dgm::Math::polarToCartesian(
-        angle, dgm::Math::getSize(forward));
+    forward = dgm::Math::polarToCartesian(angle, dgm::Math::getSize(forward));
 }
 
-void dgm::VisionCone::rotate(const float angle)
+void dgm::VisionCone::rotate(const float angle) noexcept
 {
     rotation += angle;
     forward = dgm::Math::getRotated(forward, angle);
 }
 
-float dgm::VisionCone::getLength() const
+float dgm::VisionCone::getLength() const noexcept
 {
     return dgm::Math::getSize(forward);
 }
