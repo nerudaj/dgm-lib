@@ -1,4 +1,7 @@
-dgm-lib v2.2.3
+dgm-lib v2.2.2
+ * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
+ * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`
+ * Added `dgm::Path::clone` so the paths can be explicitly copied
  * `dgm::Mesh` was turned into templated `dgm::GenericMesh` where the internal data type can be comfigured by the template
 	* Convenience back-compatible alias of `dgm::Mesh` was also introduced
 	* Default constructor is marked `[[deprecated]]`
@@ -8,12 +11,6 @@ dgm-lib v2.2.3
  * All of `dgm::Object` interface is `noexcept`
 	* Also most of the concrete implementations are now `constexpr`
 	* All default constructors are marked `[[deprecated]]`
- * Added `dgm::Path::clone` so the paths can be explicitly copied
- * Fixed `dgm::DynamicBuffer::isIndexValid` not checking array boundaries
-
-dgm-lib v2.2.2
- * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
- * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`
  * Fixed `dgm::SpatialIndex::clear` being in private interface (now public)
 
 dgm-lib v2.2.1
