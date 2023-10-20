@@ -114,7 +114,8 @@ namespace dgm
         [[nodiscard]] constexpr bool
         isIndexValid(IndexType index) const noexcept
         {
-            return std::holds_alternative<T>(data[index]);
+            return index < data.size()
+                   && std::holds_alternative<T>(data[index]);
         }
 
         template<class Self>

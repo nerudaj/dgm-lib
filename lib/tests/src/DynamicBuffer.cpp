@@ -129,6 +129,8 @@ TEST_CASE("[DynamicBuffer]")
         buffer.emplaceBack(Dummy { 2 });
         buffer.eraseAtIndex(0);
         REQUIRE_FALSE(buffer.isIndexValid(0));
+        REQUIRE_FALSE(
+            buffer.isIndexValid(std::numeric_limits<std::size_t>::max()));
     }
 
     SECTION("Can get reference to item safely with at()")
