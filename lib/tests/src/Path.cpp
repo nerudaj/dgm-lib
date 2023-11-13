@@ -27,7 +27,8 @@ namespace PathTests
         {
             auto mesh = dgm::Mesh({ 1u, 1u }, { 1u, 1u });
             dgm::WorldNavMesh navmesh(mesh);
-            destinationPath = navmesh.getPath({ 0.f, 0.f }, { 0.f, 0.f });
+            destinationPath =
+                navmesh.computePath({ 0.f, 0.f }, { 0.f, 0.f }).value();
         }
 
         SECTION("Can be cloned")
@@ -59,6 +60,7 @@ namespace PathTests
         SECTION("Looping")
         {
             dgm::Path path(POINTS, true);
+            REQUIRE(path.getLength() == 3u);
             REQUIRE(path.isLooping());
             REQUIRE(not path.isTraversed());
             path.advance();

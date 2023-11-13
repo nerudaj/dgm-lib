@@ -1,3 +1,5 @@
+dgm-lib v2.2.3
+ * Added method `dgm::Path<TileNavPoint>::getLength()`
 dgm-lib v2.2.2
  * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
  * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`

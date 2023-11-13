@@ -53,17 +53,17 @@ namespace dgm
     template<class T>
         requires std::is_same<TileNavpoint, T>::value
                  || std::is_same<WorldNavpoint, T>::value
-    class Path final
+    class [[nodiscard]] Path final
     {
     public:
-        [[nodiscard]] [[deprecated]] Path() = default;
+        [[deprecated]] Path() = default;
 
-        [[nodiscard]] Path(const std::vector<T>& points, bool looping)
+        Path(const std::vector<T>& points, bool looping)
             : points(points), looping(looping)
         {
         }
 
-        [[nodiscard]] Path(dgm::Path<T>&& other) = default;
+        Path(dgm::Path<T>&& other) = default;
 
         ~Path() = default;
 
@@ -112,6 +112,12 @@ namespace dgm
         {
             currentPointIndex++;
             if (isLooping() && isTraversed()) currentPointIndex = 0;
+        }
+
+        template<typename = std::enable_if_t<std::is_same_v<T, TileNavpoint>>>
+        [[nodiscard]] constexpr std::size_t getLength() const noexcept
+        {
+            return points.size();
         }
 
     protected:
