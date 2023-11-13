@@ -42,6 +42,10 @@ namespace dgm
     class TileNavMesh
     {
     public:
+        TileNavMesh() = delete;
+        TileNavMesh(const TileNavMesh&) = delete;
+        TileNavMesh(TileNavMesh&&) = delete;
+
         /**
          *  \brief Get path represented by tile indices to input mesh
          *
@@ -52,7 +56,22 @@ namespace dgm
          *  If from == to, then empty path (which returns true for isTraversed)
          * is returned
          */
-        static [[nodiscard]] dgm::Path<TileNavpoint> getPath(
+        static [[nodiscard]] [[deprecated]] dgm::Path<TileNavpoint> getPath(
+            const sf::Vector2u& from,
+            const sf::Vector2u& to,
+            const dgm::Mesh& mesh);
+
+        /**
+         *  \brief Get path represented by tile indices to input mesh
+         *
+         *  The resulting path will not include 'from' coord, but it includes
+         * 'to' coord.
+         *
+         *  If no path exists, empty optional will be returned
+         *  If from == to, then empty path (which returns true for isTraversed
+         * and has zero length) is returned
+         */
+        static [[nodiscard]] std::optional<dgm::Path<TileNavpoint>> computePath(
             const sf::Vector2u& from,
             const sf::Vector2u& to,
             const dgm::Mesh& mesh);

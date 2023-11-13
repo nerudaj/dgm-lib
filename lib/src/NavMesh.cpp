@@ -174,6 +174,16 @@ public:
 dgm::Path<dgm::TileNavpoint> dgm::TileNavMesh::getPath(
     const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
 {
+    return computePath(from, to, mesh)
+        .or_else(
+            []() -> std::optional<dgm::Path<dgm::TileNavpoint>>
+            { throw dgm::Exception("Path doesn't exist"); })
+        .value();
+}
+
+std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
+    const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
+{
     if (from == to) return dgm::Path<TileNavpoint>({}, false);
 
     auto updateOpenSetWithCoord =
@@ -215,7 +225,7 @@ dgm::Path<dgm::TileNavpoint> dgm::TileNavMesh::getPath(
     const NodeSet<TileNode> closedSet = astarSearch<TileNode>(
         TileNode(from, to, 0, Backdir::Undefined), to, updateOpenSetWithCoord);
 
-    if (!closedSet.hasElements()) throw dgm::Exception("No path was found");
+    if (!closedSet.hasElements()) return std::nullopt;
 
     std::vector<TileNavpoint> points;
     points.push_back(TileNavpoint(to, 0u));

@@ -52,7 +52,7 @@ public:
     TestableNavMesh(const dgm::Mesh& mesh) : dgm::WorldNavMesh(mesh) {}
 };
 
-TEST_CASE("Constructing TileNavMesh", "[TileNavMesh]")
+TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 {
     TestableNavMesh navmesh(buildMeshForTesting());
 
@@ -186,16 +186,19 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
 
     SECTION("Path exists, identity")
     {
-        auto path = dgm::TileNavMesh::getPath(
-            sf::Vector2u(1, 1), sf::Vector2u(1, 1), mesh);
+        auto path = dgm::TileNavMesh::computePath(
+                        sf::Vector2u(1, 1), sf::Vector2u(1, 1), mesh)
+                        .value();
         REQUIRE(path.isTraversed());
     }
 
     SECTION("Path exists, non trivial")
     {
-        auto path = dgm::TileNavMesh::getPath(
-            sf::Vector2u(1, 4), sf::Vector2u(5, 1), mesh);
+        auto path = dgm::TileNavMesh::computePath(
+                        sf::Vector2u(1, 4), sf::Vector2u(5, 1), mesh)
+                        .value();
         REQUIRE_FALSE(path.isLooping());
+        REQUIRE(path.getLength() == 7u);
 
         const std::vector<sf::Vector2u> refpoints = {
             { 1u, 3u }, { 1u, 2u }, { 1u, 1u }, { 2u, 1u },
@@ -217,10 +220,8 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
 
     SECTION("Path does not exist")
     {
-        REQUIRE_THROWS_AS(
-            dgm::TileNavMesh::getPath(
-                sf::Vector2u(1, 1), sf::Vector2u(8, 1), mesh),
-            dgm::Exception);
+        REQUIRE_FALSE(dgm::TileNavMesh::computePath(
+            sf::Vector2u(1, 1), sf::Vector2u(8, 1), mesh));
     }
 }
 
