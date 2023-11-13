@@ -117,7 +117,7 @@ namespace dgm
      * pre-processing before it can do pathfinding. As long as your mesh data
      * don't change, you can reuse object of this class.
      */
-    class WorldNavMesh
+    class [[nodiscard]] WorldNavMesh
     {
     protected:
         struct Connection
@@ -160,12 +160,27 @@ namespace dgm
          *
          *  \warn This function is not thread-safe.
          */
-        [[nodiscard]] dgm::Path<WorldNavpoint>
+        [[nodiscard]] [[deprecated]] dgm::Path<WorldNavpoint>
         getPath(const sf::Vector2f& from, const sf::Vector2f& to);
 
+        /**
+         *  \brief Get path represented by world coordinates
+         *
+         *  The resulting path will not include 'from' coord, but it includes
+         * 'to' coord.
+         *
+         *  If no path exists, empty optional is returned
+         *  If from == to, then empty path (which returns true for isTraversed)
+         * is returned
+         *
+         *  \warn This function is not thread-safe.
+         */
+        [[nodiscard]] std::optional<dgm::Path<WorldNavpoint>>
+        computePath(const sf::Vector2f& from, const sf::Vector2f& to);
+
         WorldNavMesh() = delete;
-        [[nodiscard]] explicit WorldNavMesh(const dgm::Mesh& mesh);
-        [[nodiscard]] WorldNavMesh(WorldNavMesh&& other) = default;
+        explicit WorldNavMesh(const dgm::Mesh& mesh);
+        WorldNavMesh(WorldNavMesh&& other) = default;
         WorldNavMesh(const WorldNavMesh& other) = delete;
     };
 

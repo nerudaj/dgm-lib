@@ -2,12 +2,14 @@ dgm-lib v2.2.3
  * Added method `dgm::Path<TileNavPoint>::getLength()`
  * `dgm::TileNavmesh::getPath` was marked deprecated
 	* `dgm::TileNavmesh::computePath` which returns `std::optional` should be used instead
+ * `dgm::WorldNavmesh::getPath` was marked deprecated
+	* `dgm::WorldNavmesh::computePath` which returns `std::optional` should be used instead
 
 dgm-lib v2.2.2
  * Added `dgm::DynamicBuffer::isValidIndex` for testing whether there is something at index
  * Added `dgm::DynamicBuffer::at` which either returns `std::reference_wrapper` for item at index or empty `std::optional`
  * Added `dgm::Path::clone` so the paths can be explicitly copied
- * `dgm::Mesh` was turned into templated `dgm::GenericMesh` where the internal data type can be comfigured by the template
+ * `dgm::Mesh` was turned into templated `dgm::GenericMesh` where the internal data type can be configured by the template
 	* Convenience back-compatible alias of `dgm::Mesh` was also introduced
 	* Default constructor is marked `[[deprecated]]`
 	* Added convenience constructor for cases where data array should be defaulted

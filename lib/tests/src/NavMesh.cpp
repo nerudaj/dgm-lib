@@ -119,13 +119,17 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 
         SECTION("From-To identity")
         {
-            auto path = navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(1, 1));
+            auto path =
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(1, 1))
+                    .value();
             REQUIRE(path.isTraversed());
         }
 
         SECTION("Direct path between from-to")
         {
-            auto path = navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(2, 1));
+            auto path =
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(2, 1))
+                    .value();
             REQUIRE_FALSE(path.isLooping());
             REQUIRE_FALSE(path.isTraversed());
 
@@ -138,7 +142,9 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 
         SECTION("Normal path")
         {
-            auto path = navmesh.getPath(toWorldCoord(5, 1), toWorldCoord(1, 3));
+            auto path =
+                navmesh.computePath(toWorldCoord(5, 1), toWorldCoord(1, 3))
+                    .value();
             REQUIRE_FALSE(path.isLooping());
             REQUIRE_FALSE(path.isTraversed());
 
@@ -166,16 +172,10 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 
         SECTION("No viable path")
         {
-            // There is no path because each point lies in a separate section of
-            // the map
-            REQUIRE_THROWS_AS(
-                navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(8, 1)),
-                dgm::Exception);
-
-            // There is no path because destination point is a wall
-            REQUIRE_THROWS_AS(
-                navmesh.getPath(toWorldCoord(1, 1), toWorldCoord(6, 1)),
-                dgm::Exception);
+            REQUIRE_FALSE(
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1)));
+            REQUIRE_FALSE(
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1)));
         }
     }
 }
@@ -243,15 +243,11 @@ TEST_CASE("[WorldNavMesh] - BUG: Crashing after several queries")
     dgm::Mesh mesh(blockMesh, { 15u, 15u }, { 64u, 64u });
     dgm::WorldNavMesh navmesh(mesh);
 
-    REQUIRE_NOTHROW(
-        [&]()
-        {
-            auto path1 = navmesh.getPath({ 100.f, 100.f }, { 288.f, 862.f });
-            auto path2 = navmesh.getPath({ 288.f, 864.f }, { 796.f, 158.f });
-            auto path3 = navmesh.getPath({ 800.f, 160.f }, { 542.f, 731.f });
-            auto path4 = navmesh.getPath({ 544.f, 736.f }, { 676.f, 733.f });
-            auto path5 = navmesh.getPath({ 672.f, 736.f }, { 545.f, 613.f });
-        }());
+    REQUIRE(navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f }));
+    REQUIRE(navmesh.computePath({ 288.f, 864.f }, { 796.f, 158.f }));
+    REQUIRE(navmesh.computePath({ 800.f, 160.f }, { 542.f, 731.f }));
+    REQUIRE(navmesh.computePath({ 544.f, 736.f }, { 676.f, 733.f }));
+    REQUIRE(navmesh.computePath({ 672.f, 736.f }, { 545.f, 613.f }));
 
     /**
      *  NOTE: This bug was caused by the fact that some points in the repro

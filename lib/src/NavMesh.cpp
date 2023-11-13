@@ -452,6 +452,16 @@ void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
 dgm::Path<dgm::WorldNavpoint>
 dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
 {
+    return computePath(from, to)
+        .or_else(
+            []() -> std::optional<dgm::Path<dgm::WorldNavpoint>>
+            { throw dgm::Exception("No path was found"); })
+        .value();
+}
+
+std::optional<dgm::Path<dgm::WorldNavpoint>>
+dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
+{
     // Compute tile coordinates of start and end
     const sf::Vector2u tileFrom = sf::Vector2u(
         static_cast<unsigned>(from.x) / mesh.getVoxelSize().x,
@@ -466,7 +476,7 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
     if (tileFrom == tileTo)
         return dgm::Path<WorldNavpoint>({}, false);
     else if (mesh.at(tileTo) >= 1)
-        throw dgm::Exception("No path was found");
+        return std::nullopt;
 
     // Make auxiliary connections to rest of network, unless source/target point
     // is already a jump point
@@ -516,7 +526,7 @@ dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
         if (not fromIsJumpPoint) jumpPointConnections.erase(tileFrom);
     }
 
-    if (!closedSet.hasElements()) throw dgm::Exception("No path was found");
+    if (!closedSet.hasElements()) return std::nullopt;
 
     auto getWorldNavpoint = [&](const sf::Vector2u& coord)
     {
