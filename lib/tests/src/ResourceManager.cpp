@@ -134,4 +134,13 @@ TEST_CASE("[ResourceManager]")
         REQUIRE(loadedCnt + 1u == LoggableResource::ctorCalledCount);
         REQUIRE(unloadedCnt + 1u == LoggableResource::dtorCalledCount);
     }
+
+    SECTION("Can get mutable resource")
+    {
+        REQUIRE(
+            resmgr.loadResource<int>("a", [](const path&, int& v) { v = 69; }));
+        REQUIRE(resmgr.get<int>("a").value().get() == 69);
+        resmgr.getMutable<int>("a").value().get() = 42;
+        REQUIRE(resmgr.get<int>("a").value().get() == 42);
+    }
 }

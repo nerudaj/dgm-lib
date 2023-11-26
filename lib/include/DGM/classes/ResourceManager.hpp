@@ -71,6 +71,19 @@ namespace dgm
             return std::cref(*reinterpret_cast<const T*>(ptr));
         }
 
+        template<CompatibleResourceType T>
+        [[nodiscard]] std::expected<std::reference_wrapper<T>, ErrorMessage>
+        getMutable(const std::string& id) const noexcept
+        {
+            if (!hasResource<T>(id))
+                return std::unexpected(
+                    std::format("Resource with id {} is not loaded.", id));
+
+            const auto&& tid = typeid(T).hash_code();
+            auto&& ptr = data.at(tid).at(id);
+            return std::ref(*reinterpret_cast<T*>(ptr));
+        }
+
         /**
         Loads resource into the database from the given path
         using the loadCallback.
