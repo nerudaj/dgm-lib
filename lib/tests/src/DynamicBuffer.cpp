@@ -33,10 +33,9 @@ TEST_CASE("[DynamicBuffer]")
             buffer.emplaceBack(1);
             buffer.emplaceBack(2);
             buffer.emplaceBack(3);
-            const auto copy = buffer.clone();
 
             int value = 1;
-            for (auto&& [dummy, _] : copy)
+            for (auto&& [dummy, _] : std::as_const(buffer))
             {
                 REQUIRE(value == dummy.value);
                 ++value;

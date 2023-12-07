@@ -53,7 +53,7 @@ namespace dgm
         class [[nodiscard]] IteratorBase final
         {
         public:
-            typedef std::random_access_iterator_tag iterator_category;
+            using iterator_category = std::forward_iterator_tag;
 
         public:
             constexpr IteratorBase(

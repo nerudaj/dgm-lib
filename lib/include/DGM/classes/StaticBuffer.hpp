@@ -20,186 +20,104 @@ namespace dgm
     class StaticBuffer final
     {
     public:
-        class const_iterator
+        template<
+            class PtrType,
+            bool IsConst = std::is_const_v<std::remove_pointer_t<PtrType>>>
+        class [[nodiscard]] IteratorBase final
         {
         public:
-            typedef ptrdiff_t difference_type;
-            typedef T value_type;
-            typedef value_type& reference;
-            typedef value_type* pointer;
-            typedef std::random_access_iterator_tag iterator_category;
+            using ValueType = std::remove_pointer_t<PtrType>;
+            using iterator_category = std::random_access_iterator_tag;
 
         public:
-            [[nodiscard]] constexpr explicit const_iterator(T* value) noexcept
-                : ptr(value)
+            constexpr explicit IteratorBase(PtrType ptr) noexcept : ptr(ptr)
             {
+                assert(ptr);
             }
 
-            [[nodiscard]] constexpr const_iterator(const_iterator&& other) =
-                default;
-            [[nodiscard]] constexpr const_iterator(
-                const const_iterator& other) = default;
-            [[nodiscard]] constexpr ~const_iterator() = default;
+            [[nodiscard]] IteratorBase(IteratorBase<PtrType>&& other)
+                : ptr(other.ptr)
+            {
+                other.ptr = nullptr;
+            }
 
         public:
-            [[nodiscard]] const reference& operator*() const noexcept
+            [[nodiscard]] std::
+                conditional_t<IsConst, const ValueType&, ValueType&>
+                operator*(this std::conditional_t<
+                          IsConst,
+                          const IteratorBase<PtrType>&,
+                          IteratorBase<PtrType>&> self) noexcept
             {
-                return *ptr;
+                // This function uses explicit this to be const
+                // based on whether it is const_iterator or not
+                return *self.ptr;
             }
 
-            const_iterator& operator++() noexcept
+            IteratorBase<PtrType>& operator++() noexcept
             {
                 ptr++;
                 return *this;
             }
 
-            [[nodiscard]] constexpr const_iterator operator++(int) noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType>
+            operator++(int) noexcept
             {
-                auto&& copy = const_iterator(*this);
+                auto&& copy = IteratorBase<PtrType>(*this);
                 ptr++;
                 return copy;
             }
 
-            [[nodiscard]] constexpr const_iterator& operator--() noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType>& operator--() noexcept
             {
                 ptr--;
                 return *this;
             }
 
-            [[nodiscard]] constexpr const_iterator operator--(int) noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType>
+            operator--(int) noexcept
             {
-                auto&& copy = const_iterator(*this);
+                auto&& copy = IteratorBase<PtrType>(*this);
                 ptr--;
                 return copy;
             }
 
-            [[nodiscard]] constexpr difference_type
-            operator-(const const_iterator& other) const noexcept
+            [[nodiscard]] constexpr std::size_t
+            operator-(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr - other.ptr;
             }
 
-            [[nodiscard]] constexpr difference_type
-            operator+(const const_iterator& other) const noexcept
+            [[nodiscard]] constexpr std::size_t
+            operator+(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr + other.ptr;
             }
 
             [[nodiscard]] constexpr bool
-            operator==(const const_iterator& second) const noexcept
+            operator==(const IteratorBase<PtrType>& other) const noexcept
             {
-                return ptr == second.ptr;
+                return ptr == other.ptr;
             }
 
             [[nodiscard]] constexpr bool
-            operator!=(const const_iterator& other) const noexcept
+            operator!=(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr != other.ptr;
             }
 
             [[nodiscard]] constexpr auto
-            operator<=>(const const_iterator& other) const noexcept
+            operator<=>(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr <=> other.ptr;
             }
 
-        protected:
-            T* ptr; ///< Pointer to data
-        };
-
-        class iterator final : public const_iterator
-        {
-        public:
-            typedef ptrdiff_t difference_type;
-            typedef T value_type;
-            typedef value_type& reference;
-            typedef value_type* pointer;
-            typedef std::random_access_iterator_tag iterator_category;
-
-        public:
-            [[nodiscard]] constexpr iterator(T* value) noexcept
-                : const_iterator(value)
-            {
-            }
-
-            [[nodiscard]] constexpr iterator(const iterator& other) noexcept =
-                default;
-            [[nodiscard]] constexpr iterator(iterator&& other) noexcept =
-                default;
-            constexpr ~iterator() = default;
-
-        public:
-            [[nodiscard]] constexpr reference& operator*() const noexcept
-            {
-                return *super::ptr;
-            }
-
-            [[nodiscard]] constexpr iterator& operator++() noexcept
-            {
-                ++super::ptr;
-                return *this;
-            }
-
-            [[nodiscard]] constexpr iterator operator++(int) noexcept
-            {
-                iterator copy(*this);
-                ++super::ptr;
-                return copy;
-            }
-
-            [[nodiscard]] constexpr iterator& operator--() noexcept
-            {
-                --super::ptr;
-                return *this;
-            }
-
-            [[nodiscard]] constexpr iterator operator--(int) noexcept
-            {
-                auto&& copy = iterator(*this);
-                --super::ptr;
-                return copy;
-            }
-
-            [[nodiscard]] constexpr iterator&
-            operator=(const iterator& other) noexcept
-            {
-                super::ptr = other.ptr;
-                return *this;
-            }
-
-            [[nodiscard]] constexpr difference_type
-            operator-(const const_iterator& other) const noexcept
-            {
-                return super::ptr - other.ptr;
-            }
-
-            [[nodiscard]] constexpr difference_type
-            operator+(const const_iterator& other) const noexcept
-            {
-                return super::ptr + other.ptr;
-            }
-
-            [[nodiscard]] constexpr bool
-            operator==(const iterator& second) const noexcept
-            {
-                return super::ptr == second.ptr;
-            }
-
-            [[nodiscard]] constexpr bool
-            operator!=(const iterator& second) const noexcept
-            {
-                return super::ptr != second.ptr;
-            }
-
-            [[nodiscard]] constexpr auto
-            operator<=>(const iterator& other) const noexcept
-            {
-                return super::ptr <=> other.ptr;
-            }
-
         private:
-            using super = const_iterator;
+            PtrType ptr; ///< Pointer to data
         };
+
+        using iterator = IteratorBase<T*>;
+        using const_iterator = IteratorBase<const T*>;
 
     public:
         [[nodiscard]] constexpr explicit StaticBuffer(unsigned maxCapacity)
