@@ -33,6 +33,7 @@ namespace dgm
         {
             defaultView.setViewport(viewport);
             defaultView.setSize(resolution);
+            defaultView.setCenter(resolution / 2.f);
             view = defaultView;
         }
 
