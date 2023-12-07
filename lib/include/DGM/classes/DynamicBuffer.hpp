@@ -21,20 +21,20 @@ namespace dgm
         class T,
         unsigned PreallocatedMemoryAmount = 128,
         typename IndexType = std::size_t>
-    class DynamicBuffer final
+    class [[nodiscard]] DynamicBuffer final
     {
     public:
         using DataType = T;
         using IndexingType = IndexType;
 
     public:
-        [[nodiscard]] constexpr DynamicBuffer()
+        constexpr DynamicBuffer()
         {
             data.reserve(PreallocatedMemoryAmount);
         }
 
         DynamicBuffer(const DynamicBuffer&) = delete;
-        [[nodiscard]] DynamicBuffer(DynamicBuffer&&) = default;
+        DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
         [[nodiscard]] constexpr DynamicBuffer clone() const
@@ -45,54 +45,57 @@ namespace dgm
         DynamicBuffer& operator=(DynamicBuffer&&) = default;
 
     public:
-        class iterator
+        template<
+            class BackrefType,
+            bool IsConst =
+                std::is_const_v<std::remove_reference_t<BackrefType>>>
+            requires std::is_reference_v<BackrefType>
+        class [[nodiscard]] IteratorBase final
         {
         public:
-            using iterator_category = std::forward_iterator_tag;
-            using difference_type = ptrdiff_t;
-            using value_type = T;
-            using reference = value_type&;
-            using pointer = value_type*;
+            typedef std::random_access_iterator_tag iterator_category;
 
         public:
-            [[nodiscard]] constexpr iterator(
-                IndexType index,
-                DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>&
-                    backref) noexcept
+            constexpr IteratorBase(
+                IndexType index, BackrefType backref) noexcept
                 : index(index), backref(backref)
             {
                 skipDeletedElements();
             }
 
         public:
-            [[nodiscard]] constexpr std::pair<reference, IndexType>
+            [[nodiscard]] std::pair<
+                std::conditional_t<IsConst, const DataType&, DataType&>,
+                IndexType>
             operator*() noexcept
             {
                 return { backref[index], index };
             }
 
-            constexpr iterator operator++() noexcept
+            constexpr [[nodiscard]] IteratorBase<BackrefType>&
+            operator++() noexcept
             {
                 ++index;
                 skipDeletedElements();
                 return *this;
             }
 
-            constexpr iterator operator++(int) noexcept
+            constexpr [[nodiscard]] IteratorBase<BackrefType>
+            operator++(int) noexcept
             {
-                auto copy = iterator(*this);
+                auto copy = IteratorBase<BackrefType>(*this);
                 ++*this;
                 return copy;
             }
 
             [[nodiscard]] constexpr bool
-            operator==(const iterator& other) const noexcept
+            operator==(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index == other.index;
             }
 
             [[nodiscard]] constexpr bool
-            operator!=(const iterator& other) const noexcept
+            operator!=(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index != other.index;
             }
@@ -107,8 +110,12 @@ namespace dgm
 
         private:
             IndexType index;
-            DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>& backref;
+            BackrefType backref;
         };
+
+        using SelfType = DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>;
+        using iterator = IteratorBase<SelfType&>;
+        using const_iterator = IteratorBase<const SelfType&>;
 
     public:
         [[nodiscard]] constexpr bool
@@ -171,6 +178,17 @@ namespace dgm
         [[nodiscard]] constexpr iterator end() noexcept
         {
             return iterator(static_cast<IndexType>(data.size()), *this);
+        }
+
+        [[nodiscard]] constexpr const_iterator begin() const noexcept
+        {
+            return const_iterator(0, std::cref(*this));
+        }
+
+        [[nodiscard]] constexpr const_iterator end() const noexcept
+        {
+            return const_iterator(
+                static_cast<IndexType>(data.size()), std::cref(*this));
         }
 
     private:

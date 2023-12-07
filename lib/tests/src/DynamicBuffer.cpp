@@ -27,6 +27,22 @@ TEST_CASE("[DynamicBuffer]")
             }
         }
 
+        SECTION("const buffer can be iterated with range-based for")
+        {
+            dgm::DynamicBuffer<Dummy> buffer;
+            buffer.emplaceBack(1);
+            buffer.emplaceBack(2);
+            buffer.emplaceBack(3);
+            const auto copy = buffer.clone();
+
+            int value = 1;
+            for (auto&& [dummy, _] : copy)
+            {
+                REQUIRE(value == dummy.value);
+                ++value;
+            }
+        }
+
         SECTION("Iterator correctly skips elements at the start")
         {
             dgm::DynamicBuffer<Dummy> buffer;

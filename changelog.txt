@@ -1,4 +1,5 @@
 dgm-lib v2.2.4
+ * Added const iterator interface to `dgm::DynamicBuffer`
  * Fixed `dgm::Camera` being positioned to a random position upon construction
 	* Now it's center is half of the resolution, so it sees a rectangle defined as [0, 0, width, height]
 
