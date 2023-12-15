@@ -1,3 +1,12 @@
+dgm-lib v2.x.x
+ * Bumped to SFML v2.6.1
+ * Removed `dgm::AbstractController`
+ * Reworked `dgm::Controller`
+	* Gamepad deadzones reworked
+	* Methods renamed
+	* `releaseInput` now affect axii too if you read them via `isInputToggled`
+	* Documentation revisited
+
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`
  * Fixed `dgm::Camera` being positioned to a random position upon construction
