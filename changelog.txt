@@ -1,3 +1,8 @@
+dgm-lib v2.x.x
+ * Marked `dgm::AbstractController` as deprecated. Will be removed in a later version and regular controller will inherit from nothing
+ * Marked `dgm::Controller::update(dgm::Time)` as deprecated
+	* The parameter was doing nothing, you should use overload that has no parameter
+
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`
  * Fixed `dgm::Camera` being positioned to a random position upon construction

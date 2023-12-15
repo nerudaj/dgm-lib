@@ -4,6 +4,11 @@
 
 void dgm::Controller::update(const dgm::Time&)
 {
+    update();
+}
+
+void dgm::Controller::update()
+{
     controllerConnected =
         XInputGetState(controllerIndex, &xstate) == ERROR_SUCCESS;
 }

@@ -16,7 +16,7 @@ namespace dgm
      *  should provide a way to bind physical inputs of chosen devices to
      *  abstract action codes.
      */
-    class AbstractController
+    [[deprecated]] class AbstractController
     {
     public:
         /**
@@ -127,7 +127,16 @@ namespace dgm
          *  the controller. You don't need to call this if you only
          *  use mouse and keyboard.
          */
-        void update(const ::dgm::Time& time);
+        [[deprecated]] void update(const ::dgm::Time& time);
+
+        /**
+         *  \brief Update state on xbox controller
+         *
+         *  You only need to call this method if you intend on using
+         *  the controller. You don't need to call this if you only
+         *  use mouse and keyboard.
+         */
+        void update();
 
         /**
          *  \brief Test if controller is connected
