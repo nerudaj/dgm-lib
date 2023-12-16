@@ -1,4 +1,5 @@
 dgm-lib v2.x.x
+ * Bumped to SFML v2.6.1
  * Marked `dgm::AbstractController` as deprecated. Will be removed in a later version and regular controller will inherit from nothing
  * Marked `dgm::Controller::update(dgm::Time)` as deprecated
 	* The parameter was doing nothing, you should use overload that has no parameter
