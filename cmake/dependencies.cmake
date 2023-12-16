@@ -13,7 +13,7 @@ file ( DOWNLOAD
 
 include ( "${DGM_SOURCE_DIR}/cmake/cpm.cmake" )
 
-set ( SFML_VERSION "2.6.0" )
+set ( SFML_VERSION "2.6.1" )
 set ( JSON_VERSION "3.11.2" )
 set ( CATCH_VERSION "3.3.2" )
 
