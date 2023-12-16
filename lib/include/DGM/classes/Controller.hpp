@@ -10,13 +10,15 @@
 namespace dgm
 {
     /**
+     *  \warn This interface is deprecated!
+     *
      *  \brief Abstraction over physical input devices
      *
      *  Inputs are abstracted through action codes. Concrete implementation
      *  should provide a way to bind physical inputs of chosen devices to
      *  abstract action codes.
      */
-    [[deprecated]] class AbstractController
+    class /*[[deprecated]]*/ AbstractController
     {
     public:
         /**
@@ -196,12 +198,6 @@ namespace dgm
          *
          *  Similar applies to negative half of the stick range - function
          * returns value from -1.f to 0.f and -1.f for buttons.
-         *
-         *  \warn While you technically can bind a button to action code that is
-         * also bound to general X/Y stick axis (not positive or negative
-         * halves) it doesn't make sense from usage perspective. Stick can
-         * return range <-1.f, 1.f> but button is only binary input. Use pos/neg
-         * axii bindings for those cases.
          */
         [[nodiscard]] float getValue(const int code) const override;
 
