@@ -1,8 +1,11 @@
 dgm-lib v2.x.x
  * Bumped to SFML v2.6.1
- * Marked `dgm::AbstractController` as deprecated. Will be removed in a later version and regular controller will inherit from nothing
- * Marked `dgm::Controller::update(dgm::Time)` as deprecated
-	* The parameter was doing nothing, you should use overload that has no parameter
+ * Removed `dgm::AbstractController`
+ * Reworked `dgm::Controller`
+	* Gamepad deadzones reworked
+	* Methods renamed
+	* `releaseInput` now affect axii too if you read them via `isInputToggled`
+	* Documentation revisited
 
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`
