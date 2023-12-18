@@ -1,14 +1,45 @@
 #pragma once
 
+#include <DGM/classes/Time.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <Windows.h>
 #include <Xinput.h>
-#include <cassert>
 #include <map>
 
 namespace dgm
 {
+    /**
+     *  \brief Abstraction over physical input devices
+     *
+     *  Inputs are abstracted through action codes. Concrete implementation
+     *  should provide a way to bind physical inputs of chosen devices to
+     *  abstract action codes.
+     */
+    class AbstractController
+    {
+    public:
+        /**
+         *  \brief Returns true if input associated with code is toggled
+         */
+        [[nodiscard]] virtual bool isToggled(const int code) const = 0;
+
+        /**
+         *  \brief Marks input as released
+         *
+         *  Function isToggled will not return TRUE until underlying physical
+         *  input is released.
+         */
+        virtual void releaseKey(const int code) = 0;
+
+        /**
+         *  \brief Returns analog value for given action code
+         */
+        [[nodiscard]] virtual float getValue(const int code) const = 0;
+
+        virtual ~AbstractController() = default;
+    };
+
     /**
      *  \brief Xbox controller related data structures
      */
@@ -70,143 +101,8 @@ namespace dgm
      *  You can even bind for example keyboard key and xbox controller
      *  button to the same input code.
      */
-    class [[nodiscard]] Controller final
+    class Controller : public AbstractController
     {
-
-    public:
-        /**
-         *  \brief Update state on xbox controller
-         *
-         *  You only need to call this method if you intend on using
-         *  the controller. You don't need to call this if you only
-         *  use mouse and keyboard.
-         */
-        void update();
-
-        /**
-         * \brief Test whether particular input code is pressed
-         *
-         * If input code was previously released using releaseInput,
-         * then the physical input has to be physically released and
-         * pressed again for this function to return true again.
-         *
-         * This can be useful for example when you want to implement
-         * a revolver gun and you want the player to press the fire
-         * button separately for every single bullet.
-         */
-        [[nodiscard]] bool isInputToggled(const int code) const;
-
-        /**
-         * \brief Get analog value for associated input
-         *
-         * Remarks:
-         *
-         * Both trigger Axii return value from 0.f to 1.f.
-         *
-         * Keyboard key, Xbox gamepad buttons and mouse keys always return -1.f,
-         * 0.f or 1.f based on whether positive or negative Axis was associated
-         * with the same input.
-         *
-         * Positive Axii return 0.f to 1.f negative Axii return -1.f to 0.f
-         *
-         * If controller deadzone was configured and queried Axis
-         * holds a abs(value) < deadzone, then 0.f is returned by this method.
-         *
-         * \releaseInput does not affect this method.
-         */
-        [[nodiscard]] float getInputValue(const int code) const;
-
-        /**
-         * \brief Marks input as released
-         *
-         * \details Only works in conjuction with isInputToggled().
-         * Once an action is marked as released then
-         * isInputToggled() will return FALSE until user had released
-         * the input physically and then pressed it again.
-         * With this, one can emulate sf::Event::keyPressed behaviour.
-         *
-         * \note In order to function properly, isInputToggled should be called
-         * every frame (to ensure that controller will notice the released key)
-         */
-        void releaseInput(const int code) noexcept
-        {
-            bindings[code].released = true;
-        }
-
-        /**
-         *  \brief Test if controller is connected
-         *
-         *  \pre setControllerIndex was called, otherwise index 0 is used
-         *  \pre update was called, this method returns value valid since last
-         * update call
-         */
-        [[nodiscard]] constexpr bool isControllerConnected() const noexcept
-        {
-            return controllerConnected;
-        }
-
-        /**
-         *  \brief Bind keyboard key to numerical action code
-         */
-        inline void bindInput(const int code, sf::Keyboard::Key key)
-        {
-            bindings[code].key = key;
-        }
-
-        /**
-         *  \brief Bind mouse button to numerical action code
-         */
-        inline void bindInput(const int code, sf::Mouse::Button btn)
-        {
-            bindings[code].btn = btn;
-        }
-
-        /**
-         *  \brief Bind xbox controller button to numerical action code
-         */
-        inline void bindInput(const int code, dgm::Xbox::Button btn)
-        {
-            bindings[code].xbtn = btn;
-        }
-
-        /**
-         *  \brief Bind xbox controller axis to numerical action code
-         */
-        void bindInput(const int code, dgm::Xbox::Axis axis);
-
-        /**
-         *  \brief Set an index of a gamepad that should be used
-         */
-        constexpr void setGamepadIndex(const unsigned short index) noexcept
-        {
-            controllerIndex = index;
-        }
-
-        /**
-         * \brief Set a vibration force on a connected gamepad
-         */
-        void vibrate(
-            const float leftMotorForce, const float rightMotorForce) noexcept;
-
-        /**
-         * \brief Resets vibrations on a connected gamepad
-         */
-        inline void stopVibrating() noexcept(noexcept(vibrate(0.f, 0.f)))
-        {
-            vibrate(0.f, 0.f);
-        }
-
-        /**
-         * \brief Set deadzone for controller axii
-         *
-         * Deadzone is a number in interval <0.f, 1.f>
-         */
-        void setControllerDeadzone(const float deadzone)
-        {
-            assert(0.f <= deadzone && deadzone <= 1.f);
-            controllerDeadzone = deadzone;
-        }
-
     protected:
         struct Binding
         {
@@ -218,40 +114,122 @@ namespace dgm
             dgm::Xbox::Axis xaxis = dgm::Xbox::Axis::Unknown;
         };
 
-    protected:
-        [[nodiscard]] inline bool
-        isMouseInputToggled(const Binding& binding) const noexcept
-        {
-            // Extra check is required because:
-            // sf::Mouse::isButtonPressed(sf::Mouse::ButtonCount) returns true
-            return (binding.btn != sf::Mouse::ButtonCount)
-                   && sf::Mouse::isButtonPressed(binding.btn);
-        }
-
-        [[nodiscard]] inline bool
-        isKeyboardInputToggled(const Binding& binding) const noexcept
-        {
-            // Extra check is required because:
-            // sf::Keyboard::isKeyPressed(sf::Keyboard::Unknown) return true
-            return (binding.key != sf::Keyboard::Unknown)
-                   && sf::Keyboard::isKeyPressed(binding.key);
-        }
-
-        [[nodiscard]] inline bool
-        isGamepadInputToggled(const Binding& binding) const noexcept
-        {
-            return controllerConnected
-                   && (xstate.Gamepad.wButtons
-                       & static_cast<WORD>(binding.xbtn));
-        }
-
-        [[nodiscard]] float getAxisValue(const Binding& binding) const noexcept;
-
-    protected:
         mutable std::map<int, Binding> bindings = {};
         XINPUT_STATE xstate = {};
         unsigned short controllerIndex = 0;
         bool controllerConnected = false;
-        float controllerDeadzone = 0.1f;
+
+    public:
+        /**
+         *  \brief Update state on xbox controller
+         *
+         *  You only need to call this method if you intend on using
+         *  the controller. You don't need to call this if you only
+         *  use mouse and keyboard.
+         */
+        void update(const ::dgm::Time& time);
+
+        /**
+         *  \brief Test if controller is connected
+         *
+         *  \pre setControllerIndex was called, otherwise index 0 is used
+         *  \pre update was called, this method returns value valid since last
+         * update call
+         */
+        [[nodiscard]] bool isControllerConnected() const noexcept
+        {
+            return controllerConnected;
+        }
+
+        /**
+         * \brief Test whether particular input code is pressed
+         *
+         * If input code was previously released using releaseKey then
+         * physical key/button must first be released, this function called
+         * and only then will this function return TRUE again.
+         *
+         * This function does NOT work for dgm::Xbox::Axis bindings (use
+         * getAxisValue for those).
+         */
+        [[nodiscard]] bool isToggled(const int code) const;
+
+        /**
+         * \brief Marks input as released
+         *
+         * \details Only works in conjuction with keyPressed().
+         * Once an action is marked as released then
+         * keyPressed() will return FALSE until point where user
+         * had released the input physically and then pressed it again.
+         * With this, one can emulate sf::Event::keyPressed behaviour.
+         *
+         * \note In order to function properly, keyPressed should be called
+         * every frame (to ensure that controller will notice the released key)
+         */
+        void releaseKey(const int code) noexcept
+        {
+            bindings[code].released = true;
+        }
+
+        /**
+         *  \brief Get analog value of bound action code
+         *
+         *  If stick X/Y axis is bound to action, value from -1.f to 1.f will be
+         * returned based on the position of the stick.
+         *
+         *  Both triggers return value from 0.f to 1.f. If button or keyboard
+         * key is bound to this action code as well, this function will
+         * return 1.f if such input is pressed.
+         *
+         *  If stick X/Y pos axis is bound to action, value from 0.f to 1.f will
+         * be returned based on the position of the stick only on positive half
+         * of range. If button or keyboard key is bound to this action code as
+         * well, this function will return 1.f if such input is pressed.
+         *
+         *  Similar applies to negative half of the stick range - function
+         * returns value from -1.f to 0.f and -1.f for buttons.
+         *
+         *  \warn While you technically can bind a button to action code that is
+         * also bound to general X/Y stick axis (not positive or negative
+         * halves) it doesn't make sense from usage perspective. Stick can
+         * return range <-1.f, 1.f> but button is only binary input. Use pos/neg
+         * axii bindings for those cases.
+         */
+        [[nodiscard]] float getValue(const int code) const override;
+
+        /**
+         *  \brief Bind keyboard key to numerical action code
+         */
+        void bindInput(const int code, sf::Keyboard::Key key);
+
+        /**
+         *  \brief Bind mouse button to numerical action code
+         */
+        void bindInput(const int code, sf::Mouse::Button btn);
+
+        /**
+         *  \brief Bind xbox controller button to numerical action code
+         */
+        void bindInput(const int code, dgm::Xbox::Button btn);
+
+        /**
+         *  \brief Bind xbox controller axis to numerical action code
+         */
+        void bindInput(const int code, dgm::Xbox::Axis axis);
+
+        /**
+         *  \brief Set index of required controller
+         */
+        void setControllerIndex(const unsigned short index) noexcept
+        {
+            controllerIndex = index;
+        }
+
+        /**
+         *  \brief Set vibration force on controller
+         */
+        void setControllerVibration(
+            const float leftMotorForce, const float rightMotorForce);
+
+        [[nodiscard]] Controller() noexcept = default;
     };
 } // namespace dgm

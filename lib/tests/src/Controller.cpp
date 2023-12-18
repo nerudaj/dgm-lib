@@ -30,7 +30,7 @@ TEST_CASE("[Controller]")
         "is pressed")
     {
         input.bindInput(0, sf::Keyboard::A);
-        REQUIRE_FALSE(input.getInputValue(0));
+        REQUIRE_FALSE(input.getValue(0));
     }
 
     SECTION(
@@ -39,7 +39,7 @@ TEST_CASE("[Controller]")
     {
         input.bindInput(0, dgm::Xbox::Button::A);
         input.bindInput(1, dgm::Xbox::Axis::LTrigger);
-        REQUIRE_FALSE(input.getInputValue(0));
-        REQUIRE_FALSE(input.getInputValue(1));
+        REQUIRE_FALSE(input.getValue(0));
+        REQUIRE_FALSE(input.getValue(1));
     }
 }
