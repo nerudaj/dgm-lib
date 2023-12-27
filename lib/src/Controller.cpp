@@ -37,20 +37,13 @@ float dgm::Controller::getInputValue(const int code) const
     return getAxisValue(binding);
 }
 
-void dgm::Controller::vibrate(const float left, const float right) noexcept
+void dgm::Controller::vibrate(
+    const std::uint16_t leftMotorForce,
+    const std::uint16_t rightMotorForce) noexcept
 {
-    assert(
-        0.f <= left && left <= 1.f
-        && "Parameter left must be in <0.f, 1.f> range");
-    assert(
-        0.f <= right && right <= 1.f
-        && "Parameter right must be in <0.f, 1.f> range");
-
     XINPUT_VIBRATION vibration;
-    vibration.wLeftMotorSpeed =
-        static_cast<WORD>(left * std::numeric_limits<WORD>::max());
-    vibration.wRightMotorSpeed =
-        static_cast<WORD>(right * std::numeric_limits<WORD>::max());
+    vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotorForce);
+    vibration.wRightMotorSpeed = static_cast<WORD>(rightMotorForce);
     XInputSetState(controllerIndex, &vibration);
 }
 

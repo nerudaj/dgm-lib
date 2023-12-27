@@ -184,6 +184,9 @@ namespace dgm
 
         /**
          * \brief Set a vibration force on a connected gamepad
+         *
+         * std::numerical_limits<std::uint16_t>::max() means
+         * maximum vibration force.
          */
         void vibrate(
             const std::uint16_t leftMotorForce,

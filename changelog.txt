@@ -4,7 +4,7 @@ dgm-lib v2.3.x
  * Reworked `dgm::Controller`
 	* Gamepad deadzones reworked
 	* Methods renamed
-	* `releaseInput` now affect axii too if you read them via `isInputToggled`
+	* `releaseInput` now affects axii too if you read them via `isInputToggled`
 	* Documentation revisited
 
 dgm-lib v2.2.5
