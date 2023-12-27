@@ -1,5 +1,6 @@
 dgm-lib v2.3.x
  * Bumped to SFML v2.6.1
+ * Added load helpers to `dgm::Utility` that can be used as load callbacks for `dgm::ResourceManager`
  * Removed `dgm::AbstractController`
  * Reworked `dgm::Controller`
 	* Gamepad deadzones reworked
