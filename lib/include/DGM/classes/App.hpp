@@ -16,11 +16,17 @@ namespace dgm
     template<class T>
     concept IsDerivedFromAppState = std::derived_from<T, dgm::AppState>;
 
-    class App
+    class [[nodiscard]] App
     {
     public:
         Window& window;
         Time time; ///< Time between frames
+
+    public:
+        explicit App(dgm::Window& window);
+        App(App&&) = delete;
+        App(App&) = delete;
+        ~App();
 
     protected:
         std::ofstream outbuf;
@@ -30,7 +36,7 @@ namespace dgm
         std::stack<std::unique_ptr<AppState>> states;
         std::size_t numberOfStatesToPop = 0;
         sf::Texture screenshot;
-        sf::Sprite screenshotSprite;
+        sf::RectangleShape screenshotSprite;
 
     protected:
         /**
@@ -112,10 +118,5 @@ namespace dgm
         {
             numberOfStatesToPop = states.size();
         }
-
-        [[nodiscard]] explicit App(dgm::Window& window);
-        App(App&&) = delete;
-        App(App&) = delete;
-        ~App();
     };
 } // namespace dgm

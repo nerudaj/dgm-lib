@@ -24,7 +24,6 @@ void dgm::App::takeScreenshot()
     auto&& capture = window.getScreenshot();
     screenshot.loadFromImage(capture);
     screenshotSprite.setTexture(screenshot);
-    screenshotSprite.setOrigin(sf::Vector2f(capture.getSize() / 2u));
 }
 
 void dgm::App::run()
@@ -40,8 +39,10 @@ void dgm::App::run()
 
         if (top.isTransparent())
         {
+            auto size = sf::Vector2f(window.getSize());
+            screenshotSprite.setSize(size);
             screenshotSprite.setPosition(
-                window.getWindowContext().getView().getCenter());
+                window.getWindowContext().getView().getCenter() - size / 2.f);
             window.draw(screenshotSprite);
         }
 
