@@ -55,8 +55,8 @@ int main()
 	input.bindInput(Action::LStick, dgm::Xbox::Button::LStick);
 	input.bindInput(Action::RStick, dgm::Xbox::Button::RStick);
 
-	input.setControllerDeadzone(0.05f);
-	input.vibrate(0.5f, 0.25f);
+	input.setGamepadDeadzone(0.05f);
+	input.vibrate(32000, 16000);
 
 	// Bind mouse
 	input.bindInput(Action::LTrigger, sf::Mouse::Button::Left);

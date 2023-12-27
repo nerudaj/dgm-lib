@@ -7,6 +7,7 @@ dgm-lib v2.3.x
 	* Methods renamed
 	* `releaseInput` now affects axii too if you read them via `isInputToggled`
 	* Documentation revisited
+ * Fixed screenshot under transparent app state to be properly scaled if resolution changes
 
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`

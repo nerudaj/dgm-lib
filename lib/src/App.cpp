@@ -23,7 +23,7 @@ void dgm::App::takeScreenshot()
 {
     auto&& capture = window.getScreenshot();
     screenshot.loadFromImage(capture);
-    screenshotSprite.setTexture(screenshot);
+    screenshotSprite.setTexture(&screenshot);
 }
 
 void dgm::App::run()

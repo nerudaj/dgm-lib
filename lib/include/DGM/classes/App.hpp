@@ -2,6 +2,7 @@
 
 #include <DGM/classes/Time.hpp>
 #include <DGM/classes/Window.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <cassert>
