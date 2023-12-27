@@ -186,14 +186,15 @@ namespace dgm
          * \brief Set a vibration force on a connected gamepad
          */
         void vibrate(
-            const float leftMotorForce, const float rightMotorForce) noexcept;
+            const std::uint16_t leftMotorForce,
+            const std::uint16_t rightMotorForce) noexcept;
 
         /**
          * \brief Resets vibrations on a connected gamepad
          */
-        inline void stopVibrating() noexcept(noexcept(vibrate(0.f, 0.f)))
+        inline void stopVibrating() noexcept(noexcept(vibrate(0, 0)))
         {
-            vibrate(0.f, 0.f);
+            vibrate(0, 0);
         }
 
         /**
@@ -201,7 +202,7 @@ namespace dgm
          *
          * Deadzone is a number in interval <0.f, 1.f>
          */
-        void setControllerDeadzone(const float deadzone)
+        void setGamepadDeadzone(const float deadzone)
         {
             assert(0.f <= deadzone && deadzone <= 1.f);
             controllerDeadzone = deadzone;
