@@ -116,8 +116,6 @@ namespace dgm
             position += forward;
         }
 
-        [[nodiscard]] [[deprecated]] constexpr Circle() noexcept = default;
-
         [[nodiscard]] Circle(
             const float x, const float y, const float radius) noexcept
             : position(x, y), radius(radius)
@@ -225,8 +223,6 @@ namespace dgm
             size = newSize;
         }
 
-        [[nodiscard]] [[deprecated]] constexpr Rect() noexcept = default;
-
         [[nodiscard]] Rect(
             const float x,
             const float y,
@@ -322,7 +318,6 @@ namespace dgm
             return width;
         }
 
-        [[nodiscard]] [[deprecated]] constexpr VisionCone() noexcept = default;
         [[nodiscard]] VisionCone(const float length, const float width);
     };
 
@@ -478,8 +473,6 @@ namespace dgm
         {
             position += forward;
         }
-
-        [[nodiscard]] [[deprecated]] constexpr GenericMesh() noexcept = default;
 
         /**
          *  \brief Construct mesh object from data array
