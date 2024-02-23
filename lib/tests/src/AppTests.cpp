@@ -9,6 +9,7 @@ struct Reporter
     bool ctorCalled = false;
     bool dtorCalled = false;
     bool hasFocus = false;
+    std::string restoreMessage = "";
 };
 
 enum class TestableStateBehaviour : std::size_t
@@ -16,6 +17,7 @@ enum class TestableStateBehaviour : std::size_t
     Default,
     PopState,
     PopState3,
+    PopWithMessage,
     ExitApp,
     ExitOnRestore
 };
@@ -44,7 +46,10 @@ public:
             break;
         case TestableStateBehaviour::PopState3:
             app.popState();
-            app.popState(2);
+            app.popState("", 2);
+            break;
+        case TestableStateBehaviour::PopWithMessage:
+            app.popState("test message");
             break;
         case TestableStateBehaviour::ExitApp:
             app.exit();
@@ -59,9 +64,10 @@ public:
         reporter->drawCalled = true;
     }
 
-    virtual void restoreFocusImpl()
+    virtual void restoreFocusImpl(const std::string& message)
     {
         reporter->hasFocus = true;
+        reporter->restoreMessage = message;
         if (behaviour == TestableStateBehaviour::ExitOnRestore) app.exit();
     }
 
@@ -308,5 +314,17 @@ TEST_CASE("App")
         REQUIRE_FALSE(r1.hasFocus);
         REQUIRE_FALSE(r2.hasFocus);
         REQUIRE(r3.hasFocus);
+    }
+
+    SECTION("Message is passed down during pop")
+    {
+        Reporter r1, r2;
+
+        app.pushState<TestableState>(&r1, TestableStateBehaviour::PopState);
+        app.pushState<TestableState>(
+            &r2, TestableStateBehaviour::PopWithMessage);
+        app.run();
+
+        REQUIRE(r1.restoreMessage == "test message");
     }
 }

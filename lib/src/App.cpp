@@ -46,7 +46,11 @@ void dgm::App::performPostFrameCleanup()
     }
 
     numberOfStatesToPop = 0;
-    if (not states.empty()) topState().restoreFocus();
+    if (not states.empty())
+    {
+        topState().restoreFocus(messageForRestore);
+        messageForRestore.clear();
+    }
 }
 
 void dgm::App::run()

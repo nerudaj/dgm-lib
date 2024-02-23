@@ -74,8 +74,10 @@ namespace dgm
          *  Calling this method multiple times per frame aggregates the
          *  number of states that will be popped
          */
-        constexpr void popState(const unsigned count = 1) noexcept
+        constexpr void popState(
+            const std::string& message = "", const unsigned count = 1) noexcept
         {
+            messageForRestore = message;
             numberOfStatesToPop += count;
         }
 
@@ -119,5 +121,6 @@ namespace dgm
         std::streambuf* stderrBackup = nullptr;
         std::stack<std::unique_ptr<AppState>> states;
         std::size_t numberOfStatesToPop = 0;
+        std::string messageForRestore = "";
     };
 } // namespace dgm

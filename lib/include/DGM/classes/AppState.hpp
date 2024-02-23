@@ -41,16 +41,10 @@ namespace dgm
          */
         virtual void draw() = 0;
 
-        /**
-         *  This method is called when stack of states has been
-         *  popped and this state is now the top state.
-         *
-         *  It is optional to override this method.
-         */
-        void restoreFocus()
+        void restoreFocus(const std::string& message)
         {
             hasFocus = true;
-            restoreFocusImpl();
+            restoreFocusImpl(message);
         }
 
         void loseFocus()
@@ -77,7 +71,16 @@ namespace dgm
         }
 
     protected:
-        virtual void restoreFocusImpl() {}
+        /**
+         *  This method is called when stack of states has been
+         *  popped and this state is now the top state.
+         *
+         *  It is optional to override this method.
+         *
+         *  The string parameter is a message previously passed
+         *  to dgm::App::popState method.
+         */
+        virtual void restoreFocusImpl(const std::string&) {}
 
         virtual void loseFocusImpl() {}
 
