@@ -3,6 +3,7 @@ dgm-lib v2.3.x
  * Added load helpers to `dgm::Utility` that can be used as load callbacks for `dgm::ResourceManager`
  * Removed `dgm::AbstractController`
  * Removed all deprecated methods
+ * Added `getRawData` and `getRawConstData` to `dgm::GenericMesh`
  * Reworked `dgm::App` and `dgm::AppState`
 	* `isTransparent` and `getClearColor` are no longer a virtual methods, they are replaced by `dgm::AppStateConfig`
 		* `isTransparent` was broken down into `shouldUpdateUnderlyingState` and `shouldDrawUnderlyingState` - first allows you to specify whether input and update methods should be executed for the state under top state. The second does the same for draw method. If multiple states are transparent in this way, the effect is applied recursively

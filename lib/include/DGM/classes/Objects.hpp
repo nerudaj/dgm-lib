@@ -370,6 +370,18 @@ namespace dgm
             return self.at(pos.x, pos.y);
         }
 
+        [[nodiscard]] constexpr inline std::vector<DataType>&
+        getRawData() noexcept
+        {
+            return data;
+        }
+
+        [[nodiscard]] constexpr inline const std::vector<DataType>&
+        getRawConstData() const noexcept
+        {
+            return data;
+        }
+
         /**
          *  \brief get position of top-left corner
          */
