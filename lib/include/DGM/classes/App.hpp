@@ -17,46 +17,20 @@ namespace dgm
     template<class T>
     concept IsDerivedFromAppState = std::derived_from<T, dgm::AppState>;
 
-    class [[nodiscard]] App
+    class [[nodiscard]] App final
     {
-    public:
-        Window& window;
-        Time time; ///< Time between frames
 
     public:
         explicit App(dgm::Window& window);
         App(App&&) = delete;
-        App(App&) = delete;
+        App& operator=(App&&) = delete;
+        App(const App&) = delete;
+        App& operator=(const App&) = delete;
         ~App();
 
-    protected:
-        std::ofstream outbuf;
-        std::ofstream errbuf;
-        std::streambuf* stdoutBackup = nullptr;
-        std::streambuf* stderrBackup = nullptr;
-        std::stack<std::unique_ptr<AppState>> states;
-        std::size_t numberOfStatesToPop = 0;
-        sf::Texture screenshot;
-        sf::RectangleShape screenshotSprite;
-
-    protected:
-        /**
-         *  \brief Get reference to top state on the stack
-         */
-        [[nodiscard]] dgm::AppState& topState() noexcept
-        {
-            assert(not states.empty());
-            return *states.top().get();
-        }
-
-        void clearStack();
-        void performPostFrameCleanup();
-        void takeScreenshot();
-
-        [[nodiscard]] constexpr bool shouldPopStates() const noexcept
-        {
-            return numberOfStatesToPop > 0;
-        }
+    public:
+        Window& window;
+        Time time; ///< Time between frames
 
     public:
         /**
@@ -78,9 +52,9 @@ namespace dgm
             requires std::constructible_from<T, dgm::App&, Args...>
         void pushState(Args&&... args)
         {
+            if (!states.empty()) states.top()->loseFocus();
             states.push(
                 std::make_unique<T>(*this, std::forward<Args>(args)...));
-            if (topState().isTransparent()) takeScreenshot();
         }
 
         /**
@@ -99,10 +73,8 @@ namespace dgm
          *
          *  Calling this method multiple times per frame aggregates the
          *  number of states that will be popped
-         *
-         *  \warn Don't mix with dgm::App::exit()
          */
-        void popState(const unsigned count = 1) noexcept
+        constexpr void popState(const unsigned count = 1) noexcept
         {
             numberOfStatesToPop += count;
         }
@@ -112,12 +84,40 @@ namespace dgm
          *
          *  The actual termination will happen at the end of the frame
          *  so input/update/draw will be performed.
-         *
-         *  \warn Don't mix with dgm::App::popState()
          */
-        void exit()
+        void exit() noexcept(noexcept(states.size()))
         {
-            numberOfStatesToPop = states.size();
+            // when called from active state, size of stack is off by one
+            numberOfStatesToPop = states.size() + 1;
         }
+
+    protected:
+        void updateTopState(bool updateState = true, bool drawState = true);
+
+        /**
+         *  \brief Get reference to top state on the stack
+         */
+        [[nodiscard]] dgm::AppState& topState() noexcept(
+            noexcept(states.top()) && noexcept(states.top().get()))
+        {
+            assert(not states.empty());
+            return *states.top().get();
+        }
+
+        void clearStack();
+        void performPostFrameCleanup();
+
+        [[nodiscard]] constexpr bool shouldPopStates() const noexcept
+        {
+            return numberOfStatesToPop > 0;
+        }
+
+    protected:
+        std::ofstream outbuf;
+        std::ofstream errbuf;
+        std::streambuf* stdoutBackup = nullptr;
+        std::streambuf* stderrBackup = nullptr;
+        std::stack<std::unique_ptr<AppState>> states;
+        std::size_t numberOfStatesToPop = 0;
     };
 } // namespace dgm

@@ -1,5 +1,35 @@
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppState.hpp>
+#include <DGM/classes/Error.hpp>
+#include <iostream>
+
+void dgm::App::updateTopState(bool updateState, bool drawState)
+{
+    assert(!states.empty());
+    if (states.empty()) return;
+
+    auto state = std::move(states.top());
+    states.pop();
+
+    if (state->shouldUpdateUnderlyingState()
+        || state->shouldDrawUnderlyingState())
+    {
+        updateTopState(
+            updateState && state->shouldUpdateUnderlyingState(),
+            drawState && state->shouldDrawUnderlyingState());
+    }
+
+    if (updateState)
+    {
+        state->input();
+        state->update();
+    }
+    if (drawState) state->draw();
+
+    states.push(std::move(state));
+
+    if (shouldPopStates()) performPostFrameCleanup();
+}
 
 void dgm::App::clearStack()
 {
@@ -9,49 +39,21 @@ void dgm::App::clearStack()
 
 void dgm::App::performPostFrameCleanup()
 {
-    while (numberOfStatesToPop > 0)
+    while (numberOfStatesToPop > 0 && !states.empty())
     {
         numberOfStatesToPop--;
         states.pop();
-        numberOfStatesToPop;
     }
 
+    numberOfStatesToPop = 0;
     if (not states.empty()) topState().restoreFocus();
-}
-
-void dgm::App::takeScreenshot()
-{
-    auto&& capture = window.getScreenshot();
-    screenshot.loadFromImage(capture);
-    screenshotSprite.setTexture(&screenshot);
 }
 
 void dgm::App::run()
 {
     while (window.isOpen() && not states.empty())
     {
-        auto& top = topState();
-
-        top.input();
-        top.update();
-
-        window.beginDraw(top.getClearColor());
-
-        if (top.isTransparent())
-        {
-            auto size = sf::Vector2f(window.getSize());
-            screenshotSprite.setSize(size);
-            screenshotSprite.setPosition(
-                window.getWindowContext().getView().getCenter() - size / 2.f);
-            window.draw(screenshotSprite);
-        }
-
-        top.draw();
-
-        window.endDraw();
-
-        if (shouldPopStates()) performPostFrameCleanup();
-
+        updateTopState();
         time.reset();
     }
 }
