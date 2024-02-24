@@ -74,8 +74,8 @@ namespace dgm
          *  Calling this method multiple times per frame aggregates the
          *  number of states that will be popped
          */
-        constexpr void popState(
-            const std::string& message = "", const unsigned count = 1) noexcept
+        constexpr void
+        popState(const std::string& message = "", const unsigned count = 1)
         {
             messageForRestore = message;
             numberOfStatesToPop += count;
