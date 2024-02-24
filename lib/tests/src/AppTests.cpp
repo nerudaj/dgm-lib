@@ -18,6 +18,7 @@ enum class TestableStateBehaviour : std::size_t
     PopState,
     PopState3,
     PopWithMessage,
+    PushExitState,
     ExitApp,
     ExitOnRestore
 };
@@ -53,6 +54,10 @@ public:
             break;
         case TestableStateBehaviour::ExitApp:
             app.exit();
+            break;
+        case TestableStateBehaviour::PushExitState:
+            app.pushState<TestableState>(
+                reporter, TestableStateBehaviour::ExitApp);
             break;
         default:
             break;
@@ -119,9 +124,10 @@ TEST_CASE("App")
     {
         app.pushState<TestableState>(
             &reporter, TestableStateBehaviour::PopState);
+        REQUIRE(reporter.ctorCalled);
+
         app.run();
 
-        REQUIRE(reporter.ctorCalled);
         REQUIRE(reporter.inputCalled);
         REQUIRE(reporter.updateCalled);
         REQUIRE(reporter.drawCalled);
@@ -133,20 +139,22 @@ TEST_CASE("App")
         Reporter r1, r2, r3;
 
         app.pushState<TestableState>(&r1, TestableStateBehaviour::Default);
+        REQUIRE(r1.ctorCalled);
+
         app.pushState<TestableState>(&r2, TestableStateBehaviour::Default);
+        REQUIRE(r2.ctorCalled);
+
         app.pushState<TestableState>(&r3, TestableStateBehaviour::ExitApp);
+        REQUIRE(r3.ctorCalled);
+
         app.run();
 
-        REQUIRE(r1.ctorCalled);
-        REQUIRE(r1.dtorCalled);
-
-        REQUIRE(r2.ctorCalled);
-        REQUIRE(r2.dtorCalled);
-
-        REQUIRE(r3.ctorCalled);
         REQUIRE(r3.inputCalled);
         REQUIRE(r3.updateCalled);
         REQUIRE(r3.drawCalled);
+
+        REQUIRE(r1.dtorCalled);
+        REQUIRE(r2.dtorCalled);
         REQUIRE(r3.dtorCalled);
     }
 
@@ -308,7 +316,12 @@ TEST_CASE("App")
         Reporter r1, r2, r3;
 
         app.pushState<TestableState>(&r1);
+        REQUIRE(r1.hasFocus);
+
         app.pushState<TestableState>(&r2);
+        REQUIRE_FALSE(r1.hasFocus);
+        REQUIRE(r2.hasFocus);
+
         app.pushState<TestableState>(&r3);
 
         REQUIRE_FALSE(r1.hasFocus);
@@ -326,5 +339,19 @@ TEST_CASE("App")
         app.run();
 
         REQUIRE(r1.restoreMessage == "test message");
+    }
+
+    SECTION("Push from current top state works")
+    {
+        Reporter r1;
+
+        app.pushState<TestableState>(
+            &r1, TestableStateBehaviour::PushExitState);
+        app.run();
+        // should push state with exit behaviour on the top of the stack
+        // right after that, the stack should be popped
+
+        // The fact that app.run() returns is enough for this test
+        REQUIRE(true);
     }
 }

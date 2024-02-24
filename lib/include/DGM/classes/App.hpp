@@ -52,8 +52,8 @@ namespace dgm
             requires std::constructible_from<T, dgm::App&, Args...>
         void pushState(Args&&... args)
         {
-            if (!states.empty()) states.top()->loseFocus();
-            states.push(
+            if (!states.empty()) getTopState().loseFocus();
+            states.push_back(
                 std::make_unique<T>(*this, std::forward<Args>(args)...));
         }
 
@@ -90,20 +90,21 @@ namespace dgm
         void exit() noexcept(noexcept(states.size()))
         {
             // when called from active state, size of stack is off by one
-            numberOfStatesToPop = states.size() + 1;
+            numberOfStatesToPop = states.size();
         }
 
     protected:
-        void updateTopState(bool updateState = true, bool drawState = true);
+        void updateTopState(
+            size_t stateIdx, bool updateState = true, bool drawState = true);
 
         /**
          *  \brief Get reference to top state on the stack
          */
-        [[nodiscard]] dgm::AppState& topState() noexcept(
-            noexcept(states.top()) && noexcept(states.top().get()))
+        [[nodiscard]] dgm::AppState& getTopState() noexcept(
+            noexcept(states.back()) && noexcept(states.back().get()))
         {
             assert(not states.empty());
-            return *states.top().get();
+            return *states.back().get();
         }
 
         void clearStack();
@@ -119,7 +120,7 @@ namespace dgm
         std::ofstream errbuf;
         std::streambuf* stdoutBackup = nullptr;
         std::streambuf* stderrBackup = nullptr;
-        std::stack<std::unique_ptr<AppState>> states;
+        std::deque<std::unique_ptr<AppState>> states;
         std::size_t numberOfStatesToPop = 0;
         std::string messageForRestore = "";
     };

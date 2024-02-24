@@ -3,18 +3,18 @@
 #include <DGM/classes/Error.hpp>
 #include <iostream>
 
-void dgm::App::updateTopState(bool updateState, bool drawState)
+void dgm::App::updateTopState(size_t stateIdx, bool updateState, bool drawState)
 {
     assert(!states.empty());
-    if (states.empty()) return;
 
-    auto state = std::move(states.top());
-    states.pop();
+    auto&& state = states[stateIdx];
 
-    if (state->shouldUpdateUnderlyingState()
-        || state->shouldDrawUnderlyingState())
+    if (stateIdx > 0
+        && (state->shouldUpdateUnderlyingState()
+            || state->shouldDrawUnderlyingState()))
     {
         updateTopState(
+            stateIdx - 1,
             updateState && state->shouldUpdateUnderlyingState(),
             drawState && state->shouldDrawUnderlyingState());
     }
@@ -26,29 +26,32 @@ void dgm::App::updateTopState(bool updateState, bool drawState)
     }
     if (drawState) state->draw();
 
-    states.push(std::move(state));
-
     if (shouldPopStates()) performPostFrameCleanup();
 }
 
 void dgm::App::clearStack()
 {
-    while (not states.empty())
-        states.pop();
+    while (!states.empty())
+    {
+        // ensure correct order of deinitialization
+        states.pop_back();
+    }
 }
 
 void dgm::App::performPostFrameCleanup()
 {
-    while (numberOfStatesToPop > 0 && !states.empty())
+    numberOfStatesToPop =
+        std::clamp(numberOfStatesToPop, size_t(0), states.size());
+
+    while (numberOfStatesToPop > 0)
     {
-        numberOfStatesToPop--;
-        states.pop();
+        --numberOfStatesToPop;
+        states.pop_back();
     }
 
-    numberOfStatesToPop = 0;
     if (not states.empty())
     {
-        topState().restoreFocus(messageForRestore);
+        getTopState().restoreFocus(messageForRestore);
         messageForRestore.clear();
     }
 }
@@ -57,8 +60,8 @@ void dgm::App::run()
 {
     while (window.isOpen() && not states.empty())
     {
-        window.beginDraw(states.top()->getClearColor());
-        updateTopState();
+        window.beginDraw(getTopState().getClearColor());
+        updateTopState(states.size() - 1);
         window.endDraw();
         time.reset();
     }
