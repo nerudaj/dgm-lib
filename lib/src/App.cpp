@@ -57,7 +57,9 @@ void dgm::App::run()
 {
     while (window.isOpen() && not states.empty())
     {
+        window.beginDraw(states.top()->getClearColor());
         updateTopState();
+        window.endDraw();
         time.reset();
     }
 }
