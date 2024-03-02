@@ -3,70 +3,6 @@
 #include <DGM/classes/Error.hpp>
 #include <iostream>
 
-void dgm::App::updateTopState(size_t stateIdx, bool updateState, bool drawState)
-{
-    assert(!states.empty());
-
-    auto&& state = states[stateIdx];
-
-    if (stateIdx > 0
-        && (state->shouldUpdateUnderlyingState()
-            || state->shouldDrawUnderlyingState()))
-    {
-        updateTopState(
-            stateIdx - 1,
-            updateState && state->shouldUpdateUnderlyingState(),
-            drawState && state->shouldDrawUnderlyingState());
-    }
-
-    if (updateState)
-    {
-        state->input();
-        state->update();
-    }
-    if (drawState) state->draw();
-
-    if (shouldPopStates()) performPostFrameCleanup();
-}
-
-void dgm::App::clearStack()
-{
-    while (!states.empty())
-    {
-        // ensure correct order of deinitialization
-        states.pop_back();
-    }
-}
-
-void dgm::App::performPostFrameCleanup()
-{
-    numberOfStatesToPop =
-        std::clamp(numberOfStatesToPop, size_t(0), states.size());
-
-    while (numberOfStatesToPop > 0)
-    {
-        --numberOfStatesToPop;
-        states.pop_back();
-    }
-
-    if (not states.empty())
-    {
-        getTopState().restoreFocus(messageForRestore);
-        messageForRestore.clear();
-    }
-}
-
-void dgm::App::run()
-{
-    while (window.isOpen() && not states.empty())
-    {
-        window.beginDraw(getTopState().getClearColor());
-        updateTopState(states.size() - 1);
-        window.endDraw();
-        time.reset();
-    }
-}
-
 dgm::App::App(dgm::Window& window)
     : window(window), outbuf("stdout.txt"), errbuf("stderr.txt")
 {
@@ -88,4 +24,75 @@ dgm::App::~App()
 
     std::cout.rdbuf(stdoutBackup);
     std::cerr.rdbuf(stderrBackup);
+}
+
+void dgm::App::run()
+{
+    while (window.isOpen() && not states.empty())
+    {
+        window.beginDraw(getTopState().getClearColor());
+        updateState(states.size() - 1);
+        window.endDraw();
+
+        performScheduledCleanup();
+
+        time.reset();
+    }
+}
+
+void dgm::App::updateState(
+    size_t stateIdx, bool shouldUpdateState, bool shouldDrawState)
+{
+    assert(!states.empty());
+    assert(stateIdx < states.size());
+
+    auto&& state = states[stateIdx];
+
+    if (stateIdx > 0
+        && (state->shouldUpdateUnderlyingState()
+            || state->shouldDrawUnderlyingState()))
+    {
+        updateState(
+            stateIdx - 1,
+            shouldUpdateState && state->shouldUpdateUnderlyingState(),
+            shouldDrawState && state->shouldDrawUnderlyingState());
+    }
+
+    if (shouldUpdateState)
+    {
+        state->input();
+        state->update();
+    }
+    if (shouldDrawState) state->draw();
+}
+
+void dgm::App::performScheduledCleanup()
+{
+    while (scheduledCleanup != ScheduledCleanup::None)
+    {
+        if (scheduledCleanup == ScheduledCleanup::Pop)
+            popStateInternal();
+        else if (scheduledCleanup == ScheduledCleanup::Exit)
+            clearStack();
+    }
+}
+
+void dgm::App::popStateInternal()
+{
+    scheduledCleanup = ScheduledCleanup::None;
+    states.pop_back();
+    auto messageCopy = messageForRestore;
+    messageForRestore.clear();
+    if (!states.empty()) getTopState().restoreFocus(messageCopy);
+}
+
+void dgm::App::clearStack()
+{
+    while (!states.empty())
+    {
+        // ensure correct order of deinitialization
+        states.pop_back();
+    }
+
+    scheduledCleanup = ScheduledCleanup::None;
 }

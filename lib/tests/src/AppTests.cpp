@@ -19,6 +19,7 @@ enum class TestableStateBehaviour : std::size_t
     PopState3,
     PopWithMessage,
     PushExitState,
+    PopInUpdateAndRestoreWithMessage,
     ExitApp,
     ExitOnRestore
 };
@@ -47,7 +48,7 @@ public:
             break;
         case TestableStateBehaviour::PopState3:
             app.popState();
-            app.popState("", 2);
+            app.popState("");
             break;
         case TestableStateBehaviour::PopWithMessage:
             app.popState("test message");
@@ -58,6 +59,9 @@ public:
         case TestableStateBehaviour::PushExitState:
             app.pushState<TestableState>(
                 reporter, TestableStateBehaviour::ExitApp);
+            break;
+        case TestableStateBehaviour::PopInUpdateAndRestoreWithMessage:
+            app.popState("test message");
             break;
         default:
             break;
@@ -73,7 +77,15 @@ public:
     {
         reporter->hasFocus = true;
         reporter->restoreMessage = message;
-        if (behaviour == TestableStateBehaviour::ExitOnRestore) app.exit();
+        if (behaviour == TestableStateBehaviour::ExitOnRestore)
+            app.exit();
+        else if (
+            behaviour
+                == TestableStateBehaviour::PopInUpdateAndRestoreWithMessage
+            && message == "test message")
+        {
+            app.popState(message);
+        }
     }
 
     virtual void loseFocusImpl()
@@ -295,22 +307,6 @@ TEST_CASE("App")
         REQUIRE(reporter2.dtorCalled);
     }
 
-    SECTION("Can pop multiple states at once")
-    {
-        Reporter r1, r2, r3;
-
-        app.pushState<TestableState>(&r1);
-        app.pushState<TestableState>(&r2);
-        app.pushState<TestableState>(
-            &r3,
-            TestableStateBehaviour::PopState3); // this pops three states
-                                                // in one frame
-        app.run();
-
-        // The fact that app.run() returns is enough for this test
-        REQUIRE(true);
-    }
-
     SECTION("After pushing multiple states, non-top states lose focus")
     {
         Reporter r1, r2, r3;
@@ -353,5 +349,36 @@ TEST_CASE("App")
 
         // The fact that app.run() returns is enough for this test
         REQUIRE(true);
+    }
+
+    SECTION("Popping from restoreFocusImpl works")
+    {
+        Reporter r1, r2, r3, r4;
+        app.pushState<TestableState>(&r1, TestableStateBehaviour::ExitApp);
+        app.pushState<TestableState>(
+            &r2, TestableStateBehaviour::PopInUpdateAndRestoreWithMessage);
+        app.pushState<TestableState>(
+            &r3, TestableStateBehaviour::PopInUpdateAndRestoreWithMessage);
+        app.pushState<TestableState>(
+            &r4,
+            TestableStateBehaviour::Default,
+            dgm::AppStateConfig { .shouldUpdateUnderlyingState = true });
+        app.run();
+        REQUIRE(true);
+    }
+
+    SECTION(
+        "Destroying app while states are on a stack will properly destroy them")
+    {
+        Reporter r1, r2;
+
+        {
+            auto&& a = dgm::App(window);
+            a.pushState<TestableState>(&r1);
+            a.pushState<TestableState>(&r2);
+        }
+
+        REQUIRE(r1.dtorCalled);
+        REQUIRE(r2.dtorCalled);
     }
 }

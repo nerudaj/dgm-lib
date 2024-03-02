@@ -74,11 +74,11 @@ namespace dgm
          *  Calling this method multiple times per frame aggregates the
          *  number of states that will be popped
          */
-        constexpr void
-        popState(const std::string& message = "", const unsigned count = 1)
+        constexpr void popState(const std::string& message = "")
         {
+            assert(scheduledCleanup == ScheduledCleanup::None);
             messageForRestore = message;
-            numberOfStatesToPop += count;
+            scheduledCleanup = ScheduledCleanup::Pop;
         }
 
         /**
@@ -87,14 +87,14 @@ namespace dgm
          *  The actual termination will happen at the end of the frame
          *  so input/update/draw will be performed.
          */
-        void exit() noexcept(noexcept(states.size()))
+        constexpr void exit() noexcept
         {
-            // when called from active state, size of stack is off by one
-            numberOfStatesToPop = states.size();
+            assert(scheduledCleanup != ScheduledCleanup::Pop);
+            scheduledCleanup = ScheduledCleanup::Exit;
         }
 
-    protected:
-        void updateTopState(
+    private:
+        void updateState(
             size_t stateIdx, bool updateState = true, bool drawState = true);
 
         /**
@@ -107,21 +107,24 @@ namespace dgm
             return *states.back().get();
         }
 
+        void performScheduledCleanup();
+        void popStateInternal();
         void clearStack();
-        void performPostFrameCleanup();
 
-        [[nodiscard]] constexpr bool shouldPopStates() const noexcept
+    private:
+        enum class [[nodiscard]] ScheduledCleanup
         {
-            return numberOfStatesToPop > 0;
-        }
+            None,
+            Pop,
+            Exit
+        };
 
-    protected:
         std::ofstream outbuf;
         std::ofstream errbuf;
         std::streambuf* stdoutBackup = nullptr;
         std::streambuf* stderrBackup = nullptr;
         std::deque<std::unique_ptr<AppState>> states;
-        std::size_t numberOfStatesToPop = 0;
+        ScheduledCleanup scheduledCleanup = ScheduledCleanup::None;
         std::string messageForRestore = "";
     };
 } // namespace dgm

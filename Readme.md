@@ -33,6 +33,10 @@ Project has following options:
 
 All these options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts.
 
+## Documentation
+
+ * [App State Pattern](docs/app.md)
+
 ## Packaging
 
 To create full release package, just run the `make-release.bat`. It will configure the project, build it and run the tests prior to packaging. If everything goes well, you will end up with `RELEASE` with zipfile with full package.
