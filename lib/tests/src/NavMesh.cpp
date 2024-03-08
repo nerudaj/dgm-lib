@@ -234,6 +234,18 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
         REQUIRE_FALSE(
             dgm::TileNavMesh::computePath({ 6u, 1u }, { 1u, 1u }, mesh));
     }
+
+    SECTION("Cannot trace a path from wall to itself")
+    {
+        REQUIRE_FALSE(
+            dgm::TileNavMesh::computePath({ 6u, 1u }, { 6u, 1u }, mesh));
+    }
+
+    SECTION("Cannot trace a path into wall")
+    {
+        REQUIRE_FALSE(
+            dgm::TileNavMesh::computePath({ 1u, 1u }, { 6u, 1u }, mesh));
+    }
 }
 
 TEST_CASE("[WorldNavMesh] - BUG: Crashing after several queries")

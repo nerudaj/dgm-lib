@@ -174,10 +174,10 @@ public:
 std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
     const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
 {
-    if (from == to)
-        return dgm::Path<TileNavpoint>({}, false);
-    else if (mesh.at(from) == 1)
+    if (mesh.at(from) == 1)
         return std::nullopt;
+    else if (from == to)
+        return dgm::Path<TileNavpoint>({}, false);
 
     auto updateOpenSetWithCoord =
         [&](NodeSet<TileNode>& openSet,
