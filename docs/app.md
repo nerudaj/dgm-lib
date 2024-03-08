@@ -52,7 +52,7 @@ public:
 
 public:
 	void input() override {}
-	void update() overide {}
+	void update() override {}
 	void draw() override {}
 
 private:

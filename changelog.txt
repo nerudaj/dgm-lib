@@ -16,7 +16,7 @@ dgm-lib v2.3.x
 	* Methods renamed
 	* `releaseInput` now affects axii too if you read them via `isInputToggled`
 	* Documentation revisited
- * Fixed screenshot under transparent app state to be properly scaled if resolution changes
+ * Fixed a bug where dgm::TileNavMesh returned a path when starting tile was an impassable wall directly neighboring with a passable tile
 
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`

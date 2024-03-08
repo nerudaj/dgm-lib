@@ -13,11 +13,16 @@
 
 [[nodiscard]] dgm::Mesh buildMeshForTesting()
 {
+    // clang-format off
     const std::vector<bool> map = {
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+        1, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+        1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
+    // clang-format on
 
     return dgm::Mesh(map, { 10u, 6u }, { 32, 32 });
 }
@@ -222,6 +227,12 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
     {
         REQUIRE_FALSE(dgm::TileNavMesh::computePath(
             sf::Vector2u(1, 1), sf::Vector2u(8, 1), mesh));
+    }
+
+    SECTION("Cannot trace a path from wall")
+    {
+        REQUIRE_FALSE(
+            dgm::TileNavMesh::computePath({ 6u, 1u }, { 1u, 1u }, mesh));
     }
 }
 
