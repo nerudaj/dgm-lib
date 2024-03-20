@@ -21,7 +21,9 @@ enum class TestableStateBehaviour : std::size_t
     PushExitState,
     PopInUpdateAndRestoreWithMessage,
     ExitApp,
-    ExitOnRestore
+    ExitOnRestore,
+    PushInCtor,
+    PushInCtor_AnotherPushInCtor
 };
 
 class TestableState : public dgm::AppState
@@ -102,6 +104,18 @@ public:
     {
         reporter->ctorCalled = true;
         reporter->hasFocus = hasFocus;
+
+        if (behaviour == TestableStateBehaviour::PushInCtor)
+        {
+            app.pushState<TestableState>(
+                reporter, TestableStateBehaviour::ExitApp);
+        }
+        else if (
+            behaviour == TestableStateBehaviour::PushInCtor_AnotherPushInCtor)
+        {
+            app.pushState<TestableState>(
+                reporter, TestableStateBehaviour::PushInCtor);
+        }
     }
 
     virtual ~TestableState()
@@ -380,5 +394,25 @@ TEST_CASE("App")
 
         REQUIRE(r1.dtorCalled);
         REQUIRE(r2.dtorCalled);
+    }
+
+    SECTION(
+        "App state pushed from constructor of another app state is on the top")
+    {
+        Reporter r1;
+        app.pushState<TestableState>(&r1, TestableStateBehaviour::PushInCtor);
+        app.run();
+        REQUIRE(true);
+    }
+
+    SECTION(
+        "App state pushed from constructor of another app state is on the top "
+        "(multiple pushes)")
+    {
+        Reporter r1;
+        app.pushState<TestableState>(
+            &r1, TestableStateBehaviour::PushInCtor_AnotherPushInCtor);
+        app.run();
+        REQUIRE(true);
     }
 }

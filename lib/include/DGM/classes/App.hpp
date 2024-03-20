@@ -37,24 +37,18 @@ namespace dgm
          *  \brief Add new AppState to App stack
          *
          *  \param [in] state Newly created AppState object pointer
-         *
-         *  \details First, pointer to this will be
-         *  passed to the state, then init method is
-         *  called. If init succeeds, the state is
-         *  pushed to app stack.
-         *
-         *  \warn This method must NOT be called from any ctor
-         *  derived from dgm::AppState. If you want to construct a
-         *  state and immediately switch to a new one, postpone call
-         *  to pustState into update method.
          */
         template<IsDerivedFromAppState T, class... Args>
             requires std::constructible_from<T, dgm::App&, Args...>
         void pushState(Args&&... args)
         {
-            if (!states.empty()) getTopState().loseFocus();
-            states.push_back(
+            pushNestingCounter++;
+
+            // T constructor might invoke pushState
+            // in which case pushNestingCounter will be > 1 at this point
+            pushStateInternal(
                 std::make_unique<T>(*this, std::forward<Args>(args)...));
+            pushNestingCounter--;
         }
 
         /**
@@ -94,6 +88,8 @@ namespace dgm
         }
 
     private:
+        void pushStateInternal(std::unique_ptr<AppState> state);
+
         void updateState(
             size_t stateIdx, bool updateState = true, bool drawState = true);
 
@@ -126,5 +122,7 @@ namespace dgm
         std::deque<std::unique_ptr<AppState>> states;
         ScheduledCleanup scheduledCleanup = ScheduledCleanup::None;
         std::string messageForRestore = "";
+        int pushNestingCounter = 0;
+        std::deque<std::unique_ptr<AppState>> statesToPush;
     };
 } // namespace dgm

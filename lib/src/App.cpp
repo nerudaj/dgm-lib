@@ -40,6 +40,26 @@ void dgm::App::run()
     }
 }
 
+void dgm::App::pushStateInternal(std::unique_ptr<AppState> state)
+{
+    statesToPush.push_back(std::move(state));
+
+    // If this is true, this is the pushState of the original state (before all
+    // other pushes happened)
+    if (pushNestingCounter == 1)
+    {
+        // since the latest push state was the first to be pushed into
+        // statesToPush we need to proceed from the back and push it to the
+        // regular states
+        while (!statesToPush.empty())
+        {
+            if (!states.empty()) getTopState().loseFocus();
+            states.push_back(std::move(statesToPush.back()));
+            statesToPush.pop_back();
+        }
+    }
+}
+
 void dgm::App::updateState(
     size_t stateIdx, bool shouldUpdateState, bool shouldDrawState)
 {
