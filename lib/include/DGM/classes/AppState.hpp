@@ -1,13 +1,25 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/App.hpp>
+#include <DGM/classes/AppStateConfig.hpp>
 
 namespace dgm
 {
-    class AppState
+    class [[nodiscard]] AppState
     {
-    protected:
-        App& app;
+    public:
+        constexpr explicit AppState(
+            dgm::App& app,
+            const AppStateConfig& config = AppStateConfig()) noexcept
+            : app(app), config(config)
+        {
+        }
+
+        AppState(AppState&&) = delete;
+        AppState& operator=(AppState&&) = delete;
+        AppState(const AppState&) = delete;
+        AppState& operator=(const AppState&) = delete;
+        virtual ~AppState() = default;
 
     public:
         /**
@@ -29,33 +41,52 @@ namespace dgm
          */
         virtual void draw() = 0;
 
+        void restoreFocus(const std::string& message)
+        {
+            hasFocus = true;
+            restoreFocusImpl(message);
+        }
+
+        void loseFocus()
+        {
+            hasFocus = false;
+            loseFocusImpl();
+        }
+
+    public:
+        [[nodiscard]] constexpr const sf::Color& getClearColor() const noexcept
+        {
+            return config.clearColor;
+        }
+
+        [[nodiscard]] constexpr bool
+        shouldUpdateUnderlyingState() const noexcept
+        {
+            return config.shouldUpdateUnderlyingState;
+        }
+
+        [[nodiscard]] constexpr bool shouldDrawUnderlyingState() const noexcept
+        {
+            return config.shouldDrawUnderlyingState;
+        }
+
+    protected:
         /**
          *  This method is called when stack of states has been
          *  popped and this state is now the top state.
          *
          *  It is optional to override this method.
+         *
+         *  The string parameter is a message previously passed
+         *  to dgm::App::popState method.
          */
-        virtual void restoreFocus() {}
+        virtual void restoreFocusImpl(const std::string&) {}
 
-        /**
-         *  Return color that will be used as window clear color
-         *  for the next frame. If you're OK with black (most use cases)
-         *  you don't have to override this method.
-         */
-        virtual [[nodiscard]] sf::Color getClearColor() const
-        {
-            return sf::Color::Black;
-        }
+        virtual void loseFocusImpl() {}
 
-        virtual [[nodiscard]] bool isTransparent() const noexcept = 0;
-
-        [[nodiscard]] constexpr explicit AppState(dgm::App& app) noexcept
-            : app(app)
-        {
-        }
-
-        AppState(AppState&&) = delete;
-        AppState(AppState&) = delete;
-        virtual ~AppState() = default;
+    protected:
+        App& app;
+        const AppStateConfig config;
+        bool hasFocus = true;
     };
 }; // namespace dgm

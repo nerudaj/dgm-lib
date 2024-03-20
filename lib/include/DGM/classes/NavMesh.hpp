@@ -52,21 +52,6 @@ namespace dgm
          *  The resulting path will not include 'from' coord, but it includes
          * 'to' coord.
          *
-         *  If no path exists, dgm::GeneralException is thrown.
-         *  If from == to, then empty path (which returns true for isTraversed)
-         * is returned
-         */
-        static [[nodiscard]] [[deprecated]] dgm::Path<TileNavpoint> getPath(
-            const sf::Vector2u& from,
-            const sf::Vector2u& to,
-            const dgm::Mesh& mesh);
-
-        /**
-         *  \brief Get path represented by tile indices to input mesh
-         *
-         *  The resulting path will not include 'from' coord, but it includes
-         * 'to' coord.
-         *
          *  If no path exists, empty optional will be returned
          *  If from == to, then empty path (which returns true for isTraversed
          * and has zero length) is returned
@@ -148,21 +133,6 @@ namespace dgm
             bool symmetricConnections = true);
 
     public:
-        /**
-         *  \brief Get path represented by world coordinates
-         *
-         *  The resulting path will not include 'from' coord, but it includes
-         * 'to' coord.
-         *
-         *  If no path exists, dgm::GeneralException is thrown.
-         *  If from == to, then empty path (which returns true for isTraversed)
-         * is returned
-         *
-         *  \warn This function is not thread-safe.
-         */
-        [[nodiscard]] [[deprecated]] dgm::Path<WorldNavpoint>
-        getPath(const sf::Vector2f& from, const sf::Vector2f& to);
-
         /**
          *  \brief Get path represented by world coordinates
          *
