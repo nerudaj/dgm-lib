@@ -90,8 +90,9 @@ namespace dgm
     private:
         void pushStateInternal(std::unique_ptr<AppState> state);
 
-        void updateState(
-            size_t stateIdx, bool updateState = true, bool drawState = true);
+        void updateState(size_t stateIdx, bool updateState = true);
+
+        void drawState(size_t stateIdx, bool drawState = true);
 
         /**
          *  \brief Get reference to top state on the stack

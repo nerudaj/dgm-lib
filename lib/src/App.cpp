@@ -30,8 +30,10 @@ void dgm::App::run()
 {
     while (window.isOpen() && not states.empty())
     {
-        window.beginDraw(getTopState().getClearColor());
         updateState(states.size() - 1);
+
+        window.beginDraw(getTopState().getClearColor());
+        drawState(states.size() - 1);
         window.endDraw();
 
         performScheduledCleanup();
@@ -60,22 +62,18 @@ void dgm::App::pushStateInternal(std::unique_ptr<AppState> state)
     }
 }
 
-void dgm::App::updateState(
-    size_t stateIdx, bool shouldUpdateState, bool shouldDrawState)
+void dgm::App::updateState(size_t stateIdx, bool shouldUpdateState)
 {
     assert(!states.empty());
     assert(stateIdx < states.size());
 
     auto&& state = states[stateIdx];
 
-    if (stateIdx > 0
-        && (state->shouldUpdateUnderlyingState()
-            || state->shouldDrawUnderlyingState()))
+    if (stateIdx > 0 && state->shouldUpdateUnderlyingState())
     {
         updateState(
             stateIdx - 1,
-            shouldUpdateState && state->shouldUpdateUnderlyingState(),
-            shouldDrawState && state->shouldDrawUnderlyingState());
+            shouldUpdateState && state->shouldUpdateUnderlyingState());
     }
 
     if (shouldUpdateState)
@@ -83,6 +81,22 @@ void dgm::App::updateState(
         state->input();
         state->update();
     }
+}
+
+void dgm::App::drawState(size_t stateIdx, bool shouldDrawState)
+{
+    assert(!states.empty());
+    assert(stateIdx < states.size());
+
+    auto&& state = states[stateIdx];
+
+    if (stateIdx > 0 && state->shouldDrawUnderlyingState())
+    {
+        drawState(
+            stateIdx - 1,
+            shouldDrawState && state->shouldDrawUnderlyingState());
+    }
+
     if (shouldDrawState) state->draw();
 }
 
