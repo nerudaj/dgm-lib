@@ -104,6 +104,28 @@ namespace dgm
      */
     class [[nodiscard]] WorldNavMesh
     {
+    public:
+        WorldNavMesh() = delete;
+        explicit WorldNavMesh(const dgm::Mesh& mesh);
+        WorldNavMesh(WorldNavMesh&& other) = default;
+        WorldNavMesh(const WorldNavMesh& other) = delete;
+
+    public:
+        /**
+         *  \brief Get path represented by world coordinates
+         *
+         *  The resulting path will not include 'from' coord, but it includes
+         * 'to' coord.
+         *
+         *  If no path exists, empty optional is returned
+         *  If from == to, then empty path (which returns true for isTraversed)
+         * is returned
+         *
+         *  \warn This function is not thread-safe.
+         */
+        [[nodiscard]] std::optional<dgm::Path<WorldNavpoint>>
+        computePath(const sf::Vector2f& from, const sf::Vector2f& to);
+
     protected:
         struct [[nodiscard]] Connection final
         {
@@ -127,39 +149,31 @@ namespace dgm
             jumpPointConnections = {};
 
     protected:
-        void discoverConnectionsForJumpPoint(
-            const sf::Vector2u& point, bool symmetricConnection = false);
-
         [[nodiscard]] bool isJumpPoint(const sf::Vector2u& p) const
         {
             return jumpPointConnections.contains(p);
         }
+
+        void discoverConnectionsForJumpPoint(
+            const sf::Vector2u& point, bool symmetricConnection = false);
 
         void connectTwoJumpPoints(
             const sf::Vector2u& a,
             const sf::Vector2u& b,
             bool symmetricConnection);
 
-    public:
-        /**
-         *  \brief Get path represented by world coordinates
-         *
-         *  The resulting path will not include 'from' coord, but it includes
-         * 'to' coord.
-         *
-         *  If no path exists, empty optional is returned
-         *  If from == to, then empty path (which returns true for isTraversed)
-         * is returned
-         *
-         *  \warn This function is not thread-safe.
-         */
-        [[nodiscard]] std::optional<dgm::Path<WorldNavpoint>>
-        computePath(const sf::Vector2f& from, const sf::Vector2f& to);
+        void connectToAndFromPointsToTheNetwork(
+            const sf::Vector2u& tileFrom, const sf::Vector2u& tileTo);
 
-        WorldNavMesh() = delete;
-        explicit WorldNavMesh(const dgm::Mesh& mesh);
-        WorldNavMesh(WorldNavMesh&& other) = default;
-        WorldNavMesh(const WorldNavMesh& other) = delete;
+        void eraseFromAndToPointsFromTheNetwork(
+            const sf::Vector2u& tileFrom,
+            bool wasTileFromOriginallyJumpPoint,
+            const sf::Vector2u& tileTo,
+            bool wasTileToOriginallyJumpPoint);
+
+        [[nodiscard]] sf::Vector2u toTileCoord(const sf::Vector2f& coord);
+
+        [[nodiscard]] WorldNavpoint toWorldNavpoint(const sf::Vector2u& coord);
     };
 
 } // namespace dgm
