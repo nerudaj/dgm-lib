@@ -105,7 +105,7 @@ namespace dgm
     class [[nodiscard]] WorldNavMesh
     {
     protected:
-        struct Connection
+        struct [[nodiscard]] Connection final
         {
             sf::Vector2u destination; ///< Destination node of the connection
             unsigned distance;        ///< Distance to destination
@@ -128,9 +128,17 @@ namespace dgm
 
     protected:
         void discoverConnectionsForJumpPoint(
-            const sf::Vector2u& point,
-            bool fullSearch,
-            bool symmetricConnections = true);
+            const sf::Vector2u& point, bool symmetricConnection = false);
+
+        [[nodiscard]] bool isJumpPoint(const sf::Vector2u& p) const
+        {
+            return jumpPointConnections.contains(p);
+        }
+
+        void connectTwoJumpPoints(
+            const sf::Vector2u& a,
+            const sf::Vector2u& b,
+            bool symmetricConnection);
 
     public:
         /**

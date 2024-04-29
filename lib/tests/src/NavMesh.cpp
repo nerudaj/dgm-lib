@@ -43,6 +43,11 @@ public:
         return result;
     }
 
+    [[nodiscard]] auto&& getConnections() const noexcept
+    {
+        return jumpPointConnections;
+    }
+
     [[nodiscard]] bool
     arePointsConnected(const sf::Vector2u& a, const sf::Vector2u& b) const
     {
@@ -143,6 +148,23 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
             REQUIRE(path.getCurrentPoint().value == 0u);
             path.advance();
             REQUIRE(path.isTraversed());
+
+            // Verify that the temporary points were cleaned up
+            auto&& connections =
+                navmesh.getConnections().at(sf::Vector2u(3u, 2u));
+            REQUIRE(
+                std::find_if(
+                    connections.begin(),
+                    connections.end(),
+                    [](const auto& conn) {
+                        return conn.destination.x == 2u
+                               && conn.destination.y == 1u;
+                    })
+                == connections.end());
+            REQUIRE_FALSE(
+                navmesh.getConnections().contains(sf::Vector2u(1u, 1u)));
+            REQUIRE_FALSE(
+                navmesh.getConnections().contains(sf::Vector2u(2u, 1u)));
         }
 
         SECTION("Normal path")
@@ -154,7 +176,6 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
             REQUIRE_FALSE(path.isTraversed());
 
             const std::vector<sf::Vector2u> refpoints = {
-                { 3u, 2u },
                 { 1u, 2u },
                 { 1u, 3u },
             };
@@ -182,6 +203,120 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
             REQUIRE_FALSE(
                 navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1)));
         }
+    }
+}
+
+TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
+{
+    SECTION("Case 1 - Jump point is truly obstructed")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+            1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 13u, 7u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 2u }, { 4u, 3u }));
+        REQUIRE_FALSE(navmesh.arePointsConnected({ 2u, 2u }, { 10u, 4u }));
+        REQUIRE(navmesh.arePointsConnected({ 4u, 3u }, { 10u, 4u }));
+    }
+
+    SECTION("Case 2")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 0, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+            1, 1, 1, 1, 0, 0, 0, 0, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 10u, 10u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 3u }, { 6u, 2u }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 3u }, { 7u, 5u }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 3u }, { 4u, 7u }));
+        REQUIRE(navmesh.arePointsConnected({ 6u, 2u }, { 7u, 5u }));
+        REQUIRE(navmesh.arePointsConnected({ 4u, 7u }, { 7u, 5u }));
+    }
+
+    SECTION("Case 3 - Diagonal seeker cannot go past corner")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 0, 0, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 9u, 10u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 3u }, { 5u, 5u }));
+        REQUIRE_FALSE(navmesh.arePointsConnected({ 2u, 3u }, { 6u, 7u }));
+        REQUIRE(navmesh.arePointsConnected({ 5u, 5u }, { 6u, 7u }));
+    }
+
+    SECTION(
+        "Case 4 - Second matched jump point is lower than first matched "
+        "(although technically well visible)")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 0, 0, 0, 0, 1,
+            1, 1, 1, 0, 0, 0, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1,
+
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 8u, 9u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 2u }, { 3u, 5u }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 2u }, { 5u, 6u }));
+        REQUIRE(navmesh.arePointsConnected({ 3u, 5u }, { 5u, 6u }));
+    }
+
+    SECTION("Case 5 - Similar to case 1 but not obstructed")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 13u, 5u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 2u }, { 5u, 2u }));
+        REQUIRE_FALSE(navmesh.arePointsConnected({ 2u, 2u }, { 9u, 3u }));
+        REQUIRE(navmesh.arePointsConnected({ 5u, 2u }, { 9u, 3u }));
     }
 }
 
