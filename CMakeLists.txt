@@ -9,7 +9,7 @@ option ( ENABLE_SANDBOX "Build sandbox target" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
 
 # Project setup
-project ( dgm-lib)
+project ( dgm-lib VERSION 2.3.0 )
 
 if (NOT ${PROJECT_IS_TOP_LEVEL} )
 	message ( "INFO: dgm-lib is used as a dependency, turning off unwanted features" )
@@ -30,7 +30,6 @@ include ( "${DGM_SOURCE_DIR}/cmake/cpp.cmake" )
 # Dependencies must go after overriding runtime output directory
 include ( "${DGM_SOURCE_DIR}/cmake/dependencies.cmake" )
 include ( "${DGM_SOURCE_DIR}/cmake/utils.cmake" )
-include ( "${DGM_SOURCE_DIR}/cmake/version.cmake" )
 
 # Subprojects
 add_subdirectory ( lib )
@@ -52,9 +51,6 @@ install (
 
 # Packaging
 set ( CPACK_GENERATOR "ZIP" )
-set ( CPACK_PACKAGE_VERSION_MAJOR       "${PROJECT_VERSION_MAJOR}" )
-set ( CPACK_PACKAGE_VERSION_MINOR       "${PROJECT_VERSION_MINOR}" )
-set ( CPACK_PACKAGE_VERSION_PATCH       "${PROJECT_VERSION_PATCH}" )
-set ( CPACK_PACKAGE_FILE_NAME           "${PROJECT_NAME}-${PROJECT_VERSION}-win${CMAKE_GENERATOR_PLATFORM}-vc17-${CMAKE_GENERATOR_PLATFORM}-for-SFML-${SFML_VERSION}" )
+set ( CPACK_PACKAGE_FILE_NAME           "${PROJECT_NAME}-${CMAKE_PROJECT_VERSION}-win${CMAKE_GENERATOR_PLATFORM}-vc17-${CMAKE_GENERATOR_PLATFORM}-for-SFML-${SFML_VERSION}" )
 
 include ( CPack )

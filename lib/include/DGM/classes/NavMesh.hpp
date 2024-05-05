@@ -165,6 +165,7 @@ namespace dgm
         void connectToAndFromPointsToTheNetwork(
             const sf::Vector2u& tileFrom, const sf::Vector2u& tileTo);
 
+
         void eraseFromAndToPointsFromTheNetwork(
             const sf::Vector2u& tileFrom,
             bool wasTileFromOriginallyJumpPoint,

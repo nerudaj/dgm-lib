@@ -1,4 +1,7 @@
-dgm-lib v2.3.x
+dgm-lib vX.X.Xbox
+ * Fixed WorldNavMesh internal lookup algorithm, which could produce paths that go through solid walls
+
+dgm-lib v2.3.0
  * Bumped to SFML v2.6.1
  * Added load helpers to `dgm::Utility` that can be used as load callbacks for `dgm::ResourceManager`
  * Removed `dgm::AbstractController`
