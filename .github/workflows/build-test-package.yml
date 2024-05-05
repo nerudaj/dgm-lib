@@ -14,10 +14,10 @@ jobs:
     runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.13
+      uses: jwlawson/actions-setup-cmake@v1.14
       with:
         cmake-version: '3.26.1'
 
@@ -50,7 +50,7 @@ jobs:
       run: cpack
       
     - name: Store artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.0.0
       with:
         name: dgm-lib
         path: ${{env.BUILD_DIR}}/*.zip
