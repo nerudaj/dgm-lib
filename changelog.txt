@@ -1,3 +1,24 @@
+dgm-lib v2.3.x
+ * Bumped to SFML v2.6.1
+ * Added load helpers to `dgm::Utility` that can be used as load callbacks for `dgm::ResourceManager`
+ * Removed `dgm::AbstractController`
+ * Removed all deprecated methods
+ * Added `getRawData` and `getRawConstData` to `dgm::GenericMesh`
+ * Reworked `dgm::App` and `dgm::AppState`
+	* There is no longer a restriction about not calling pushState from constructor of AppState derivates. It works now!
+	* `isTransparent` and `getClearColor` are no longer virtual methods, they are replaced by `dgm::AppStateConfig`
+		* `isTransparent` was broken down into `shouldUpdateUnderlyingState` and `shouldDrawUnderlyingState` - first allows you to specify whether input and update methods should be executed for the state under top state. The second does the same for draw method. If multiple states are transparent in this way, the effect is applied recursively
+	* `dgm::AppState::restoreFocus` is now replaced with `restoreFocusImpl`. In addition, `loseFocusImpl` has been added. `dgm::AppState` also has a protected member `hasFocus` to test whether the state is currently the top one or not (only top state has focus). That one, one can test if they are updated because the state is on the top or because the currently top state is transparent.
+	* `dgm::App::popState` now accepts optional message parameter that is then passed down to `dgm::AppState::restoreStateImpl`
+		* It no longer accepts a number of states to pop. Calling multiple pops in one frame is considered as a bug
+	* Added documentation for using `dgm::App`
+ * Reworked `dgm::Controller`
+	* Gamepad deadzones reworked
+	* Methods renamed
+	* `releaseInput` now affects axii too if you read them via `isInputToggled`
+	* Documentation revisited
+ * Fixed a bug where dgm::TileNavMesh returned a path when starting tile was an impassable wall directly neighboring with a passable tile
+
 dgm-lib v2.2.5
  * Added const iterator interface to `dgm::DynamicBuffer`
  * Fixed `dgm::Camera` being positioned to a random position upon construction

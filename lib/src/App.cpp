@@ -1,59 +1,7 @@
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppState.hpp>
-
-void dgm::App::clearStack()
-{
-    while (not states.empty())
-        states.pop();
-}
-
-void dgm::App::performPostFrameCleanup()
-{
-    while (numberOfStatesToPop > 0)
-    {
-        numberOfStatesToPop--;
-        states.pop();
-        numberOfStatesToPop;
-    }
-
-    if (not states.empty()) topState().restoreFocus();
-}
-
-void dgm::App::takeScreenshot()
-{
-    auto&& capture = window.getScreenshot();
-    screenshot.loadFromImage(capture);
-    screenshotSprite.setTexture(screenshot);
-    screenshotSprite.setOrigin(sf::Vector2f(capture.getSize() / 2u));
-}
-
-void dgm::App::run()
-{
-    while (window.isOpen() && not states.empty())
-    {
-        auto& top = topState();
-
-        top.input();
-        top.update();
-
-        window.beginDraw(top.getClearColor());
-
-        if (top.isTransparent())
-        {
-            screenshotSprite.setPosition(
-                window.getWindowContext().getView().getCenter());
-            window.draw(screenshotSprite);
-        }
-
-        top.draw();
-
-        window.endDraw();
-
-        if (shouldPopStates()) performPostFrameCleanup();
-
-        time.reset();
-    }
-}
+#include <DGM/classes/Error.hpp>
+#include <iostream>
 
 dgm::App::App(dgm::Window& window)
     : window(window), outbuf("stdout.txt"), errbuf("stderr.txt")
@@ -76,4 +24,109 @@ dgm::App::~App()
 
     std::cout.rdbuf(stdoutBackup);
     std::cerr.rdbuf(stderrBackup);
+}
+
+void dgm::App::run()
+{
+    while (window.isOpen() && not states.empty())
+    {
+        updateState(states.size() - 1);
+
+        window.beginDraw(getTopState().getClearColor());
+        drawState(states.size() - 1);
+        window.endDraw();
+
+        performScheduledCleanup();
+
+        time.reset();
+    }
+}
+
+void dgm::App::pushStateInternal(std::unique_ptr<AppState> state)
+{
+    statesToPush.push_back(std::move(state));
+
+    // If this is true, this is the pushState of the original state (before all
+    // other pushes happened)
+    if (pushNestingCounter == 1)
+    {
+        // since the latest push state was the first to be pushed into
+        // statesToPush we need to proceed from the back and push it to the
+        // regular states
+        while (!statesToPush.empty())
+        {
+            if (!states.empty()) getTopState().loseFocus();
+            states.push_back(std::move(statesToPush.back()));
+            statesToPush.pop_back();
+        }
+    }
+}
+
+void dgm::App::updateState(size_t stateIdx, bool shouldUpdateState)
+{
+    assert(!states.empty());
+    assert(stateIdx < states.size());
+
+    auto&& state = states[stateIdx];
+
+    if (stateIdx > 0 && state->shouldUpdateUnderlyingState())
+    {
+        updateState(
+            stateIdx - 1,
+            shouldUpdateState && state->shouldUpdateUnderlyingState());
+    }
+
+    if (shouldUpdateState)
+    {
+        state->input();
+        state->update();
+    }
+}
+
+void dgm::App::drawState(size_t stateIdx, bool shouldDrawState)
+{
+    assert(!states.empty());
+    assert(stateIdx < states.size());
+
+    auto&& state = states[stateIdx];
+
+    if (stateIdx > 0 && state->shouldDrawUnderlyingState())
+    {
+        drawState(
+            stateIdx - 1,
+            shouldDrawState && state->shouldDrawUnderlyingState());
+    }
+
+    if (shouldDrawState) state->draw();
+}
+
+void dgm::App::performScheduledCleanup()
+{
+    while (scheduledCleanup != ScheduledCleanup::None)
+    {
+        if (scheduledCleanup == ScheduledCleanup::Pop)
+            popStateInternal();
+        else if (scheduledCleanup == ScheduledCleanup::Exit)
+            clearStack();
+    }
+}
+
+void dgm::App::popStateInternal()
+{
+    scheduledCleanup = ScheduledCleanup::None;
+    states.pop_back();
+    auto messageCopy = messageForRestore;
+    messageForRestore.clear();
+    if (!states.empty()) getTopState().restoreFocus(messageCopy);
+}
+
+void dgm::App::clearStack()
+{
+    while (!states.empty())
+    {
+        // ensure correct order of deinitialization
+        states.pop_back();
+    }
+
+    scheduledCleanup = ScheduledCleanup::None;
 }

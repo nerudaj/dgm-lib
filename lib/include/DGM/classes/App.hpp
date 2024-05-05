@@ -2,6 +2,7 @@
 
 #include <DGM/classes/Time.hpp>
 #include <DGM/classes/Window.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <cassert>
@@ -16,64 +17,38 @@ namespace dgm
     template<class T>
     concept IsDerivedFromAppState = std::derived_from<T, dgm::AppState>;
 
-    class App
+    class [[nodiscard]] App final
     {
+
+    public:
+        explicit App(dgm::Window& window);
+        App(App&&) = delete;
+        App& operator=(App&&) = delete;
+        App(const App&) = delete;
+        App& operator=(const App&) = delete;
+        ~App();
+
     public:
         Window& window;
         Time time; ///< Time between frames
-
-    protected:
-        std::ofstream outbuf;
-        std::ofstream errbuf;
-        std::streambuf* stdoutBackup = nullptr;
-        std::streambuf* stderrBackup = nullptr;
-        std::stack<std::unique_ptr<AppState>> states;
-        std::size_t numberOfStatesToPop = 0;
-        sf::Texture screenshot;
-        sf::Sprite screenshotSprite;
-
-    protected:
-        /**
-         *  \brief Get reference to top state on the stack
-         */
-        [[nodiscard]] dgm::AppState& topState() noexcept
-        {
-            assert(not states.empty());
-            return *states.top().get();
-        }
-
-        void clearStack();
-        void performPostFrameCleanup();
-        void takeScreenshot();
-
-        [[nodiscard]] constexpr bool shouldPopStates() const noexcept
-        {
-            return numberOfStatesToPop > 0;
-        }
 
     public:
         /**
          *  \brief Add new AppState to App stack
          *
          *  \param [in] state Newly created AppState object pointer
-         *
-         *  \details First, pointer to this will be
-         *  passed to the state, then init method is
-         *  called. If init succeeds, the state is
-         *  pushed to app stack.
-         *
-         *  \warn This method must NOT be called from any ctor
-         *  derived from dgm::AppState. If you want to construct a
-         *  state and immediately switch to a new one, postpone call
-         *  to pustState into update method.
          */
         template<IsDerivedFromAppState T, class... Args>
             requires std::constructible_from<T, dgm::App&, Args...>
         void pushState(Args&&... args)
         {
-            states.push(
+            pushNestingCounter++;
+
+            // T constructor might invoke pushState
+            // in which case pushNestingCounter will be > 1 at this point
+            pushStateInternal(
                 std::make_unique<T>(*this, std::forward<Args>(args)...));
-            if (topState().isTransparent()) takeScreenshot();
+            pushNestingCounter--;
         }
 
         /**
@@ -92,12 +67,12 @@ namespace dgm
          *
          *  Calling this method multiple times per frame aggregates the
          *  number of states that will be popped
-         *
-         *  \warn Don't mix with dgm::App::exit()
          */
-        void popState(const unsigned count = 1) noexcept
+        constexpr void popState(const std::string& message = "")
         {
-            numberOfStatesToPop += count;
+            assert(scheduledCleanup == ScheduledCleanup::None);
+            messageForRestore = message;
+            scheduledCleanup = ScheduledCleanup::Pop;
         }
 
         /**
@@ -105,17 +80,50 @@ namespace dgm
          *
          *  The actual termination will happen at the end of the frame
          *  so input/update/draw will be performed.
-         *
-         *  \warn Don't mix with dgm::App::popState()
          */
-        void exit()
+        constexpr void exit() noexcept
         {
-            numberOfStatesToPop = states.size();
+            assert(scheduledCleanup != ScheduledCleanup::Pop);
+            scheduledCleanup = ScheduledCleanup::Exit;
         }
 
-        [[nodiscard]] explicit App(dgm::Window& window);
-        App(App&&) = delete;
-        App(App&) = delete;
-        ~App();
+    private:
+        void pushStateInternal(std::unique_ptr<AppState> state);
+
+        void updateState(size_t stateIdx, bool updateState = true);
+
+        void drawState(size_t stateIdx, bool drawState = true);
+
+        /**
+         *  \brief Get reference to top state on the stack
+         */
+        [[nodiscard]] dgm::AppState& getTopState() noexcept(
+            noexcept(states.back()) && noexcept(states.back().get()))
+        {
+            assert(not states.empty());
+            return *states.back().get();
+        }
+
+        void performScheduledCleanup();
+        void popStateInternal();
+        void clearStack();
+
+    private:
+        enum class [[nodiscard]] ScheduledCleanup
+        {
+            None,
+            Pop,
+            Exit
+        };
+
+        std::ofstream outbuf;
+        std::ofstream errbuf;
+        std::streambuf* stdoutBackup = nullptr;
+        std::streambuf* stderrBackup = nullptr;
+        std::deque<std::unique_ptr<AppState>> states;
+        ScheduledCleanup scheduledCleanup = ScheduledCleanup::None;
+        std::string messageForRestore = "";
+        int pushNestingCounter = 0;
+        std::deque<std::unique_ptr<AppState>> statesToPush;
     };
 } // namespace dgm

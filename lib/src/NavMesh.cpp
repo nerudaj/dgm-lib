@@ -171,20 +171,13 @@ public:
     }
 };
 
-dgm::Path<dgm::TileNavpoint> dgm::TileNavMesh::getPath(
-    const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
-{
-    return computePath(from, to, mesh)
-        .or_else(
-            []() -> std::optional<dgm::Path<dgm::TileNavpoint>>
-            { throw dgm::Exception("Path doesn't exist"); })
-        .value();
-}
-
 std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
     const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
 {
-    if (from == to) return dgm::Path<TileNavpoint>({}, false);
+    if (mesh.at(from) == 1)
+        return std::nullopt;
+    else if (from == to)
+        return dgm::Path<TileNavpoint>({}, false);
 
     auto updateOpenSetWithCoord =
         [&](NodeSet<TileNode>& openSet,
@@ -447,16 +440,6 @@ void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
             break;
         }
     }
-}
-
-dgm::Path<dgm::WorldNavpoint>
-dgm::WorldNavMesh::getPath(const sf::Vector2f& from, const sf::Vector2f& to)
-{
-    return computePath(from, to)
-        .or_else(
-            []() -> std::optional<dgm::Path<dgm::WorldNavpoint>>
-            { throw dgm::Exception("No path was found"); })
-        .value();
 }
 
 std::optional<dgm::Path<dgm::WorldNavpoint>>

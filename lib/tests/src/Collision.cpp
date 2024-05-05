@@ -94,13 +94,10 @@ TEST_CASE("Circle-to-point", "Collision")
 
 TEST_CASE("Mesh-to-rect", "Collision")
 {
-    dgm::Mesh mesh;
-    mesh.setVoxelSize(10u, 10u);
-    mesh.setDataSize(2, 2);
-    mesh.at(0, 0) = 1;
-    mesh.at(1, 0) = 0;
-    mesh.at(0, 1) = 1;
-    mesh.at(1, 1) = 1;
+    auto&& mesh = dgm::Mesh(
+        std::vector<bool> { 1, 0, 1, 1 },
+        sf::Vector2u(2u, 2u),
+        sf::Vector2u(10u, 10u));
 
     SECTION("No collision")
     {
@@ -121,13 +118,10 @@ TEST_CASE("Mesh-to-rect", "Collision")
 
 TEST_CASE("Mesh-to-circle", "Collision")
 {
-    dgm::Mesh mesh;
-    mesh.setVoxelSize(10u, 10u);
-    mesh.setDataSize(2, 2);
-    mesh.at(0, 0) = 1;
-    mesh.at(1, 0) = 0;
-    mesh.at(0, 1) = 1;
-    mesh.at(1, 1) = 1;
+    auto&& mesh = dgm::Mesh(
+        std::vector<bool> { 1, 0, 1, 1 },
+        sf::Vector2u(2u, 2u),
+        sf::Vector2u(10u, 10u));
 
     SECTION("No collision")
     {
