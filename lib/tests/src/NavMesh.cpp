@@ -318,6 +318,31 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
         REQUIRE_FALSE(navmesh.arePointsConnected({ 2u, 2u }, { 9u, 3u }));
         REQUIRE(navmesh.arePointsConnected({ 5u, 2u }, { 9u, 3u }));
     }
+
+    SECTION("Case 6")
+    {
+        // clang-format off
+        const std::vector<bool> map = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+        auto&& navmesh =
+            TestableNavMesh(dgm::Mesh(map, { 10u, 11u }, { 32, 32 }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 8u }, { 3u, 8u }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 8u }, { 3u, 6u }));
+        REQUIRE_FALSE(navmesh.arePointsConnected({ 2u, 8u }, { 7u, 3u }));
+        REQUIRE(navmesh.arePointsConnected({ 2u, 8u }, { 7u, 1u }));
+    }
 }
 
 TEST_CASE("Computing Tile path", "[TileNavMesh]")

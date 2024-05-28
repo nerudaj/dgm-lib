@@ -1,4 +1,4 @@
-dgm-lib vX.X.Xbox
+dgm-lib v2.3.x
  * Fixed WorldNavMesh internal lookup algorithm, which could produce paths that go through solid walls
 
 dgm-lib v2.3.0
