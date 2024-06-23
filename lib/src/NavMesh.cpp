@@ -1,5 +1,6 @@
 #include "DGM/classes/NavMesh.hpp"
 #include "DGM/classes/Error.hpp"
+#include <JumpPointSearchUtilities.hpp>
 #include <array>
 #include <cmath>
 #include <functional>
@@ -93,7 +94,7 @@ using UpdateOpenSetWithCoordCallback = std::function<void(
     NodeSet<NodeType>&, const sf::Vector2u&, const NodeSet<NodeType>&)>;
 
 /*
- *  Returns ClosedSet from which path can be reconstructed or returns empty set
+ * Returns ClosedSet from which path can be reconstructed or returns empty set
  * if no path was found
  */
 template<AstarNode NodeType>
@@ -253,22 +254,6 @@ std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
 
 // ========= WORLD NAVMESH ===========
 
-enum class SeekDir : std::uint8_t
-{
-    // Upper two bits are used to denote vertical/horizontal direction
-    // If both bits are toggled, then its diagonal. It will be useful
-    // to reduce code for testing neighbours
-    // Lower bits are just iterating unique values for each code
-    Up = 0b10000001,
-    UpRight = 0b11000010,
-    Right = 0b01000011,
-    DownRight = 0b11000100,
-    Down = 0b10000101,
-    DownLeft = 0b11000110,
-    Left = 0b01000111,
-    UpLeft = 0b11001000
-};
-
 struct WorldNode
 {
     sf::Vector2u point = {};
@@ -297,244 +282,13 @@ struct WorldNode
 
     WorldNode(const WorldNode& other) = default;
 
-    [[nodiscard]] bool isCloserThan(const WorldNode& other) const noexcept
+    [[nodiscard]] constexpr bool
+    isCloserThan(const WorldNode& other) const noexcept
     {
         return fcost < other.fcost
                || (fcost == other.fcost && hcost < other.hcost);
     }
 };
-
-void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
-    const sf::Vector2u& point, bool fullSearch, bool symmetricConnections)
-{
-    using Seeker = std::pair<sf::Vector2u, SeekDir>;
-
-    auto isJumpPoint = [&](const sf::Vector2u& p)
-    { return jumpPointConnections.find(p) != jumpPointConnections.end(); };
-
-    // point is current seeker point, origin is jump point from which
-    // connections are being discovered
-    auto isHorizontalNeighborOk =
-        [&](const sf::Vector2u& point, const sf::Vector2u& origin)
-    {
-        // If point is not on the same axis as origin, then we need to check
-        // horizontal neighbor that is closer to origin. If it is solid wall
-        // then direct visibility to point is compromised and function returns
-        // false
-        if (point.x < origin.x && mesh.at(point.x + 1, point.y) > 0)
-            return false;
-        else if (point.x > origin.x && mesh.at(point.x - 1, point.y) > 0)
-            return false;
-        return true;
-    };
-
-    auto isVerticalNeighborOk =
-        [&](const sf::Vector2u& point, const sf::Vector2u& origin)
-    {
-        // Same as test for horizontal neighbour, just for Y axis
-        if (point.y < origin.y && mesh.at(point.x, point.y + 1) > 0)
-            return false;
-        else if (point.y > origin.y && mesh.at(point.x, point.y - 1) > 0)
-            return false;
-        return true;
-    };
-
-    auto isVerticalSeekDir = [&](SeekDir dir)
-    { return static_cast<uint8_t>(dir) & 0b10000000; };
-
-    auto isHorizontalSeekDir = [&](SeekDir dir)
-    { return static_cast<uint8_t>(dir) & 0b01000000; };
-
-    auto connectTwoJumpPoints =
-        [&](const sf::Vector2u& a, const sf::Vector2u& b)
-    {
-        const float dx =
-            (static_cast<float>(a.x) - b.x) * mesh.getVoxelSize().x;
-        const float dy =
-            (static_cast<float>(a.y) - b.y) * mesh.getVoxelSize().y;
-        const unsigned distance =
-            static_cast<unsigned>(std::sqrt(dx * dx + dy * dy));
-        jumpPointConnections[a].push_back(Connection(b, distance));
-
-        if (symmetricConnections)
-            jumpPointConnections[b].push_back(Connection(a, distance));
-    };
-
-    std::queue<Seeker> seekers;
-
-    // For discovery of basic jump points, we only need a partial search since
-    // everything is symmetrical
-    seekers.push({ sf::Vector2u(point.x + 1, point.y - 1), SeekDir::UpRight });
-    seekers.push({ sf::Vector2u(point.x + 1, point.y), SeekDir::Right });
-    seekers.push(
-        { sf::Vector2u(point.x + 1, point.y + 1), SeekDir::DownRight });
-    seekers.push({ sf::Vector2u(point.x, point.y + 1), SeekDir::Down });
-
-    // For source/end points of actual pathfinding, we need full search
-    if (fullSearch)
-    {
-        seekers.push({ sf::Vector2u(point.x, point.y - 1), SeekDir::Up });
-        seekers.push(
-            { sf::Vector2u(point.x - 1, point.y - 1), SeekDir::UpLeft });
-        seekers.push({ sf::Vector2u(point.x - 1, point.y), SeekDir::Left });
-        seekers.push(
-            { sf::Vector2u(point.x - 1, point.y + 1), SeekDir::DownLeft });
-    }
-
-    while (!seekers.empty())
-    {
-        const auto [coord, dir] = seekers.front();
-        seekers.pop();
-
-        // Skip if seeker hit a wall or neighbor compromises visibility
-        if (mesh.at(coord) > 0) continue;
-        if (isVerticalSeekDir(dir) && !isVerticalNeighborOk(coord, point))
-            continue;
-        if (isHorizontalSeekDir(dir) && !isHorizontalNeighborOk(coord, point))
-            continue;
-
-        // If coord is valid jump point, do not continue search from there
-        if (isJumpPoint(coord))
-        {
-            connectTwoJumpPoints(point, coord);
-            continue;
-        }
-
-        // Seeker didn't find anything and visibility not compromised, spawn new
-        // seekers
-        switch (dir)
-        {
-        case SeekDir::Up:
-            seekers.push({ sf::Vector2u(coord.x, coord.y - 1), dir });
-            break;
-        case SeekDir::Left:
-            seekers.push({ sf::Vector2u(coord.x - 1, coord.y), dir });
-            break;
-        case SeekDir::Down:
-            seekers.push({ sf::Vector2u(coord.x, coord.y + 1), dir });
-            break;
-        case SeekDir::Right:
-            seekers.push({ sf::Vector2u(coord.x + 1, coord.y), dir });
-            break;
-        case SeekDir::UpLeft:
-            seekers.push({ sf::Vector2u(coord.x, coord.y - 1), SeekDir::Up });
-            seekers.push({ sf::Vector2u(coord.x - 1, coord.y), SeekDir::Left });
-            seekers.push({ sf::Vector2u(coord.x - 1, coord.y - 1), dir });
-            break;
-        case SeekDir::UpRight:
-            seekers.push({ sf::Vector2u(coord.x, coord.y - 1), SeekDir::Up });
-            seekers.push(
-                { sf::Vector2u(coord.x + 1, coord.y), SeekDir::Right });
-            seekers.push({ sf::Vector2u(coord.x + 1, coord.y - 1), dir });
-            break;
-        case SeekDir::DownLeft:
-            seekers.push({ sf::Vector2u(coord.x, coord.y + 1), SeekDir::Down });
-            seekers.push({ sf::Vector2u(coord.x - 1, coord.y), SeekDir::Left });
-            seekers.push({ sf::Vector2u(coord.x - 1, coord.y + 1), dir });
-            break;
-        case SeekDir::DownRight:
-            seekers.push({ sf::Vector2u(coord.x, coord.y + 1), SeekDir::Down });
-            seekers.push(
-                { sf::Vector2u(coord.x + 1, coord.y), SeekDir::Right });
-            seekers.push({ sf::Vector2u(coord.x + 1, coord.y + 1), dir });
-            break;
-        }
-    }
-}
-
-std::optional<dgm::Path<dgm::WorldNavpoint>>
-dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
-{
-    // Compute tile coordinates of start and end
-    const sf::Vector2u tileFrom = sf::Vector2u(
-        static_cast<unsigned>(from.x) / mesh.getVoxelSize().x,
-        static_cast<unsigned>(from.y) / mesh.getVoxelSize().y);
-    const sf::Vector2u tileTo = sf::Vector2u(
-        static_cast<unsigned>(to.x) / mesh.getVoxelSize().x,
-        static_cast<unsigned>(to.y) / mesh.getVoxelSize().y);
-
-    const bool fromIsJumpPoint = jumpPointConnections.contains(tileFrom);
-    const bool toIsJumpPoint = jumpPointConnections.contains(tileTo);
-
-    if (tileFrom == tileTo)
-        return dgm::Path<WorldNavpoint>({}, false);
-    else if (mesh.at(tileTo) >= 1)
-        return std::nullopt;
-
-    // Make auxiliary connections to rest of network, unless source/target point
-    // is already a jump point
-    if (not toIsJumpPoint)
-        discoverConnectionsForJumpPoint(
-            tileTo, true, true); // First evaluate destination so start point
-                                 // can find direct connection
-    if (not fromIsJumpPoint)
-        discoverConnectionsForJumpPoint(
-            tileFrom, true, false); // do not make symmetrical connections so
-                                    // the erasure is constant
-
-    // A*
-    auto updateOpenSetWithCoord =
-        [&](NodeSet<WorldNode>& openSet,
-            const sf::Vector2u& coord,
-            const NodeSet<WorldNode>& closedSet) -> void
-    {
-        const auto node = closedSet.getNode(coord);
-        for (auto&& conn : jumpPointConnections[coord])
-        {
-            if (!closedSet.contains(
-                    conn.destination)) // Do not re-evaluate node which we've
-                                       // already visited on faster route
-                openSet.insertNode(WorldNode(
-                    conn.destination,
-                    coord,
-                    tileTo,
-                    node.gcost + static_cast<unsigned>(conn.distance)));
-        }
-    };
-
-    auto closedSet = astarSearch<WorldNode>(
-        WorldNode(tileFrom, {}, tileTo, 0), tileTo, updateOpenSetWithCoord);
-
-    {
-        // Erase auxiliary connections created earlier, but only if from/to
-        // points weren't jump points to begin with
-        if (not toIsJumpPoint)
-        {
-            for (auto&& conn : jumpPointConnections[tileTo])
-                jumpPointConnections[conn.destination].pop_back();
-            jumpPointConnections.erase(tileTo);
-        }
-
-        // source is connected in one-way only, sufficient to delete this node
-        if (not fromIsJumpPoint) jumpPointConnections.erase(tileFrom);
-    }
-
-    if (!closedSet.hasElements()) return std::nullopt;
-
-    auto getWorldNavpoint = [&](const sf::Vector2u& coord)
-    {
-        return WorldNavpoint(
-            sf::Vector2f(
-                (coord.x + 0.5f) * mesh.getVoxelSize().x,
-                (coord.y + 0.5f) * mesh.getVoxelSize().y),
-            0u);
-    };
-
-    std::vector<WorldNavpoint> points;
-    points.push_back(getWorldNavpoint(tileTo));
-
-    sf::Vector2u point = tileTo;
-    do
-    {
-        const auto node = closedSet.getNode(point);
-        point = node.predecessor;
-        if (point == tileFrom) break;
-        points.push_back(getWorldNavpoint(point));
-    } while (true);
-    std::reverse(points.begin(), points.end());
-
-    return dgm::Path<WorldNavpoint>(points, false);
-}
 
 dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
 {
@@ -573,7 +327,7 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
                || southEastCorner;
     };
 
-    auto discoverJumpPoints = [&]()
+    auto discoverJumpPoints = [&]
     {
         for (unsigned y = 1; y < mesh.getDataSize().y - 1; y++)
         {
@@ -595,4 +349,227 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
 
     for (auto&& [point, _] : jumpPointConnections)
         discoverConnectionsForJumpPoint(point, false);
+}
+
+static std::optional<dgm::Path<dgm::WorldNavpoint>> convertRawPathToWorldPath(
+    const NodeSet<WorldNode>& rawPath,
+    const sf::Vector2u& tileFrom,
+    const sf::Vector2u& tileTo,
+    std::function<dgm::WorldNavpoint(const sf::Vector2u&)> toWorldNavpoint)
+{
+    if (!rawPath.hasElements()) return std::nullopt;
+
+    std::vector<dgm::WorldNavpoint> points;
+    points.push_back(toWorldNavpoint(tileTo));
+
+    sf::Vector2u point = tileTo;
+    do
+    {
+        const auto node = rawPath.getNode(point);
+        point = node.predecessor;
+        if (point == tileFrom) break;
+        points.push_back(toWorldNavpoint(point));
+    } while (true);
+    std::reverse(points.begin(), points.end());
+
+    return dgm::Path<dgm::WorldNavpoint>(points, false);
+}
+
+std::optional<dgm::Path<dgm::WorldNavpoint>>
+dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
+{
+    const auto&& tileFrom = toTileCoord(from);
+    const auto&& tileTo = toTileCoord(to);
+    const auto&& wasTileFromOriginallyJumpPoint = isJumpPoint(tileFrom);
+    const auto&& wasTileToOriginallyJumpPoint = isJumpPoint(tileTo);
+
+    // Early search pruning
+    if (tileFrom == tileTo) // Identity
+        return dgm::Path<WorldNavpoint>({}, false);
+    else if (mesh.at(tileTo) > 0) // Destination is a wall
+        return std::nullopt;
+
+    connectToAndFromPointsToTheNetwork(tileFrom, tileTo);
+
+    // A*
+    auto&& insertCoordIntoOpenSetIfNotInClosedSetAlready =
+        [&](NodeSet<WorldNode>& openSet,
+            const sf::Vector2u& coord,
+            const NodeSet<WorldNode>& closedSet) -> void
+    {
+        const auto node = closedSet.getNode(coord);
+        for (auto&& conn : jumpPointConnections[coord])
+        {
+            if (!closedSet.contains(
+                    conn.destination)) // Do not re-evaluate node which we've
+                                       // already visited on faster route
+                openSet.insertNode(WorldNode(
+                    conn.destination,
+                    coord,
+                    tileTo,
+                    node.gcost + static_cast<unsigned>(conn.distance)));
+        }
+    };
+
+    auto&& rawPath = astarSearch<WorldNode>(
+        WorldNode(tileFrom, {}, tileTo, 0),
+        tileTo,
+        insertCoordIntoOpenSetIfNotInClosedSetAlready);
+
+    eraseFromAndToPointsFromTheNetwork(
+        tileFrom,
+        wasTileFromOriginallyJumpPoint,
+        tileTo,
+        wasTileToOriginallyJumpPoint);
+
+    return convertRawPathToWorldPath(
+        rawPath,
+        tileFrom,
+        tileTo,
+        std::bind(
+            &dgm::WorldNavMesh::toWorldNavpoint, this, std::placeholders::_1));
+}
+
+void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
+    const sf::Vector2u& point, bool symmetricConnection)
+{
+    using namespace dgm::priv;
+
+    auto&& discoverConnectionsInDirection =
+        [&](sf::Vector2u seeker,
+            std::function<sf::Vector2u(const sf::Vector2u&)> advance,
+            std::function<bool(const sf::Vector2u, const dgm::Mesh&)>
+                shouldStopAdvancing)
+    {
+        while (true)
+        {
+            if (shouldStopAdvancing(seeker, mesh))
+                return seeker;
+            else if (isJumpPoint(seeker))
+            {
+                connectTwoJumpPoints(point, seeker, symmetricConnection);
+                return seeker;
+            }
+            seeker = advance(seeker);
+        }
+    };
+
+    // Discover vertical connections
+    auto&& ystop1 = discoverConnectionsInDirection(
+        advanceUp(point), advanceUp, shouldStopStraightDiscovery);
+    auto&& ystop2 = discoverConnectionsInDirection(
+        advanceDown(point), advanceDown, shouldStopStraightDiscovery);
+
+    // Discover horizontal connections
+    auto&& xstop1 = discoverConnectionsInDirection(
+        advanceLeft(point), advanceLeft, shouldStopStraightDiscovery);
+    auto&& xstop2 = discoverConnectionsInDirection(
+        advanceRight(point), advanceRight, shouldStopStraightDiscovery);
+
+    for (unsigned y = point.y - 1; y > ystop1.y; --y)
+    {
+        discoverConnectionsInDirection(
+            { point.x - 1, y }, advanceUpLeft, shouldStopUpLeftDiscovery);
+        discoverConnectionsInDirection(
+            { point.x + 1, y }, advanceUpRight, shouldStopUpRightDiscovery);
+    }
+
+    for (unsigned y = point.y + 1; y < ystop2.y; ++y)
+    {
+        discoverConnectionsInDirection(
+            { point.x - 1, y }, advanceDownLeft, shouldStopDownLeftDiscovery);
+        discoverConnectionsInDirection(
+            { point.x + 1, y }, advanceDownRight, shouldStopDownRightDiscovery);
+    }
+
+    // starting at point.x - 1 would duplicate diagonal ray
+    for (unsigned x = point.x - 2; point.x > 1 && x > xstop1.x; --x)
+    {
+        discoverConnectionsInDirection(
+            { x, point.y - 1 }, advanceUpLeft, shouldStopUpLeftDiscovery);
+        discoverConnectionsInDirection(
+            { x, point.y + 1 }, advanceDownLeft, shouldStopDownLeftDiscovery);
+    }
+
+    // starting at point.x + 1 would duplicate diagonal ray
+    for (unsigned x = point.x + 2;
+         point.x < mesh.getDataSize().x - 1 && x < xstop2.x;
+         ++x)
+    {
+        discoverConnectionsInDirection(
+            { x, point.y - 1 }, advanceUpRight, shouldStopUpRightDiscovery);
+        discoverConnectionsInDirection(
+            { x, point.y + 1 }, advanceDownRight, shouldStopDownRightDiscovery);
+    }
+}
+
+void dgm::WorldNavMesh::connectTwoJumpPoints(
+    const sf::Vector2u& a, const sf::Vector2u& b, bool symmetricConnection)
+{
+    const float dx = (static_cast<float>(a.x) - b.x) * mesh.getVoxelSize().x;
+    const float dy = (static_cast<float>(a.y) - b.y) * mesh.getVoxelSize().y;
+    const unsigned distance =
+        static_cast<unsigned>(std::sqrt(dx * dx + dy * dy));
+
+    if (symmetricConnection)
+        jumpPointConnections[b].push_back(Connection(a, distance));
+    jumpPointConnections[a].push_back(Connection(b, distance));
+}
+
+void dgm::WorldNavMesh::connectToAndFromPointsToTheNetwork(
+    const sf::Vector2u& tileFrom, const sf::Vector2u& tileTo)
+{
+    // Unless these points are jump points, connect them to the network
+    if (!isJumpPoint(tileTo))
+    {
+        // Destination needs to have connections from neighbors to itself
+        // reverse connections are only made for bookmarking so everything
+        // can be cleaned-up later
+        discoverConnectionsForJumpPoint(tileTo, true);
+    }
+
+    if (!isJumpPoint(tileFrom))
+    {
+        // At this point, destination is connected to the netwrok
+        // discovery at this point will plug the starting point to
+        // the network and with a little luck, it might find a
+        // direct path to the destination
+        discoverConnectionsForJumpPoint(tileFrom);
+    }
+}
+
+void dgm::WorldNavMesh::eraseFromAndToPointsFromTheNetwork(
+    const sf::Vector2u& tileFrom,
+    bool wasTileFromOriginallyJumpPoint,
+    const sf::Vector2u& tileTo,
+    bool wasTileToOriginallyJumpPoint)
+{
+    // Erase auxiliary connections created earlier, but only if from/to
+    // points weren't jump points to begin with
+    if (not wasTileToOriginallyJumpPoint)
+    {
+        for (auto&& conn : jumpPointConnections[tileTo])
+            jumpPointConnections[conn.destination].pop_back();
+        jumpPointConnections.erase(tileTo);
+    }
+
+    // source is connected in one-way only, sufficient to delete this node
+    if (not wasTileFromOriginallyJumpPoint)
+        jumpPointConnections.erase(tileFrom);
+}
+
+sf::Vector2u dgm::WorldNavMesh::toTileCoord(const sf::Vector2f& coord)
+{
+    return sf::Vector2u(
+        static_cast<unsigned>(coord.x) / mesh.getVoxelSize().x,
+        static_cast<unsigned>(coord.y) / mesh.getVoxelSize().y);
+}
+
+dgm::WorldNavpoint dgm::WorldNavMesh::toWorldNavpoint(const sf::Vector2u& coord)
+{
+    return WorldNavpoint(
+        sf::Vector2f(
+            (coord.x + 0.5f) * mesh.getVoxelSize().x,
+            (coord.y + 0.5f) * mesh.getVoxelSize().y),
+        0u);
 }
