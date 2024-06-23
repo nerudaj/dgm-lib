@@ -34,12 +34,12 @@ protected:
 
 public:
     // Dědí se přes AppState.
-    virtual void input() override
+    void input() override
     {
         reporter->inputCalled = true;
     }
 
-    virtual void update() override
+    void update() override
     {
         reporter->updateCalled = true;
 
@@ -70,12 +70,12 @@ public:
         }
     }
 
-    virtual void draw() override
+    void draw() override
     {
         reporter->drawCalled = true;
     }
 
-    virtual void restoreFocusImpl(const std::string& message)
+    void restoreFocusImpl(const std::string& message)
     {
         reporter->hasFocus = true;
         reporter->restoreMessage = message;
@@ -90,7 +90,7 @@ public:
         }
     }
 
-    virtual void loseFocusImpl()
+    void loseFocusImpl()
     {
         reporter->hasFocus = false;
     }
@@ -122,6 +122,21 @@ public:
     {
         reporter->dtorCalled = true;
     }
+};
+
+class StateThatThrowsInCtor : public dgm::AppState
+{
+public:
+    StateThatThrowsInCtor(dgm::App& app) : dgm::AppState(app)
+    {
+        throw std::exception();
+    }
+
+    void input() override {}
+
+    void update() override {}
+
+    void draw() override {}
 };
 
 TEST_CASE("Cout/cerr restoration", "App")
@@ -414,5 +429,26 @@ TEST_CASE("App")
             &r1, TestableStateBehaviour::PushInCtor_AnotherPushInCtor);
         app.run();
         REQUIRE(true);
+    }
+
+    SECTION(
+        "Focus is lost appropriately even if some pushState throws exception")
+    {
+        Reporter r1, r2;
+        app.pushState<TestableState>(&r1, TestableStateBehaviour::Default);
+        try
+        {
+            app.pushState<StateThatThrowsInCtor>();
+        }
+        catch (...)
+        {
+        }
+        app.pushState<TestableState>(&r2, TestableStateBehaviour::ExitApp);
+        app.run(); // A part of the bug was that the extra state never got
+                   // pushed so
+        // the app would keep on running in this test
+
+        REQUIRE_FALSE(r1.hasFocus);
+        REQUIRE(r2.hasFocus);
     }
 }

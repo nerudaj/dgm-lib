@@ -46,8 +46,17 @@ namespace dgm
 
             // T constructor might invoke pushState
             // in which case pushNestingCounter will be > 1 at this point
-            pushStateInternal(
-                std::make_unique<T>(*this, std::forward<Args>(args)...));
+            try
+            {
+                pushStateInternal(
+                    std::make_unique<T>(*this, std::forward<Args>(args)...));
+            }
+            catch (const std::exception&)
+            {
+                pushNestingCounter--;
+                throw;
+            }
+
             pushNestingCounter--;
         }
 

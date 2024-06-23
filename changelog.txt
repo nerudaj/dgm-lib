@@ -1,5 +1,6 @@
 dgm-lib v2.3.x
- * Fixed WorldNavMesh internal lookup algorithm, which could produce paths that go through solid walls
+ * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
+ * Fixed `dgm::App::pushState` stopped working properly after pushed state throwed an exception in constructor
 
 dgm-lib v2.3.0
  * Bumped to SFML v2.6.1
