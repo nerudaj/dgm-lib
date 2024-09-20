@@ -525,6 +525,7 @@ void dgm::WorldNavMesh::connectToAndFromPointsToTheNetwork(
         // Destination needs to have connections from neighbors to itself
         // reverse connections are only made for bookmarking so everything
         // can be cleaned-up later
+        jumpPointConnections[tileTo] = {};
         discoverConnectionsForJumpPoint(tileTo, true);
     }
 

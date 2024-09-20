@@ -408,41 +408,81 @@ TEST_CASE("Computing Tile path", "[TileNavMesh]")
     }
 }
 
-TEST_CASE("[WorldNavMesh] - BUG: Crashing after several queries")
+TEST_CASE("BUGS", "[WorldNavMesh]")
 {
-    std::vector<bool> blockMesh = {
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1,
-        0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0,
-        0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1,
-        1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1,
-        0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0,
-        1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    };
+    SECTION("Crashing after several queries")
+    {
+        // clang-format off
+        std::vector<bool> blockMesh = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
+            1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+            1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
 
-    dgm::Mesh mesh(blockMesh, { 15u, 15u }, { 64u, 64u });
-    dgm::WorldNavMesh navmesh(mesh);
+        dgm::Mesh mesh(blockMesh, { 15u, 15u }, { 64u, 64u });
+        dgm::WorldNavMesh navmesh(mesh);
 
-    REQUIRE(navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f }));
-    REQUIRE(navmesh.computePath({ 288.f, 864.f }, { 796.f, 158.f }));
-    REQUIRE(navmesh.computePath({ 800.f, 160.f }, { 542.f, 731.f }));
-    REQUIRE(navmesh.computePath({ 544.f, 736.f }, { 676.f, 733.f }));
-    REQUIRE(navmesh.computePath({ 672.f, 736.f }, { 545.f, 613.f }));
+        REQUIRE(navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f }));
+        REQUIRE(navmesh.computePath({ 288.f, 864.f }, { 796.f, 158.f }));
+        REQUIRE(navmesh.computePath({ 800.f, 160.f }, { 542.f, 731.f }));
+        REQUIRE(navmesh.computePath({ 544.f, 736.f }, { 676.f, 733.f }));
+        REQUIRE(navmesh.computePath({ 672.f, 736.f }, { 545.f, 613.f }));
 
-    /**
-     *  NOTE: This bug was caused by the fact that some points in the repro
-     *  were also the jump points.
-     *
-     *  Algorithm used to add some auxiliary connections from source and
-     * destination points to the existing jump points, so it could compute A*
-     * and then removed those auxiliary connections to return internal
-     * structures to default state.
-     *
-     *  That is obviously not needed if source and/or destination are jump
-     * points, because they're connections are already found (so no need to redo
-     * this step) and they must not be deleted.
-     */
+        /**
+         *  NOTE: This bug was caused by the fact that some points in the repro
+         *  were also the jump points.
+         *
+         *  Algorithm used to add some auxiliary connections from source and
+         * destination points to the existing jump points, so it could compute
+         * A* and then removed those auxiliary connections to return internal
+         * structures to default state.
+         *
+         *  That is obviously not needed if source and/or destination are jump
+         * points, because they're connections are already found (so no need to
+         * redo this step) and they must not be deleted.
+         */
+    }
+
+    SECTION("Can't find a path in a room without jump points")
+    {
+        // clang-format off
+        const std::vector<bool> blockMesh = {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        };
+        // clang-format on
+
+        dgm::Mesh mesh(blockMesh, { 16u, 16u }, { 16u, 16u });
+        dgm::WorldNavMesh navmesh(mesh);
+
+        auto path = navmesh.computePath({ 104.f, 56.f }, { 120.f, 24.f });
+        REQUIRE(path.has_value());
+    }
 }
