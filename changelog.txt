@@ -1,4 +1,4 @@
-dgm-lib v2.3.x
+dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
  * Fixed `WorldNavMesh` internal lookup algorithm, which could not find path in an empty room
  * Fixed `dgm::App::pushState` stopped working properly after pushed state throwed an exception in constructor

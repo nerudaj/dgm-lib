@@ -9,7 +9,7 @@ option ( ENABLE_SANDBOX "Build sandbox target" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
 
 # Project setup
-project ( dgm-lib VERSION 2.3.0 )
+project ( dgm-lib VERSION 2.3.1 )
 
 if (NOT ${PROJECT_IS_TOP_LEVEL} )
 	message ( "INFO: dgm-lib is used as a dependency, turning off unwanted features" )
