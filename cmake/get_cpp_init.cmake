@@ -4,7 +4,7 @@ function ( fetch_cpp_init )
     FetchContent_Declare (
         cpp-init
         GIT_REPOSITORY https://github.com/nerudaj/cpp-init
-        GIT_TAG "v0.1.1"
+        GIT_TAG "main"
     )
 
     FetchContent_MakeAvailable ( cpp-init )
