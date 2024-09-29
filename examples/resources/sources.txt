@@ -1,0 +1,4 @@
+soldier.png: https://opengameart.org/content/death-soldier-32x32
+starship.png: https://opengameart.org/content/top-down-spaceships
+smoke.png: https://opengameart.org/content/smoke-aura
+tileset.png: own

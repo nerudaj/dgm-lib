@@ -1,6 +1,5 @@
 #include <DGM/dgm.hpp>
 #include <catch2/catch_all.hpp>
-#include <catch2/catch_approx.hpp>
 
 using Catch::Approx;
 

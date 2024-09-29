@@ -1,6 +1,5 @@
 #include <DGM/dgm.hpp>
 #include <catch2/catch_all.hpp>
-#include <catch2/catch_approx.hpp>
 
 using Catch::Approx;
 
@@ -30,13 +29,13 @@ TEST_CASE("[Math]")
 
         SECTION("Returns vector with size of 1 and the same angle")
         {
-            const auto vectors = std::vector { sf::Vector2f {10.f, -3.f} };
+            const auto vectors = std::vector { sf::Vector2f { 10.f, -3.f } };
 
             for (auto&& vec : vectors)
             {
                 auto unit = dgm::Math::toUnit(vec);
                 REQUIRE(Approx(dgm::Math::getSize(unit)) == 1.f);
-                
+
                 auto polar1 = dgm::Math::cartesianToPolar(vec);
                 auto polar2 = dgm::Math::cartesianToPolar(unit);
 
@@ -57,7 +56,8 @@ TEST_CASE("[Math]")
 
     SECTION("getDotProduct")
     {
-        const float dot = dgm::Math::getDotProduct({-2.f, 4.f}, {3.f, -4.f});
+        const float dot =
+            dgm::Math::getDotProduct({ -2.f, 4.f }, { 3.f, -4.f });
         REQUIRE(dot == -22.f);
     }
 
