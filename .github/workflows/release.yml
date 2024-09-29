@@ -31,7 +31,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake .. -D ENABLE_TESTS=OFF ENABLE_EXAMPLES=OFF
+        cmake .. -D ENABLE_TESTS=OFF ENABLE_EXAMPLES=OFF ENABLE_SANDBOX=OFF
       shell: cmd
 
     - name: Build
@@ -48,6 +48,6 @@ jobs:
     - name: Store artifact
       uses: actions/upload-artifact@v4
       with:
-        name: dgm-lib
+        name: ${{github.event.repository.name}}
         path: ${{env.BUILD_DIR}}/*.zip
         retention-days: 5
