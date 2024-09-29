@@ -60,6 +60,8 @@ target_link_libraries ( ${PROJECT_NAME}
 )
 ```
 
+The full example is available [here](../integration_tests/fetch_git).
+
 ## CPM
 
 You can also use the Cmake Package Manager. This will transitively download and bootstrap SFML as well:
@@ -70,12 +72,7 @@ cmake_minimum_required ( VERSION 3.26 )
 set ( CMAKE_CXX_STANDARD		23 )
 set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Compiled" )
 
-file ( DOWNLOAD
-  https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/get_cpm.cmake
-  "${CMAKE_BINARY_DIR}/cpm.cmake"
-)
-
-include ( "${CMAKE_BINARY_DIR}/cpm.cmake" )
+# Somehow get CPM here
 
 CPMAddPackage("gh:nerudaj/dgm-lib#main")
 
@@ -90,3 +87,5 @@ target_link_libraries ( ${PROJECT_NAME}
     libdgm sfml-main
 )
 ```
+
+The full example is available [here](../integration_tests/cpm).
