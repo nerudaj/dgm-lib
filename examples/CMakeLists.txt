@@ -1,7 +1,31 @@
 cmake_minimum_required ( VERSION 3.26 )
 
-project ( examples )
+#add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/shared" )
 
-add_compile_definitions ( RESOURCE_DIR="${PROJECT_SOURCE_DIR}/resources" )
+set ( TARGET "examples-common" )
 
-add_subdirectory ( "${PROJECT_SOURCE_DIR}/example-02-controller" )
+add_library ( ${TARGET} INTERFACE )
+
+target_compile_definitions ( ${TARGET} INTERFACE
+	RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resources"
+)
+
+target_link_libraries ( ${TARGET}
+	INTERFACE libdgm #examples-shared libdgm
+)
+
+function ( execute_example_as_test TARGET )
+	if ( ${BUILD_TESTS} )
+		add_test (
+			NAME "${TARGET}"
+			COMMAND "${TARGET}"
+		)
+	endif ()
+endfunction ()
+
+
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-app" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-02-controller" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-03-math" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-04-particle-effects" )
+
