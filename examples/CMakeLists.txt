@@ -16,10 +16,11 @@ target_link_libraries ( ${TARGET}
 
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-tilemap" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-02-controller" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-03-math" )
 
 # add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-app" )
 # 
-# add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-03-math" )
+# 
 # add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-04-particle-effects" )
 # add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-05-pathfind" )
 # add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-06-simple-ai" )

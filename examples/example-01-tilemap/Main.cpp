@@ -6,7 +6,7 @@ https://www.sfml-dev.org/tutorials/2.6/graphics-vertex-array.php
 TileMap is more efficient to render than to render tiles individually.
 */
 
-#include "../shared/DemoData.hpp"
+#include "DemoData.hpp"
 #include <DGM/dgm.hpp>
 
 dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
@@ -53,7 +53,7 @@ int main()
     std::ignore = resmgr.loadResourcesFromDirectory<sf::Texture>(
         RESOURCE_DIR, dgm::Utility::loadTexture, { ".png" });
 
-    auto tilemap = createSampleTilemap(resmgr);
+    auto&& tilemap = createSampleTilemap(resmgr);
 
     sf::Event event;
     while (window.isOpen())
