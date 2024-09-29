@@ -1,4 +1,4 @@
-[![Build-Test-Package](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml)
+[![CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml)
 
 # Readme
 
