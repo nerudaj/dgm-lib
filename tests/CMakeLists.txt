@@ -19,11 +19,10 @@ target_include_directories( ${TARGET}
 
 target_link_libraries ( ${TARGET}
 	LINK_PRIVATE libdgm
-	LINK_PRIVATE Catch2::Catch2WithMain
 )
 
 apply_compile_options ( ${TARGET} )
-enable_autoformat_and_linter ( ${TARGET} )
+enable_autoformatter ( ${TARGET} )
 
 add_test (
 	NAME    ${TARGET}

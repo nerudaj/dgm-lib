@@ -45,7 +45,6 @@ endif ()
 
 CPMAddPackage( "gh:SFML/SFML#2.6.1" )
 CPMAddPackage( "gh:nlohmann/json@3.11.2" )
-CPMAddPackage( "gh:catchorg/Catch2@3.3.2" )
 
 # Subprojects
 add_subdirectory ( lib )

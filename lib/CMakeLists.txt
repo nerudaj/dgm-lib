@@ -20,7 +20,7 @@ target_link_libraries ( ${TARGET}
 )
 
 apply_compile_options ( ${TARGET} )
-enable_autoformat_and_linter ( ${TARGET} )
+enable_autoformatter ( ${TARGET} )
 
 # Instalation
 install (
