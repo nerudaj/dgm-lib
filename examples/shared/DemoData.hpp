@@ -1,11 +1,20 @@
 #pragma once
 
-#include "include/LevelD.hpp"
+#include "Level.hpp"
+#include <DGM/classes/Clip.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 class DemoData
 {
 public:
-	static LevelD createDemoLevel();
+    static Level
+    createDemoLevel(const sf::Texture& texture, const dgm::Clip& clip);
 
-	static LevelD createDemoLevel2();
+    static Level
+    createDemoLevel2(const sf::Texture& texture, const dgm::Clip& clip);
+
+    static dgm::Clip getClipForExampleTileset()
+    {
+        return dgm::Clip(sf::Vector2u(32u, 32u), sf::IntRect(0, 0, 64, 64));
+    }
 };

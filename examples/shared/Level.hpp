@@ -1,28 +1,34 @@
 #pragma once
 
 #include <DGM/dgm.hpp>
-#include <include/LevelD.hpp>
 
-class Level
+class [[nodiscard]] Level final
 {
-protected:
-	dgm::Mesh mesh;
-	dgm::TileMap tilemap;
+public:
+    // Values of tileData are indices into textureClip
+    // so each tile is associated with the correct texture
+    // collisionData determine whether each tile is impassable (true)
+    // or not (false).
+    Level(
+        const dgm::Mesh& tileData,
+        const sf::Texture& texture,
+        const dgm::Clip& textureClip,
+        const dgm::Mesh& collisionData);
 
 public:
-	void draw(dgm::Window& window)
-	{
-		window.draw(tilemap);
-	}
+    void draw(dgm::Window& window)
+    {
+        window.draw(tilemap);
+    }
 
-	const dgm::Mesh& getMesh() const
-	{
-		return mesh;
-	}
+    constexpr const dgm::Mesh& getMesh() const noexcept
+    {
+        return mesh;
+    }
 
-	void changeTileToVoid(unsigned x, unsigned y);
+    // void changeTileToVoid(unsigned x, unsigned y);
 
-	void loadFromLvd(const LevelD& lvd);
-
-	Level(const sf::Texture& texture);
+protected:
+    dgm::Mesh mesh;
+    dgm::TileMap tilemap;
 };

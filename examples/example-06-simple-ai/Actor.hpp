@@ -1,8 +1,8 @@
 #pragma once
 
-#include <DGM/dgm.hpp>
-#include "Scene.hpp"
 #include "ControllerInterface.hpp"
+#include "Scene.hpp"
+#include <DGM/dgm.hpp>
 
 class Actor
 {
@@ -18,8 +18,8 @@ public:
         : SPEED(speed)
         , input(input)
         , renderColor(color)
+        , body({ 0.f, 0.f }, 16.f)
     {
-        body.setRadius(16.f);
     }
 
     void spawn(const sf::Vector2f& pos)
