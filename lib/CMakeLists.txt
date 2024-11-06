@@ -1,42 +1,26 @@
-cmake_minimum_required ( VERSION 3.19 )
+cmake_minimum_required ( VERSION 3.26 )
 
-project ( libdgm )
-
-file (
-	COPY "${DGM_BINARY_DIR}/.clang-format"
-	DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+set ( TARGET libdgm )
 
 glob_headers_and_sources ( HEADERS SOURCES )
 
-add_library ( ${PROJECT_NAME}
+add_library ( ${TARGET}
 	STATIC ${HEADERS} ${SOURCES}
-	"${CMAKE_CURRENT_SOURCE_DIR}/.clang-format"
 )
 
-target_include_directories ( ${PROJECT_NAME}
+target_include_directories ( ${TARGET}
 	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
 	PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/private_include"
 )
 
-target_compile_features ( ${PROJECT_NAME}
-	INTERFACE ${MY_CXX_COMPILE_FEATURES}
-)
-
-target_compile_options ( ${PROJECT_NAME}
-	PRIVATE ${CXX_COMPILE_OPTIONS}
-)
-
-target_link_libraries ( ${PROJECT_NAME}
-	LINK_PUBLIC sfml-system sfml-window sfml-graphics
+target_link_libraries ( ${TARGET}
+	LINK_PUBLIC sfml-system sfml-window sfml-graphics sfml-main
 	LINK_PUBLIC xinput.lib
 	LINK_PRIVATE nlohmann_json::nlohmann_json
 )
 
-# Testing
-if ( ${ENABLE_TESTS} )
-	add_subdirectory ( tests )
-endif ()
+apply_compile_options ( ${TARGET} )
+enable_autoformatter ( ${TARGET} )
 
 # Instalation
 install (

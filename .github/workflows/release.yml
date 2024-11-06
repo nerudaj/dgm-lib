@@ -1,10 +1,10 @@
-name: Build-Test-Package
+name: Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - '*'
+  workflow_dispatch:
 
 env:
   BUILD_DIR: ${{github.workspace}}/vsbuild
@@ -15,20 +15,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: Setup cmake
-      uses: jwlawson/actions-setup-cmake@v1.14
+      uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.26.1'
 
-    - name: Use cmake
+    - name: Check cmake version
       run: cmake --version
 
     - name: Configure CMake
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake ..
+        cmake .. -D ENABLE_TESTS=OFF ENABLE_EXAMPLES=OFF ENABLE_SANDBOX=OFF
       shell: cmd
 
     - name: Build
@@ -38,20 +41,13 @@ jobs:
         cmake --build . --config Release
       shell: cmd
 
-    - name: Test
-      working-directory: ${{env.BUILD_DIR}}
-      run: |
-        ctest -C Debug
-        ctest -C Release
-      shell: cmd
-      
     - name: Pack
       working-directory: ${{env.BUILD_DIR}}
       run: cpack
       
     - name: Store artifact
-      uses: actions/upload-artifact@v4.0.0
+      uses: actions/upload-artifact@v4
       with:
-        name: dgm-lib
+        name: ${{github.event.repository.name}}
         path: ${{env.BUILD_DIR}}/*.zip
         retention-days: 5

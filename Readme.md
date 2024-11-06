@@ -1,4 +1,4 @@
-[![Build-Test-Package](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/build-test-package.yml)
+[![CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml)
 
 # Readme
 
@@ -28,7 +28,9 @@ Dependencies are managed via CPM. Latest CPM script is downloaded during configu
 Project has following options:
 
  * `ENABLE_TESTS` - Default: ON. When enabled, unit-tests target is created.
+ * `ENABLE_EXAMPLES` - Default: ON. When enabled, example targets are created.
  * `ENABLE_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
+ * `BOOTSTRAP_CPM` - Default: ON. When enable, newest version of CMake Package Manager is downloaded and included. This is required for dependencies. Only turn OFF when your project is also using CPM.
  * `OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
 
 All these options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts.
