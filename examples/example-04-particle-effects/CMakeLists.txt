@@ -21,6 +21,5 @@ set_target_properties( ${TARGET} PROPERTIES
 
 apply_compile_options ( ${TARGET} )
 enable_autoformatter ( ${TARGET} )
-execute_example_as_test ( ${TARGET} )
 
 

@@ -13,8 +13,5 @@ public:
     static Level
     createDemoLevel2(const sf::Texture& texture, const dgm::Clip& clip);
 
-    static dgm::Clip getClipForExampleTileset()
-    {
-        return dgm::Clip(sf::Vector2u(32u, 32u), sf::IntRect(0, 0, 64, 64));
-    }
+    static dgm::ResourceManager loadDemoResources();
 };

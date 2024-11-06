@@ -85,3 +85,20 @@ Level DemoData::createDemoLevel2(
     );
     // clang-format on
 }
+
+#define CHECK_RESULT(x)                                                        \
+    if (auto result = x; !result) throw std::runtime_error(result.error());
+
+dgm::ResourceManager DemoData::loadDemoResources()
+{
+    dgm::ResourceManager resmgr;
+    CHECK_RESULT(resmgr.loadResourcesFromDirectory<sf::Font>(
+        RESOURCE_DIR, dgm::Utility::loadFont, { ".ttf" }));
+    CHECK_RESULT(resmgr.loadResourcesFromDirectory<sf::Texture>(
+        RESOURCE_DIR, dgm::Utility::loadTexture, { ".png" }));
+    CHECK_RESULT(resmgr.loadResourcesFromDirectory<dgm::AnimationStates>(
+        RESOURCE_DIR, dgm::Utility::loadAnimationStates, { ".json" }));
+    CHECK_RESULT(resmgr.loadResourcesFromDirectory<dgm::Clip>(
+        RESOURCE_DIR, dgm::Utility::loadClip, { ".clip" }));
+    return resmgr;
+}

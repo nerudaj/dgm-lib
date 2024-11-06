@@ -1,15 +1,37 @@
+#include "DemoData.hpp"
 #include "EffectBloodSpatter.hpp"
 #include "EffectStarfield.hpp"
 #include "EffectTexturedSmoke.hpp"
 #include "EffectWaterFountain.hpp"
 #include "ParticleEffectBase.hpp"
 #include <DGM/dgm.hpp>
+#include <ranges>
 
 const sf::Vector2u WINDOW_SIZE_U = { 1600, 900 };
 const sf::Vector2f WINDOW_SIZE_F = sf::Vector2f(WINDOW_SIZE_U);
-const sf::Vector2f BOX_SIZE = { 350.f, 405.f };
-const sf::Vector2f BOX_OFFSET = { (WINDOW_SIZE_F.x - 4.f * BOX_SIZE.x) / 5.f,
-                                  (WINDOW_SIZE_F.y - 2.f * BOX_SIZE.y) / 3.f };
+
+consteval unsigned long long operator""_numparticles(unsigned long long value)
+{
+    return value;
+}
+
+sf::RectangleShape createVisualContainer(unsigned x, unsigned y)
+{
+    const sf::Vector2f BOX_SIZE = { 350.f, 405.f };
+    const sf::Vector2f BOX_OFFSET = {
+        (WINDOW_SIZE_F.x - 4.f * BOX_SIZE.x) / 5.f,
+        (WINDOW_SIZE_F.y - 2.f * BOX_SIZE.y) / 3.f
+    };
+
+    auto&& shape = sf::RectangleShape(BOX_SIZE);
+    shape.setOutlineThickness(3.f);
+    shape.setOutlineColor(sf::Color::White);
+    shape.setFillColor(sf::Color::Transparent);
+    shape.setPosition(
+        BOX_OFFSET.x + x * (BOX_OFFSET.x + BOX_SIZE.x),
+        BOX_OFFSET.y + y * (BOX_OFFSET.y + BOX_SIZE.y));
+    return shape;
+}
 
 int main()
 {
@@ -20,72 +42,39 @@ int main()
     dgm::Time time;
 
     // Images & configs
-    dgm::ResourceManager resmgr;
-    std::ignore = resmgr.loadResourcesFromDirectory<sf::Font>(
-        RESOURCE_DIR,
-        [](const std::filesystem::path& path, sf::Font& font)
-        {
-            if (!font.loadFromFile(path.string()))
-                throw std::runtime_error(path.string());
-        },
-        { ".ttf" });
-    std::ignore = resmgr.loadResourcesFromDirectory<sf::Texture>(
-        RESOURCE_DIR,
-        [](const std::filesystem::path& path, sf::Texture& texture)
-        {
-            if (!texture.loadFromFile(path.string()))
-                throw std::runtime_error(path.string());
-        },
-        { ".png" });
-    std::ignore = resmgr.loadResourcesFromDirectory<dgm::AnimationStates>(
-        RESOURCE_DIR,
-        [](const std::filesystem::path& path, dgm::AnimationStates& animations)
-        {
-            dgm::JsonLoader loader;
-            animations = loader.loadAnimationsFromFile(path);
-        },
-        { ".json" });
+    auto&& resmgr = DemoData::loadDemoResources();
 
     // Spawn 8 "containers" for effects
-    // It could be all written more nicely, but the goal here was to have effect
-    // with interfaces that are compatible with real world project so they can
-    // be copy-pasted without many modifications
-    std::vector<sf::RectangleShape> boxes;
-    for (unsigned y = 0; y < 2; y++)
-    {
-        for (unsigned x = 0; x < 4; x++)
-        {
-            boxes.push_back(sf::RectangleShape(BOX_SIZE));
-            boxes.back().setOutlineThickness(3.f);
-            boxes.back().setOutlineColor(sf::Color::White);
-            boxes.back().setFillColor(sf::Color::Transparent);
-            boxes.back().setPosition(
-                BOX_OFFSET.x + x * (BOX_OFFSET.x + BOX_SIZE.x),
-                BOX_OFFSET.y + y * (BOX_OFFSET.y + BOX_SIZE.y));
-        }
-    }
+    // It could be all written more nicely, but the goal here was to have
+    // effect with interfaces that are compatible with real world project so
+    // they can be copy-pasted without many modifications
+    auto&& boxes =
+        std::views::cartesian_product(
+            std::views::iota(0u, 4u), std::views::iota(0u, 1u))
+        | std::views::transform(
+            [](auto t) { return std::apply(createVisualContainer, t); })
+        | std::ranges::to<std::vector>();
 
     // Create actual effects
     EffectWaterFountain effectFountain(
-        256,
+        256_numparticles,
         { boxes[0].getGlobalBounds().left
               + boxes[0].getGlobalBounds().width / 2.f,
           boxes[0].getGlobalBounds().top + boxes[0].getGlobalBounds().height });
 
-    const sf::Vector2f BOX1_CENTER = {
-        boxes[1].getGlobalBounds().left
-            + boxes[1].getGlobalBounds().width / 2.f,
-        boxes[1].getGlobalBounds().top + boxes[1].getGlobalBounds().height / 2.f
-    };
+    const sf::Vector2f BOX1_CENTER =
+        boxes[1].getGlobalBounds().getPosition()
+        + boxes[1].getGlobalBounds().getSize() / 2.f;
+
     EffectBloodSpatter effectBloodSpatter(
-        128,
+        128_numparticles,
         BOX1_CENTER,
         boxes[1].getGlobalBounds().top + boxes[1].getGlobalBounds().height);
 
     EffectStarfield effectStarfield(256, boxes[2].getGlobalBounds());
 
     EffectTexturedSmoke effectTexturedSmoke(
-        256,
+        256_numparticles,
         { boxes[3].getGlobalBounds().left
               + boxes[3].getGlobalBounds().width / 2.f,
           boxes[3].getGlobalBounds().top + boxes[3].getGlobalBounds().height
