@@ -44,6 +44,7 @@ int main(int, char*[])
 
     float zoomLevel = 1.f;
     float rotation = 0.f;
+    dgm::Time time;
 
     while (window.isOpen())
     {
@@ -61,18 +62,21 @@ int main(int, char*[])
                 if (event.key.code == sf::Keyboard::D) playerDot.move(3.f, 0.f);
                 if (event.key.code == sf::Keyboard::Up) zoomLevel -= 0.1f;
                 if (event.key.code == sf::Keyboard::Down) zoomLevel += 0.1f;
-                if (event.key.code == sf::Keyboard::Space
-                    && !camera.isShaking())
-                {
+                if (event.key.code == sf::Keyboard::Space)
                     camera.shake(sf::seconds(2.f), 30.f);
-                }
                 if (event.key.code == sf::Keyboard::Q) rotation -= 0.5f;
                 if (event.key.code == sf::Keyboard::E) rotation += 0.5f;
             }
         }
 
-        // Center camera on the player dot, apply rotation and zoom levels
+        // First center camera on the player dot
         camera.setPosition(playerDot.getPosition());
+
+        // Call update so the shake effect can evaluate
+        camera.update(time);
+        // WARNING: Player is unable to move while the camera is shaking
+
+        // Apply rest of the transforms
         camera.setRotation(rotation);
         camera.setZoom(zoomLevel);
 
@@ -87,5 +91,6 @@ int main(int, char*[])
         playerDot.debugRender(window);
 
         window.endDraw();
+        time.reset();
     }
 }
