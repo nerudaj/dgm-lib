@@ -35,7 +35,7 @@ sf::RectangleShape createVisualContainer(unsigned x, unsigned y)
 
 int main()
 {
-    srand(time(nullptr));
+    srand(static_cast<unsigned>(time(nullptr)));
 
     auto&& window =
         dgm::Window(WINDOW_SIZE_U, "Example: Particle Effects", false);

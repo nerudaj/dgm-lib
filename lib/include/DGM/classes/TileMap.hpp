@@ -99,7 +99,7 @@ namespace dgm
             return clip;
         }
 
-        [[nodiscard]] TileMap() = default;
+        [[nodiscard, deprecated]] TileMap() = default;
 
         template<UniversalReference<dgm::Clip> _Clip>
         [[nodiscard]] explicit TileMap(const sf::Texture& texture, _Clip&& clip)

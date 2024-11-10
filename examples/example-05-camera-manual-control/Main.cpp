@@ -51,7 +51,7 @@ int main(int, char*[])
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed())
+            if (event.type == sf::Event::Closed)
                 std::ignore = window.close();
             else if (event.type == sf::Event::KeyPressed)
             {
