@@ -22,8 +22,8 @@ set_target_properties( ${TARGET} PROPERTIES
 	FOLDER "examples"
 )
 
-target_compile_definitions ( ${TARGET} INTERFACE
-	RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/resources"
+target_compile_definitions ( ${TARGET} PUBLIC
+	RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../resources"
 )
 
 apply_compile_options ( ${TARGET} )

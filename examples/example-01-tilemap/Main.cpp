@@ -42,17 +42,8 @@ dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
 
 int main()
 {
-    dgm::Window window({ 1280, 720 }, "Example: Tileset", false);
-
-    dgm::ResourceManager resmgr;
-    // Normally, you want to intercept return value from
-    // loadResourcesFromDirectory but this is a sample, so we're ignoring the
-    // result.
-    std::ignore = resmgr.loadResourcesFromDirectory<dgm::Clip>(
-        RESOURCE_DIR, dgm::Utility::loadClip, { ".clip" });
-    std::ignore = resmgr.loadResourcesFromDirectory<sf::Texture>(
-        RESOURCE_DIR, dgm::Utility::loadTexture, { ".png" });
-
+    auto&& window = dgm::Window({ 1280, 720 }, "Example: Tilemap", false);
+    auto&& resmgr = DemoData::loadDemoResources();
     auto&& tilemap = createSampleTilemap(resmgr);
 
     sf::Event event;
