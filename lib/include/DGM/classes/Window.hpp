@@ -185,7 +185,7 @@ namespace dgm
         }
 
         Window(Window&&) = delete;
-        Window(Window&) = delete;
+        Window(const Window&) = delete;
 
         virtual ~Window()
         {

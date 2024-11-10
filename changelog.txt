@@ -1,3 +1,9 @@
+dgm-lib v2.4.0
+ * Deprecated default constructors for Clip, Window, Path and TileMap
+ * Added examples target
+    * Build by default, you can use `-D ENABLE_EXAMPLES=OFF` to surpress on configure
+    * Examples showcase various features of the library and how to use them
+
 dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
  * Fixed `WorldNavMesh` internal lookup algorithm, which could not find path in an empty room

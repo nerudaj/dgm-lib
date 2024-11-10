@@ -70,7 +70,7 @@ namespace dgm
             const std::size_t frameCount = 0,
             const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0));
 
-        [[nodiscard]] Clip() = default;
+        [[nodiscard, deprecated]] Clip() = default;
 
         [[nodiscard]] Clip(
             const sf::Vector2u& frameSize,
