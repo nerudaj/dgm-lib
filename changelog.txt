@@ -1,4 +1,6 @@
 dgm-lib v2.4.0
+ * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
+    * Also `dgm::Window` is now marked as `final`
  * Deprecated default constructors for Clip, Window, Path and TileMap
  * Added examples target
     * Build by default, you can use `-D ENABLE_EXAMPLES=OFF` to surpress on configure

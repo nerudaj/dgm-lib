@@ -82,7 +82,7 @@ int main(int, char*[])
 
         // In each frame, update sf::RenderWindow's view with current camera
         // view
-        window.getWindowContext().setView(camera.getCurrentView());
+        window.setViewFromCamera(camera);
 
         // And just render as normal
         window.beginDraw();
