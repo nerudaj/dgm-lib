@@ -1,10 +1,11 @@
 #pragma once
 
+#include <DGM/classes/Camera.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace dgm
 {
-    struct WindowSettings
+    struct [[nodiscard]] WindowSettings final
     {
         sf::Vector2u resolution = { 0u, 0u };
         std::string title = "";
@@ -16,13 +17,31 @@ namespace dgm
      *
      *  Class provides method for easier window management.
      */
-    class Window
+    class [[nodiscard]] Window final
     {
-    protected:
-        sf::RenderWindow window;
-        bool fullscreen = false;
-        std::string title = "";
-        sf::Uint32 style = sf::Style::Default;
+    public:
+        Window() = default;
+
+        explicit Window(const WindowSettings& settings)
+        {
+            open(settings);
+        }
+
+        Window(
+            const sf::Vector2u& resolution,
+            const std::string& title,
+            bool fullscreen)
+        {
+            open(resolution, title, fullscreen);
+        }
+
+        Window(Window&&) = delete;
+        Window(Window&) = delete;
+
+        ~Window()
+        {
+            if (isOpen()) std::ignore = close();
+        }
 
     public:
         /**
@@ -64,9 +83,22 @@ namespace dgm
          *
          *  This function mimicks the behaviour of sf::RenderWindow::pollEvent
          */
-        [[nodiscard]] bool pollEvent(sf::Event& event)
+        [[nodiscard]] inline bool pollEvent(sf::Event& event)
         {
             return window.pollEvent(event);
+        }
+
+        /**
+         * \brief Set the current view from the camera to the window
+         *
+         * \param[in] camera  A camera instance with update view
+         *
+         *  This is a shorthand for calling
+         *  window.getWindowContext().setView(camera.getCurrentView())
+         */
+        inline void setViewFromCamera(const dgm::Camera& camera)
+        {
+            window.setView(camera.getCurrentView());
         }
 
         /**
@@ -115,26 +147,15 @@ namespace dgm
          *  Use this method whether you need something from sf::RenderWindow API
          *  not supported directly by this class
          */
-        [[nodiscard]] sf::RenderWindow& getWindowContext()
+        [[nodiscard]] auto& getWindowContext(this auto&& self) noexcept
         {
-            return window;
-        }
-
-        /**
-         *  \brief Get handle to internal instance of sf::RenderWindow
-         *
-         *  Use this method whether you need something from sf::RenderWindow API
-         *  not supported directly by this class
-         */
-        [[nodiscard]] const sf::RenderWindow& getWindowContext() const
-        {
-            return window;
+            return self.window;
         }
 
         /**
          *  \brief Get title text of the window
          */
-        [[nodiscard]] const std::string& getTitle() const noexcept
+        [[nodiscard]] constexpr const std::string& getTitle() const noexcept
         {
             return title;
         }
@@ -154,7 +175,7 @@ namespace dgm
          *
          *  \param[in]  drawable  Reference to drawable object
          */
-        virtual void draw(sf::Drawable& drawable)
+        void draw(sf::Drawable& drawable)
         {
             window.draw(drawable);
         }
@@ -167,29 +188,12 @@ namespace dgm
             window.display();
         }
 
-        [[nodiscard]] virtual sf::Image getScreenshot() const;
+        [[nodiscard]] sf::Image getScreenshot() const;
 
-        [[nodiscard]] Window() = default;
-
-        [[nodiscard]] explicit Window(const WindowSettings& settings)
-        {
-            open(settings);
-        }
-
-        [[nodiscard]] Window(
-            const sf::Vector2u& resolution,
-            const std::string& title,
-            bool fullscreen)
-        {
-            open(resolution, title, fullscreen);
-        }
-
-        Window(Window&&) = delete;
-        Window(Window&) = delete;
-
-        virtual ~Window()
-        {
-            if (isOpen()) std::ignore = close();
-        }
+    protected:
+        sf::RenderWindow window;
+        bool fullscreen = false;
+        std::string title = "";
+        sf::Uint32 style = sf::Style::Default;
     };
 }; // namespace dgm

@@ -1,3 +1,7 @@
+dgm-lib v2.4.0
+ * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
+    * Also `dgm::Window` is now marked as `final`
+
 dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
  * Fixed `WorldNavMesh` internal lookup algorithm, which could not find path in an empty room
