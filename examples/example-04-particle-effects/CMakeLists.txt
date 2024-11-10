@@ -1,8 +1,13 @@
 cmake_minimum_required ( VERSION 3.26 )
 
-set ( TARGET "example-02-controller" )
+set ( TARGET "example-04-particle-effects" )
 
 add_executable ( ${TARGET} WIN32
+	"${CMAKE_CURRENT_SOURCE_DIR}/EffectBloodSpatter.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/EffectStarfield.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/EffectTexturedSmoke.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/EffectWaterFountain.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/ParticleEffectBase.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
 )
 

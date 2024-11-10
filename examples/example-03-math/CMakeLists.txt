@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 3.26 )
 
-set ( TARGET "example-02-controller" )
+set ( TARGET "example-03-math" )
 
 add_executable ( ${TARGET} WIN32
 	"${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
