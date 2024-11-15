@@ -2,9 +2,7 @@
 
 # Readme
 
-This project is an extension library for [SFML](http://sfml-dev.org). You can use it on its own, but recommended usage is as a part of [dgm-sdk](https://github.com/nerudaj/dgm-lib) project.
-
-This library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation.
+This project is an extension library for [SFML](http://sfml-dev.org). The library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation.
 
 ## Requirements
 
