@@ -16,24 +16,28 @@ namespace dgm
      */
     class Clip
     {
-    protected:
-        std::vector<sf::IntRect> frames; /// Array of sprite frames
-        sf::Vector2u size;               /// Size of each frame in pixels
-
     public:
         /**
-         *  \brief Get reference to selected frame frame
+         *  \brief Get reference to selected frame
          *
          *  \param [in] index Index of the frame
-         *
-         *  \pre Regular constructor or init were called prior to calling this
-         * function
          *
          *  This function throws if index is out of bounds.
          */
         [[nodiscard]] const sf::IntRect& getFrame(const std::size_t index) const
         {
             return frames.at(index);
+        }
+
+        /**
+         * \brief Get reference to selected frame without checking array bounds
+         *
+         * \param [in] index Index of the frame
+         */
+        [[nodiscard]] const sf::IntRect&
+        getFrameUnchecked(const std::size_t index) const noexcept
+        {
+            return frames[index];
         }
 
         /**
@@ -80,5 +84,9 @@ namespace dgm
         {
             init(frameSize, boundaries, frameCount, frameSpacing);
         }
+
+    protected:
+        std::vector<sf::IntRect> frames; /// Array of sprite frames
+        sf::Vector2u size;               /// Size of each frame in pixels
     };
 } // namespace dgm
