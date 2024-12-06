@@ -160,4 +160,42 @@ TEST_CASE("[DynamicBuffer]")
         buffer.at(1).value().get().value = 10;
         REQUIRE(buffer[1].value == 10);
     }
+
+    SECTION("isEmpty")
+    {
+        SECTION("Returns true for default-constructed")
+        {
+            dgm::DynamicBuffer<Dummy> buffer;
+            REQUIRE(buffer.isEmpty());
+        }
+
+        SECTION(
+            "Returns false when something is in collection (and something "
+            "deleted)")
+        {
+            dgm::DynamicBuffer<Dummy> buffer;
+            buffer.emplaceBack(Dummy { 1 });
+            buffer.emplaceBack(Dummy { 2 });
+            buffer.emplaceBack(Dummy { 3 });
+
+            buffer.eraseAtIndex(0);
+            buffer.eraseAtIndex(2);
+
+            REQUIRE_FALSE(buffer.isEmpty());
+        }
+
+        SECTION("Returns true when everything is deleted")
+        {
+            dgm::DynamicBuffer<Dummy> buffer;
+            buffer.emplaceBack(Dummy { 1 });
+            buffer.emplaceBack(Dummy { 2 });
+            buffer.emplaceBack(Dummy { 3 });
+
+            buffer.eraseAtIndex(0);
+            buffer.eraseAtIndex(2);
+            buffer.eraseAtIndex(1);
+
+            REQUIRE(buffer.isEmpty());
+        }
+    }
 }

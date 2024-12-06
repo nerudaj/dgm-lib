@@ -1,9 +1,11 @@
 #pragma once
 
 #include <DGM/classes/Traits.hpp>
+#include <algorithm>
 #include <cassert>
 #include <limits>
 #include <optional>
+#include <ranges>
 #include <variant>
 #include <vector>
 
@@ -118,6 +120,18 @@ namespace dgm
         using const_iterator = IteratorBase<const SelfType&>;
 
     public:
+        /**
+         *  Check if buffer contains any valid indices
+         *
+         *  Returns true if either there are no data or no valid indices
+         */
+        [[nodiscard]] constexpr bool isEmpty() const noexcept
+        {
+            for (auto&& item : data)
+                if (std::holds_alternative<T>(item)) return false;
+            return true;
+        }
+
         [[nodiscard]] constexpr bool
         isIndexValid(IndexType index) const noexcept
         {
@@ -125,6 +139,11 @@ namespace dgm
                    && std::holds_alternative<T>(data[index]);
         }
 
+        /**
+         * Get reference to item at given index
+         *
+         * \warn Index is not checked for out-of-bounds! See at()
+         */
         template<class Self>
         [[nodiscard]] constexpr auto&&
         operator[](this Self&& self, IndexType index) noexcept
@@ -132,6 +151,11 @@ namespace dgm
             return std::get<T>(self.data[index]);
         }
 
+        /**
+         * Get reference to item at given index
+         * If index is out of bounds, empty optional
+         * is returned.
+         */
         [[nodiscard]] constexpr std::optional<std::reference_wrapper<T>>
         at(IndexType index) noexcept
         {
