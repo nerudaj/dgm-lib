@@ -76,8 +76,8 @@ TEST_CASE("Clip", "init")
 
     SECTION("Throws if getFrame is called with out-of-bounds index")
     {
-        dgm::Clip clip;
+        auto&& clip = dgm::Clip({ 1, 1 }, { 0, 0, 1, 1 });
 
-        REQUIRE_THROWS([&clip]() { std::ignore = clip.getFrame(0); }());
+        REQUIRE_THROWS([&clip]() { std::ignore = clip.getFrame(1); }());
     }
 }

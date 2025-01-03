@@ -14,8 +14,20 @@ namespace dgm
      *  This class is base building block for animations or tilesets.
      *  All frames must have the same size
      */
-    class Clip
+    class [[nodiscard]] Clip final
     {
+    public:
+        Clip() = default;
+
+        Clip(
+            const sf::Vector2u& frameSize,
+            const sf::IntRect& boundaries,
+            const std::size_t frameCount = 0,
+            const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0))
+        {
+            init(frameSize, boundaries, frameCount, frameSpacing);
+        }
+
     public:
         /**
          *  \brief Get reference to selected frame
@@ -73,17 +85,6 @@ namespace dgm
             const sf::IntRect& boundaries,
             const std::size_t frameCount = 0,
             const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0));
-
-        [[nodiscard, deprecated]] Clip() = default;
-
-        [[nodiscard]] Clip(
-            const sf::Vector2u& frameSize,
-            const sf::IntRect& boundaries,
-            const std::size_t frameCount = 0,
-            const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0))
-        {
-            init(frameSize, boundaries, frameCount, frameSpacing);
-        }
 
     protected:
         std::vector<sf::IntRect> frames; /// Array of sprite frames

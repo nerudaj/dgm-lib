@@ -1,5 +1,6 @@
 dgm-lib v3.0.0
  * `dgm::AppStateConfig` marked as final
+ * `dgm::Clip` is now nodiscard and final
 
 dgm-lib v2.x.x
  * `dgm::Animation::getSpeed` was marked as noexcept
