@@ -19,7 +19,7 @@ namespace dgm
      *  don't know what that is, you can always start with identity
      *  function.
      */
-    class [[nodiscard]] Camera
+    class [[nodiscard]] Camera final
     {
     public:
         /// Easing function. It is supposed to accept a number from 0..1 and
