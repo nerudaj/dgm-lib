@@ -19,7 +19,7 @@ namespace dgm
      *  don't know what that is, you can always start with identity
      *  function.
      */
-    class Camera
+    class [[nodiscard]] Camera
     {
     public:
         /// Easing function. It is supposed to accept a number from 0..1 and
@@ -27,8 +27,7 @@ namespace dgm
         using EasingFunc = std::function<float(float)>;
 
     public:
-        [[nodiscard]] Camera(
-            const sf::FloatRect& viewport, const sf::Vector2f& resolution)
+        Camera(const sf::FloatRect& viewport, const sf::Vector2f& resolution)
             : view(view)
         {
             defaultView.setViewport(viewport);

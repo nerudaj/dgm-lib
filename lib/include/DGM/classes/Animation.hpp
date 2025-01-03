@@ -69,7 +69,7 @@ namespace dgm
         /**
          *  \brief Get speed as number of frames per second
          */
-        [[nodiscard]] unsigned getSpeed() const
+        [[nodiscard]] unsigned getSpeed() const noexcept
         {
             return static_cast<unsigned>(
                 1000.f / timePerFrame.asMilliseconds());

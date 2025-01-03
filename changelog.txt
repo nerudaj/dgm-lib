@@ -1,3 +1,6 @@
+dgm-lib v2.x.x
+ * `dgm::Animation::getSpeed` was marked as noexcept
+
 dgm-lib v2.4.0
  * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
     * Also `dgm::Window` is now marked as `final`
