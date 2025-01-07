@@ -34,7 +34,7 @@ jobs:
       run: |
         mkdir _build
         cd _build
-        cmake -D GIT_BRANCH ${{ steps.branch-names.outputs.current_branch }} ..
+        cmake -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} ..
       shell: cmd
 
     - name: Build
