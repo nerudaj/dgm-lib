@@ -2,12 +2,14 @@
 
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Error.hpp>
 #include <DGM/classes/JsonLoader.hpp>
 #include <DGM/classes/Traits.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <expected>
 #include <format>
 #include <iostream>
 #include <string>
@@ -38,56 +40,85 @@ namespace dgm
         /*
          * Use this as a LoadCallback for dgm::ResourceManager
          */
-        static void
-        loadTexture(const std::filesystem::path& path, sf::Texture& texture)
+        static std::expected<sf::Texture, dgm::Error>
+        loadTexture(const std::filesystem::path& path)
         {
+            auto&& texture = sf::Texture();
             if (!texture.loadFromFile(path.string()))
             {
-                throw std::runtime_error(std::format(
+                return std::unexpected(std::format(
                     "Could not load texture from path '{}'", path.string()));
             }
+            return texture;
         }
 
         /*
          * Use this as a LoadCallback for dgm::ResourceManager
          */
-        static void loadFont(const std::filesystem::path& path, sf::Font& font)
+        static std::expected<sf::Font, dgm::Error>
+        loadFont(const std::filesystem::path& path)
         {
+            auto&& font = sf::Font();
             if (!font.loadFromFile(path.string()))
             {
-                throw std::runtime_error(std::format(
+                return std::unexpected(std::format(
                     "Could not load font from path '{}'", path.string()));
             }
+            return font;
         }
 
         /*
          * Use this as a LoadCallback for dgm::ResourceManager
          */
-        static void
-        loadSound(const std::filesystem::path& path, sf::SoundBuffer& sound)
+        static std::expected<sf::SoundBuffer, dgm::Error>
+        loadSound(const std::filesystem::path& path)
         {
+            auto&& sound = sf::SoundBuffer();
             if (!sound.loadFromFile(path.string()))
             {
-                throw std::runtime_error(std::format(
+                return std::unexpected(std::format(
                     "Could not load sound from path '{}'", path.string()));
+            }
+            return sound;
+        }
+
+        /*
+         * Use this as a LoadCallback for dgm::ResourceManager
+         */
+        static std::expected<dgm::Clip, dgm::Error>
+        loadClip(const std::filesystem::path& path)
+        {
+            try
+            {
+                return dgm::JsonLoader().loadClipFromFile(path);
+            }
+            catch (const std::exception& e)
+            {
+                std::unexpected(std::format(
+                    "Could not load dgm::Clip from file '{}', reason: {}",
+                    path.string(),
+                    e.what()));
             }
         }
 
         /*
          * Use this as a LoadCallback for dgm::ResourceManager
          */
-        static void loadClip(const std::filesystem::path& path, dgm::Clip& clip)
+        static std::expected<dgm::AnimationStates, dgm::Error>
+        loadAnimationStates(const std::filesystem::path& path)
         {
-            clip = dgm::JsonLoader().loadClipFromFile(path);
-        }
-
-        /*
-         * Use this as a LoadCallback for dgm::ResourceManager
-         */
-        static void loadAnimationStates(
-            const std::filesystem::path& path, dgm::AnimationStates& states)
-        {
-            states = dgm::JsonLoader().loadAnimationsFromFile(path);
+            try
+            {
+                return dgm::JsonLoader().loadAnimationsFromFile(path);
+            }
+            catch (const std::exception& e)
+            {
+                std::unexpected(std::format(
+                    "Could not load dgm::AnimationStates from file '{}', "
+                    "reason: {}",
+                    path.string(),
+                    e.what()));
+            }
         }
     };
 } // namespace dgm

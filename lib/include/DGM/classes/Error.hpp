@@ -22,7 +22,6 @@ namespace dgm
         }
     };
 
-    using ErrorMessage = std::string;
     class [[nodiscard]] Error final
     {
     public:
@@ -47,5 +46,5 @@ namespace dgm
         std::stacktrace trace;
     };
 
-    using ExpectedSuccess = std::expected<std::true_type, ErrorMessage>;
+    using ExpectedSuccess = std::expected<std::true_type, Error>;
 } // namespace dgm

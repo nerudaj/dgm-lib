@@ -87,7 +87,8 @@ Level DemoData::createDemoLevel2(
 }
 
 #define CHECK_RESULT(x)                                                        \
-    if (auto result = x; !result) throw std::runtime_error(result.error());
+    if (auto result = x; !result)                                              \
+        throw std::runtime_error(result.error().getMessage());
 
 dgm::ResourceManager DemoData::loadDemoResources()
 {

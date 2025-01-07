@@ -99,7 +99,7 @@ int main()
 
     // Decorations
     sf::Text text;
-    text.setFont(resmgr.get<sf::Font>("cruft.ttf").value().get());
+    text.setFont(resmgr.get<sf::Font>("cruft.ttf"));
 
     sf::RectangleShape dpadUp, dpadLeft, dpadDown, dpadRight;
     dpadUp.setSize({ 20.f, 50.f });

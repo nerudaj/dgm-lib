@@ -80,13 +80,11 @@ int main()
           boxes[3].getGlobalBounds().top + boxes[3].getGlobalBounds().height
               - 64.f },
         dgm::Clip({ 256, 256 }, { 0, 0, 1280, 768 }));
-    effectTexturedSmoke.setTexture(
-        resmgr.get<sf::Texture>("smoke.png").value().get());
+    effectTexturedSmoke.setTexture(resmgr.get<sf::Texture>("smoke.png"));
 
     // Create decorations
     sf::Sprite soldierSprite;
-    soldierSprite.setTexture(
-        resmgr.get<sf::Texture>("soldier.png").value().get());
+    soldierSprite.setTexture(resmgr.get<sf::Texture>("soldier.png"));
     soldierSprite.setOrigin(160.f, 160.f);
     soldierSprite.setPosition(
         boxes[1].getGlobalBounds().left
@@ -95,13 +93,12 @@ int main()
             - 160.f);
 
     dgm::Animation soldierAnimation(
-        resmgr.get<dgm::AnimationStates>("soldier_config.json").value().get());
+        resmgr.get<dgm::AnimationStates>("soldier_config.json"));
     soldierAnimation.setState("idle", true);
     soldierAnimation.setSpeed(4);
 
     sf::Sprite starshipSprite;
-    starshipSprite.setTexture(
-        resmgr.get<sf::Texture>("starship.png").value().get());
+    starshipSprite.setTexture(resmgr.get<sf::Texture>("starship.png"));
     starshipSprite.setOrigin(sf::Vector2f(64.f, 53.f) / 2.f);
     starshipSprite.setPosition(
         boxes[2].getGlobalBounds().left
@@ -116,7 +113,7 @@ int main()
     unsigned fpsCount = 0;
     sf::Time fpsTimer = sf::Time::Zero;
     sf::Text fpsOutput;
-    fpsOutput.setFont(resmgr.get<sf::Font>("cruft.ttf").value().get());
+    fpsOutput.setFont(resmgr.get<sf::Font>("cruft.ttf"));
     fpsOutput.setFillColor(sf::Color::Yellow);
 
     sf::Event event;

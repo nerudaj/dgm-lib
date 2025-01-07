@@ -5,8 +5,8 @@
 dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
 {
     auto&& tilemap = dgm::TileMap(
-        resmgr.get<sf::Texture>("tileset.png").value().get(),
-        resmgr.get<dgm::Clip>("tileset.png.clip").value().get());
+        resmgr.get<sf::Texture>("tileset.png"),
+        resmgr.get<dgm::Clip>("tileset.png.clip"));
 
     // clang-format off
     tilemap.build(

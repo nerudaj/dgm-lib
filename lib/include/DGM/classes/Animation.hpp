@@ -21,6 +21,21 @@ namespace dgm
      */
     class Animation
     {
+    public:
+        /**
+         *  \brief Construct empty animation
+         *
+         *  \warning Default constructor is meant only for cases when you cannot
+         * construct animation immediately and have to postpone it to later
+         * time, but you don't need to use the object in the meantime.
+         */
+        Animation();
+
+        /**
+         *  \brief Construct animation object from states and required FPS
+         */
+        Animation(const AnimationStates& states, int framesPerSecond = 30);
+
     private:
         std::reference_wrapper<const AnimationStates> states;
         sf::Time elapsedTime = sf::seconds(0);
@@ -101,19 +116,5 @@ namespace dgm
             currentFrameIndex = 0;
             elapsedTime = sf::Time::Zero;
         }
-
-        /**
-         *  \brief Construct empty animation
-         *
-         *  \warning Default constructor is meant only for cases when you cannot
-         * construct animation immediately and have to postpone it to later
-         * time, but you don't need to use the object in the meantime.
-         */
-        Animation();
-
-        /**
-         *  \brief Construct animation object from states and required FPS
-         */
-        Animation(const AnimationStates& states, int framesPerSecond = 30);
     };
 } // namespace dgm

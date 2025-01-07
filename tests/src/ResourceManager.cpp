@@ -8,6 +8,7 @@ class LoggableResource
 {
 public:
     static inline unsigned ctorCalledCount = 0;
+    static inline unsigned moveCalledCount = 0;
     static inline unsigned dtorCalledCount = 0;
 
 public:
@@ -16,13 +17,24 @@ public:
         ctorCalledCount++;
     }
 
+    LoggableResource(LoggableResource&&) noexcept
+    {
+        moveCalledCount++;
+    }
+
+    LoggableResource(const LoggableResource&) = delete;
+
     ~LoggableResource()
     {
         dtorCalledCount++;
     }
 };
 
-void loadLoggable(const std::filesystem::path&, LoggableResource&) {}
+template<class T>
+std::expected<T, dgm::Error> loadMocked(const std::filesystem::path&)
+{
+    return T {};
+}
 
 TEST_CASE("[ResourceManager]")
 {
@@ -66,33 +78,39 @@ TEST_CASE("[ResourceManager]")
     {
         SECTION("Resource ctor/dtor are called exactly once")
         {
+            unsigned loadedCnt = LoggableResource::ctorCalledCount;
+            unsigned movedCnt = LoggableResource::moveCalledCount;
+            unsigned unloadedCnt = LoggableResource::dtorCalledCount;
+
             {
                 dgm::ResourceManager resmgr2;
                 REQUIRE(resmgr2.loadResource<LoggableResource>(
-                    "path", loadLoggable));
+                    "path", loadMocked<LoggableResource>));
             }
 
             // resmgr2 is now destroyed, dtors should have been called
-            REQUIRE(LoggableResource::ctorCalledCount == 1u);
-            REQUIRE(LoggableResource::dtorCalledCount == 1u);
+            // Regular constructor is called only once in load callback
+            // The resource is then moved twice to destination memory
+            // Destructor is called for each move and then for destroyed resmgr
+            REQUIRE(loadedCnt + 1u == LoggableResource::ctorCalledCount);
+            REQUIRE(movedCnt + 2u == LoggableResource::moveCalledCount);
+            REQUIRE(unloadedCnt + 3u == LoggableResource::dtorCalledCount);
         }
     }
 
     SECTION("Can get reference to loaded resource")
     {
-        REQUIRE(resmgr.loadResource<int>(
-            "myint", [](const path&, int& val) { val = 42; }));
-        auto&& val = resmgr.get<int>("myint");
-        REQUIRE(val.has_value());
-        REQUIRE(val->get() == 42);
+        REQUIRE(
+            resmgr.loadResource<int>("myint", [](const path&) { return 42; }));
+        REQUIRE(resmgr.get<int>("myint") == 42);
     }
 
     SECTION("Can list all resources of a given type")
     {
-        REQUIRE(resmgr.loadResource<int>("a", [](const path&, int&) {}));
-        REQUIRE(resmgr.loadResource<int>("b", [](const path&, int&) {}));
-        REQUIRE(resmgr.loadResource<int>("c", [](const path&, int&) {}));
-        REQUIRE(resmgr.loadResource<double>("d", [](const path&, double&) {}));
+        REQUIRE(resmgr.loadResource<int>("a", loadMocked<int>));
+        REQUIRE(resmgr.loadResource<int>("b", loadMocked<int>));
+        REQUIRE(resmgr.loadResource<int>("c", loadMocked<int>));
+        REQUIRE(resmgr.loadResource<double>("d", loadMocked<double>));
 
         const auto&& names = resmgr.getLoadedResourceIds<int>();
         REQUIRE(names.has_value());
@@ -110,13 +128,10 @@ TEST_CASE("[ResourceManager]")
     {
         dgm::JsonLoader loader;
         const auto&& dirPath = path { TEST_DATA_DIR } / "resmgr_loading";
-        const auto&& loadClip = [](const path&, dgm::Clip&)
-        {
-            /* not loading anything, those files are mocks */
-        };
+        const auto&& loadClip = [](const path&) { return dgm::Clip(); };
 
         REQUIRE(resmgr.loadResourcesFromDirectory<dgm::Clip>(
-            dirPath, loadClip, { ".json" }));
+            dirPath, loadMocked<dgm::Clip>, { ".json" }));
 
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesA.json"));
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesB.json"));
@@ -126,21 +141,23 @@ TEST_CASE("[ResourceManager]")
     SECTION("Can unload resource")
     {
         unsigned loadedCnt = LoggableResource::ctorCalledCount;
+        unsigned movedCnt = LoggableResource::moveCalledCount;
         unsigned unloadedCnt = LoggableResource::dtorCalledCount;
-        REQUIRE(
-            resmgr.loadResource<LoggableResource>("unloadable", loadLoggable));
+
+        REQUIRE(resmgr.loadResource<LoggableResource>(
+            "unloadable", loadMocked<LoggableResource>));
         resmgr.unloadResource<LoggableResource>("unloadable");
 
         REQUIRE(loadedCnt + 1u == LoggableResource::ctorCalledCount);
-        REQUIRE(unloadedCnt + 1u == LoggableResource::dtorCalledCount);
+        REQUIRE(movedCnt + 2u == LoggableResource::moveCalledCount);
+        REQUIRE(unloadedCnt + 3u == LoggableResource::dtorCalledCount);
     }
 
     SECTION("Can get mutable resource")
     {
-        REQUIRE(
-            resmgr.loadResource<int>("a", [](const path&, int& v) { v = 69; }));
-        REQUIRE(resmgr.get<int>("a").value().get() == 69);
-        resmgr.getMutable<int>("a").value().get() = 42;
-        REQUIRE(resmgr.get<int>("a").value().get() == 42);
+        REQUIRE(resmgr.loadResource<int>("a", [](const path&) { return 69; }));
+        REQUIRE(resmgr.get<int>("a") == 69);
+        resmgr.getMutable<int>("a") = 42;
+        REQUIRE(resmgr.get<int>("a") == 42);
     }
 }

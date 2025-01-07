@@ -22,21 +22,51 @@ namespace dgm
     Lifetime of all resources is limited by the lifetime
     of this manager object.
     */
-    class ResourceManager final
+    class [[nodiscard]] ResourceManager final
     {
     private:
         using byte = unsigned char;
 
     public:
-        [[nodiscard]] ResourceManager() noexcept = default;
+        ResourceManager() noexcept = default;
 
-        [[nodiscard]] ResourceManager(ResourceManager&& other) noexcept;
+        ResourceManager(ResourceManager&& other) noexcept;
 
         ResourceManager(const ResourceManager&) = delete;
 
         ~ResourceManager() noexcept;
 
     public:
+        /**
+        Get a read-only reference to resource that has
+        been previously loaded.
+
+        If error occures, an error message is returned instead.
+        */
+        template<CompatibleResourceType T>
+        const T& get(const std::string& id) const
+        {
+            if (!hasResource<T>(id))
+                throw Error(
+                    std::format("Resource with id {} is not loaded.", id));
+
+            const auto&& tid = typeid(T).hash_code();
+            auto&& ptr = data.at(tid).at(id);
+            return std::cref(*reinterpret_cast<const T*>(ptr));
+        }
+
+        template<CompatibleResourceType T>
+        T& getMutable(const std::string& id) const
+        {
+            if (!hasResource<T>(id))
+                throw Error(
+                    std::format("Resource with id {} is not loaded.", id));
+
+            const auto&& tid = typeid(T).hash_code();
+            auto&& ptr = data.at(tid).at(id);
+            return std::ref(*reinterpret_cast<T*>(ptr));
+        }
+
         /**
          Callback used to load a particular resource
 
@@ -48,41 +78,8 @@ namespace dgm
          any error occurs.
          */
         template<CompatibleResourceType T>
-        using LoadCallback =
-            std::function<void(const std::filesystem::path&, T&)>;
-
-        /**
-        Get a read-only reference to resource that has
-        been previously loaded.
-
-        If error occures, an error message is returned instead.
-        */
-        template<CompatibleResourceType T>
-        [[nodiscard]] std::
-            expected<std::reference_wrapper<const T>, ErrorMessage>
-            get(const std::string& id) const noexcept
-        {
-            if (!hasResource<T>(id))
-                return std::unexpected(
-                    std::format("Resource with id {} is not loaded.", id));
-
-            const auto&& tid = typeid(T).hash_code();
-            auto&& ptr = data.at(tid).at(id);
-            return std::cref(*reinterpret_cast<const T*>(ptr));
-        }
-
-        template<CompatibleResourceType T>
-        [[nodiscard]] std::expected<std::reference_wrapper<T>, ErrorMessage>
-        getMutable(const std::string& id) const noexcept
-        {
-            if (!hasResource<T>(id))
-                return std::unexpected(
-                    std::format("Resource with id {} is not loaded.", id));
-
-            const auto&& tid = typeid(T).hash_code();
-            auto&& ptr = data.at(tid).at(id);
-            return std::ref(*reinterpret_cast<T*>(ptr));
-        }
+        using LoadCallback = std::function<std::expected<T, Error>(
+            const std::filesystem::path&)>;
 
         /**
         Loads resource into the database from the given path
@@ -96,8 +93,7 @@ namespace dgm
         */
         template<CompatibleResourceType T>
         [[nodiscard]] ExpectedSuccess loadResource(
-            const std::filesystem::path& path,
-            LoadCallback<T> loadCallback) noexcept
+            const std::filesystem::path& path, LoadCallback<T> loadCallback)
         {
             const auto&& tid = typeid(T).hash_code();
             const auto&& resId = getResourceId(path);
@@ -112,11 +108,12 @@ namespace dgm
 
             try
             {
+                auto&& resource = loadCallback(path);
+                if (!resource) return std::unexpected(resource.error());
+
                 registerDestructor<T>(tid);
                 data[tid][resId.value()] = allocateInitializedMemory<T>();
-                auto&& resourcePtr =
-                    reinterpret_cast<T*>(data.at(tid).at(resId.value()));
-                loadCallback(path, *resourcePtr);
+                new (data[tid][resId.value()]) T(std::move(resource.value()));
             }
             catch (const std::exception& e)
             {
@@ -134,7 +131,8 @@ namespace dgm
          *  the database, this function throws an exception.
          */
         template<CompatibleResourceType T>
-        void unloadResource(const std::string& id)
+        std::expected<std::true_type, dgm::Error>
+        unloadResource(const std::string& id)
         {
             try
             {
@@ -151,7 +149,7 @@ namespace dgm
             }
             catch (std::exception& e)
             {
-                throw dgm::Exception(std::format(
+                return std::unexpected(std::format(
                     "Unloading resource failed. Reason: {}", e.what()));
             }
         }
@@ -175,13 +173,14 @@ namespace dgm
         [[nodiscard]] ExpectedSuccess loadResourcesFromDirectory(
             const std::filesystem::path& folderPath,
             LoadCallback<T> loadCallback,
-            const std::vector<std::string>& allowedExtensions = {}) noexcept
+            const std::vector<std::string>& allowedExtensions = {})
         {
             namespace fs = std::filesystem;
 
             if (allowedExtensions.empty())
             {
-                return std::unexpected("Allowed extensions must not be empty!");
+                return std::unexpected(
+                    dgm::Error("Allowed extensions must not be empty!"));
             }
 
             fs::path path(folderPath);
@@ -219,7 +218,7 @@ namespace dgm
             return std::true_type {};
         }
 
-        [[nodiscard]] std::expected<std::string, ErrorMessage>
+        [[nodiscard]] std::expected<std::string, Error>
         getResourceId(const std::filesystem::path& path) const noexcept;
 
         template<CompatibleResourceType T>
@@ -236,7 +235,7 @@ namespace dgm
         If no resources has been loaded
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] std::expected<std::vector<std::string>, ErrorMessage>
+        [[nodiscard]] std::expected<std::vector<std::string>, Error>
         getLoadedResourceIds() const noexcept
         {
             try
@@ -277,7 +276,6 @@ namespace dgm
                 throw std::bad_alloc();
             }
 
-            new (buffer) T();
             return buffer;
         }
 
