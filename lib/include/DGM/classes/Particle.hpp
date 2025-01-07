@@ -1,6 +1,10 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace dgm
 {
@@ -18,7 +22,7 @@ namespace dgm
          *  To texture your particles, see ParticleSystem::setTexture and
          *  Particle::setAnimationFrame.
          */
-        class Particle
+        class [[nodiscard]] Particle
         {
         protected:
             sf::Vertex* quad; ///< Pointer to first of the four quad vertices

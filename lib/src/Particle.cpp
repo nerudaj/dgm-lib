@@ -1,3 +1,4 @@
+#include <DGM/classes/Math.hpp>
 #include <DGM/classes/Particle.hpp>
 
 using dgm::ps::Particle;

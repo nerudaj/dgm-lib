@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/Error.hpp>
+#include <DGM/classes/Particle.hpp>
 #include <DGM/classes/ParticleSystemRenderer.hpp>
 #include <DGM/classes/StaticBuffer.hpp>
 #include <DGM/classes/Time.hpp>
@@ -13,18 +14,16 @@ namespace dgm
 {
     namespace ps
     {
-        class Particle;
-
         /**
          *  \brief Interface and base implementation of ParticleSystem
          *
          *  \details Always inherit from this class when creating new
          *  particle system.
          */
-        class ParticleSystemInterface
+        class [[nodiscard]] ParticleSystemInterface
         {
         public:
-            [[nodiscard]] ParticleSystemInterface(unsigned particleCount)
+            explicit ParticleSystemInterface(unsigned particleCount)
                 : renderer(particleCount), particles(particleCount)
             {
                 try
@@ -42,8 +41,7 @@ namespace dgm
             }
 
             ParticleSystemInterface(ParticleSystemInterface& other) = delete;
-            [[nodiscard]] ParticleSystemInterface(
-                ParticleSystemInterface&& other) = default;
+            ParticleSystemInterface(ParticleSystemInterface&& other) = default;
             virtual ~ParticleSystemInterface() = default;
 
         public:
@@ -113,4 +111,4 @@ namespace dgm
             dgm::StaticBuffer<std::unique_ptr<Particle>> particles;
         };
     }; // namespace ps
-};     // namespace dgm
+}; // namespace dgm

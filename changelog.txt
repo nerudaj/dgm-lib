@@ -13,6 +13,7 @@ dgm-lib v3.0.0
         * Resources no longer have to be default-constructible (yay, RAII), but they have to be movable
         * Two moves are issued per resource load, but that's a price I am willing to pay for RAII
     * All `dgm::Utility::load*` functions have been adjusted
+    * `dgm::ParticleSystemInterface` is now explicit
 
 dgm-lib v2.x.x
  * `dgm::Animation::getSpeed` was marked as noexcept
