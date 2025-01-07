@@ -20,8 +20,6 @@ namespace dgm
     class [[nodiscard]] Window final
     {
     public:
-        [[deprecated]] Window() = default;
-
         explicit Window(const WindowSettings& settings)
         {
             open(settings);

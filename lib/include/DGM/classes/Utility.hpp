@@ -94,7 +94,7 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                std::unexpected(std::format(
+                return std::unexpected(std::format(
                     "Could not load dgm::Clip from file '{}', reason: {}",
                     path.string(),
                     e.what()));
@@ -113,7 +113,7 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                std::unexpected(std::format(
+                return std::unexpected(std::format(
                     "Could not load dgm::AnimationStates from file '{}', "
                     "reason: {}",
                     path.string(),

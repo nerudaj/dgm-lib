@@ -102,7 +102,7 @@ dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
                 name));
         }
 
-        result[name].init(frame, bounds, frameCount, spacing);
+        result.insert({ name, dgm::Clip(frame, bounds, frameCount, spacing) });
     }
 
     return result;

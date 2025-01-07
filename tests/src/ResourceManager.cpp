@@ -128,10 +128,11 @@ TEST_CASE("[ResourceManager]")
     {
         dgm::JsonLoader loader;
         const auto&& dirPath = path { TEST_DATA_DIR } / "resmgr_loading";
-        const auto&& loadClip = [](const path&) { return dgm::Clip(); };
+        const auto&& loadClip = [](const path&)
+        { return dgm::Clip({ 1, 1 }, { 0, 0, 1, 1 }); };
 
         REQUIRE(resmgr.loadResourcesFromDirectory<dgm::Clip>(
-            dirPath, loadMocked<dgm::Clip>, { ".json" }));
+            dirPath, loadClip, { ".json" }));
 
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesA.json"));
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesB.json"));

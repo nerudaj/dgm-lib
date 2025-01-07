@@ -12,7 +12,7 @@
 namespace dgm
 {
     template<class T>
-    concept CompatibleResourceType = std::is_constructible_v<T>;
+    concept CompatibleResourceType = std::is_move_constructible_v<T>;
 
     /**
     ResourceManager allows for loading any kind of

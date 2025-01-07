@@ -10,13 +10,6 @@ namespace PathTests
 
     TEST_CASE("Construction", "Path")
     {
-        dgm::Path<dgm::WorldNavpoint> destinationPath;
-
-        SECTION("Empty ctor")
-        {
-            auto path = dgm::Path<dgm::WorldNavpoint>();
-        }
-
         SECTION("From vector")
         {
             REQUIRE_NOTHROW(dgm::Path(POINTS, true));
@@ -27,8 +20,9 @@ namespace PathTests
         {
             auto mesh = dgm::Mesh({ 1u, 1u }, { 1u, 1u });
             dgm::WorldNavMesh navmesh(mesh);
-            destinationPath =
+            auto destinationPath =
                 navmesh.computePath({ 0.f, 0.f }, { 0.f, 0.f }).value();
+            auto path2 = std::move(destinationPath);
         }
 
         SECTION("Can be cloned")
