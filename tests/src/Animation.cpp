@@ -7,4 +7,11 @@ TEST_CASE("[Animation]")
     {
         REQUIRE_NOTHROW([]() { dgm::Animation animation; }());
     }
+
+    SECTION("set/getSpeed works")
+    {
+        dgm::Animation animation;
+        animation.setSpeed(42);
+        REQUIRE(animation.getSpeed() == 42);
+    }
 }

@@ -21,18 +21,20 @@ namespace dgm
      */
     class Animation
     {
-    private:
-        std::reference_wrapper<const AnimationStates> states;
-        sf::Time elapsedTime = sf::seconds(0);
-        sf::Time timePerFrame = sf::seconds(0);
-        std::size_t currentFrameIndex = 0;
-        AnimationStates::const_iterator currentState;
-        bool looping = false;
+    public:
+        /**
+         *  \brief Construct empty animation
+         *
+         *  \warning Default constructor is meant only for cases when you cannot
+         * construct animation immediately and have to postpone it to later
+         * time, but you don't need to use the object in the meantime.
+         */
+        Animation();
 
-        [[nodiscard]] bool isCurrentStateValid() const noexcept
-        {
-            return currentState != states.get().end();
-        }
+        /**
+         *  \brief Construct animation object from states and required FPS
+         */
+        Animation(const AnimationStates& states, int framesPerSecond = 30);
 
     public:
         /**
@@ -72,7 +74,7 @@ namespace dgm
         [[nodiscard]] unsigned getSpeed() const noexcept
         {
             return static_cast<unsigned>(
-                1000.f / timePerFrame.asMilliseconds());
+                std::round(1000.f / timePerFrame.asMilliseconds()));
         }
 
         /**
@@ -102,18 +104,17 @@ namespace dgm
             elapsedTime = sf::Time::Zero;
         }
 
-        /**
-         *  \brief Construct empty animation
-         *
-         *  \warning Default constructor is meant only for cases when you cannot
-         * construct animation immediately and have to postpone it to later
-         * time, but you don't need to use the object in the meantime.
-         */
-        Animation();
+    private:
+        std::reference_wrapper<const AnimationStates> states;
+        sf::Time elapsedTime = sf::seconds(0);
+        sf::Time timePerFrame = sf::seconds(0);
+        std::size_t currentFrameIndex = 0;
+        AnimationStates::const_iterator currentState;
+        bool looping = false;
 
-        /**
-         *  \brief Construct animation object from states and required FPS
-         */
-        Animation(const AnimationStates& states, int framesPerSecond = 30);
+        [[nodiscard]] bool isCurrentStateValid() const noexcept
+        {
+            return currentState != states.get().end();
+        }
     };
 } // namespace dgm
