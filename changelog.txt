@@ -1,26 +1,3 @@
-dgm-lib v3.0.0
- * `dgm::AppStateConfig` marked as final
- * `dgm::Clip` is now nodiscard and final
- * `dgm::Camera` is now final
- * `dgm::Error` replaces `dgm::ErrorMessage`
-    * Contains message and a stacktrace
-    * This is a `std::expected` version of `dgm::Exception`
- * `dgm::ResourceManager` has been streamlined
-    * `get` and `getMutable` are now throwing so they can return references directly
-        * No more `.value().get()` pattern
-        * Resource not present is treated as a precondition fail
-    * `LoadCallback` now returns `std::expected<T, dgm::Error>` instead of having an inout T parameter
-        * Resources no longer have to be default-constructible (yay, RAII), but they have to be movable
-        * Two moves are issued per resource load, but that's a price I am willing to pay for RAII
-    * All `dgm::Utility::load*` functions have been adjusted
-    * `dgm::ParticleSystemInterface` is now explicit
- * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
- * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
-
-dgm-lib v2.x.x
- * `dgm::Animation::getSpeed` was marked as noexcept
- * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
-
 dgm-lib v2.4.0
  * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
     * Also `dgm::Window` is now marked as `final`
@@ -30,6 +7,8 @@ dgm-lib v2.4.0
     * Examples showcase various features of the library and how to use them
  * Added `dgm::Clip::getFrameUnchecked` for faster, unchecked access
  * Added `dgm::DynamicBuffer::isEmpty`
+ * `dgm::Animation::getSpeed` was marked as noexcept
+ * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
 
 dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
