@@ -48,7 +48,7 @@ void Animation::setState(const std::string& state, bool shouldLoop)
 void Animation::setSpeed(unsigned framesPerSecond)
 {
     assert(framesPerSecond > 0);
-    timePerFrame = sf::milliseconds(1000 / framesPerSecond);
+    timePerFrame = sf::milliseconds(std::round(1000.f / framesPerSecond));
 }
 
 Animation::Animation() : Animation(NullStates) {}

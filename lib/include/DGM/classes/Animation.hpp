@@ -36,19 +36,6 @@ namespace dgm
          */
         Animation(const AnimationStates& states, int framesPerSecond = 30);
 
-    private:
-        std::reference_wrapper<const AnimationStates> states;
-        sf::Time elapsedTime = sf::seconds(0);
-        sf::Time timePerFrame = sf::seconds(0);
-        std::size_t currentFrameIndex = 0;
-        AnimationStates::const_iterator currentState;
-        bool looping = false;
-
-        [[nodiscard]] bool isCurrentStateValid() const noexcept
-        {
-            return currentState != states.get().end();
-        }
-
     public:
         /**
          *  \brief Update animation object with time
@@ -87,7 +74,7 @@ namespace dgm
         [[nodiscard]] unsigned getSpeed() const noexcept
         {
             return static_cast<unsigned>(
-                1000.f / timePerFrame.asMilliseconds());
+                std::round(1000.f / timePerFrame.asMilliseconds()));
         }
 
         /**
@@ -115,6 +102,19 @@ namespace dgm
         {
             currentFrameIndex = 0;
             elapsedTime = sf::Time::Zero;
+        }
+
+    private:
+        std::reference_wrapper<const AnimationStates> states;
+        sf::Time elapsedTime = sf::seconds(0);
+        sf::Time timePerFrame = sf::seconds(0);
+        std::size_t currentFrameIndex = 0;
+        AnimationStates::const_iterator currentState;
+        bool looping = false;
+
+        [[nodiscard]] bool isCurrentStateValid() const noexcept
+        {
+            return currentState != states.get().end();
         }
     };
 } // namespace dgm

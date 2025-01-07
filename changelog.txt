@@ -15,6 +15,7 @@ dgm-lib v3.0.0
     * All `dgm::Utility::load*` functions have been adjusted
     * `dgm::ParticleSystemInterface` is now explicit
  * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
+ * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
 
 dgm-lib v2.x.x
  * `dgm::Animation::getSpeed` was marked as noexcept
