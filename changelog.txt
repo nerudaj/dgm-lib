@@ -1,4 +1,5 @@
 dgm-lib v3.0.0
+ * Library target has been renamed to `lib-dgm` and a `dgm::dgm` alias has been added. Use that for linking
  * `dgm::AppStateConfig` marked as final
  * `dgm::Clip` is now nodiscard and final
  * `dgm::Camera` is now final

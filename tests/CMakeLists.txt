@@ -18,7 +18,7 @@ target_include_directories( ${TARGET}
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE libdgm
+	LINK_PRIVATE dgm::dgm
 )
 
 apply_compile_options ( ${TARGET} )

@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 3.26 )
 
-set ( TARGET libdgm )
+set ( TARGET dgm-lib )
 
 glob_headers_and_sources ( HEADERS SOURCES )
 
@@ -24,17 +24,17 @@ enable_autoformatter ( ${TARGET} )
 
 # Instalation
 install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Release/libdgm.lib"
+	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Release/${TARGET}.lib"
 	DESTINATION  "lib"
 )
 
 install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/libdgm-d.lib"
+	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/${TARGET}-d.lib"
 	DESTINATION  "lib"
 )
 
 install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/libdgm-d.pdb"
+	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/${TARGET}-d.pdb"
 	DESTINATION  "lib"
 )
 

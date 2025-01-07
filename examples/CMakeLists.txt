@@ -7,7 +7,7 @@ set ( TARGET "examples-common" )
 add_library ( ${TARGET} INTERFACE )
 
 target_link_libraries ( ${TARGET}
-	INTERFACE examples-shared libdgm
+	INTERFACE examples-shared
 )
 
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-tilemap" )
