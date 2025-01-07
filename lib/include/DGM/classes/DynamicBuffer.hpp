@@ -19,10 +19,7 @@ namespace dgm
      * dgm::SpatialBuffer. For your projects, consider using plf::colony
      * instead.
      */
-    template<
-        class T,
-        unsigned PreallocatedMemoryAmount = 128,
-        typename IndexType = std::size_t>
+    template<class T, typename IndexType = std::size_t>
     class [[nodiscard]] DynamicBuffer final
     {
     public:
@@ -30,9 +27,10 @@ namespace dgm
         using IndexingType = IndexType;
 
     public:
-        constexpr DynamicBuffer()
+        constexpr explicit DynamicBuffer(
+            const unsigned PREALLOCATED_MEMORY_AMOUNT = 128)
         {
-            data.reserve(PreallocatedMemoryAmount);
+            data.reserve(PREALLOCATED_MEMORY_AMOUNT);
         }
 
         DynamicBuffer(const DynamicBuffer&) = delete;
@@ -115,7 +113,7 @@ namespace dgm
             BackrefType backref;
         };
 
-        using SelfType = DynamicBuffer<T, PreallocatedMemoryAmount, IndexType>;
+        using SelfType = DynamicBuffer<T, IndexType>;
         using iterator = IteratorBase<SelfType&>;
         using const_iterator = IteratorBase<const SelfType&>;
 

@@ -131,7 +131,7 @@ TEST_CASE("[DynamicBuffer]")
 
     SECTION("decltype")
     {
-        dgm::DynamicBuffer<Dummy, 64, std::uint8_t> buffer;
+        dgm::DynamicBuffer<Dummy, std::uint8_t> buffer;
         static_assert(std::is_same_v<Dummy, decltype(buffer)::DataType>);
         static_assert(
             std::is_same_v<std::uint8_t, decltype(buffer)::IndexingType>);

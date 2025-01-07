@@ -53,6 +53,7 @@ namespace dgm
      * \endcode
      */
     // clang-format on
+
     template<
         class T,
         typename IndexType = std::size_t,
@@ -63,12 +64,12 @@ namespace dgm
     public:
         using super = SpatialIndex<IndexType, GridResolutionType>;
         using DataType = T;
-        using StorageType = dgm::DynamicBuffer<T, 1024, IndexType>;
+        using StorageType = dgm::DynamicBuffer<T, IndexType>;
 
     public:
         [[nodiscard]] constexpr SpatialBuffer(
             dgm::Rect boundingBox, GridResolutionType gridResolution)
-            : super(boundingBox, gridResolution)
+            : super(boundingBox, gridResolution), items(1024)
         {
         }
 
