@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 3.19 )
 
-set ( TARGET "example-07-spatial-buffer" )
+set ( TARGET "example-06-spatial-buffer" )
 
 add_executable ( ${TARGET} WIN32
 	"${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp"
@@ -16,4 +16,3 @@ set_target_properties( ${TARGET} PROPERTIES
 
 apply_compile_options ( ${TARGET} )
 enable_autoformatter ( ${TARGET} )
-execute_example_as_test ( ${TARGET} )

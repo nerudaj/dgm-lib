@@ -8,6 +8,8 @@ add_library ( ${TARGET} STATIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/Level.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Level.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/Helpers.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/WhiteRectangleParticle.hpp"
 )
 
 target_include_directories ( ${TARGET}
