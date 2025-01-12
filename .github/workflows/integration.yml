@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        case: [cpm, fetch_git]
+        case: [cpm, fetch_git, fetch_release]
 
     steps:
     - uses: actions/checkout@v4
