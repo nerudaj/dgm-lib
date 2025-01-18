@@ -1,16 +1,16 @@
 dgm-lib v2.4.0
  * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
     * Also `dgm::Window` is now marked as `final`
- * Deprecated default constructors for Clip, Window, Path and TileMap
  * Added examples target
     * Build by default, you can use `-D ENABLE_EXAMPLES=OFF` to surpress on configure
     * Examples showcase various features of the library and how to use them
  * Added `dgm::Clip::getFrameUnchecked` for faster, unchecked access
  * Added `dgm::DynamicBuffer::isEmpty`
- * `dgm::Animation::getSpeed` was marked as noexcept
+ * Added integration test for integrating precompiled binaries with CMake
  * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
  * Fixed bug in `dgm::Camera` where `setPosition` did nothing while the camera was shaking
- * Added integration test for integrating precompiled binaries with CMake
+ * Deprecated default constructors for Clip, Window, Path and TileMap
+ * `dgm::Animation::getSpeed` was marked as noexcept
 
 dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls
