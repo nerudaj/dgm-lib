@@ -9,6 +9,7 @@ dgm-lib v2.4.0
  * Added `dgm::DynamicBuffer::isEmpty`
  * `dgm::Animation::getSpeed` was marked as noexcept
  * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
+ * Fixed bug in `dgm::Camera` where `setPosition` did nothing while the camera was shaking
  * Added integration test for integrating precompiled binaries with CMake
 
 dgm-lib v2.3.1

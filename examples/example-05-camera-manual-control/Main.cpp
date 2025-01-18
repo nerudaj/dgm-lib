@@ -29,12 +29,52 @@ dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
     return tilemap;
 }
 
+enum Action
+{
+    Up,
+    Down,
+    Left,
+    Right,
+    Shake,
+    RotateLeft,
+    RotateRight,
+    ZoomIn,
+    ZoomOut,
+};
+
+dgm::Controller setupController()
+{
+    auto&& input = dgm::Controller();
+    input.bindInput(Up, sf::Keyboard::W);
+    input.bindInput(Down, sf::Keyboard::S);
+    input.bindInput(Left, sf::Keyboard::A);
+    input.bindInput(Right, sf::Keyboard::D);
+    input.bindInput(Shake, sf::Keyboard::Space);
+    input.bindInput(RotateLeft, sf::Keyboard::Q);
+    input.bindInput(RotateRight, sf::Keyboard::E);
+    input.bindInput(ZoomIn, sf::Keyboard::Up);
+    input.bindInput(ZoomOut, sf::Keyboard::Down);
+
+    return input;
+}
+
+void updatePlayer(dgm::Circle& playerDot, dgm::Controller& input)
+{
+    auto forward = sf::Vector2f {
+        input.getInputValue(Left) * -1.f + input.getInputValue(Right),
+        input.getInputValue(Up) * -1.f + input.getInputValue(Down),
+    };
+
+    playerDot.move(forward * 3.f); // FPS fixed to 60, so 180px per second
+}
+
 int main(int, char*[])
 {
     auto&& window = dgm::Window({ 1280, 720 }, "Example: Camera", false);
     auto&& resmgr = DemoData::loadDemoResources();
     auto&& tilemap = createSampleTilemap(resmgr);
     auto&& playerDot = dgm::Circle({ 100.f, 100.f }, 8.f);
+    auto&& input = setupController();
 
     // Make the camera take up the whole screen and use native window resolution
     auto&& camera =
@@ -51,22 +91,26 @@ int main(int, char*[])
         sf::Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
-                std::ignore = window.close();
-            else if (event.type == sf::Event::KeyPressed)
-            {
-                if (event.key.code == sf::Keyboard::W) playerDot.move(0, -3.f);
-                if (event.key.code == sf::Keyboard::A)
-                    playerDot.move(-3.f, 0.f);
-                if (event.key.code == sf::Keyboard::S) playerDot.move(0, 3.f);
-                if (event.key.code == sf::Keyboard::D) playerDot.move(3.f, 0.f);
-                if (event.key.code == sf::Keyboard::Up) zoomLevel -= 0.1f;
-                if (event.key.code == sf::Keyboard::Down) zoomLevel += 0.1f;
-                if (event.key.code == sf::Keyboard::Space)
-                    camera.shake(sf::seconds(2.f), 30.f);
-                if (event.key.code == sf::Keyboard::Q) rotation -= 0.5f;
-                if (event.key.code == sf::Keyboard::E) rotation += 0.5f;
-            }
+            if (event.type == sf::Event::Closed) std::ignore = window.close();
+        }
+
+        updatePlayer(playerDot, input);
+
+        // Handle camera-related effects
+        if (input.isInputToggled(RotateLeft))
+            rotation -= 0.5f;
+        else if (input.isInputToggled(RotateRight))
+            rotation += 0.5f;
+
+        if (input.isInputToggled(ZoomIn))
+            zoomLevel -= 0.01f;
+        else if (input.isInputToggled(ZoomOut))
+            zoomLevel += 0.01f;
+
+        if (input.isInputToggled(Shake))
+        {
+            input.releaseInput(Shake);
+            camera.shake(sf::seconds(2.f), 30.f);
         }
 
         // First center camera on the player dot
@@ -74,7 +118,6 @@ int main(int, char*[])
 
         // Call update so the shake effect can evaluate
         camera.update(time);
-        // WARNING: Player is unable to move while the camera is shaking
 
         // Apply rest of the transforms
         camera.setRotation(rotation);

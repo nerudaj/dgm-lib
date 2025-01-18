@@ -36,17 +36,6 @@ inline float dgm::Camera::Effect<T>::update(const dgm::Time& time)
     return easing(std::clamp(f, 0.f, 1.f));
 }
 
-template<typename T>
-inline void
-dgm::Camera::Effect<T>::init(T s, T a, const sf::Time& d, EasingFunc f)
-{
-    elapsed = 0.f;
-    duration = d.asSeconds();
-    start = s;
-    amount = a;
-    easing = f;
-}
-
 void dgm::Camera::update(const dgm::Time& time)
 {
     if (isMoving())
@@ -74,42 +63,50 @@ void dgm::Camera::update(const dgm::Time& time)
         const float f = shakeEffect.update(time);
         const unsigned vecIndex =
             unsigned(shakeEffect.elapsed / shakeEffect.hold) % 20;
-        setPosition(
+        view.setCenter(
             shakeEffect.start
             + f * SHAKE_POSITIONS[vecIndex] * shakeEffect.amount.x);
     }
 }
 
 void dgm::Camera::moveGradually(
-    const sf::Vector2f& position, const sf::Time& duration, EasingFunc f)
+    const sf::Vector2f& position, const sf::Time& duration, EasingFunc&& f)
 {
     if (isMoving()) return;
 
-    moveEffect.init(view.getCenter(), position - view.getCenter(), duration, f);
+    moveEffect = Effect(
+        view.getCenter(), position - view.getCenter(), duration, std::move(f));
 }
 
 void dgm::Camera::zoomGradually(
-    float level, const sf::Time& duration, EasingFunc f)
+    float level, const sf::Time& duration, EasingFunc&& f)
 {
     if (isZooming()) return;
 
     const float start = view.getSize().x / defaultView.getSize().x;
-    zoomEffect.init(start, level - start, duration, f);
+    zoomEffect = Effect(start, level - start, duration, std::move(f));
 }
 
 void dgm::Camera::rotateGradually(
-    float amount, const sf::Time& duration, EasingFunc f)
+    float amount, const sf::Time& duration, EasingFunc&& f)
 {
     if (isRotating()) return;
 
-    rotationEffect.init(view.getRotation(), amount, duration, f);
+    rotationEffect = Effect(view.getRotation(), amount, duration, std::move(f));
 }
 
 void dgm::Camera::shake(
-    const sf::Time& duration, float amount, EasingFunc f, const sf::Time& hold)
+    const sf::Time& duration,
+    float amount,
+    EasingFunc&& f,
+    const sf::Time& hold)
 {
     if (isShaking()) return;
 
-    shakeEffect.init(view.getCenter(), { amount, amount }, duration, f);
-    shakeEffect.hold = hold.asSeconds();
+    shakeEffect = ShakeEffect(
+        view.getCenter(),
+        sf::Vector2f { amount, amount },
+        duration,
+        std::move(f),
+        hold.asSeconds());
 }

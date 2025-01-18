@@ -39,63 +39,6 @@ namespace dgm
         Camera(const Camera&) = delete;
         Camera(Camera&&) = delete;
 
-    protected:
-        /**
-         *  Container holding transform effect
-         */
-        template<typename T>
-        struct Effect
-        {
-            float elapsed = 0.f;  // How much time elapsed in seconds
-            float duration = 0.f; // How much time effect should take in seconds
-            EasingFunc easing;    // Easing functions for animation
-            T start = T();        // Starting value for animation
-            T amount = T();       // Offset value from start to end
-
-            /**
-             *  Update elapsed and use it to compute
-             *  parameter t for animation (also ease
-             *  this parameter using EasingFunc).
-             */
-            float update(const dgm::Time& time);
-
-            /**
-             * Is effect still animating?
-             */
-            [[nodiscard]] constexpr bool isActive() const noexcept
-            {
-                return elapsed < duration;
-            }
-
-            /**
-             *  Shorthand for initialization of this object
-             */
-            void
-            init(T start, T amount, const sf::Time& duration, EasingFunc f);
-        };
-
-        /**
-         *  Dedicated structure for screen shake effect. It should rapidly move
-         * the camera around a center point in random directions. For this
-         * purpose we use predefined set of randomly generated numbers.
-         */
-        struct ShakeEffect : public Effect<sf::Vector2f>
-        {
-            float hold =
-                0.f; // how long should position be held before changing
-        };
-
-        Effect<sf::Vector2f> moveEffect;
-        Effect<float> zoomEffect;
-        Effect<float> rotationEffect;
-        ShakeEffect shakeEffect;
-
-        [[nodiscard]] dgm::Rect getVíewBoundingBox() const
-        {
-            return dgm::Rect(
-                view.getCenter() - view.getSize() / 2.f, view.getSize());
-        }
-
     public:
         [[nodiscard]] constexpr const sf::View& getCurrentView() const noexcept
         {
@@ -104,7 +47,7 @@ namespace dgm
 
         [[nodiscard]] constexpr const sf::View& getDefaultView() const noexcept
         {
-            return view;
+            return defaultView;
         }
 
         /**
@@ -163,6 +106,7 @@ namespace dgm
          */
         inline void setPosition(const sf::Vector2f& position)
         {
+            if (isShaking()) shakeEffect.start = position;
             view.setCenter(position);
         }
 
@@ -171,9 +115,9 @@ namespace dgm
          *
          *  Will mess up if camera isMoving
          */
-        inline void setPosition(float x, float y)
+        [[deprecated]] inline void setPosition(float x, float y)
         {
-            view.setCenter(x, y);
+            setPosition({ x, y });
         }
 
         /**
@@ -238,7 +182,7 @@ namespace dgm
         void moveGradually(
             const sf::Vector2f& position,
             const sf::Time& duration,
-            EasingFunc f);
+            EasingFunc&& f);
 
         /**
          *  \brief Perform animated zoom to another zoom level
@@ -248,7 +192,8 @@ namespace dgm
          *
          *  This function does nothing if camera isZooming
          */
-        void zoomGradually(float level, const sf::Time& duration, EasingFunc f);
+        void
+        zoomGradually(float level, const sf::Time& duration, EasingFunc&& f);
 
         /**
          *  \brief Perform animated rotation by given angle
@@ -259,7 +204,7 @@ namespace dgm
          *  This function does nothing if camera isRotating
          */
         void
-        rotateGradually(float angle, const sf::Time& duration, EasingFunc f);
+        rotateGradually(float angle, const sf::Time& duration, EasingFunc&& f);
 
         /**
          *  \brief Perform screenshake
@@ -276,11 +221,85 @@ namespace dgm
         void shake(
             const sf::Time& duration,
             float amount,
-            EasingFunc f = [](float) -> float { return 1.f; },
+            EasingFunc&& f = [](float) -> float { return 1.f; },
             const sf::Time& hold = sf::milliseconds(20));
+
+    protected:
+        /**
+         *  Container holding transform effect
+         */
+        template<typename T>
+        struct [[nodiscard]] Effect
+        {
+            float elapsed = 0.f;  // How much time elapsed in seconds
+            float duration = 0.f; // How much time effect should take in seconds
+            EasingFunc easing;    // Easing functions for animation
+            T start = T();        // Starting value for animation
+            T amount = T();       // Offset value from start to end
+
+            Effect() = default;
+
+            Effect(T start, T amount, const sf::Time& duration, EasingFunc&& f)
+                : duration(duration.asSeconds())
+                , start(start)
+                , amount(amount)
+                , easing(std::move(f))
+            {
+            }
+
+            /**
+             *  Update elapsed and use it to compute
+             *  parameter t for animation (also ease
+             *  this parameter using EasingFunc).
+             */
+            float update(const dgm::Time& time);
+
+            /**
+             * Is effect still animating?
+             */
+            [[nodiscard]] constexpr bool isActive() const noexcept
+            {
+                return elapsed < duration;
+            }
+        };
+
+        /**
+         *  Dedicated structure for screen shake effect. It should rapidly move
+         * the camera around a center point in random directions. For this
+         * purpose we use predefined set of randomly generated numbers.
+         */
+        struct [[nodiscard]] ShakeEffect final : public Effect<sf::Vector2f>
+        {
+            float hold =
+                0.f; // how long should position be held before changing
+
+            ShakeEffect() = default;
+
+            ShakeEffect(
+                const sf::Vector2f& start,
+                const sf::Vector2f& amount,
+                const sf::Time& duration,
+                EasingFunc&& f,
+                float hold)
+                : Effect<sf::Vector2f>(start, amount, duration, std::move(f))
+                , hold(hold)
+            {
+            }
+        };
+
+    protected:
+        [[nodiscard]] dgm::Rect getVíewBoundingBox() const
+        {
+            return dgm::Rect(
+                view.getCenter() - view.getSize() / 2.f, view.getSize());
+        }
 
     protected:
         sf::View view;
         sf::View defaultView;
+        Effect<sf::Vector2f> moveEffect;
+        Effect<float> zoomEffect;
+        Effect<float> rotationEffect;
+        ShakeEffect shakeEffect;
     };
 } // namespace dgm
