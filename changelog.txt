@@ -6,6 +6,8 @@ dgm-lib v2.4.0
     * Examples showcase various features of the library and how to use them
  * Added `dgm::Clip::getFrameUnchecked` for faster, unchecked access
  * Added `dgm::DynamicBuffer::isEmpty`
+ * Added behavior modifiers to `dgm::Controller::bindInput`
+    * A key can now be autoreleased after first read
  * Added integration test for integrating precompiled binaries with CMake
  * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
  * Fixed bug in `dgm::Camera` where `setPosition` did nothing while the camera was shaking

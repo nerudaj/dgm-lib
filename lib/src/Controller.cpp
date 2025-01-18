@@ -20,9 +20,16 @@ bool dgm::Controller::isInputToggled(const int code) const
     const bool pressed =
         mousePressed || keyPressed || gamepadButtonPressed || axisToggled;
 
+    if (pressed && binding.releaseOnRead && !binding.released)
+    {
+        binding.released = true;
+        return true;
+    }
+
     return pressed ? not bindings.at(code).released
                    : (bindings.at(code).released =
-                          false); // assignment is on purpose
+                          false); // assignment is on purpose, returns false and
+                                  // marks the key as physically released
 }
 
 float dgm::Controller::getInputValue(const int code) const

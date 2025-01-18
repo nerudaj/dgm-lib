@@ -49,7 +49,10 @@ dgm::Controller setupController()
     input.bindInput(Down, sf::Keyboard::S);
     input.bindInput(Left, sf::Keyboard::A);
     input.bindInput(Right, sf::Keyboard::D);
-    input.bindInput(Shake, sf::Keyboard::Space);
+    input.bindInput(
+        Shake,
+        sf::Keyboard::Space,
+        dgm::Controller::InputBehavior::ReportKeyPress);
     input.bindInput(RotateLeft, sf::Keyboard::Q);
     input.bindInput(RotateRight, sf::Keyboard::E);
     input.bindInput(ZoomIn, sf::Keyboard::Up);
@@ -109,7 +112,6 @@ int main(int, char*[])
 
         if (input.isInputToggled(Shake))
         {
-            input.releaseInput(Shake);
             camera.shake(sf::seconds(2.f), 30.f);
         }
 

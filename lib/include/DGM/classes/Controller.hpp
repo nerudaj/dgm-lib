@@ -72,6 +72,34 @@ namespace dgm
      */
     class [[nodiscard]] Controller final
     {
+    public:
+        /**
+        * Modifies how the input is reported.
+        * If set to ReportKeyPress, the isInputToggled will
+        * only return true the first time it is called while the key is pressed.
+        * The user needs to physically release the key and re-press it to
+        * report the input second time.
+        *
+        * In previous versions of the library, the same behavior had to be
+        * achieved by:
+        *
+        * \code
+        if (input.isInputToggled(code)) {
+            input.releaseKey(code);
+            // ...
+        }
+        * \endcode
+        *
+        * ReportKeyHold is the default behavior and reports the key press
+        * for as long as the key is physically pressed (unless releaseKey was
+        called).
+        * This is how the library behaved up until now.
+        */
+        enum class [[nodiscard]] InputBehavior
+        {
+            ReportKeyPress,
+            ReportKeyHold,
+        };
 
     public:
         /**
@@ -148,25 +176,40 @@ namespace dgm
         /**
          *  \brief Bind keyboard key to numerical action code
          */
-        inline void bindInput(const int code, sf::Keyboard::Key key)
+        inline void bindInput(
+            const int code,
+            sf::Keyboard::Key key,
+            InputBehavior behavior = InputBehavior::ReportKeyHold)
         {
             bindings[code].key = key;
+            bindings[code].releaseOnRead =
+                behavior == InputBehavior::ReportKeyPress;
         }
 
         /**
          *  \brief Bind mouse button to numerical action code
          */
-        inline void bindInput(const int code, sf::Mouse::Button btn)
+        inline void bindInput(
+            const int code,
+            sf::Mouse::Button btn,
+            InputBehavior behavior = InputBehavior::ReportKeyHold)
         {
             bindings[code].btn = btn;
+            bindings[code].releaseOnRead =
+                behavior == InputBehavior::ReportKeyPress;
         }
 
         /**
          *  \brief Bind xbox controller button to numerical action code
          */
-        inline void bindInput(const int code, dgm::Xbox::Button btn)
+        inline void bindInput(
+            const int code,
+            dgm::Xbox::Button btn,
+            InputBehavior behavior = InputBehavior::ReportKeyHold)
         {
             bindings[code].xbtn = btn;
+            bindings[code].releaseOnRead =
+                behavior == InputBehavior::ReportKeyPress;
         }
 
         /**
@@ -215,6 +258,7 @@ namespace dgm
         struct Binding
         {
             bool released = false;
+            bool releaseOnRead = false;
             float negateMultiplier = 1.f;
             sf::Keyboard::Key key = sf::Keyboard::Key::Unknown;
             sf::Mouse::Button btn = sf::Mouse::Button::ButtonCount;
