@@ -15,7 +15,7 @@ dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
 std::expected<ClipLocation, dgm::Error>
 dgm::TextureAtlas::addTileset(const sf::Texture& tileset, const dgm::Clip& clip)
 {
-    const auto&& size = tileset.getSize();
+    const auto&& size = sf::Vector2i(tileset.getSize());
 
     auto&& itr = std::find_if(
         freeAreas.begin(),
@@ -24,11 +24,9 @@ dgm::TextureAtlas::addTileset(const sf::Texture& tileset, const dgm::Clip& clip)
     if (itr == freeAreas.end())
         return std::unexpected(dgm::Error("No free space left in the atlas!"));
 
-    const auto&& startCoord = sf::Vector2u {
-        sf::Vector2i {
-            itr->left,
-            itr->top,
-        },
+    const auto&& startCoord = sf::Vector2i {
+        itr->left,
+        itr->top,
     };
 
     adjustFreeArea(std::move(itr), sf::Vector2i(size));
@@ -51,9 +49,9 @@ void dgm::TextureAtlas::adjustFreeArea(
     auto&& subdividedFreeAreas = subdivideArea(*freeAreaItr, takenTextureDims);
     freeAreas.erase(freeAreaItr);
     freeAreas.insert(
+        freeAreas.end(),
         subdividedFreeAreas.begin(),
-        subdividedFreeAreas.end(),
-        freeAreas.end());
+        subdividedFreeAreas.end());
 }
 
 std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
@@ -64,8 +62,8 @@ std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
     if (takenTextureDims.x < area.width)
     {
         result.push_back(sf::IntRect {
-            takenTextureDims.x,
-            0,
+            area.left + takenTextureDims.x,
+            area.top,
             area.width - takenTextureDims.x,
             takenTextureDims.y,
         });
@@ -74,8 +72,8 @@ std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
     if (takenTextureDims.y < area.height)
     {
         result.push_back(sf::IntRect {
-            0,
-            takenTextureDims.y,
+            area.left,
+            area.top + takenTextureDims.y,
             area.width,
             area.height - takenTextureDims.y,
         });
@@ -86,18 +84,14 @@ std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
 
 dgm::Clip dgm::TextureAtlas::recomputeClip(
     const dgm::Clip& clip,
-    const sf::Vector2u& startCoord,
-    const sf::Vector2u& textureSize)
+    const sf::Vector2i& startCoord,
+    const sf::Vector2i& textureSize)
 {
-    const auto& offset = clip.getOriginalOffset();
-
     return dgm::Clip(
         clip.getFrameSize(),
         sf::IntRect {
-            static_cast<int>(startCoord.x + offset.x),
-            static_cast<int>(startCoord.y + offset.y),
-            static_cast<int>(textureSize.x),
-            static_cast<int>(textureSize.y),
+            startCoord + clip.getFrame(0).getPosition(),
+            textureSize,
         },
         clip.getFrameCount(),
         clip.getOriginalSpacing());

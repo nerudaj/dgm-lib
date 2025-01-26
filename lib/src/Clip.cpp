@@ -85,10 +85,4 @@ void dgm::Clip::init(
     }
 
     originalSpacing = frameSpacing;
-    originalOffset = sf::Vector2u {
-        sf::Vector2i {
-            boundaries.left,
-            boundaries.top,
-        },
-    };
 }

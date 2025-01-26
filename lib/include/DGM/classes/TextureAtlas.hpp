@@ -50,25 +50,28 @@ namespace dgm
             return states[location.idx];
         }
 
-        constexpr bool fits(
-            const sf::Vector2u& textureDims,
-            const sf::IntRect& area) const noexcept
+        static constexpr bool
+        fits(const sf::Vector2i& textureDims, const sf::IntRect& area) noexcept
         {
-            return textureDims.x < static_cast<unsigned>(area.width)
-                   && textureDims.y < static_cast<unsigned>(area.height);
+            // NOTE: don't use sf::IntRect::contains
+            // - too much overhead
+            return textureDims.x < area.width && textureDims.y < area.height;
         }
 
         void adjustFreeArea(
             std::vector<sf::IntRect>::const_iterator&& freeAreaItr,
             const sf::Vector2i& takenTextureDims);
 
-        std::vector<sf::IntRect> subdivideArea(
+        static std::vector<sf::IntRect> subdivideArea(
             const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
 
-        dgm::Clip recomputeClip(
+        friend std::vector<sf::IntRect> subdivideAreaTest(
+            const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
+
+        static dgm::Clip recomputeClip(
             const dgm::Clip& clip,
-            const sf::Vector2u& startCoord,
-            const sf::Vector2u& textureSize);
+            const sf::Vector2i& startCoord,
+            const sf::Vector2i& textureSize);
 
     private:
         sf::Texture texture;
