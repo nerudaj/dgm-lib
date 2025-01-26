@@ -140,7 +140,7 @@ void dgm::TextureAtlas::copyTexture(
         offset.x,
         offset.y,
         sf::IntRect(0, 0, 0, 0), // full image
-        /* applyAlpha */ true);
+        /* applyAlpha */ false);
 
     if (!atlasTexture.loadFromImage(atlasImage))
     {
