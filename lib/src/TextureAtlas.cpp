@@ -1,4 +1,5 @@
 #include <DGM/classes/TextureAtlas.hpp>
+#include <ranges>
 
 using ClipLocation = dgm::TextureAtlas::ResourceLocation<dgm::Clip>;
 
@@ -6,16 +7,14 @@ using SheetLocation = dgm::TextureAtlas::ResourceLocation<dgm::AnimationStates>;
 
 dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
 {
-    if (!texture.create(atlasWidth, atlasHeight))
-        throw dgm::Exception("Could not create underlying atlas texture");
-
+    atlasImage.create(atlasWidth, atlasHeight);
     freeAreas.push_back({ 0, 0, atlasWidth, atlasHeight });
 }
 
 std::expected<ClipLocation, dgm::Error>
-dgm::TextureAtlas::addTileset(const sf::Texture& tileset, const dgm::Clip& clip)
+dgm::TextureAtlas::addTileset(const sf::Texture& texture, const dgm::Clip& clip)
 {
-    const auto&& size = sf::Vector2i(tileset.getSize());
+    const auto&& size = sf::Vector2i(texture.getSize());
 
     auto&& itr = std::find_if(
         freeAreas.begin(),
@@ -29,17 +28,35 @@ dgm::TextureAtlas::addTileset(const sf::Texture& tileset, const dgm::Clip& clip)
         itr->top,
     };
 
-    adjustFreeArea(std::move(itr), sf::Vector2i(size));
+    adjustFreeArea(std::move(itr), size);
+    copyTexture(texture, startCoord);
     clips.push_back(recomputeClip(clip, startCoord, size));
 
     return ClipLocation(clips.size() - 1);
 }
 
 std::expected<SheetLocation, dgm::Error> dgm::TextureAtlas::addSpritesheet(
-    const sf::Texture& spritesheet, const dgm::AnimationStates& ss)
+    const sf::Texture& texture, const dgm::AnimationStates& animStates)
 {
-    // TODO: this
-    return SheetLocation(0);
+    const auto&& size = sf::Vector2i(texture.getSize());
+
+    auto&& itr = std::find_if(
+        freeAreas.begin(),
+        freeAreas.end(),
+        [&](auto&& area) { return fits(size, area); });
+    if (itr == freeAreas.end())
+        return std::unexpected(dgm::Error("No free space left in the atlas!"));
+
+    const auto&& startCoord = sf::Vector2i {
+        itr->left,
+        itr->top,
+    };
+
+    adjustFreeArea(std::move(itr), size);
+    copyTexture(texture, startCoord);
+    states.push_back(recomputeAnimationStates(animStates, startCoord, size));
+
+    return SheetLocation(states.size() - 1);
 }
 
 void dgm::TextureAtlas::adjustFreeArea(
@@ -95,4 +112,38 @@ dgm::Clip dgm::TextureAtlas::recomputeClip(
         },
         clip.getFrameCount(),
         clip.getOriginalSpacing());
+}
+
+dgm::AnimationStates dgm::TextureAtlas::recomputeAnimationStates(
+    const dgm::AnimationStates& animationStates,
+    const sf::Vector2i& startCoord,
+    const sf::Vector2i& textureSize)
+{
+    return animationStates
+           | std::views::transform(
+               [&](const std::pair<std::string, dgm::Clip>& pair)
+               {
+                   return std::pair {
+                       pair.first,
+                       recomputeClip(pair.second, startCoord, textureSize),
+                   };
+               })
+           | std::ranges::to<dgm::AnimationStates>();
+}
+
+void dgm::TextureAtlas::copyTexture(
+    const sf::Texture& textureToCopy, const sf::Vector2i& offset)
+{
+    auto imageToCopy = textureToCopy.copyToImage();
+    atlasImage.copy(
+        imageToCopy,
+        offset.x,
+        offset.y,
+        sf::IntRect(0, 0, 0, 0), // full image
+        /* applyAlpha */ true);
+
+    if (!atlasTexture.loadFromImage(atlasImage))
+    {
+        throw dgm::Exception("Could not create underlying atlas texture");
+    }
 }

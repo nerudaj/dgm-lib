@@ -26,15 +26,15 @@ namespace dgm
 
     public:
         std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
-        addTileset(const sf::Texture& tilesetp, const dgm::Clip& clip);
+        addTileset(const sf::Texture& texture, const dgm::Clip& clip);
 
         std::expected<ResourceLocation<dgm::AnimationStates>, dgm::Error>
         addSpritesheet(
-            const sf::Texture& spritesheet, const dgm::AnimationStates& states);
+            const sf::Texture& texture, const dgm::AnimationStates& states);
 
         const sf::Texture& getTexture() const noexcept
         {
-            return texture;
+            return atlasTexture;
         }
 
         const dgm::Clip&
@@ -73,8 +73,17 @@ namespace dgm
             const sf::Vector2i& startCoord,
             const sf::Vector2i& textureSize);
 
+        static dgm::AnimationStates recomputeAnimationStates(
+            const dgm::AnimationStates& animationStates,
+            const sf::Vector2i& startCoord,
+            const sf::Vector2i& textureSize);
+
+        void copyTexture(
+            const sf::Texture& textureToCopy, const sf::Vector2i& offset);
+
     private:
-        sf::Texture texture;
+        sf::Texture atlasTexture;
+        sf::Image atlasImage;
         std::vector<dgm::Clip> clips;
         std::vector<dgm::AnimationStates> states;
         std::vector<sf::IntRect> freeAreas;
