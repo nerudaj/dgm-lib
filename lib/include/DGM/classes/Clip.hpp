@@ -56,6 +56,20 @@ namespace dgm
             return size;
         }
 
+        // TODO: only part of this can be computed dynamically
+        [[nodiscard]] constexpr const sf::Vector2u&
+        getOriginalSpacing() const noexcept
+        {
+            return originalSpacing;
+        }
+
+        // TODO: this can be computed dynamically
+        [[nodiscard]] constexpr const sf::Vector2u&
+        getOriginalOffset() const noexcept
+        {
+            return originalOffset;
+        }
+
         /**
          *  \brief Initialize the object
          *
@@ -88,5 +102,7 @@ namespace dgm
     protected:
         std::vector<sf::IntRect> frames; /// Array of sprite frames
         sf::Vector2u size;               /// Size of each frame in pixels
+        sf::Vector2u originalSpacing;
+        sf::Vector2u originalOffset;
     };
 } // namespace dgm

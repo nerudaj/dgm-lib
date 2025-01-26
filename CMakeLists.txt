@@ -43,7 +43,9 @@ if ( ${ENABLE_TESTS} )
 	enable_testing()
 endif ()
 
-CPMAddPackage( "gh:SFML/SFML#2.6.1" )
+set ( SFML_VERSION "2.6.1" )
+
+CPMAddPackage( "gh:SFML/SFML#${SFML_VERSION}" )
 CPMAddPackage( "gh:nlohmann/json@3.11.2" )
 
 # Subprojects
