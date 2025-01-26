@@ -55,7 +55,7 @@ namespace dgm
         {
             // NOTE: don't use sf::IntRect::contains
             // - too much overhead
-            return textureDims.x < area.width && textureDims.y < area.height;
+            return textureDims.x <= area.width && textureDims.y <= area.height;
         }
 
         void adjustFreeArea(

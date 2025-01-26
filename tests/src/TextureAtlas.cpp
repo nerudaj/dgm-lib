@@ -33,14 +33,6 @@ TEST_CASE("[TextureAtlas]")
 
     SECTION("SubdivideArea")
     {
-        SECTION("Returns nothing if source area is too small")
-        {
-            // TODO: this is not valid input
-            auto&& vec = subdivideAreaTest(
-                sf::IntRect(0, 0, 64, 64), sf::Vector2i(96, 96));
-            REQUIRE(vec.empty());
-        }
-
         SECTION("Only horizontal subdivision")
         {
             auto&& vec = subdivideAreaTest(
@@ -128,7 +120,7 @@ TEST_CASE("[TextureAtlas]")
             sf::Vector2u(182, 20), newClip.getFrame(1).getPosition());
     }
 
-    /*SECTION("Correctly adds second Clip (vertical sub-area)")
+    SECTION("Correctly adds second Clip (vertical sub-area)")
     {
         auto&& texture = createTexture(396, 128);
         auto&& clip = createDummyClip();
@@ -140,7 +132,31 @@ TEST_CASE("[TextureAtlas]")
         auto&& newClip = atlas.getClip(*result);
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
-        COMPARE_INTRECTS(newClip.getFrame(0), clip.getFrame(0));
-        COMPARE_INTRECTS(newClip.getFrame(1), clip.getFrame(1));
-    }*/
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(10, 148), newClip.getFrame(0).getPosition());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(54, 148), newClip.getFrame(1).getPosition());
+    }
+
+    SECTION("Correctly adds third clip")
+    {
+        auto&& texture = createTexture(256, 128);
+        auto&& clip = createDummyClip();
+
+        std::ignore = atlas.addTileset(texture, clip);
+        std::ignore = atlas.addTileset(texture, clip);
+        std::ignore = atlas.addTileset(texture, clip);
+
+        // should be placed at [256, 128]
+        auto&& result = atlas.addTileset(texture, clip);
+        REQUIRE(result.has_value());
+
+        auto&& newClip = atlas.getClip(*result);
+        REQUIRE(newClip.getFrameCount() == 2u);
+        COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(266, 148), newClip.getFrame(0).getPosition());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(310, 148), newClip.getFrame(1).getPosition());
+    }
 }
