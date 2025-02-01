@@ -21,6 +21,23 @@ dgm::Clip createDummyClip()
         { 12, 12 });
 }
 
+dgm::AnimationStates createDummySpritesheet()
+{
+    return { {
+                 "first",
+                 createDummyClip(),
+             },
+             {
+                 "second",
+                 dgm::Clip(
+                     { 32, 32 },
+                     sf::IntRect {
+                         sf::Vector2i(6, 128),
+                         sf::Vector2i(96, 32),
+                     }),
+             } };
+}
+
 std::vector<sf::IntRect>
 subdivideAreaTest(const sf::IntRect& area, const sf::Vector2i& takenTextureDims)
 {
@@ -90,7 +107,7 @@ TEST_CASE("[TextureAtlas]")
         auto&& result = atlas.addTileset(texture, clip);
         REQUIRE(result.has_value());
 
-        auto&& newClip = atlas.getClip(*result);
+        auto&& newClip = atlas.getClip(result.value());
 
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
@@ -111,7 +128,7 @@ TEST_CASE("[TextureAtlas]")
 
         // horizontal offset 128
         // vertical offset 0
-        auto&& newClip = atlas.getClip(*result);
+        auto&& newClip = atlas.getClip(result.value());
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
@@ -129,7 +146,7 @@ TEST_CASE("[TextureAtlas]")
         auto&& result = atlas.addTileset(texture, clip);
         REQUIRE(result.has_value());
 
-        auto&& newClip = atlas.getClip(*result);
+        auto&& newClip = atlas.getClip(result.value());
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
@@ -151,12 +168,47 @@ TEST_CASE("[TextureAtlas]")
         auto&& result = atlas.addTileset(texture, clip);
         REQUIRE(result.has_value());
 
-        auto&& newClip = atlas.getClip(*result);
+        auto&& newClip = atlas.getClip(result.value());
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
             sf::Vector2u(266, 148), newClip.getFrame(0).getPosition());
         COMPARE_SIGNED_VECTORS(
             sf::Vector2u(310, 148), newClip.getFrame(1).getPosition());
+    }
+
+    SECTION("Correctly adds spritesheet")
+    {
+        auto&& clipTexture = createTexture(96, 96);
+        auto&& clip = createDummyClip();
+
+        auto&& sheetTexture = createTexture(256, 256);
+        auto&& sheet = createDummySpritesheet();
+
+        std::ignore = atlas.addTileset(clipTexture, clip);
+        auto&& result = atlas.addSpritesheet(sheetTexture, sheet);
+        REQUIRE(result.has_value());
+
+        auto&& newSheet = atlas.getAnimationStates(result.value());
+        auto&& firstClip = newSheet.at("first");
+        auto&& secondClip = newSheet.at("second");
+
+        REQUIRE(firstClip.getFrameCount() == 2u);
+        COMPARE_UNSIGNED_VECTORS(
+            firstClip.getFrameSize(), sheet["first"].getFrameSize());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(10, 116), firstClip.getFrame(0).getPosition());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(54, 116), firstClip.getFrame(1).getPosition());
+
+        REQUIRE(secondClip.getFrameCount() == 3u);
+        COMPARE_UNSIGNED_VECTORS(
+            secondClip.getFrameSize(), sheet["second"].getFrameSize());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(6, 224), secondClip.getFrame(0).getPosition());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(38, 224), secondClip.getFrame(1).getPosition());
+        COMPARE_SIGNED_VECTORS(
+            sf::Vector2u(70, 224), secondClip.getFrame(2).getPosition());
     }
 }

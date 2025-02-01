@@ -1,3 +1,5 @@
+// An example that showcases how a texture atlas can be utilized
+
 #include "DemoData.hpp"
 #include <DGM/dgm.hpp>
 
@@ -41,6 +43,8 @@ int main()
     auto&& spritesheetLoc = atlas.addSpritesheet(
         resmgr.get<sf::Texture>("soldier.png").value().get(),
         resmgr.get<dgm::AnimationStates>("soldier_config.json").value().get());
+
+    atlas.getTexture().copyToImage().saveToFile("atlas.png");
 
     auto&& level = DemoData::createDemoLevel(
         atlas.getTexture(), atlas.getClip(tilesetLoc.value()));

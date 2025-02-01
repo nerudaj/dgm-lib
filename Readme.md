@@ -51,7 +51,7 @@ This project depends on couple other projects:
 * nlohmann/json
 * catch2 (unit-tests target)
 
-If you want to bump any of them, update the `cmake/dependencies.cmake` file.
+These are fetched automatically through CMake FetchContent.
 
 ## Versioning
 
