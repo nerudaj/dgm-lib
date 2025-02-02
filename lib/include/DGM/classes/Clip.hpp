@@ -7,6 +7,8 @@
 
 namespace dgm
 {
+    class TextureAtlas;
+
     /**
      *  \brief Class representing array of sf::IntRect (frames) for purpose of
      * clipping textures
@@ -56,13 +58,6 @@ namespace dgm
             return size;
         }
 
-        // TODO: only part of this can be computed dynamically
-        [[nodiscard]] constexpr const sf::Vector2u&
-        getOriginalSpacing() const noexcept
-        {
-            return originalSpacing;
-        }
-
         /**
          *  \brief Initialize the object
          *
@@ -91,6 +86,15 @@ namespace dgm
         {
             init(frameSize, boundaries, frameCount, frameSpacing);
         }
+
+    protected:
+        [[nodiscard]] constexpr const sf::Vector2u&
+        getOriginalSpacing() const noexcept
+        {
+            return originalSpacing;
+        }
+
+        friend class TextureAtlas; // co it can get access to getOriginalSpacing
 
     protected:
         std::vector<sf::IntRect> frames; /// Array of sprite frames
