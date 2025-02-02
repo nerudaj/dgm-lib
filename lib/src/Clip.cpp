@@ -83,4 +83,6 @@ void dgm::Clip::init(
 
         frameStartY += Y_INCREMENT;
     }
+
+    originalSpacing = frameSpacing;
 }

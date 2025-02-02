@@ -1,10 +1,7 @@
+#include "CustomComparators.hpp"
 #include <DGM/dgm.hpp>
 #include <catch2/catch_all.hpp>
 #include <sstream>
-
-#define COMPARE_UNSIGNED_VECTORS(v1, v2)                                       \
-    REQUIRE(v1.x == v2.y);                                                     \
-    REQUIRE(v1.y == v2.y);
 
 TEST_CASE("Clip", "init")
 {

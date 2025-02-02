@@ -1,3 +1,7 @@
+dgm-lib v2.5.0
+ * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
+ * Added `dgm::TextureAtlas` that can optimize drawcalls by having a single texture for multiple entities (thus these can be put into a single VBO)
+
 dgm-lib v2.4.0
  * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
     * Also `dgm::Window` is now marked as `final`
