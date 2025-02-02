@@ -36,6 +36,7 @@ All these options are disabled when the library is used as a dependency to impro
 ## Documentation
 
  * [App State Pattern](docs/app.md)
+ * [Texture Atlas](docs/texture_atlas.md)
 
 ## Packaging
 
