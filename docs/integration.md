@@ -89,3 +89,19 @@ target_link_libraries ( ${PROJECT_NAME}
 ```
 
 The full example is available [here](../integration_tests/cpm).
+
+## Precompiled binaries
+
+You can find precompiled binaries under [Releases](https://github.com/nerudaj/dgm-lib/releases). They are more cumbersome to setup up, but you will get waaay faster compile times, if you use them (alongside with precompiled SFML). Assuming the release archive is unzipped into `${DGM_FOLDER}`, you can easily create linkable target as this:
+
+```
+find_library(LIB_DGM_D libdgm-d  NAMES libdgm-d.lib  HINTS "${DGM_FOLDER}/lib")
+find_library(LIB_DGM_R libdgm  NAMES libdgm.lib  HINTS "${DGM_FOLDER}/lib")
+set(LIB_DGM optimized ${LIB_DGM_R} debug ${LIB_DGM_D})
+
+add_library ( Dep_dgm INTERFACE )
+target_include_directories ( Dep_dgm INTERFACE "${DGM_FOLDER}/include" )
+target_link_libraries ( Dep_dgm INTERFACE ${LIB_DGM} Dep_sfml xinput.lib )
+```
+
+DGM only has 1 static lib, so it is quite easy, setting up SFML is more verbose because it has 6. The full source for that can be found [here](../integration_tests/fetch_release).

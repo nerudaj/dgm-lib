@@ -3,6 +3,8 @@ name: IntegrationTests
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 env:
@@ -13,10 +15,14 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        case: [cpm, fetch_git]
+        case: [cpm, fetch_git, fetch_release]
 
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Get branch names.
+      id: branch-names
+      uses: tj-actions/branch-names@v8
 
     - name: Setup cmake
       uses: jwlawson/actions-setup-cmake@v2
@@ -28,7 +34,7 @@ jobs:
       run: |
         mkdir _build
         cd _build
-        cmake ..
+        cmake -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} ..
       shell: cmd
 
     - name: Build

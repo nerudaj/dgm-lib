@@ -36,6 +36,7 @@ All these options are disabled when the library is used as a dependency to impro
 ## Documentation
 
  * [App State Pattern](docs/app.md)
+ * [Texture Atlas](docs/texture_atlas.md)
 
 ## Packaging
 
@@ -51,7 +52,7 @@ This project depends on couple other projects:
 * nlohmann/json
 * catch2 (unit-tests target)
 
-If you want to bump any of them, update the `cmake/dependencies.cmake` file.
+These are fetched automatically through CMake FetchContent.
 
 ## Versioning
 

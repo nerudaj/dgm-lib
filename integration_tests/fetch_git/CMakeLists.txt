@@ -8,7 +8,7 @@ include ( FetchContent )
 
 FetchContent_Declare ( LIBDGM_GIT
 	GIT_REPOSITORY "https://github.com/nerudaj/dgm-lib"
-	GIT_TAG "origin/main"
+	GIT_TAG "${GIT_BRANCH}"
 )
 
 FetchContent_MakeAvailable ( LIBDGM_GIT )

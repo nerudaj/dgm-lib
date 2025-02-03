@@ -19,6 +19,12 @@ dgm-lib v3.0.0
  * Moved `PreallocatedMemoryAmount` from `dgm::DynamicBuffer` template parameters to the constructor parameters
     * Also made the whole thing explicit
 
+dgm-lib v2.5.0
+ * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
+ * Added `dgm::TextureAtlas` that can optimize drawcalls by having a single texture for multiple entities (thus these can be put into a single VBO)
+ * `sf::err()` is now redirected into `stderr.txt` (after constructor of `dgm::App` was invoked)
+    * Previously, it was completely lost, because it pointed to the original std::cerr stream
+
 dgm-lib v2.4.0
  * Added method `dgm::Window::setViewFromCamera` which is a shorthand for `window.getWindowContext().setView(camera.getCurrentView())`
     * Also `dgm::Window` is now marked as `final`
@@ -30,6 +36,7 @@ dgm-lib v2.4.0
  * Added `dgm::DynamicBuffer::isEmpty`
  * `dgm::Animation::getSpeed` was marked as noexcept
  * Fixed an off-by-one error produced from `dgm::Animation::set/getSpeed`
+ * Added integration test for integrating precompiled binaries with CMake
 
 dgm-lib v2.3.1
  * Fixed `WorldNavMesh` internal lookup algorithm, which could produce paths that go through solid walls

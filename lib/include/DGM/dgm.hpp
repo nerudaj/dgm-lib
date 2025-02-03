@@ -23,6 +23,7 @@
 #include "classes/ResourceManager.hpp"
 #include "classes/SpatialBuffer.hpp"
 #include "classes/StaticBuffer.hpp"
+#include "classes/TextureAtlas.hpp"
 #include "classes/TileMap.hpp"
 #include "classes/Time.hpp"
 #include "classes/Window.hpp"

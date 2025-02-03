@@ -1,44 +1,17 @@
 // Demo having 20'000 particles bouncing from each other
-// Optimized via dgm::SpatialBuffer
+// Optimized through use of dgm::SpatialBuffer and
+// custom particle system.
 
 #include <DGM/dgm.hpp>
-
-class CustomParticle : public dgm::ps::Particle
-{
-    using super = dgm::ps::Particle;
-
-public:
-    [[nodiscard]] explicit CustomParticle(sf::Vertex* vertices) noexcept
-        : super(vertices)
-    {
-    }
-
-    void spawn(
-        const sf::Vector2f& position,
-        const sf::Vector2f& size,
-        const sf::Time& lifespanL = sf::Time::Zero) override
-    {
-        super::spawn(position, size, lifespanL);
-        body.setRadius(size.x / 2.f);
-        body.setPosition(position);
-    }
-
-    void moveForwardBy(const sf::Vector2f& fwd) noexcept override
-    {
-        super::moveForwardBy(fwd);
-        body.move(fwd);
-    }
-
-public:
-    dgm::Circle body = dgm::Circle({ 0.f, 0.f }, 0.f);
-};
+#include <FpsCounter.hpp>
+#include <WhiteRectangleParticle.hpp>
 
 /**
  *  A custom particle system which has many particles bouncing off each other
  * and off the screen boundaries.
  *
  *  It doesn't inhering from ParticleSystemInterface because it needs a
- * SpatialBuffer to store the particles.
+ * SpatialBuffer as a particle storage instead of a StaticBuffer.
  */
 class CollidingAgentsParticleSystem
 {
@@ -52,13 +25,13 @@ public:
     {
         for (unsigned i = 0; i < particleCount; i++)
         {
-            auto particle = std::make_unique<CustomParticle>(
+            auto particle = std::make_unique<WhiteRectangleParticle>(
                 renderer.getParticleVertices(i));
 
-            auto&& x = (i % 160) * 8;
-            auto&& y = (i / 160) * 8;
-            auto&& size = static_cast<float>(i % 5 + 1);
-            auto&& position = sf::Vector2f(x + 4.f, y + 4.f);
+            const auto&& x = (i % 160) * 8;
+            const auto&& y = (i / 160) * 8;
+            const auto&& size = static_cast<float>(i % 5 + 1);
+            const auto&& position = sf::Vector2f(x + 4.f, y + 4.f);
 
             particle->spawn(position, sf::Vector2f(1.f, 1.f) * size);
             particle->setForward(
@@ -82,6 +55,8 @@ public:
             // Object must be removed from lookup before it can be moved
             particles.removeFromLookup(particleId, particle->body);
 
+            // Copying the body so we can move it around and test
+            // possible destinations for collisions
             dgm::Circle bodyCpy = particle->body;
             bodyCpy.move(tickForward);
             bool secondCollisionFound = false;
@@ -141,7 +116,7 @@ private:
     // Collision boxes for the particles. Need to be stored in the SpatialBuffer
     // dgm::SpatialBuffer<dgm::Circle, std::uint32_t> collisionBoxes;
     dgm::ps::ParticleSystemRenderer renderer;
-    dgm::SpatialBuffer<std::unique_ptr<CustomParticle>, std::uint32_t>
+    dgm::SpatialBuffer<std::unique_ptr<WhiteRectangleParticle>, std::uint32_t>
         particles;
 };
 
@@ -163,34 +138,6 @@ createTextWrapper(const std::filesystem::path& fontPath)
     result->text.setStyle(sf::Text::Bold);
     return std::move(result);
 }
-
-class FpsCounter
-{
-public:
-    void update(const dgm::Time& time)
-    {
-        maxFps =
-            std::max(static_cast<unsigned>(1.f / time.getDeltaTime()), maxFps);
-        elapsed += time.getDeltaTime();
-
-        if (elapsed > 1.f)
-        {
-            text = std::to_string(maxFps);
-            maxFps = 0;
-            elapsed = 0.f;
-        }
-    }
-
-    const std::string& getString() const
-    {
-        return text;
-    }
-
-private:
-    float elapsed = 0.f;
-    unsigned maxFps = 0;
-    std::string text = "0";
-};
 
 int main(int, char*[])
 {

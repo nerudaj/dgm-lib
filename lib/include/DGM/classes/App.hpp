@@ -129,6 +129,7 @@ namespace dgm
         std::ofstream errbuf;
         std::streambuf* stdoutBackup = nullptr;
         std::streambuf* stderrBackup = nullptr;
+        std::streambuf* sferrBackup = nullptr;
         std::deque<std::unique_ptr<AppState>> states;
         ScheduledCleanup scheduledCleanup = ScheduledCleanup::None;
         std::string messageForRestore = "";

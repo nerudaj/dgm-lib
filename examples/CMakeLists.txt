@@ -15,6 +15,8 @@ add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-02-controller" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-03-math" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-04-particle-effects" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-05-camera-manual-control" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-06-spatial-buffer" )
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-07-texture-atlas" )
 
 # add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-app" )
 # 
