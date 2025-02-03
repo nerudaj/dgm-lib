@@ -37,12 +37,12 @@ int main()
     auto&& atlas = dgm::TextureAtlas(1920, 1920);
 
     auto&& tilesetLoc = atlas.addTileset(
-        resmgr.get<sf::Texture>("tileset.png").value().get(),
-        resmgr.get<dgm::Clip>("tileset.png.clip").value().get());
+        resmgr.get<sf::Texture>("tileset.png"),
+        resmgr.get<dgm::Clip>("tileset.png.clip"));
 
     auto&& spritesheetLoc = atlas.addSpritesheet(
-        resmgr.get<sf::Texture>("soldier.png").value().get(),
-        resmgr.get<dgm::AnimationStates>("soldier_config.json").value().get());
+        resmgr.get<sf::Texture>("soldier.png"),
+        resmgr.get<dgm::AnimationStates>("soldier_config.json"));
 
     atlas.getTexture().copyToImage().saveToFile("atlas.png");
 
