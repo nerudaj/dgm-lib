@@ -1,6 +1,7 @@
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppState.hpp>
 #include <DGM/classes/Error.hpp>
+#include <SFML/System/Err.hpp>
 #include <iostream>
 
 dgm::App::App(dgm::Window& window)
@@ -11,9 +12,11 @@ dgm::App::App(dgm::Window& window)
 
     stdoutBackup = std::cout.rdbuf();
     stderrBackup = std::cerr.rdbuf();
+    sferrBackup = sf::err().rdbuf();
 
     std::cout.rdbuf(outbuf.rdbuf());
     std::cerr.rdbuf(errbuf.rdbuf());
+    sf::err().rdbuf(errbuf.rdbuf());
 
     time.reset();
 }
@@ -24,6 +27,7 @@ dgm::App::~App()
 
     std::cout.rdbuf(stdoutBackup);
     std::cerr.rdbuf(stderrBackup);
+    sf::err().rdbuf(sferrBackup);
 }
 
 void dgm::App::run()
