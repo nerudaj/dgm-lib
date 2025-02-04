@@ -1,17 +1,12 @@
 #include <DGM/classes/Math.hpp>
 #include <DGM/classes/Particle.hpp>
+#include <VBOHelper.hpp>
 
 using dgm::ps::Particle;
 
 void Particle::setAnimationFrame(const sf::IntRect& frame) noexcept
 {
-    quad[0].texCoords = sf::Vector2f(float(frame.left), float(frame.top));
-    quad[1].texCoords =
-        sf::Vector2f(float(frame.left + frame.width), float(frame.top));
-    quad[2].texCoords = sf::Vector2f(
-        float(frame.left + frame.width), float(frame.top + frame.height));
-    quad[3].texCoords =
-        sf::Vector2f(float(frame.left), float(frame.top + frame.height));
+    VBOHelper::setTextureCoords(quad, frame);
 }
 
 // This just makes a unit vector that has angle of 45°
@@ -35,8 +30,11 @@ void dgm::ps::Particle::setRotation(const float angle) noexcept
     // we do the same and just alter signs and order of X and Y components
     quad[0].position = POS + sf::Vector2f(BASE_VEC.y, -BASE_VEC.x);
     quad[1].position = POS + BASE_VEC;
-    quad[2].position = POS + sf::Vector2f(-BASE_VEC.y, BASE_VEC.x);
-    quad[3].position = POS - BASE_VEC;
+    quad[2].position = POS - BASE_VEC;
+
+    quad[3].position = POS + BASE_VEC;
+    quad[4].position = POS + sf::Vector2f(-BASE_VEC.y, BASE_VEC.x);
+    quad[5].position = POS - BASE_VEC;
 }
 
 void Particle::spawn(
@@ -49,12 +47,18 @@ void Particle::spawn(
     rotation = 0.f;
     diagonalHalfLength = dgm::Math::getSize(halfSize);
 
-    sf::Vector2f offsets[] = { { -halfSize.x, -halfSize.y },
-                               { halfSize.x, -halfSize.y },
-                               { halfSize.x, halfSize.y },
-                               { -halfSize.x, halfSize.y } };
+    sf::Vector2f offsets[] = {
+        // Upper-left triangle
+        { -halfSize.x, -halfSize.y },
+        { halfSize.x, -halfSize.y },
+        { -halfSize.x, halfSize.y },
+        // Bottom-right triangle
+        { halfSize.x, -halfSize.y },
+        { halfSize.x, halfSize.y },
+        { -halfSize.x, halfSize.y },
+    };
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 6; i++)
     {
         quad[i].position = newPosition + offsets[i];
     }

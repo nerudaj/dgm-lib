@@ -8,8 +8,10 @@ using SheetLocation = dgm::TextureAtlas::ResourceLocation<dgm::AnimationStates>;
 dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
 {
     atlasImage = sf::Image(sf::Vector2u {
-        atlasWidth,
-        atlasHeight,
+        sf::Vector2i {
+            atlasWidth,
+            atlasHeight,
+        },
     });
 
     freeAreas.push_back(sf::IntRect {
@@ -144,11 +146,14 @@ void dgm::TextureAtlas::copyTexture(
     const sf::Texture& textureToCopy, const sf::Vector2i& offset)
 {
     auto imageToCopy = textureToCopy.copyToImage();
-    atlasImage.copy(
-        imageToCopy,
-        sf::Vector2u(offset),
-        sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0)), // full image
-        /* applyAlpha */ false);
+    if (!atlasImage.copy(
+            imageToCopy,
+            sf::Vector2u(offset),
+            sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0)), // full image
+            /* applyAlpha */ false))
+    {
+        throw dgm::Exception("Could not copy source texture to atlas");
+    }
 
     if (!atlasTexture.loadFromImage(atlasImage))
     {

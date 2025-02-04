@@ -12,7 +12,7 @@ void dgm::Circle::debugRender(dgm::Window& window, sf::Color color) const
 {
     sf::CircleShape shape;
     shape.setRadius(radius);
-    shape.setOrigin(radius, radius);
+    shape.setOrigin({ radius, radius });
     shape.setPosition(position);
     shape.setFillColor(color);
     window.draw(shape);

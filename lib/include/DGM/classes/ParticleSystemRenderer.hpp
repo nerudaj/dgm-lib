@@ -21,7 +21,9 @@ namespace dgm
                 unsigned particleCount)
                 : sf::Drawable(), sf::Transformable()
             {
-                vertices = sf::VertexArray(sf::Quads, particleCount * 4);
+                vertices = sf::VertexArray(
+                    sf::PrimitiveType::Triangles,
+                    particleCount * VERTICES_PER_QUAD);
             }
 
         public:
@@ -34,8 +36,8 @@ namespace dgm
             [[nodiscard]] sf::Vertex*
             getParticleVertices(const std::size_t index) noexcept
             {
-                assert(index < vertices.getVertexCount() / 4);
-                return &vertices[index * 4];
+                assert(index < vertices.getVertexCount() / VERTICES_PER_QUAD);
+                return &vertices[index * VERTICES_PER_QUAD];
             }
 
             /**
@@ -67,6 +69,8 @@ namespace dgm
             }
 
         private:
+            constexpr static inline const unsigned VERTICES_PER_QUAD = 6;
+
             sf::VertexArray vertices;
             const sf::Texture* texture = nullptr;
         };
