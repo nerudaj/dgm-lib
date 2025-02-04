@@ -152,6 +152,8 @@ namespace dgm
                 return std::unexpected(std::format(
                     "Unloading resource failed. Reason: {}", e.what()));
             }
+
+            return std::true_type {};
         }
 
         /**

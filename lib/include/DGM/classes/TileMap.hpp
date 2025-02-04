@@ -15,7 +15,7 @@ namespace sf
 {
     class Texture;
     class RenderTarget;
-    class RenderStates;
+    struct RenderStates;
 } // namespace sf
 
 namespace dgm

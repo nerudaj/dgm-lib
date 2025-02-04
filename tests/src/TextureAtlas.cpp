@@ -2,13 +2,6 @@
 #include <DGM/classes/TextureAtlas.hpp>
 #include <catch2/catch_all.hpp>
 
-sf::Texture createTexture(unsigned width, unsigned height)
-{
-    sf::Texture texture;
-    texture.create(width, height);
-    return texture;
-}
-
 dgm::Clip createDummyClip()
 {
     return dgm::Clip(
@@ -53,55 +46,72 @@ TEST_CASE("[TextureAtlas]")
         SECTION("Only horizontal subdivision")
         {
             auto&& vec = subdivideAreaTest(
-                sf::IntRect(128, 0, 128, 128), sf::Vector2i(96, 128));
+                sf::IntRect(sf::Vector2i(128, 0), sf::Vector2i(128, 128)),
+                sf::Vector2i(96, 128));
             REQUIRE(1u == vec.size());
-            COMPARE_INTRECTS(vec.front(), sf::IntRect(224, 0, 32, 128));
+            COMPARE_INTRECTS(
+                vec.front(),
+                sf::IntRect(sf::Vector2i(224, 0), sf::Vector2i(32, 128)));
         }
 
         SECTION("Only vertical subdivision")
         {
             auto&& vec = subdivideAreaTest(
-                sf::IntRect(0, 128, 128, 128), sf::Vector2i(128, 96));
+                sf::IntRect(sf::Vector2i(0, 128), sf::Vector2i(128, 128)),
+                sf::Vector2i(128, 96));
             REQUIRE(1u == vec.size());
-            COMPARE_INTRECTS(vec.front(), sf::IntRect(0, 224, 128, 32));
+            COMPARE_INTRECTS(
+                vec.front(),
+                sf::IntRect(sf::Vector2i(0, 224), sf::Vector2i(128, 32)));
         }
 
         SECTION("Both subdivisions")
         {
             auto&& vec = subdivideAreaTest(
-                sf::IntRect(0, 0, 128, 128), sf::Vector2i(64, 64));
+                sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(128, 128)),
+                sf::Vector2i(64, 64));
             REQUIRE(2u == vec.size());
-            COMPARE_INTRECTS(vec[0], sf::IntRect(64, 0, 64, 64));
-            COMPARE_INTRECTS(vec[1], sf::IntRect(0, 64, 128, 64));
+            COMPARE_INTRECTS(
+                vec[0], sf::IntRect(sf::Vector2i(64, 0), sf::Vector2i(64, 64)));
+            COMPARE_INTRECTS(
+                vec[1],
+                sf::IntRect(sf::Vector2i(0, 64), sf::Vector2i(128, 64)));
         }
 
         SECTION("Full horizontal fill")
         {
             auto&& vec = subdivideAreaTest(
-                sf::IntRect(128, 0, 128, 128), sf::Vector2i(128, 64));
+                sf::IntRect(sf::Vector2i(128, 0), sf::Vector2i(128, 128)),
+                sf::Vector2i(128, 64));
             REQUIRE(1u == vec.size());
-            COMPARE_INTRECTS(vec.front(), sf::IntRect(128, 64, 128, 64));
+            COMPARE_INTRECTS(
+                vec.front(),
+                sf::IntRect(sf::Vector2i(128, 64), sf::Vector2i(128, 64)));
         }
 
         SECTION("Full vertical fill")
         {
             auto&& vec = subdivideAreaTest(
-                sf::IntRect(0, 0, 128, 128), sf::Vector2i(64, 128));
+                sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(128, 128)),
+                sf::Vector2i(64, 128));
             REQUIRE(1u == vec.size());
-            COMPARE_INTRECTS(vec.front(), sf::IntRect(64, 0, 64, 128));
+            COMPARE_INTRECTS(
+                vec.front(),
+                sf::IntRect(sf::Vector2i(64, 0), sf::Vector2i(64, 128)));
         }
 
         SECTION("Full fill")
         {
             REQUIRE(subdivideAreaTest(
-                        sf::IntRect(64, 64, 64, 64), sf::Vector2i(64, 64))
+                        sf::IntRect(sf::Vector2i(64, 64), sf::Vector2i(64, 64)),
+                        sf::Vector2i(64, 64))
                         .empty());
         }
     }
 
     SECTION("Correctly adds Clip to empty texture")
     {
-        auto&& texture = createTexture(128, 128);
+        auto&& texture = sf::Texture(sf::Vector2u { 128u, 128u });
         auto&& clip = createDummyClip();
 
         auto&& result = atlas.addTileset(texture, clip);
@@ -117,7 +127,7 @@ TEST_CASE("[TextureAtlas]")
 
     SECTION("Correctly adds second Clip (horizontal sub-area)")
     {
-        auto&& texture = createTexture(128, 128);
+        auto&& texture = sf::Texture(sf::Vector2u { 128u, 128u });
         auto&& clip = createDummyClip();
 
         std::ignore = atlas.addTileset(texture, clip);
@@ -132,14 +142,14 @@ TEST_CASE("[TextureAtlas]")
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(138, 20), newClip.getFrame(0).getPosition());
+            sf::Vector2i(138, 20), newClip.getFrame(0).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(182, 20), newClip.getFrame(1).getPosition());
+            sf::Vector2i(182, 20), newClip.getFrame(1).position);
     }
 
     SECTION("Correctly adds second Clip (vertical sub-area)")
     {
-        auto&& texture = createTexture(396, 128);
+        auto&& texture = sf::Texture(sf::Vector2u { 396u, 128u });
         auto&& clip = createDummyClip();
 
         std::ignore = atlas.addTileset(texture, clip);
@@ -150,14 +160,14 @@ TEST_CASE("[TextureAtlas]")
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(10, 148), newClip.getFrame(0).getPosition());
+            sf::Vector2i(10, 148), newClip.getFrame(0).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(54, 148), newClip.getFrame(1).getPosition());
+            sf::Vector2i(54, 148), newClip.getFrame(1).position);
     }
 
     SECTION("Correctly adds third clip")
     {
-        auto&& texture = createTexture(256, 128);
+        auto&& texture = sf::Texture(sf::Vector2u { 256u, 128u });
         auto&& clip = createDummyClip();
 
         std::ignore = atlas.addTileset(texture, clip);
@@ -172,17 +182,17 @@ TEST_CASE("[TextureAtlas]")
         REQUIRE(newClip.getFrameCount() == 2u);
         COMPARE_UNSIGNED_VECTORS(newClip.getFrameSize(), clip.getFrameSize());
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(266, 148), newClip.getFrame(0).getPosition());
+            sf::Vector2i(266, 148), newClip.getFrame(0).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(310, 148), newClip.getFrame(1).getPosition());
+            sf::Vector2i(310, 148), newClip.getFrame(1).position);
     }
 
     SECTION("Correctly adds spritesheet")
     {
-        auto&& clipTexture = createTexture(96, 96);
+        auto&& clipTexture = sf::Texture(sf::Vector2u { 96u, 96u });
         auto&& clip = createDummyClip();
 
-        auto&& sheetTexture = createTexture(256, 256);
+        auto&& sheetTexture = sf::Texture(sf::Vector2u { 256u, 256u });
         auto&& sheet = createDummySpritesheet();
 
         std::ignore = atlas.addTileset(clipTexture, clip);
@@ -197,18 +207,18 @@ TEST_CASE("[TextureAtlas]")
         COMPARE_UNSIGNED_VECTORS(
             firstClip.getFrameSize(), sheet["first"].getFrameSize());
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(10, 116), firstClip.getFrame(0).getPosition());
+            sf::Vector2i(10, 116), firstClip.getFrame(0).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(54, 116), firstClip.getFrame(1).getPosition());
+            sf::Vector2i(54, 116), firstClip.getFrame(1).position);
 
         REQUIRE(secondClip.getFrameCount() == 3u);
         COMPARE_UNSIGNED_VECTORS(
             secondClip.getFrameSize(), sheet["second"].getFrameSize());
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(6, 224), secondClip.getFrame(0).getPosition());
+            sf::Vector2i(6, 224), secondClip.getFrame(0).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(38, 224), secondClip.getFrame(1).getPosition());
+            sf::Vector2i(38, 224), secondClip.getFrame(1).position);
         COMPARE_SIGNED_VECTORS(
-            sf::Vector2u(70, 224), secondClip.getFrame(2).getPosition());
+            sf::Vector2i(70, 224), secondClip.getFrame(2).position);
     }
 }
