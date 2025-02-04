@@ -7,8 +7,8 @@ TEST_CASE("[Controller]")
 
     SECTION("Can bind two distinct keyboard keys")
     {
-        input.bindInput(0, sf::Keyboard::A);
-        input.bindInput(1, sf::Keyboard::B);
+        input.bindInput(0, sf::Keyboard::Key::A);
+        input.bindInput(1, sf::Keyboard::Key::B);
     }
 
     SECTION("Can bind two distinct xbox buttons")
@@ -20,7 +20,7 @@ TEST_CASE("[Controller]")
     SECTION("Can bind all possible inputs to the same code")
     {
         input.bindInput(0, dgm::Xbox::Button::A);
-        input.bindInput(0, sf::Keyboard::A);
+        input.bindInput(0, sf::Keyboard::Key::A);
         input.bindInput(0, sf::Mouse::Button::Left);
         input.bindInput(0, dgm::Xbox::Axis::LTrigger);
     }
@@ -29,7 +29,7 @@ TEST_CASE("[Controller]")
         "BUG: Does not return false when mouse button is not bound and nothing "
         "is pressed")
     {
-        input.bindInput(0, sf::Keyboard::A);
+        input.bindInput(0, sf::Keyboard::Key::A);
         REQUIRE_FALSE(input.getInputValue(0));
     }
 

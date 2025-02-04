@@ -1,4 +1,5 @@
 #include <DGM/classes/Window.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 void dgm::Window::open(
@@ -7,11 +8,14 @@ void dgm::Window::open(
     const bool forceFullscreen)
 {
     title = windowTitle;
-    style = forceFullscreen ? sf::Style::Fullscreen
-                            : (sf::Style::Titlebar | sf::Style::Close);
+    style = sf::Style::Titlebar | sf::Style::Close;
     fullscreen = forceFullscreen;
 
-    window.create({ resolution.x, resolution.y, 32 }, windowTitle, style);
+    window.create(
+        sf::VideoMode { sf::Vector2u(resolution.x, resolution.y), 32 },
+        windowTitle,
+        style,
+        forceFullscreen ? sf::State::Fullscreen : sf::State::Windowed);
 }
 
 dgm::WindowSettings dgm::Window::close()
@@ -44,8 +48,7 @@ void dgm::Window::changeResolution(const sf::Vector2u& newResolution)
 sf::Image dgm::Window::getScreenshot() const
 {
     sf::Vector2u windowSize = window.getSize();
-    sf::Texture texture;
-    texture.create(windowSize.x, windowSize.y);
+    sf::Texture texture = sf::Texture(sf::Vector2u(windowSize.x, windowSize.y));
     texture.update(window);
     return texture.copyToImage();
 }

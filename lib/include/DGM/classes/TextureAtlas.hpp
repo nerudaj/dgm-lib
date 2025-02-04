@@ -1,6 +1,7 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Error.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <vector>
 
@@ -55,7 +56,7 @@ namespace dgm
         {
             // NOTE: don't use sf::IntRect::contains
             // - too much overhead
-            return textureDims.x <= area.width && textureDims.y <= area.height;
+            return textureDims.x <= area.size.x && textureDims.y <= area.size.y;
         }
 
         void adjustFreeArea(

@@ -59,7 +59,7 @@ namespace dgm
         loadFont(const std::filesystem::path& path)
         {
             auto&& font = sf::Font();
-            if (!font.loadFromFile(path.string()))
+            if (!font.openFromFile(path.string()))
             {
                 return std::unexpected(std::format(
                     "Could not load font from path '{}'", path.string()));

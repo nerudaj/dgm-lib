@@ -96,15 +96,15 @@ normalizeBoundaries(const sf::IntRect& src, const dgm::Mesh& mesh)
     sf::Vector2u tileSize = mesh.getVoxelSize();
 
     // TODO: revisit
-    dst.left = src.left / tileSize.x;
-    dst.top = src.top / tileSize.y;
-    dst.width = (src.left + src.width) / tileSize.x;
-    dst.height = (src.top + src.height) / tileSize.y;
+    dst.position.x = src.position.x / tileSize.x;
+    dst.position.y = src.position.y / tileSize.y;
+    dst.size.x = (src.position.x + src.size.x) / tileSize.x;
+    dst.size.y = (src.position.y + src.size.y) / tileSize.y;
 
-    if (dst.left < 0) dst.left = 0;
-    if (unsigned(dst.width) >= meshSize.x) dst.width = meshSize.x - 1;
-    if (dst.top < 0) dst.top = 0;
-    if (unsigned(dst.height) >= meshSize.y) dst.height = meshSize.y - 1;
+    if (dst.position.x < 0) dst.position.y = 0;
+    if (unsigned(dst.size.x) >= meshSize.x) dst.size.x = meshSize.x - 1;
+    if (dst.position.y < 0) dst.position.x = 0;
+    if (unsigned(dst.size.y) >= meshSize.y) dst.size.y = meshSize.y - 1;
 
     return dst;
 }
@@ -122,9 +122,9 @@ bool dgm::Collision::basic(
 
     dgm::Rect box(sf::Vector2f(0.f, 0.f), tileSize);
 
-    for (int y = bounds.top; y <= bounds.height; y++)
+    for (int y = bounds.position.y; y <= bounds.size.y; y++)
     {
-        for (int x = bounds.left; x <= bounds.width; x++)
+        for (int x = bounds.position.x; x <= bounds.size.x; x++)
         {
             if (A[y * meshWidth + x] > 0)
             {
@@ -157,9 +157,9 @@ bool dgm::Collision::basic(
     sf::Vector2u meshSize = A.getDataSize();
     unsigned meshWidth = A.getDataSize().x;
 
-    for (int y = bounds.top; y <= bounds.height; y++)
+    for (int y = bounds.position.y; y <= bounds.size.y; y++)
     {
-        for (int x = bounds.left; x <= bounds.width; x++)
+        for (int x = bounds.position.x; x <= bounds.size.x; x++)
         {
             if (A[y * meshWidth + x] > 0)
             {

@@ -18,6 +18,10 @@ dgm-lib v3.0.0
  * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
  * Moved `PreallocatedMemoryAmount` from `dgm::DynamicBuffer` template parameters to the constructor parameters
     * Also made the whole thing explicit
+ * SFML bumped to v3.0.0
+	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
+	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
+	* `dgm::Window::pollEvent` now returns `std::optional<sf::Event>` and accepts no parameters
 
 dgm-lib v2.5.0
  * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
