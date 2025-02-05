@@ -69,10 +69,9 @@ void dgm::Clip::init(
     const int Y_INCREMENT = frameSize.y + frameSpacing.y;
 
     sf::Vector2i frameStart = boundaries.position;
-    int frameStartY = boundaries.position.y;
     for (std::size_t y = 0, i = 0; y < Y_FRAME_COUNT; y++)
     {
-        int frameStartX = boundaries.position.x;
+        frameStart.x = boundaries.position.x;
         for (std::size_t x = 0; x < X_FRAME_COUNT && i < CONCRETE_FRAME_COUNT;
              x++, i++)
         {
