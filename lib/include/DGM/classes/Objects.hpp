@@ -167,7 +167,7 @@ namespace dgm
             return size;
         }
 
-        [[nodiscard]] sf::Vector2f getCenter() const noexcept
+        [[nodiscard]] constexpr sf::Vector2f getCenter() const noexcept
         {
             return getPosition() + getSize() / 2.f;
         }
@@ -258,12 +258,12 @@ namespace dgm
      *
      *  Currently, only collisions between circles and cones are supported
      */
-    class VisionCone final : public Object
+    class [[nodiscard]] VisionCone final : public Object
     {
         sf::Vector2f position = { 0.f, 0.f };
         sf::Vector2f forward = { 0.f, 0.f };
         float width = 0.f;
-        float rotation = 0.f;
+        sf::Angle rotation = sf::Angle::Zero;
 
     public:
         /**
@@ -303,15 +303,18 @@ namespace dgm
             position += direction;
         }
 
-        [[nodiscard]] constexpr float getRotation() const noexcept
+        [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
         {
             return rotation;
         }
 
-        void setRotation(const float angle) noexcept;
-        void rotate(const float angle) noexcept;
+        void setRotation(const sf::Angle angle) noexcept;
+        void rotate(const sf::Angle angle) noexcept;
 
-        [[nodiscard]] float getLength() const noexcept;
+        [[nodiscard]] float getLength() const noexcept
+        {
+            return forward.length();
+        }
 
         [[nodiscard]] constexpr float getWidth() const noexcept
         {

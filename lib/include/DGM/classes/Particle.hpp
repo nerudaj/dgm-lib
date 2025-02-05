@@ -26,8 +26,8 @@ namespace dgm
         {
         protected:
             sf::Vertex* quad; ///< Pointer to first of the four quad vertices
-            float lifespan = 1.f; ///< How long till dead
-            float rotation = 0.f; ///< Current angle
+            float lifespan = 1.f;                 ///< How long till dead
+            sf::Angle rotation = sf::Angle::Zero; ///< Current angle
             float diagonalHalfLength =
                 1.f; ///< Each particle is a square with this being the half of
                      ///< diagonal length, used for rotation calculations
@@ -51,7 +51,7 @@ namespace dgm
                 return forward;
             }
 
-            [[nodiscard]] constexpr float getRotation() const noexcept
+            [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
             {
                 return rotation;
             }
@@ -81,7 +81,7 @@ namespace dgm
                 forward = f;
             }
 
-            virtual void setRotation(const float angle) noexcept;
+            virtual void setRotation(const sf::Angle angle) noexcept;
 
             /**
              *  \brief Sets the color of the particle
@@ -109,7 +109,7 @@ namespace dgm
             /**
              *  \brief Rotate particle by a given angle
              */
-            virtual void rotateBy(const float angle) noexcept
+            virtual void rotateBy(const sf::Angle angle) noexcept
             {
                 setRotation(rotation + angle);
             }

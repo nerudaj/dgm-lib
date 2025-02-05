@@ -177,12 +177,8 @@ bool dgm::Collision::basic(
 
 bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
 {
-    /*auto transposedCirclePos = dgm::Math::rotateVector(
-            c.getPosition(),
-            -cone.getRotation())
-            - cone.getPosition();*/
-    auto transposedCirclePos = dgm::Math::getRotated(
-        c.getPosition() - cone.getPosition(), -cone.getRotation());
+    auto transposedCirclePos =
+        (c.getPosition() - cone.getPosition()).rotatedBy(-cone.getRotation());
 
     // It is "behind" the cone, not touching it
     if (transposedCirclePos.x + c.getRadius() < 0) return false;
@@ -190,7 +186,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
     else if (transposedCirclePos.x - c.getRadius() > cone.getLength())
         return false;
     // It is intersecting origin position of the cone
-    else if (dgm::Math::getSize(transposedCirclePos) < c.getRadius())
+    else if (transposedCirclePos.length() < c.getRadius())
         return true;
 
     // cone is symmetrical, we can only test positive side
@@ -200,8 +196,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
     // TODO: this one is broken
     const sf::Vector2f rightTipPoint = { cone.getLength(),
                                          cone.getWidth() / 2.f };
-    if (dgm::Math::getSize(rightTipPoint - c.getPosition()) < c.getRadius())
-        return true;
+    if ((rightTipPoint - c.getPosition()).length() < c.getRadius()) return true;
 
     // Last condition - circle center is somewhere on the interval <0,
     // cone.length> Cone edge rises from [0, 0] to [length, width / 2] so y
@@ -214,8 +209,8 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
 
 bool dgm::Collision::basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
 {
-    auto transposedPointPos = dgm::Math::getRotated(
-        sf::Vector2f(p) - cone.getPosition(), -cone.getRotation());
+    auto transposedPointPos =
+        (sf::Vector2f(p) - cone.getPosition()).rotatedBy(-cone.getRotation());
 
     if (transposedPointPos.x < 0 || transposedPointPos.x > cone.getLength())
         return false;

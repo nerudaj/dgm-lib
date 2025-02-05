@@ -79,7 +79,7 @@ namespace dgm
          *
          * \return TRUE if values are equal within a given precision
          */
-        [[nodiscard]] static constexpr inline bool isApproxEqual(
+        [[nodiscard]] static inline bool isApproxEqual(
             const float value,
             const float expectedValue,
             const float precision = 0.01f) noexcept
@@ -134,7 +134,7 @@ namespace dgm
         /**
          *  \brief Convert cartesian coordinates to polar
          */
-        [[nodiscard]] static constexpr inline PolarCoords
+        [[nodiscard]] static inline PolarCoords
         cartesianToPolar(const sf::Vector2f& coords) noexcept
         {
             return PolarCoords {

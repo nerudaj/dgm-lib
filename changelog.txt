@@ -25,6 +25,8 @@ dgm-lib v3.0.0
 	* Math utils migrated to use `sf::Angle`
 		* `polarToCartesian` overload accepting `PolarCoords` struct was removed
 		* `cartesianToPolar` overload accepting two floats was removed
+	* `dgm::Cone` migrated to use `sf::Angle`
+	* `dgm::Particle` migrated to use `sf::Angle`
 	* `dgm::Math::map` removed
 	* `dgm::Math::getRotated` removed, replaced by `sf::Vector2::rotateBy`
 	* `dgm::Math::getDotProduct` removed, replaced by `sf::Vector2::dot`

@@ -13,7 +13,7 @@ void Particle::setAnimationFrame(const sf::IntRect& frame) noexcept
 constexpr float SIN_OF_45_DEG = 0.707106f;
 const sf::Vector2f VEC_45_DEG = sf::Vector2f(SIN_OF_45_DEG, -SIN_OF_45_DEG);
 
-void dgm::ps::Particle::setRotation(const float angle) noexcept
+void dgm::ps::Particle::setRotation(const sf::Angle angle) noexcept
 {
     rotation = angle;
 
@@ -22,8 +22,7 @@ void dgm::ps::Particle::setRotation(const float angle) noexcept
     // of first vertex after rotation and is scaled to point to one of the new
     // vertex positions
     const auto POS = getPosition();
-    const auto BASE_VEC =
-        dgm::Math::getRotated(VEC_45_DEG, rotation) * diagonalHalfLength;
+    const auto BASE_VEC = VEC_45_DEG.rotatedBy(rotation) * diagonalHalfLength;
 
     // So the first vertex is just offset from center POS in direction of
     // BASE_VEC Each subsequent vertex is perpendicular to the previous one so
@@ -44,8 +43,8 @@ void Particle::spawn(
 {
     lifespan = newLifespan.asSeconds();
     const auto halfSize = newSize / 2.f;
-    rotation = 0.f;
-    diagonalHalfLength = dgm::Math::getSize(halfSize);
+    rotation = sf::Angle::Zero;
+    diagonalHalfLength = halfSize.length();
 
     sf::Vector2f offsets[] = {
         // Upper-left triangle
