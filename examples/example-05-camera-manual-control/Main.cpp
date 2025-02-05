@@ -37,8 +37,8 @@ int main(int, char*[])
     auto&& playerDot = dgm::Circle({ 100.f, 100.f }, 8.f);
 
     // Make the camera take up the whole screen and use native window resolution
-    auto&& camera =
-        dgm::Camera({ 0.f, 0.f, 1.f, 1.f }, sf::Vector2f(window.getSize()));
+    auto&& camera = dgm::Camera(
+        { { 0.f, 0.f }, { 1.f, 1.f } }, sf::Vector2f(window.getSize()));
 
     window.getWindowContext().setFramerateLimit(60);
 
@@ -48,24 +48,23 @@ int main(int, char*[])
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
                 std::ignore = window.close();
-            else if (event.type == sf::Event::KeyPressed)
+            else if (const auto key = event->getIf<sf::Event::KeyPressed>())
             {
-                if (event.key.code == sf::Keyboard::W) playerDot.move(0, -3.f);
-                if (event.key.code == sf::Keyboard::A)
+                if (key->code == sf::Keyboard::Key::W) playerDot.move(0, -3.f);
+                if (key->code == sf::Keyboard::Key::A)
                     playerDot.move(-3.f, 0.f);
-                if (event.key.code == sf::Keyboard::S) playerDot.move(0, 3.f);
-                if (event.key.code == sf::Keyboard::D) playerDot.move(3.f, 0.f);
-                if (event.key.code == sf::Keyboard::Up) zoomLevel -= 0.1f;
-                if (event.key.code == sf::Keyboard::Down) zoomLevel += 0.1f;
-                if (event.key.code == sf::Keyboard::Space)
+                if (key->code == sf::Keyboard::Key::S) playerDot.move(0, 3.f);
+                if (key->code == sf::Keyboard::Key::D) playerDot.move(3.f, 0.f);
+                if (key->code == sf::Keyboard::Key::Up) zoomLevel -= 0.1f;
+                if (key->code == sf::Keyboard::Key::Down) zoomLevel += 0.1f;
+                if (key->code == sf::Keyboard::Key::Space)
                     camera.shake(sf::seconds(2.f), 30.f);
-                if (event.key.code == sf::Keyboard::Q) rotation -= 0.5f;
-                if (event.key.code == sf::Keyboard::E) rotation += 0.5f;
+                if (key->code == sf::Keyboard::Key::Q) rotation -= 0.5f;
+                if (key->code == sf::Keyboard::Key::E) rotation += 0.5f;
             }
         }
 
@@ -77,7 +76,7 @@ int main(int, char*[])
         // WARNING: Player is unable to move while the camera is shaking
 
         // Apply rest of the transforms
-        camera.setRotation(rotation);
+        camera.setRotation(sf::degrees(rotation));
         camera.setZoom(zoomLevel);
 
         // In each frame, update sf::RenderWindow's view with current camera

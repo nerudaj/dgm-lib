@@ -46,12 +46,11 @@ int main()
     auto&& resmgr = DemoData::loadDemoResources();
     auto&& tilemap = createSampleTilemap(resmgr);
 
-    sf::Event event;
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }

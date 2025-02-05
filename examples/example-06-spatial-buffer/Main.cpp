@@ -130,7 +130,7 @@ std::unique_ptr<TextWrapper>
 createTextWrapper(const std::filesystem::path& fontPath)
 {
     auto result = std::make_unique<TextWrapper>();
-    if (!result->font.loadFromFile(fontPath.string()))
+    if (!result->font.openFromFile(fontPath.string()))
         throw std::runtime_error(
             std::format("Cannot load path {}", fontPath.string()));
     result->text.setFont(result->font);
@@ -142,7 +142,6 @@ createTextWrapper(const std::filesystem::path& fontPath)
 int main(int, char*[])
 {
     auto&& window = dgm::Window({ 1280, 720 }, "Sandbox", false);
-    sf::Event event;
     dgm::Time time;
 
     auto&& agentsViz = CollidingAgentsParticleSystem(20000);
@@ -152,9 +151,9 @@ int main(int, char*[])
 
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed) std::ignore = window.close();
+            if (event->is<sf::Event::Closed>()) std::ignore = window.close();
         }
 
         // Logic
