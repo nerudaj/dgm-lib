@@ -22,6 +22,14 @@ dgm-lib v3.0.0
 	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
 	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
 	* `dgm::Window::pollEvent` now returns `std::optional<sf::Event>` and accepts no parameters
+	* Math utils migrated to use `sf::Angle`
+		* `polarToCartesian` overload accepting `PolarCoords` struct was removed
+		* `cartesianToPolar` overload accepting two floats was removed
+	* `dgm::Math::map` removed
+	* `dgm::Math::getRotated` removed, replaced by `sf::Vector2::rotateBy`
+	* `dgm::Math::getDotProduct` removed, replaced by `sf::Vector2::dot`
+	* `dgm::Math::getSize` removed, replaced by `sf::Vector2::length`
+	* `dgm::Math::polarToCartesian` removed, replaced by `sf::Vector2` constructor accepting length and angle
 
 dgm-lib v2.5.0
  * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
