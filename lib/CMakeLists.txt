@@ -14,7 +14,7 @@ target_include_directories ( ${TARGET}
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PUBLIC sfml-system sfml-window sfml-graphics sfml-main
+	LINK_PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
 	LINK_PUBLIC xinput.lib
 	LINK_PRIVATE nlohmann_json::nlohmann_json
 )
