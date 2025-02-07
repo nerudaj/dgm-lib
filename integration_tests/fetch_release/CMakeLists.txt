@@ -4,10 +4,13 @@ include ( "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/get_cpp_init.cmake" )
 
 project ( fetch_release )
 
+message ( "Git branch: ${GIT_BRANCH}" )
+message ( "Latest tag: ${LATEST_TAG}" )
+
 # Fetch zips with compiled libraries
 fetch_prebuilt_dependency (
     SFML
-    URL "https://github.com/SFML/SFML/releases/download/2.6.1/SFML-2.6.1-windows-vc17-64-bit.zip"
+    URL "https://github.com/SFML/SFML/releases/download/${LATEST_TAG}/SFML-${LATEST_TAG}-windows-vc17-64-bit.zip"
 )
 
 fetch_prebuilt_dependency (
