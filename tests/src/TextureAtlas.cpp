@@ -1,35 +1,7 @@
 #include "CustomComparators.hpp"
 #include <DGM/classes/TextureAtlas.hpp>
+#include <DemoData.hpp>
 #include <catch2/catch_all.hpp>
-
-dgm::Clip createDummyClip()
-{
-    return dgm::Clip(
-        { 32, 32 },
-        sf::IntRect {
-            sf::Vector2i(10, 20),
-            sf::Vector2i(84, 40),
-        },
-        2,
-        { 12, 12 });
-}
-
-dgm::AnimationStates createDummySpritesheet()
-{
-    return { {
-                 "first",
-                 createDummyClip(),
-             },
-             {
-                 "second",
-                 dgm::Clip(
-                     { 32, 32 },
-                     sf::IntRect {
-                         sf::Vector2i(6, 128),
-                         sf::Vector2i(96, 32),
-                     }),
-             } };
-}
 
 std::vector<sf::IntRect>
 subdivideAreaTest(const sf::IntRect& area, const sf::Vector2i& takenTextureDims)

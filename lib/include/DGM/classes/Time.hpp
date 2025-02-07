@@ -11,7 +11,7 @@ namespace dgm
      *  It stores difference of time between last two
      *  calls to reset.
      */
-    class Time
+    class [[nodiscard]] Time
     {
     protected:
         sf::Clock clock;
