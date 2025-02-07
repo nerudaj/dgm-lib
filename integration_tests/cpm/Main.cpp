@@ -3,15 +3,14 @@
 int main(int, char* [])
 {
 	auto&& window = dgm::Window({ 1280,720 }, "Test", false);
-	sf::Event event;
-	
+
 	dgm::Circle circle(640.f, 360.f, 20.f);
 
 	while (window.isOpen())
 	{
-		while (window.pollEvent(event))
+		while (const auto event = window.pollEvent())
 		{
-			if (event.type == sf::Event::Closed) window.close();
+			if (event->is<sf::Event::Closed>()) std::ignore = window.close();
 		}
 
 		window.beginDraw();
