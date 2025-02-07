@@ -22,7 +22,7 @@ namespace dgm
     class [[nodiscard]] Animation final
     {
     public:
-        enum class [[nodiscard]] PlaybackStatus
+        enum class PlaybackStatus // not nodiscard on purpose
         {
             Playing,
             Finished
