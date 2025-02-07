@@ -17,22 +17,4 @@ add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-04-particle-effects" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-05-camera-manual-control" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-06-spatial-buffer" )
 add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-07-texture-atlas" )
-
-# add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-01-app" )
-# 
-# 
-# 
-# add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-05-pathfind" )
-# add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-06-simple-ai" )
-# add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-07-spatial-buffer" )
-
-
-# Future ordering:
-## TileMap
-## Controller
-## Math
-## ParticleEffects
-## Collisions
-## Camera
-## App
-## Spatial Effect
+add_subdirectory ( "${CMAKE_CURRENT_SOURCE_DIR}/example-08-pathfind" )

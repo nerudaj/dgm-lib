@@ -16,7 +16,7 @@ private:
 
     dgm::Circle body = dgm::Circle(100.f, 100.f, RADIUS);
     dgm::WorldNavMesh navMesh;
-    dgm::Path<dgm::WorldNavpoint> path;
+    std::optional<dgm::Path<dgm::WorldNavpoint>> path;
 
     sf::Vector2f oldPosition = { 0.f, 0.f };
     sf::Vector2f forward = { 0.f, 0.f };
@@ -25,12 +25,12 @@ private:
 
     void beginTransitionToNextPoint()
     {
-        if (path.isTraversed()) return;
+        if (!hasValidPath()) return;
 
         oldPosition = body.getPosition();
-        forward = path.getCurrentPoint().coord - body.getPosition();
+        forward = path->getCurrentPoint().coord - body.getPosition();
         transitionTimer = 0.f;
-        transitionDuration = dgm::Math::getSize(forward) / SPEED;
+        transitionDuration = forward.length() / SPEED;
     }
 
 public:
@@ -49,7 +49,7 @@ public:
 
     void update(const dgm::Time& time)
     {
-        if (path.isTraversed()) return;
+        if (!hasValidPath()) return;
 
         transitionTimer += time.getDeltaTime();
         const auto transition =
@@ -58,7 +58,7 @@ public:
 
         if (transition >= 1.f)
         {
-            path.advance();
+            path->advance();
             beginTransitionToNextPoint();
         }
     }
@@ -73,12 +73,13 @@ public:
         {
             path = std::move(result.value());
         }
-        else
-        {
-            path = dgm::Path<dgm::WorldNavpoint>();
-        }
 
         beginTransitionToNextPoint();
+    }
+
+    bool hasValidPath() const
+    {
+        return path && !path->isTraversed();
     }
 
     Actor(const dgm::Mesh& mesh) : navMesh(mesh) {}
@@ -89,30 +90,29 @@ int main()
     dgm::Window window({ 1280, 980 }, "Example: Pathfind", false);
     dgm::Time time;
 
-    dgm::ResourceManager resmgr;
+    dgm::ResourceManager resmgr = DemoData::loadDemoResources();
     std::ignore = resmgr.loadResourcesFromDirectory<sf::Texture>(
         RESOURCE_DIR,
-        [](const std::filesystem::path& path, sf::Texture& texture)
-        { texture.loadFromFile(path.string()); },
+        [](const std::filesystem::path& path)
+            -> std::expected<sf::Texture, dgm::Error>
+        { return sf::Texture(path); },
         { ".png" });
 
     auto level = DemoData::createDemoLevel(
-        resmgr.get<sf::Texture>("tileset.png").value().get(),
-        DemoData::getClipForExampleTileset());
+        resmgr.get<sf::Texture>("tileset.png"),
+        resmgr.get<dgm::Clip>("tileset.png.clip"));
 
     Actor actor(level.getMesh());
 
-    sf::Event event;
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }
-
-            if (event.type == sf::Event::MouseButtonPressed)
+            else if (event->is<sf::Event::MouseButtonPressed>())
             {
                 auto mousePos =
                     sf::Mouse::getPosition(window.getWindowContext());

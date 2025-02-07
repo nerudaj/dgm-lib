@@ -2,6 +2,7 @@
 // Optimized through use of dgm::SpatialBuffer and
 // custom particle system.
 
+#include "DemoData.hpp"
 #include <DGM/dgm.hpp>
 #include <FpsCounter.hpp>
 #include <WhiteRectangleParticle.hpp>
@@ -35,8 +36,8 @@ public:
 
             particle->spawn(position, sf::Vector2f(1.f, 1.f) * size);
             particle->setForward(
-                dgm::Math::getRotated(
-                    sf::Vector2f { 1.f, 0.f }, static_cast<float>(rand() % 360))
+                sf::Vector2f { 1.f, 0.f }.rotatedBy(
+                    sf::degrees(static_cast<float>(rand() % 360)))
                 * (6 - size) * 10.f);
 
             auto bodyCopy = particle->body;
@@ -120,33 +121,15 @@ private:
         particles;
 };
 
-struct TextWrapper
-{
-    sf::Font font;
-    sf::Text text;
-};
-
-std::unique_ptr<TextWrapper>
-createTextWrapper(const std::filesystem::path& fontPath)
-{
-    auto result = std::make_unique<TextWrapper>();
-    if (!result->font.openFromFile(fontPath.string()))
-        throw std::runtime_error(
-            std::format("Cannot load path {}", fontPath.string()));
-    result->text.setFont(result->font);
-    result->text.setFillColor(sf::Color::Red);
-    result->text.setStyle(sf::Text::Bold);
-    return std::move(result);
-}
-
 int main(int, char*[])
 {
     auto&& window = dgm::Window({ 1280, 720 }, "Sandbox", false);
     dgm::Time time;
 
+    auto&& resmgr = DemoData::loadDemoResources();
+    auto&& text = sf::Text(resmgr.get<sf::Font>("cruft.ttf"));
+
     auto&& agentsViz = CollidingAgentsParticleSystem(20000);
-    auto&& textWrapper =
-        createTextWrapper(RESOURCE_DIR + std::string("/cruft.ttf"));
     auto&& fpsCounter = FpsCounter();
 
     while (window.isOpen())
@@ -161,13 +144,13 @@ int main(int, char*[])
 
         agentsViz.update(time);
         fpsCounter.update(time);
-        textWrapper->text.setString(fpsCounter.getString());
+        text.setString(fpsCounter.getString());
 
         // Draw
         window.beginDraw();
 
         agentsViz.drawTo(window);
-        window.draw(textWrapper->text);
+        window.draw(text);
 
         window.endDraw();
     }
