@@ -1,5 +1,7 @@
 [![CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml)
 
+**NOTE**: You are currently on a v2.5.x. It has been archived for compatibility with legacy projects. For new projects, switch to main.
+
 # Readme
 
 This project is an extension library for [SFML](http://sfml-dev.org). The library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation.
