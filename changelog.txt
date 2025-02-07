@@ -1,5 +1,5 @@
 dgm-lib v3.0.0
- * Library target has been renamed to `lib-dgm` and a `dgm::dgm` alias has been added. Use that for linking
+ * Library target has been renamed to `dgm-lib` and a `dgm::dgm` alias has been added. Use that for linking
  * `dgm::AppStateConfig` marked as final
  * `dgm::Clip` is now nodiscard and final
  * `dgm::Camera` is now final
@@ -18,6 +18,10 @@ dgm-lib v3.0.0
  * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
  * Moved `PreallocatedMemoryAmount` from `dgm::DynamicBuffer` template parameters to the constructor parameters
     * Also made the whole thing explicit
+ * Added example for `dgm::NavMesh` called `example-08-pathfinding`
+ * Default constructor of `dgm::Animation` was removed
+ * `dgm::Animation` is nodiscard and final, most of the interface is noexcept
+ * `dgm::Time` is nodiscard
  * SFML bumped to v3.0.0
 	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
 	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
@@ -32,8 +36,7 @@ dgm-lib v3.0.0
 	* `dgm::Math::getDotProduct` removed, replaced by `sf::Vector2::dot`
 	* `dgm::Math::getSize` removed, replaced by `sf::Vector2::length`
 	* `dgm::Math::polarToCartesian` removed, replaced by `sf::Vector2` constructor accepting length and angle
-    * Added example for `dgm::NavMesh` called `example-08-pathfinding`
-    * Default constructor of `dgm::Animation` was removed
+    * `dgm::Particle` and related particle system classes now internally allocate 6 vertices instead of 4, because `sf::PrimitiveType::Quads` was removed.
 
 dgm-lib v2.5.0
  * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
