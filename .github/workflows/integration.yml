@@ -40,7 +40,7 @@ jobs:
       run: |
         mkdir _build
         cd _build
-        cmake -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} -D LATEST_TAG=${{ steps.dgm.release }} ..
+        cmake -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} -D LATEST_TAG=${{ steps.dgm.outputs.release }} ..
       shell: cmd
 
     - name: Build

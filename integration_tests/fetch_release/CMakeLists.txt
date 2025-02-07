@@ -7,15 +7,17 @@ project ( fetch_release )
 message ( "Git branch: ${GIT_BRANCH}" )
 message ( "Latest tag: ${LATEST_TAG}" )
 
+set ( SFML_VERSION "2.6.1" )
+
 # Fetch zips with compiled libraries
 fetch_prebuilt_dependency (
     SFML
-    URL "https://github.com/SFML/SFML/releases/download/${LATEST_TAG}/SFML-${LATEST_TAG}-windows-vc17-64-bit.zip"
+    URL "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc17-64-bit.zip"
 )
 
 fetch_prebuilt_dependency (
     DGM
-    URL "https://github.com/nerudaj/dgm-lib/releases/download/v2.3.1/dgm-lib-2.3.1-winx64-vc17-x64-for-SFML-2.6.1.zip"
+    URL "https://github.com/nerudaj/dgm-lib/releases/download/${LATEST_TAG}/dgm-lib-${LATEST_TAG}-winx64-vc17-x64-for-SFML-${SFML_VERSION}.zip"
 )
 
 # Create linkable targets for SFML
