@@ -6,7 +6,7 @@ using dgm::ps::Particle;
 
 void Particle::setAnimationFrame(const sf::IntRect& frame) noexcept
 {
-    VBOHelper::setTextureCoords(quad, frame);
+    VBOHelper::setTextureCoords(vertices.data(), frame);
 }
 
 // This just makes a unit vector that has angle of 45°
@@ -27,13 +27,13 @@ void dgm::ps::Particle::setRotation(const sf::Angle angle) noexcept
     // So the first vertex is just offset from center POS in direction of
     // BASE_VEC Each subsequent vertex is perpendicular to the previous one so
     // we do the same and just alter signs and order of X and Y components
-    quad[0].position = POS + sf::Vector2f(BASE_VEC.y, -BASE_VEC.x);
-    quad[1].position = POS + BASE_VEC;
-    quad[2].position = POS - BASE_VEC;
+    vertices[0].position = POS + sf::Vector2f(BASE_VEC.y, -BASE_VEC.x);
+    vertices[1].position = POS + BASE_VEC;
+    vertices[2].position = POS - BASE_VEC;
 
-    quad[3].position = POS + BASE_VEC;
-    quad[4].position = POS + sf::Vector2f(-BASE_VEC.y, BASE_VEC.x);
-    quad[5].position = POS - BASE_VEC;
+    vertices[3].position = POS + BASE_VEC;
+    vertices[4].position = POS + sf::Vector2f(-BASE_VEC.y, BASE_VEC.x);
+    vertices[5].position = POS - BASE_VEC;
 }
 
 void Particle::spawn(
@@ -57,8 +57,9 @@ void Particle::spawn(
         { -halfSize.x, halfSize.y },
     };
 
-    for (int i = 0; i < 6; i++)
+    assert(vertices.size() == std::size(offsets));
+    for (int i = 0; i < vertices.size(); i++)
     {
-        quad[i].position = newPosition + offsets[i];
+        vertices[i].position = newPosition + offsets[i];
     }
 }

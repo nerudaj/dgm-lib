@@ -7,6 +7,7 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <cassert>
+#include <span>
 
 namespace dgm
 {
@@ -28,16 +29,16 @@ namespace dgm
 
         public:
             /**
-             *  \brief Get array of four vertices for given particle
+             *  \brief Get array of vertices for given particle
              *
              *  \param[in] index  Index of particle
-             *  \return Pointer to array of four vertices
              */
-            [[nodiscard]] sf::Vertex*
+            [[nodiscard]] std::span<sf::Vertex>
             getParticleVertices(const std::size_t index) noexcept
             {
                 assert(index < vertices.getVertexCount() / VERTICES_PER_QUAD);
-                return &vertices[index * VERTICES_PER_QUAD];
+                return std::span(
+                    &vertices[index * VERTICES_PER_QUAD], VERTICES_PER_QUAD);
             }
 
             /**
@@ -75,4 +76,4 @@ namespace dgm
             const sf::Texture* texture = nullptr;
         };
     }; // namespace ps
-};     // namespace dgm
+}; // namespace dgm

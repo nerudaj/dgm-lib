@@ -9,6 +9,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <concepts>
+#include <span>
 
 namespace dgm
 {
@@ -77,7 +78,7 @@ namespace dgm
 
         protected:
             [[nodiscard]] inline std::unique_ptr<dgm::ps::Particle>
-            createParticle(sf::Vertex* vertices, unsigned index) const
+            createParticle(std::span<sf::Vertex> vertices, unsigned index) const
             {
                 return createParticleImpl(vertices, index);
             }
@@ -101,7 +102,7 @@ namespace dgm
              * array.
              */
             [[nodiscard]] virtual std::unique_ptr<dgm::ps::Particle>
-            createParticleImpl(sf::Vertex* vertices, unsigned) const
+            createParticleImpl(std::span<sf::Vertex> vertices, unsigned) const
             {
                 return std::make_unique<Particle>(vertices);
             }
