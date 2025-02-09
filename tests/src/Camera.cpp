@@ -12,11 +12,25 @@ public:
     }
 };
 
+sf::FloatRect getFullScreenRect()
+{
+    return sf::FloatRect {
+        sf::Vector2f {
+            0.f,
+            0.f,
+        },
+        sf::Vector2f {
+            1.f,
+            1.f,
+        },
+    };
+}
+
 TEST_CASE("Camera")
 {
     SECTION("IsObjectVisible")
     {
-        dgm::Camera camera({ 0.f, 0.f, 1.f, 1.f }, { 10.f, 10.f });
+        dgm::Camera camera(getFullScreenRect(), { 10.f, 10.f });
         camera.setPosition({ 5.f, 5.f });
 
         SECTION("Fully in view")
@@ -43,7 +57,7 @@ TEST_CASE("Camera")
 
     SECTION("Move")
     {
-        dgm::Camera camera({ 0.f, 0.f, 1.f, 1.f }, { 10.f, 10.f });
+        dgm::Camera camera(getFullScreenRect(), { 10.f, 10.f });
         camera.setPosition({ 10.f, 10.f });
 
         SECTION("Immediate move")
@@ -74,10 +88,10 @@ TEST_CASE("Camera")
 
     SECTION("Bug")
     {
-        sf::RenderWindow window(sf::VideoMode(10, 10), "");
+        sf::RenderWindow window(sf::VideoMode({ 10u, 10u }), "");
         {
-            auto&& camera = dgm::Camera(
-                sf::FloatRect(0.f, 0.f, 1.f, 1.f), sf::Vector2f(1280.f, 720.f));
+            auto&& camera =
+                dgm::Camera(getFullScreenRect(), sf::Vector2f(1280.f, 720.f));
             camera.setPosition(sf::Vector2f(1280.f, 720.f) / 2.f);
             window.setView(camera.getCurrentView());
             window.setView(camera.getCurrentView());

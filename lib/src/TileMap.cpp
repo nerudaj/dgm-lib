@@ -1,6 +1,7 @@
 #include <DGM/classes/TileMap.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <VBOHelper.hpp>
 #include <cassert>
 
 void dgm::TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -19,29 +20,25 @@ void dgm::TileMap::changeTile(
     float x, float y, uint32_t tileIndex, uint32_t tileValue)
 {
     assert(tileValue < clip.getFrameCount());
-    assert(tileIndex * size_t(4) < vertices.getVertexCount());
+    assert(tileIndex * size_t(6) < vertices.getVertexCount());
 
     // Find textureRect for this tile
     const sf::IntRect& frame = clip.getFrame(tileValue);
 
     // get a pointer to the current tile's quad
-    sf::Vertex* quad = &vertices[tileIndex * size_t(4)];
+    sf::Vertex* quad = &vertices[tileIndex * size_t(6)];
 
     // Define corners
     quad[0].position = sf::Vector2f(x * tileSize.x, y * tileSize.y);
     quad[1].position = sf::Vector2f((x + 1.f) * tileSize.x, y * tileSize.y);
-    quad[2].position =
-        sf::Vector2f((x + 1.f) * tileSize.x, (y + 1.f) * tileSize.y);
-    quad[3].position = sf::Vector2f(x * tileSize.x, (y + 1.f) * tileSize.y);
+    quad[2].position = sf::Vector2f(x * tileSize.x, (y + 1.f) * tileSize.y);
 
-    // Define texture coordinates
-    quad[0].texCoords = sf::Vector2f(float(frame.left), float(frame.top));
-    quad[1].texCoords =
-        sf::Vector2f(float(frame.left + frame.width), float(frame.top));
-    quad[2].texCoords = sf::Vector2f(
-        float(frame.left + frame.width), float(frame.top + frame.height));
-    quad[3].texCoords =
-        sf::Vector2f(float(frame.left), float(frame.top + frame.height));
+    quad[3].position = quad[1].position;
+    quad[4].position =
+        sf::Vector2f((x + 1.f) * tileSize.x, (y + 1.f) * tileSize.y);
+    quad[5].position = quad[2].position;
+
+    VBOHelper::setTextureCoords(quad, frame);
 }
 
 void dgm::TileMap::build(
@@ -62,7 +59,8 @@ void dgm::TileMap::build(
     tileSize = sf::Vector2f(float(newTileSize.x), float(newTileSize.y));
     dataSize = newDataSize;
 
-    vertices = sf::VertexArray(sf::Quads, size_t(4) * dataSize.x * dataSize.y);
+    vertices = sf::VertexArray(
+        sf::PrimitiveType::Triangles, size_t(6) * dataSize.x * dataSize.y);
 
     // Loop over all tiles
     for (size_t y = 0; y < dataSize.y; y++)

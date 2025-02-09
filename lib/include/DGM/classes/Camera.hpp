@@ -19,7 +19,7 @@ namespace dgm
      *  don't know what that is, you can always start with identity
      *  function.
      */
-    class [[nodiscard]] Camera
+    class [[nodiscard]] Camera final
     {
     public:
         /// Easing function. It is supposed to accept a number from 0..1 and
@@ -87,7 +87,7 @@ namespace dgm
 
         Effect<sf::Vector2f> moveEffect;
         Effect<float> zoomEffect;
-        Effect<float> rotationEffect;
+        Effect<sf::Angle> rotationEffect;
         ShakeEffect shakeEffect;
 
         [[nodiscard]] dgm::Rect getVíewBoundingBox() const
@@ -167,16 +167,6 @@ namespace dgm
         }
 
         /**
-         *  \brief Changes position of camera
-         *
-         *  Will mess up if camera isMoving
-         */
-        inline void setPosition(float x, float y)
-        {
-            view.setCenter(x, y);
-        }
-
-        /**
          *  \brief Changes position of camera, relative to where it is now
          *
          *  Will mess up if camera isMoving
@@ -184,16 +174,6 @@ namespace dgm
         inline void move(const sf::Vector2f& position)
         {
             view.move(position);
-        }
-
-        /**
-         *  \brief Changes position of camera, relative to where it is now
-         *
-         *  Will mess up if camera isMoving
-         */
-        inline void move(float x, float y)
-        {
-            view.move(x, y);
         }
 
         void resetTransformations()
@@ -222,7 +202,7 @@ namespace dgm
          *
          *  Will mess up if camera isRotating
          */
-        inline void setRotation(float angle)
+        inline void setRotation(sf::Angle angle)
         {
             view.setRotation(angle);
         }
@@ -258,8 +238,8 @@ namespace dgm
          *
          *  This function does nothing if camera isRotating
          */
-        void
-        rotateGradually(float angle, const sf::Time& duration, EasingFunc f);
+        void rotateGradually(
+            sf::Angle angle, const sf::Time& duration, EasingFunc f);
 
         /**
          *  \brief Perform screenshake

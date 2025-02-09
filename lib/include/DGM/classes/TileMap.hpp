@@ -15,7 +15,7 @@ namespace sf
 {
     class Texture;
     class RenderTarget;
-    class RenderStates;
+    struct RenderStates;
 } // namespace sf
 
 namespace dgm
@@ -28,23 +28,16 @@ namespace dgm
      * (which contains coordinates for each tile in the texture) and an array of
      * data (your map, where each cell is an index of a tile).
      */
-    class TileMap
+    class [[nodiscard]] TileMap
         : public sf::Drawable
         , public sf::Transformable
     {
-    private:
-        virtual void
-        draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-    protected:
-        const sf::Texture* texturePtr = nullptr;
-        sf::VertexArray vertices;
-        sf::Vector2f tileSize;
-        sf::Vector2u dataSize;
-        dgm::Clip clip;
-
-        void
-        changeTile(float x, float y, uint32_t tileIndex, uint32_t tileValue);
+    public:
+        template<UniversalReference<dgm::Clip> _Clip>
+        [[nodiscard]] explicit TileMap(const sf::Texture& texture, _Clip&& clip)
+            : texturePtr(&texture), clip(std::forward<_Clip>(clip))
+        {
+        }
 
     public:
         /**
@@ -99,12 +92,18 @@ namespace dgm
             return clip;
         }
 
-        [[nodiscard, deprecated]] TileMap() = default;
+    private:
+        virtual void
+        draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-        template<UniversalReference<dgm::Clip> _Clip>
-        [[nodiscard]] explicit TileMap(const sf::Texture& texture, _Clip&& clip)
-            : texturePtr(&texture), clip(std::forward<_Clip>(clip))
-        {
-        }
+    protected:
+        const sf::Texture* texturePtr = nullptr;
+        sf::VertexArray vertices;
+        sf::Vector2f tileSize;
+        sf::Vector2u dataSize;
+        dgm::Clip clip;
+
+        void
+        changeTile(float x, float y, uint32_t tileIndex, uint32_t tileValue);
     };
 } // namespace dgm

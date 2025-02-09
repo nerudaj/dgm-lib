@@ -56,8 +56,6 @@ namespace dgm
     class [[nodiscard]] Path final
     {
     public:
-        [[deprecated]] Path() = default;
-
         Path(const std::vector<T>& points, bool looping)
             : points(points), looping(looping)
         {

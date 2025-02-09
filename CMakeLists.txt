@@ -43,13 +43,14 @@ if ( ${ENABLE_TESTS} )
 	enable_testing()
 endif ()
 
-set ( SFML_VERSION "2.6.1" )
+set ( SFML_VERSION "3.0.0" )
 
 CPMAddPackage( "gh:SFML/SFML#${SFML_VERSION}" )
 CPMAddPackage( "gh:nlohmann/json@3.11.2" )
 
 # Subprojects
 add_subdirectory ( lib )
+add_library ( dgm::dgm ALIAS dgm-lib )
 
 if ( ${ENABLE_SANDBOX} )
 	add_subdirectory ( sandbox )
@@ -75,7 +76,17 @@ install (
 )
 
 # Packaging
-set ( CPACK_GENERATOR "ZIP" )
-set ( CPACK_PACKAGE_FILE_NAME           "${PROJECT_NAME}-${FULL_PROJECT_VERSION}-win${CMAKE_GENERATOR_PLATFORM}-vc17-${CMAKE_GENERATOR_PLATFORM}-for-SFML-${SFML_VERSION}" )
+if ( ${PROJECT_IS_TOP_LEVEL} )
+    if ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+        set ( COMPILER_ID "${CMAKE_CXX_COMPILER_ID}-${MSVC_TOOLSET_VERSION}" )
+    else ()
+        message ( FATAL_ERROR "Unsupported compiler ID: ${CMAKE_CXX_COMPILER_ID}" )
+    endif ()
 
-include ( CPack )
+    set ( CPACK_GENERATOR "ZIP" )
+    set ( CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${FULL_PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_GENERATOR_PLATFORM}-${COMPILER_ID}-for-SFML-${SFML_VERSION}" )
+    
+    message ( "${CPACK_PACKAGE_FILE_NAME}" )
+
+    include ( CPack )
+endif ()

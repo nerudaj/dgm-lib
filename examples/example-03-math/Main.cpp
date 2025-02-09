@@ -20,8 +20,6 @@
 int main()
 {
     auto&& window = dgm::Window({ 1280, 720 }, "Example: Math", false);
-    sf::Event event;
-
     auto&& circle = dgm::Circle(1000.f, 500.f, 140.f);
 
     // Line is defined as direction and position
@@ -32,9 +30,9 @@ int main()
 
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }

@@ -3,15 +3,15 @@
 
 TEST_CASE("[TileMap]")
 {
-    SECTION("Default constructor works")
-    {
-        REQUIRE_NOTHROW([]() { dgm::TileMap tilemap; }());
-    }
-
     SECTION("Proper constructor works")
     {
         sf::Texture texture;
-        dgm::Clip clip;
+        auto&& clip = dgm::Clip(
+            { 1, 1 },
+            sf::IntRect {
+                sf::Vector2i(0, 0),
+                sf::Vector2i(1, 1),
+            });
 
         dgm::TileMap tilemap = dgm::TileMap(texture, std::move(clip));
     }

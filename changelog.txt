@@ -1,3 +1,43 @@
+dgm-lib v3.0.0
+ * Library target has been renamed to `dgm-lib` and a `dgm::dgm` alias has been added. Use that for linking
+ * `dgm::AppStateConfig` marked as final
+ * `dgm::Clip` is now nodiscard and final
+ * `dgm::Camera` is now final
+ * `dgm::Error` replaces `dgm::ErrorMessage`
+    * Contains message and a stacktrace
+    * This is a `std::expected` version of `dgm::Exception`
+ * `dgm::ResourceManager` has been streamlined
+    * `get` and `getMutable` are now throwing so they can return references directly
+        * No more `.value().get()` pattern
+        * Resource not present is treated as a precondition fail
+    * `LoadCallback` now returns `std::expected<T, dgm::Error>` instead of having an inout T parameter
+        * Resources no longer have to be default-constructible (yay, RAII), but they have to be movable
+        * Two moves are issued per resource load, but that's a price I am willing to pay for RAII
+    * All `dgm::Utility::load*` functions have been adjusted
+    * `dgm::ParticleSystemInterface` is now explicit
+ * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
+ * Moved `PreallocatedMemoryAmount` from `dgm::DynamicBuffer` template parameters to the constructor parameters
+    * Also made the whole thing explicit
+ * Added example for `dgm::NavMesh` called `example-08-pathfinding`
+ * Default constructor of `dgm::Animation` was removed
+ * `dgm::Animation` is nodiscard and final, most of the interface is noexcept
+ * `dgm::Time` is nodiscard
+ * SFML bumped to v3.0.0
+	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
+	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
+	* `dgm::Window::pollEvent` now returns `std::optional<sf::Event>` and accepts no parameters
+	* Math utils migrated to use `sf::Angle`
+		* `polarToCartesian` overload accepting `PolarCoords` struct was removed
+		* `cartesianToPolar` overload accepting two floats was removed
+	* `dgm::Cone` migrated to use `sf::Angle`
+	* `dgm::Particle` migrated to use `sf::Angle`
+	* `dgm::Math::map` removed
+	* `dgm::Math::getRotated` removed, replaced by `sf::Vector2::rotateBy`
+	* `dgm::Math::getDotProduct` removed, replaced by `sf::Vector2::dot`
+	* `dgm::Math::getSize` removed, replaced by `sf::Vector2::length`
+	* `dgm::Math::polarToCartesian` removed, replaced by `sf::Vector2` constructor accepting length and angle
+    * `dgm::Particle` and related particle system classes now internally allocate 6 vertices instead of 4, because `sf::PrimitiveType::Quads` was removed.
+
 dgm-lib v2.5.0
  * Added `dgm::Error` for having an error type for `std::expected` with built-in stacktrace
  * Added `dgm::TextureAtlas` that can optimize drawcalls by having a single texture for multiple entities (thus these can be put into a single VBO)

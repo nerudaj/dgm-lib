@@ -20,11 +20,16 @@ sf::Vector2u getSpacingFromJson(const nlohmann::json& jsonFrame)
 
 sf::IntRect getBoundsFromJson(const nlohmann::json& jsonBounds)
 {
-    return sf::IntRect(
-        jsonBounds["left"].get<int>(),
-        jsonBounds["top"].get<int>(),
-        jsonBounds["width"].get<int>(),
-        jsonBounds["height"].get<int>());
+    return sf::IntRect {
+        sf::Vector2i {
+            jsonBounds["left"].get<int>(),
+            jsonBounds["top"].get<int>(),
+        },
+        sf::Vector2i {
+            jsonBounds["width"].get<int>(),
+            jsonBounds["height"].get<int>(),
+        },
+    };
 }
 
 dgm::Clip
@@ -102,7 +107,7 @@ dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
                 name));
         }
 
-        result[name].init(frame, bounds, frameCount, spacing);
+        result.insert({ name, dgm::Clip(frame, bounds, frameCount, spacing) });
     }
 
     return result;

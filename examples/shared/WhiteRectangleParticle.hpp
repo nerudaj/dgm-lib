@@ -5,7 +5,8 @@ class [[nodiscard]] WhiteRectangleParticle final : public dgm::ps::Particle
     using super = dgm::ps::Particle;
 
 public:
-    [[nodiscard]] explicit WhiteRectangleParticle(sf::Vertex* vertices) noexcept
+    [[nodiscard]] explicit WhiteRectangleParticle(
+        std::span<sf::Vertex> vertices) noexcept
         : super(vertices)
     {
     }

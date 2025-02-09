@@ -178,7 +178,7 @@ TEST_CASE("Circle-to-cone", "Collision")
 
         SECTION("Forward is rotated")
         {
-            cone.setRotation(45.f);
+            cone.setRotation(sf::degrees(45.f));
 
             SECTION("Circle is behind the cone")
             {

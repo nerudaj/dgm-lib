@@ -1,7 +1,7 @@
 #include <DGM/classes/ResourceManager.hpp>
 #include <stdexcept>
 
-using dgm::ErrorMessage;
+using dgm::Error;
 using dgm::ResourceManager;
 namespace fs = std::filesystem;
 
@@ -21,7 +21,7 @@ ResourceManager::~ResourceManager()
         }
 }
 
-std::expected<std::string, ErrorMessage> dgm::ResourceManager::getResourceId(
+std::expected<std::string, Error> dgm::ResourceManager::getResourceId(
     const std::filesystem::path& path) const noexcept
 {
     try

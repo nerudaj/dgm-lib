@@ -2,6 +2,7 @@
 
 #include <DGM/classes/Camera.hpp>
 #include <DGM/classes/Time.hpp>
+#include <algorithm>
 #include <array>
 
 static const std::array<sf::Vector2f, 20> SHAKE_POSITIONS = {
@@ -98,7 +99,7 @@ void dgm::Camera::zoomGradually(
 }
 
 void dgm::Camera::rotateGradually(
-    float amount, const sf::Time& duration, EasingFunc f)
+    sf::Angle amount, const sf::Time& duration, EasingFunc f)
 {
     if (isRotating()) return;
 

@@ -12,8 +12,8 @@ TileMap is more efficient to render than to render tiles individually.
 dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
 {
     auto&& tilemap = dgm::TileMap(
-        resmgr.get<sf::Texture>("tileset.png").value().get(),
-        resmgr.get<dgm::Clip>("tileset.png.clip").value().get());
+        resmgr.get<sf::Texture>("tileset.png"),
+        resmgr.get<dgm::Clip>("tileset.png.clip"));
 
     // clang-format off
     tilemap.build(
@@ -46,12 +46,11 @@ int main()
     auto&& resmgr = DemoData::loadDemoResources();
     auto&& tilemap = createSampleTilemap(resmgr);
 
-    sf::Event event;
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }

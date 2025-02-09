@@ -20,8 +20,6 @@ namespace dgm
     class [[nodiscard]] Window final
     {
     public:
-        [[deprecated]] Window() = default;
-
         explicit Window(const WindowSettings& settings)
         {
             open(settings);
@@ -75,17 +73,26 @@ namespace dgm
         [[nodiscard]] WindowSettings close();
 
         /**
-         *  \brief Poll next event from SFML
+         *  \brief Pop the next event from the front of the FIFO event queue, if
+        any, and return it
          *
-         *  \param[in]  event  Destination variable for polled event
-         *  \return TRUE if event was stored, FALSE if there were no more
-         * events.
-         *
-         *  This function mimicks the behaviour of sf::RenderWindow::pollEvent
-         */
-        [[nodiscard]] inline bool pollEvent(sf::Event& event)
+         * This function is not blocking: if there's no pending event then
+         * it will return a `std::nullopt`. Note that more than one event
+         * may be present in the event queue, thus you should always call
+         * this function in a loop to make sure that you process every
+         * pending event.
+         * \code
+         * while (const std::optional event = window.pollEvent())
         {
-            return window.pollEvent(event);
+            // process event...
+        }
+         * \endcode
+         *
+         * \return The event, otherwise `std::nullopt` if no events are pending
+         */
+        [[nodiscard]] inline auto pollEvent()
+        {
+            return window.pollEvent();
         }
 
         /**
@@ -194,6 +201,6 @@ namespace dgm
         sf::RenderWindow window;
         bool fullscreen = false;
         std::string title = "";
-        sf::Uint32 style = sf::Style::Default;
+        std::int64_t style = sf::Style::Default;
     };
 }; // namespace dgm

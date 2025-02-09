@@ -7,8 +7,17 @@ using SheetLocation = dgm::TextureAtlas::ResourceLocation<dgm::AnimationStates>;
 
 dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
 {
-    atlasImage.create(atlasWidth, atlasHeight);
-    freeAreas.push_back({ 0, 0, atlasWidth, atlasHeight });
+    atlasImage = sf::Image(sf::Vector2u {
+        sf::Vector2i {
+            atlasWidth,
+            atlasHeight,
+        },
+    });
+
+    freeAreas.push_back(sf::IntRect {
+        sf::Vector2i(0, 0),
+        sf::Vector2i(atlasWidth, atlasHeight),
+    });
 }
 
 std::expected<ClipLocation, dgm::Error>
@@ -23,10 +32,7 @@ dgm::TextureAtlas::addTileset(const sf::Texture& texture, const dgm::Clip& clip)
     if (itr == freeAreas.end())
         return std::unexpected(dgm::Error("No free space left in the atlas!"));
 
-    const auto&& startCoord = sf::Vector2i {
-        itr->left,
-        itr->top,
-    };
+    const auto startCoord = itr->position;
 
     adjustFreeArea(std::move(itr), size);
     copyTexture(texture, startCoord);
@@ -47,10 +53,7 @@ std::expected<SheetLocation, dgm::Error> dgm::TextureAtlas::addSpritesheet(
     if (itr == freeAreas.end())
         return std::unexpected(dgm::Error("No free space left in the atlas!"));
 
-    const auto&& startCoord = sf::Vector2i {
-        itr->left,
-        itr->top,
-    };
+    const auto startCoord = itr->position;
 
     adjustFreeArea(std::move(itr), size);
     copyTexture(texture, startCoord);
@@ -76,23 +79,31 @@ std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
 {
     auto&& result = std::vector<sf::IntRect>();
 
-    if (takenTextureDims.x < area.width)
+    if (takenTextureDims.x < area.size.x)
     {
         result.push_back(sf::IntRect {
-            area.left + takenTextureDims.x,
-            area.top,
-            area.width - takenTextureDims.x,
-            takenTextureDims.y,
+            sf::Vector2i {
+                area.position.x + takenTextureDims.x,
+                area.position.y,
+            },
+            sf::Vector2i {
+                area.size.x - takenTextureDims.x,
+                takenTextureDims.y,
+            },
         });
     }
 
-    if (takenTextureDims.y < area.height)
+    if (takenTextureDims.y < area.size.y)
     {
         result.push_back(sf::IntRect {
-            area.left,
-            area.top + takenTextureDims.y,
-            area.width,
-            area.height - takenTextureDims.y,
+            sf::Vector2i {
+                area.position.x,
+                area.position.y + takenTextureDims.y,
+            },
+            sf::Vector2i {
+                area.size.x,
+                area.size.y - takenTextureDims.y,
+            },
         });
     }
 
@@ -107,7 +118,7 @@ dgm::Clip dgm::TextureAtlas::recomputeClip(
     return dgm::Clip(
         clip.getFrameSize(),
         sf::IntRect {
-            startCoord + clip.getFrame(0).getPosition(),
+            startCoord + clip.getFrame(0).position,
             textureSize,
         },
         clip.getFrameCount(),
@@ -135,12 +146,14 @@ void dgm::TextureAtlas::copyTexture(
     const sf::Texture& textureToCopy, const sf::Vector2i& offset)
 {
     auto imageToCopy = textureToCopy.copyToImage();
-    atlasImage.copy(
-        imageToCopy,
-        offset.x,
-        offset.y,
-        sf::IntRect(0, 0, 0, 0), // full image
-        /* applyAlpha */ false);
+    if (!atlasImage.copy(
+            imageToCopy,
+            sf::Vector2u(offset),
+            sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0)), // full image
+            /* applyAlpha */ false))
+    {
+        throw dgm::Exception("Could not copy source texture to atlas");
+    }
 
     if (!atlasTexture.loadFromImage(atlasImage))
     {

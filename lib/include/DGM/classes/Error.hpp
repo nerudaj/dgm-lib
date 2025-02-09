@@ -46,7 +46,5 @@ namespace dgm
         std::stacktrace trace;
     };
 
-    using ErrorMessage = std::string;
-
-    using ExpectedSuccess = std::expected<std::true_type, ErrorMessage>;
+    using ExpectedSuccess = std::expected<std::true_type, Error>;
 } // namespace dgm

@@ -8,9 +8,8 @@ class AnimatedSprite
 public:
     AnimatedSprite(
         const sf::Texture& texture, const dgm::AnimationStates& states)
-        : animation(states, 15)
+        : sprite(texture), animation(states, 15)
     {
-        sprite.setTexture(texture);
     }
 
 public:
@@ -37,14 +36,14 @@ int main()
     auto&& atlas = dgm::TextureAtlas(1920, 1920);
 
     auto&& tilesetLoc = atlas.addTileset(
-        resmgr.get<sf::Texture>("tileset.png").value().get(),
-        resmgr.get<dgm::Clip>("tileset.png.clip").value().get());
+        resmgr.get<sf::Texture>("tileset.png"),
+        resmgr.get<dgm::Clip>("tileset.png.clip"));
 
     auto&& spritesheetLoc = atlas.addSpritesheet(
-        resmgr.get<sf::Texture>("soldier.png").value().get(),
-        resmgr.get<dgm::AnimationStates>("soldier_config.json").value().get());
+        resmgr.get<sf::Texture>("soldier.png"),
+        resmgr.get<dgm::AnimationStates>("soldier_config.json"));
 
-    atlas.getTexture().copyToImage().saveToFile("atlas.png");
+    std::ignore = atlas.getTexture().copyToImage().saveToFile("atlas.png");
 
     auto&& level = DemoData::createDemoLevel(
         atlas.getTexture(), atlas.getClip(tilesetLoc.value()));
@@ -57,10 +56,9 @@ int main()
     {
         time.reset();
 
-        sf::Event event;
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }

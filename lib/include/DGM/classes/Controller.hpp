@@ -217,7 +217,8 @@ namespace dgm
             bool released = false;
             float negateMultiplier = 1.f;
             sf::Keyboard::Key key = sf::Keyboard::Key::Unknown;
-            sf::Mouse::Button btn = sf::Mouse::Button::ButtonCount;
+            sf::Mouse::Button btn =
+                static_cast<sf::Mouse::Button>(sf::Mouse::ButtonCount);
             dgm::Xbox::Button xbtn = dgm::Xbox::Button::Unknown;
             dgm::Xbox::Axis xaxis = dgm::Xbox::Axis::Unknown;
         };
@@ -228,7 +229,8 @@ namespace dgm
         {
             // Extra check is required because:
             // sf::Mouse::isButtonPressed(sf::Mouse::ButtonCount) returns true
-            return (binding.btn != sf::Mouse::ButtonCount)
+            return (binding.btn
+                    != static_cast<sf::Mouse::Button>(sf::Mouse::ButtonCount))
                    && sf::Mouse::isButtonPressed(binding.btn);
         }
 
@@ -237,7 +239,7 @@ namespace dgm
         {
             // Extra check is required because:
             // sf::Keyboard::isKeyPressed(sf::Keyboard::Unknown) return true
-            return (binding.key != sf::Keyboard::Unknown)
+            return (binding.key != sf::Keyboard::Key::Unknown)
                    && sf::Keyboard::isKeyPressed(binding.key);
         }
 

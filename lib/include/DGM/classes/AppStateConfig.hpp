@@ -4,7 +4,7 @@
 
 namespace dgm
 {
-    struct [[nodiscard]] AppStateConfig
+    struct [[nodiscard]] AppStateConfig final
     {
         const sf::Color clearColor =
             sf::Color::Black; ///< Return color that will be used as window

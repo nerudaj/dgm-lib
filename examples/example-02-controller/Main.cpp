@@ -55,17 +55,19 @@ int main()
     // values to get the final vector.
     // see getDirection lambda later in this example
 
+    using Key = sf::Keyboard::Key;
+
     // Bind keyboard
-    input.bindInput(Action::L_Up, sf::Keyboard::Up);
-    input.bindInput(Action::L_Left, sf::Keyboard::Left);
-    input.bindInput(Action::L_Down, sf::Keyboard::Down);
-    input.bindInput(Action::L_Right, sf::Keyboard::Right);
-    input.bindInput(Action::A, sf::Keyboard::S);
-    input.bindInput(Action::B, sf::Keyboard::D);
-    input.bindInput(Action::X, sf::Keyboard::A);
-    input.bindInput(Action::Y, sf::Keyboard::W);
-    input.bindInput(Action::Back, sf::Keyboard::B);
-    input.bindInput(Action::Start, sf::Keyboard::N);
+    input.bindInput(Action::L_Up, Key::Up);
+    input.bindInput(Action::L_Left, Key::Left);
+    input.bindInput(Action::L_Down, Key::Down);
+    input.bindInput(Action::L_Right, Key::Right);
+    input.bindInput(Action::A, Key::S);
+    input.bindInput(Action::B, Key::D);
+    input.bindInput(Action::X, Key::A);
+    input.bindInput(Action::Y, Key::W);
+    input.bindInput(Action::Back, Key::B);
+    input.bindInput(Action::Start, Key::N);
 
     // Bind controller
     input.bindInput(Action::L_Up, dgm::Xbox::Button::DPadUp);
@@ -98,8 +100,7 @@ int main()
     input.bindInput(Action::RTrigger, sf::Mouse::Button::Right);
 
     // Decorations
-    sf::Text text;
-    text.setFont(resmgr.get<sf::Font>("cruft.ttf").value().get());
+    auto&& text = sf::Text(resmgr.get<sf::Font>("cruft.ttf"));
 
     sf::RectangleShape dpadUp, dpadLeft, dpadDown, dpadRight;
     dpadUp.setSize({ 20.f, 50.f });
@@ -181,12 +182,11 @@ int main()
                * 100.f;
     };
 
-    sf::Event event;
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }

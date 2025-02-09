@@ -30,7 +30,7 @@
 
 // Particle Systems
 #include "classes/Particle.hpp"
-#include "classes/ParticleSystem.hpp"
+#include "classes/ParticleSystemInterface.hpp"
 #include "classes/ParticleSystemRenderer.hpp"
 
 // Navigation

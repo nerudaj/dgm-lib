@@ -17,7 +17,7 @@ target_include_directories ( ${TARGET}
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PUBLIC libdgm
+	LINK_PUBLIC dgm::dgm
 )
 
 set_target_properties( ${TARGET} PROPERTIES

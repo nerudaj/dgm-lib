@@ -18,16 +18,16 @@ int main()
 	dgm::Controller input;
 
 	// Bind keyboard
-	input.bindInput(Action::L_Up, sf::Keyboard::Up);
-	input.bindInput(Action::L_Left, sf::Keyboard::Left);
-	input.bindInput(Action::L_Down, sf::Keyboard::Down);
-	input.bindInput(Action::L_Right, sf::Keyboard::Right);
-	input.bindInput(Action::A, sf::Keyboard::S);
-	input.bindInput(Action::B, sf::Keyboard::D);
-	input.bindInput(Action::X, sf::Keyboard::A);
-	input.bindInput(Action::Y, sf::Keyboard::W);
-	input.bindInput(Action::Back, sf::Keyboard::B);
-	input.bindInput(Action::Start, sf::Keyboard::N);
+	input.bindInput(Action::L_Up, sf::Keyboard::Key::Up);
+	input.bindInput(Action::L_Left, sf::Keyboard::Key::Left);
+	input.bindInput(Action::L_Down, sf::Keyboard::Key::Down);
+	input.bindInput(Action::L_Right, sf::Keyboard::Key::Right);
+	input.bindInput(Action::A, sf::Keyboard::Key::S);
+	input.bindInput(Action::B, sf::Keyboard::Key::D);
+	input.bindInput(Action::X, sf::Keyboard::Key::A);
+	input.bindInput(Action::Y, sf::Keyboard::Key::W);
+	input.bindInput(Action::Back, sf::Keyboard::Key::B);
+	input.bindInput(Action::Start, sf::Keyboard::Key::N);
 
 	// Bind controller
 	input.bindInput(Action::L_Up, dgm::Xbox::Button::DPadUp);
@@ -140,12 +140,11 @@ int main()
 			) * 100.f;
 		};
 
-	sf::Event event;
 	while (window.isOpen())
 	{
-		while (window.pollEvent(event))
+		while (const auto event = window.pollEvent())
 		{
-			if (event.type == sf::Event::Closed)
+			if (event->is<sf::Event::Closed>())
 			{
 				std::ignore = window.close();
 			}

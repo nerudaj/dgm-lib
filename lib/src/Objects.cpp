@@ -12,7 +12,7 @@ void dgm::Circle::debugRender(dgm::Window& window, sf::Color color) const
 {
     sf::CircleShape shape;
     shape.setRadius(radius);
-    shape.setOrigin(radius, radius);
+    shape.setOrigin({ radius, radius });
     shape.setPosition(position);
     shape.setFillColor(color);
     window.draw(shape);
@@ -35,7 +35,7 @@ void dgm::Rect::debugRender(dgm::Window& window, sf::Color color) const
 // *******************
 void dgm::VisionCone::debugRender(dgm::Window& window, sf::Color color) const
 {
-    const sf::Vector2f unit = forward / dgm::Math::getSize(forward);
+    const sf::Vector2f unit = dgm::Math::toUnit(forward);
     const sf::Vector2f plane = sf::Vector2f(unit.y, -unit.x) * width / 2.f;
 
     sf::ConvexShape shape(3);
@@ -47,21 +47,16 @@ void dgm::VisionCone::debugRender(dgm::Window& window, sf::Color color) const
     window.draw(shape);
 }
 
-void dgm::VisionCone::setRotation(const float angle) noexcept
+void dgm::VisionCone::setRotation(const sf::Angle angle) noexcept
 {
     rotation = angle;
-    forward = dgm::Math::polarToCartesian(angle, dgm::Math::getSize(forward));
+    forward = sf::Vector2f(forward.length(), angle);
 }
 
-void dgm::VisionCone::rotate(const float angle) noexcept
+void dgm::VisionCone::rotate(const sf::Angle angle) noexcept
 {
     rotation += angle;
-    forward = dgm::Math::getRotated(forward, angle);
-}
-
-float dgm::VisionCone::getLength() const noexcept
-{
-    return dgm::Math::getSize(forward);
+    forward = forward.rotatedBy(angle);
 }
 
 dgm::VisionCone::VisionCone(const float length, const float width)

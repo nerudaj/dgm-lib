@@ -1,6 +1,11 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <span>
 
 namespace dgm
 {
@@ -18,17 +23,21 @@ namespace dgm
          *  To texture your particles, see ParticleSystem::setTexture and
          *  Particle::setAnimationFrame.
          */
-        class Particle
+        class [[nodiscard]] Particle
         {
-        protected:
-            sf::Vertex* quad; ///< Pointer to first of the four quad vertices
-            float lifespan = 1.f; ///< How long till dead
-            float rotation = 0.f; ///< Current angle
-            float diagonalHalfLength =
-                1.f; ///< Each particle is a square with this being the half of
-                     ///< diagonal length, used for rotation calculations
-            sf::Vector2f forward = { 0.f,
-                                     0.f }; ///< Direction of particle movement
+        public:
+            /**
+             *  \brief Initialize the object with pointer to its vertices
+             *
+             *  \param [in] vertices Pointer to topleft vertex of particle
+             */
+            [[nodiscard]] explicit Particle(
+                std::span<sf::Vertex> vertices) noexcept
+                : vertices(vertices)
+            {
+            }
+
+            virtual ~Particle() = default;
 
         public:
             /**
@@ -36,7 +45,7 @@ namespace dgm
              */
             [[nodiscard]] sf::Vector2f getPosition() const noexcept
             {
-                return (quad[0].position + quad[2].position) / 2.f;
+                return (vertices[0].position + vertices[4].position) / 2.f;
             }
 
             /**
@@ -47,7 +56,7 @@ namespace dgm
                 return forward;
             }
 
-            [[nodiscard]] constexpr float getRotation() const noexcept
+            [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
             {
                 return rotation;
             }
@@ -77,15 +86,15 @@ namespace dgm
                 forward = f;
             }
 
-            virtual void setRotation(const float angle) noexcept;
+            virtual void setRotation(const sf::Angle angle) noexcept;
 
             /**
              *  \brief Sets the color of the particle
              */
             virtual void setColor(const sf::Color& color) noexcept
             {
-                for (unsigned i = 0; i < 4; i++)
-                    quad[i].color = color;
+                for (auto&& vertex : vertices)
+                    vertex.color = color;
             }
 
             /**
@@ -98,14 +107,14 @@ namespace dgm
              */
             virtual void moveForwardBy(const sf::Vector2f& fwd) noexcept
             {
-                for (unsigned i = 0; i < 4; i++)
-                    quad[i].position += fwd;
+                for (auto&& vertex : vertices)
+                    vertex.position += fwd;
             }
 
             /**
              *  \brief Rotate particle by a given angle
              */
-            virtual void rotateBy(const float angle) noexcept
+            virtual void rotateBy(const sf::Angle angle) noexcept
             {
                 setRotation(rotation + angle);
             }
@@ -147,17 +156,15 @@ namespace dgm
                 spawn({ 0.f, 0.f }, { 0.f, 0.f }, sf::Time::Zero);
             }
 
-            /**
-             *  \brief Initialize the object with pointer to its vertices
-             *
-             *  \param [in] vertices Pointer to topleft vertex of particle
-             */
-            [[nodiscard]] explicit Particle(sf::Vertex* vertices) noexcept
-                : quad(vertices)
-            {
-            }
-
-            virtual ~Particle() = default;
+        protected:
+            std::span<sf::Vertex> vertices;
+            float lifespan = 1.f;                 ///< How long till dead
+            sf::Angle rotation = sf::Angle::Zero; ///< Current angle
+            float diagonalHalfLength =
+                1.f; ///< Each particle is a square with this being the half of
+                     ///< diagonal length, used for rotation calculations
+            sf::Vector2f forward = { 0.f,
+                                     0.f }; ///< Direction of particle movement
         };
     }; // namespace ps
 } // namespace dgm

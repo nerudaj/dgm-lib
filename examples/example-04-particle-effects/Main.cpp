@@ -27,9 +27,8 @@ sf::RectangleShape createVisualContainer(unsigned x, unsigned y)
     shape.setOutlineThickness(3.f);
     shape.setOutlineColor(sf::Color::White);
     shape.setFillColor(sf::Color::Transparent);
-    shape.setPosition(
-        BOX_OFFSET.x + x * (BOX_OFFSET.x + BOX_SIZE.x),
-        BOX_OFFSET.y + y * (BOX_OFFSET.y + BOX_SIZE.y));
+    shape.setPosition({ BOX_OFFSET.x + x * (BOX_OFFSET.x + BOX_SIZE.x),
+                        BOX_OFFSET.y + y * (BOX_OFFSET.y + BOX_SIZE.y) });
     return shape;
 }
 
@@ -58,73 +57,60 @@ int main()
     // Create actual effects
     EffectWaterFountain effectFountain(
         256_numparticles,
-        { boxes[0].getGlobalBounds().left
-              + boxes[0].getGlobalBounds().width / 2.f,
-          boxes[0].getGlobalBounds().top + boxes[0].getGlobalBounds().height });
-
-    const sf::Vector2f BOX1_CENTER =
-        boxes[1].getGlobalBounds().getPosition()
-        + boxes[1].getGlobalBounds().getSize() / 2.f;
+        { boxes[0].getGlobalBounds().position.x
+              + boxes[0].getGlobalBounds().size.x / 2.f,
+          boxes[0].getGlobalBounds().position.y
+              + boxes[0].getGlobalBounds().size.y });
 
     EffectBloodSpatter effectBloodSpatter(
         128_numparticles,
-        BOX1_CENTER,
-        boxes[1].getGlobalBounds().top + boxes[1].getGlobalBounds().height);
+        boxes[1].getGlobalBounds().getCenter(),
+        boxes[1].getGlobalBounds().position.y
+            + boxes[1].getGlobalBounds().size.y);
 
     EffectStarfield effectStarfield(256, boxes[2].getGlobalBounds());
 
     EffectTexturedSmoke effectTexturedSmoke(
         256_numparticles,
-        { boxes[3].getGlobalBounds().left
-              + boxes[3].getGlobalBounds().width / 2.f,
-          boxes[3].getGlobalBounds().top + boxes[3].getGlobalBounds().height
-              - 64.f },
-        dgm::Clip({ 256, 256 }, { 0, 0, 1280, 768 }));
-    effectTexturedSmoke.setTexture(
-        resmgr.get<sf::Texture>("smoke.png").value().get());
+        { boxes[3].getGlobalBounds().position.x
+              + boxes[3].getGlobalBounds().size.x / 2.f,
+          boxes[3].getGlobalBounds().position.y
+              + boxes[3].getGlobalBounds().size.y - 64.f },
+        dgm::Clip({ 256, 256 }, { { 0, 0 }, { 1280, 768 } }));
+    effectTexturedSmoke.setTexture(resmgr.get<sf::Texture>("smoke.png"));
 
     // Create decorations
-    sf::Sprite soldierSprite;
-    soldierSprite.setTexture(
-        resmgr.get<sf::Texture>("soldier.png").value().get());
-    soldierSprite.setOrigin(160.f, 160.f);
-    soldierSprite.setPosition(
-        boxes[1].getGlobalBounds().left
-            + boxes[1].getGlobalBounds().width / 2.f,
-        boxes[1].getGlobalBounds().top + boxes[1].getGlobalBounds().height
-            - 160.f);
+    auto&& soldierSprite = sf::Sprite(resmgr.get<sf::Texture>("soldier.png"));
+    soldierSprite.setOrigin({ 160.f, 160.f });
+    soldierSprite.setPosition({ boxes[1].getGlobalBounds().position.x
+                                    + boxes[1].getGlobalBounds().size.x / 2.f,
+                                boxes[1].getGlobalBounds().position.y
+                                    + boxes[1].getGlobalBounds().size.y
+                                    - 160.f });
 
     dgm::Animation soldierAnimation(
-        resmgr.get<dgm::AnimationStates>("soldier_config.json").value().get());
+        resmgr.get<dgm::AnimationStates>("soldier_config.json"));
     soldierAnimation.setState("idle", true);
     soldierAnimation.setSpeed(4);
 
-    sf::Sprite starshipSprite;
-    starshipSprite.setTexture(
-        resmgr.get<sf::Texture>("starship.png").value().get());
+    auto&& starshipSprite = sf::Sprite(resmgr.get<sf::Texture>("starship.png"));
     starshipSprite.setOrigin(sf::Vector2f(64.f, 53.f) / 2.f);
-    starshipSprite.setPosition(
-        boxes[2].getGlobalBounds().left
-            + boxes[2].getGlobalBounds().width / 2.f,
-        boxes[2].getGlobalBounds().top
-            + boxes[2].getGlobalBounds().height / 2.f);
-    starshipSprite.setRotation(-45.f);
+    starshipSprite.setPosition(boxes[2].getGlobalBounds().getCenter());
+    starshipSprite.setRotation(sf::degrees(-45.f));
 
     // FPS counter
     const sf::Time FPS_DISPLAY_UPDATE_FREQUENCY = sf::seconds(0.1f);
     float fpsElapsedSum = 0.f;
     unsigned fpsCount = 0;
     sf::Time fpsTimer = sf::Time::Zero;
-    sf::Text fpsOutput;
-    fpsOutput.setFont(resmgr.get<sf::Font>("cruft.ttf").value().get());
+    auto&& fpsOutput = sf::Text(resmgr.get<sf::Font>("cruft.ttf"));
     fpsOutput.setFillColor(sf::Color::Yellow);
 
-    sf::Event event;
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
             {
                 std::ignore = window.close();
             }
