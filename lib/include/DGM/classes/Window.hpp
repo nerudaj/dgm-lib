@@ -172,7 +172,7 @@ namespace dgm
          *
          *  \param[in]  color  Color to clear window to (Default: Black)
          */
-        void beginDraw(const sf::Color& color = sf::Color::Black)
+        void clear(const sf::Color& color = sf::Color::Black)
         {
             window.clear(color);
         }
@@ -190,7 +190,7 @@ namespace dgm
         /**
          *  \brief Finish drawing by rendering Window to screen
          */
-        void endDraw()
+        void display()
         {
             window.display();
         }

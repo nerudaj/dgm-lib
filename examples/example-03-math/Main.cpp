@@ -51,7 +51,7 @@ int main()
         auto&& closestLinePoint =
             dgm::Math::getClosestPointOnLine(line, mousePos);
 
-        window.beginDraw();
+        window.clear();
 
         circle.debugRender(window, sf::Color::White);
         drawLine(window, point1, point2, sf::Color::White);
@@ -75,7 +75,7 @@ int main()
         drawDot(window, closestLinePoint, sf::Color::Green);
         drawLine(window, mousePos, closestLinePoint, sf::Color::Blue);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

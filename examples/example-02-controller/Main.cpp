@@ -227,7 +227,7 @@ int main()
         rStickHat.setPosition(rStickOutline.getPosition() + rDirection);
 
         /* DRAW */
-        window.beginDraw();
+        window.clear();
 
         window.draw(dpadUp);
         window.draw(dpadLeft);
@@ -253,7 +253,7 @@ int main()
         window.draw(lStickHat);
         window.draw(rStickHat);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

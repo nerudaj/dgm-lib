@@ -84,12 +84,12 @@ int main(int, char*[])
         window.setViewFromCamera(camera);
 
         // And just render as normal
-        window.beginDraw();
+        window.clear();
 
         window.draw(tilemap);
         playerDot.debugRender(window);
 
-        window.endDraw();
+        window.display();
         time.reset();
     }
 }

@@ -57,11 +57,11 @@ int main()
         }
 
         /* DRAW */
-        window.beginDraw();
+        window.clear();
 
         window.draw(tilemap); // draws like a native sf primitive
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

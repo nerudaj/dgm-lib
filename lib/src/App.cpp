@@ -36,9 +36,9 @@ void dgm::App::run()
     {
         updateState(states.size() - 1);
 
-        window.beginDraw(getTopState().getClearColor());
+        window.clear(getTopState().getClearColor());
         drawState(states.size() - 1);
-        window.endDraw();
+        window.display();
 
         performScheduledCleanup();
 

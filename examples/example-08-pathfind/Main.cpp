@@ -126,12 +126,12 @@ int main()
         actor.update(time);
 
         /* DRAW */
-        window.beginDraw();
+        window.clear();
 
         level.draw(window);
         actor.draw(window);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

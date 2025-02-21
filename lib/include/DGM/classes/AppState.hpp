@@ -36,7 +36,7 @@ namespace dgm
          *  \brief Render state logic
          *
          *  Only issue calls to window.draw in from within this function.
-         *  You should NOT call dgm::Window::beginDraw and dgm::Window::endDraw
+         *  You should NOT call dgm::Window::clear and dgm::Window::display
          *  as those will be called for you.
          */
         virtual void draw() = 0;

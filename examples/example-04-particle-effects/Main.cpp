@@ -143,7 +143,7 @@ int main()
         effectTexturedSmoke.update(time);
 
         /* DRAW */
-        window.beginDraw();
+        window.clear();
 
         effectFountain.draw(window);
 
@@ -161,7 +161,7 @@ int main()
 
         window.draw(fpsOutput);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

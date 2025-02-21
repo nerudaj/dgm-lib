@@ -66,12 +66,12 @@ int main()
 
         sprite.update(time);
 
-        window.beginDraw();
+        window.clear();
 
         level.draw(window);
         sprite.draw(window);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

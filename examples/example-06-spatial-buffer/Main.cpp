@@ -147,12 +147,12 @@ int main(int, char*[])
         text.setString(fpsCounter.getString());
 
         // Draw
-        window.beginDraw();
+        window.clear();
 
         agentsViz.drawTo(window);
         window.draw(text);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;
