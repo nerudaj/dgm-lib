@@ -1,25 +1,24 @@
 #include <DGM/dgm.hpp>
 
-int main(int, char* [])
+int main(int, char*[])
 {
-	auto&& window = dgm::Window({ 1280,720 }, "Test", false);
-	sf::Event event;
-	
-	dgm::Circle circle(640.f, 360.f, 20.f);
+    auto&& window = dgm::Window({ 1280, 720 }, "Test", false);
 
-	while (window.isOpen())
-	{
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed) std::ignore = window.close();
-		}
+    dgm::Circle circle(640.f, 360.f, 20.f);
 
-		window.beginDraw();
+    while (window.isOpen())
+    {
+        while (const auto event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>()) std::ignore = window.close();
+        }
 
-		circle.debugRender(window, sf::Color::Red);
+        window.beginDraw();
 
-		window.endDraw();
-	}
+        circle.debugRender(window, sf::Color::Red);
 
-	return 0;
+        window.endDraw();
+    }
+
+    return 0;
 }
