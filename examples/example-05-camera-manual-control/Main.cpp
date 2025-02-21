@@ -40,7 +40,7 @@ int main(int, char*[])
     auto&& camera = dgm::Camera(
         { { 0.f, 0.f }, { 1.f, 1.f } }, sf::Vector2f(window.getSize()));
 
-    window.getWindowContext().setFramerateLimit(60);
+    window.getSfmlWindowContext().setFramerateLimit(60);
 
     float zoomLevel = 1.f;
     float rotation = 0.f;

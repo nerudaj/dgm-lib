@@ -101,7 +101,7 @@ namespace dgm
          * \param[in] camera  A camera instance with update view
          *
          *  This is a shorthand for calling
-         *  window.getWindowContext().setView(camera.getCurrentView())
+         *  window.getSfmlWindowContext().setView(camera.getCurrentView())
          */
         inline void setViewFromCamera(const dgm::Camera& camera)
         {
@@ -154,7 +154,7 @@ namespace dgm
          *  Use this method whether you need something from sf::RenderWindow API
          *  not supported directly by this class
          */
-        [[nodiscard]] auto& getWindowContext(this auto&& self) noexcept
+        [[nodiscard]] auto& getSfmlWindowContext(this auto&& self) noexcept
         {
             return self.window;
         }

@@ -115,7 +115,7 @@ int main()
             else if (event->is<sf::Event::MouseButtonPressed>())
             {
                 auto mousePos =
-                    sf::Mouse::getPosition(window.getWindowContext());
+                    sf::Mouse::getPosition(window.getSfmlWindowContext());
                 actor.setWaypoint(sf::Vector2f(mousePos));
             }
         }

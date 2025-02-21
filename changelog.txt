@@ -22,6 +22,7 @@ dgm-lib v3.0.0
  * Default constructor of `dgm::Animation` was removed
  * `dgm::Animation` is nodiscard and final, most of the interface is noexcept
  * `dgm::Time` is nodiscard
+ * `dgm::Window::getWindowContext` renamed to `getSfmlWindowContext`
  * SFML bumped to v3.0.0
 	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
 	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
