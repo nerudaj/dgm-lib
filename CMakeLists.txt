@@ -1,7 +1,5 @@
 cmake_minimum_required ( VERSION 3.26 )
 
-include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_cpp_init.cmake" )
-
 # Remember source directories
 set ( DGM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
 set ( DGM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
@@ -13,13 +11,15 @@ option ( BOOTSTRAP_CPM "Whether to download CPM" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
 
 # CppInit
-include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/get_cpp_init.cmake" )
+include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 
 if ( ${BOOTSTRAP_CPM} )
 	bootstrap_cpm ()
 endif ()
 
-get_git_version (
+set_cpp23_x64()
+
+get_version_from_git (
 	PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
 	FULL_VERSION_VARIABLE FULL_PROJECT_VERSION
 )
