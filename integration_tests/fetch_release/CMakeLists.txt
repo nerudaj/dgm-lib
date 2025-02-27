@@ -31,7 +31,7 @@ find_package ( SFML
 # CMAKE_COMPATIBLE_VERSION doesn't have 'v' prefix, nor -rcN suffixes, just N.N.N
 string ( REGEX MATCH "[0-9]+\.[0-9]+\.[0-9]+" CMAKE_COMPATIBLE_VERSION "${LATEST_TAG}" )
 
-find_package ( DGM
+find_package ( dgm-lib
     ${CMAKE_COMPATIBLE_VERSION} REQUIRED
     PATHS "${DGM_FOLDER}/lib/cmake"
 )
