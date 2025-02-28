@@ -50,7 +50,7 @@ CPMAddPackage( "gh:nlohmann/json@3.11.2" )
 
 # Subprojects
 add_subdirectory ( lib )
-add_library ( dgm::dgm ALIAS dgm-lib )
+add_library ( dgm::dgm-lib ALIAS dgm-lib )
 
 if ( ${ENABLE_SANDBOX} )
 	add_subdirectory ( sandbox )

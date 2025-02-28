@@ -56,7 +56,7 @@ add_executable ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-    libdgm sfml-main
+    dgm::dgm-lib sfml-main
 )
 ```
 
@@ -84,7 +84,7 @@ add_executable ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-    libdgm sfml-main
+    dgm::dgm-lib sfml-main
 )
 ```
 
