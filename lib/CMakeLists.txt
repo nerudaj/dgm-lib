@@ -7,7 +7,7 @@ make_static_library ( ${TARGET} )
 target_link_libraries ( ${TARGET}
 	PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
 	PUBLIC xinput.lib
-	PRIVATE nlohmann_json::nlohmann_json
+	PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
 
 if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
