@@ -5,9 +5,9 @@ set ( TARGET dgm-lib )
 make_static_library ( ${TARGET} )
 
 target_link_libraries ( ${TARGET}
-	LINK_PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
-	LINK_PUBLIC xinput.lib
-	LINK_PRIVATE nlohmann_json::nlohmann_json
+	PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
+	PUBLIC xinput.lib
+	PRIVATE nlohmann_json::nlohmann_json
 )
 
 if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
