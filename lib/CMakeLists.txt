@@ -2,43 +2,43 @@ cmake_minimum_required ( VERSION 3.26 )
 
 set ( TARGET dgm-lib )
 
-glob_headers_and_sources ( HEADERS SOURCES )
-
-add_library ( ${TARGET}
-	STATIC ${HEADERS} ${SOURCES}
-)
-
-target_include_directories ( ${TARGET}
-	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
-	PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/private_include"
-)
+make_static_library ( ${TARGET} )
 
 target_link_libraries ( ${TARGET}
-	LINK_PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
-	LINK_PUBLIC xinput.lib
-	LINK_PRIVATE nlohmann_json::nlohmann_json
+	PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
+	PUBLIC xinput.lib
+	PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
 
-apply_compile_options ( ${TARGET} )
-enable_autoformatter ( ${TARGET} )
+if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
+    install (
+        DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        DESTINATION  "."
+    )
 
-# Instalation
-install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Release/${TARGET}.lib"
-	DESTINATION  "lib"
-)
+    install ( TARGETS ${TARGET}
+        EXPORT ${TARGET}Config
+        ARCHIVE DESTINATION LIB
+    )
 
-install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/${TARGET}-d.lib"
-	DESTINATION  "lib"
-)
+    install ( EXPORT ${TARGET}Config
+        NAMESPACE dgm::
+        DESTINATION lib/cmake/${TARGET}
+    )
 
-install (
-	FILES        "${CMAKE_CURRENT_BINARY_DIR}/Debug/${TARGET}-d.pdb"
-	DESTINATION  "lib"
-)
+    include (CMakePackageConfigHelpers)
 
-install (
-	DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/include/DGM"
-	DESTINATION  "include"
-)
+    write_basic_package_version_file(
+        ${TARGET}ConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMinorVersion
+    )
+
+    install (
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}ConfigVersion.cmake
+        DESTINATION lib/cmake/${TARGET}
+    )
+else()
+    message ( "PROJECT_VERSION is empty, git was likely fetched in shallow mode" )
+    message ( "No install rules will be called" )
+endif()

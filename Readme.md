@@ -13,7 +13,7 @@ This project is an extension library for [SFML](http://sfml-dev.org). The librar
 
 ### Integration using CMake
 
-`FetchContent` can be used to download `dgm-lib` from GitHub and integrated. See [integration guide](docs/integration.md) on how to do so.
+`FetchContent` can be used to download `dgm-lib` from GitHub and integrated. Alternatively, you can fetch prebuild release binaries and link them through `find_package`. See [integration guide](docs/integration.md) on how to do so.
 
 ### Integration from releases
 

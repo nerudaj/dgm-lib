@@ -13,11 +13,11 @@ int main(int, char*[])
             if (event->is<sf::Event::Closed>()) std::ignore = window.close();
         }
 
-        window.beginDraw();
+        window.clear();
 
         circle.debugRender(window, sf::Color::Red);
 
-        window.endDraw();
+        window.display();
     }
 
     return 0;

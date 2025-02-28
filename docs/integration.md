@@ -56,7 +56,7 @@ add_executable ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-    libdgm sfml-main
+    dgm::dgm-lib sfml-main
 )
 ```
 
@@ -84,7 +84,7 @@ add_executable ( ${PROJECT_NAME}
 )
 
 target_link_libraries ( ${PROJECT_NAME}
-    libdgm sfml-main
+    dgm::dgm-lib sfml-main
 )
 ```
 
@@ -92,16 +92,40 @@ The full example is available [here](../integration_tests/cpm).
 
 ## Precompiled binaries
 
-You can find precompiled binaries under [Releases](https://github.com/nerudaj/dgm-lib/releases). They are more cumbersome to setup up, but you will get waaay faster compile times, if you use them (alongside with precompiled SFML). Assuming the release archive is unzipped into `${DGM_FOLDER}`, you can easily create linkable target as this:
+You can find precompiled binaries under [Releases](https://github.com/nerudaj/dgm-lib/releases). They provide faster compilation times, but you're responsible for also downloading SFML as well: 
 
 ```
-find_library(LIB_DGM_D libdgm-d  NAMES libdgm-d.lib  HINTS "${DGM_FOLDER}/lib")
-find_library(LIB_DGM_R libdgm  NAMES libdgm.lib  HINTS "${DGM_FOLDER}/lib")
-set(LIB_DGM optimized ${LIB_DGM_R} debug ${LIB_DGM_D})
+set ( SFML_VERSION "3.0.0" )
+set ( DGM_VERSION "v3.0.0" )
 
-add_library ( Dep_dgm INTERFACE )
-target_include_directories ( Dep_dgm INTERFACE "${DGM_FOLDER}/include" )
-target_link_libraries ( Dep_dgm INTERFACE ${LIB_DGM} Dep_sfml xinput.lib )
+include (FetchContent)
+
+FetchContent_Declare ( SFML
+	URL "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc17-64-bit.zip"
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_Declare ( DGM
+	URL "https://github.com/nerudaj/dgm-lib/releases/download/${DGM_VERSION}/dgm-lib-${DGM_VERSION}-Windows-x64-MSVC-143-for-SFML-${SFML_VERSION}.zip"
+	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+
+FetchContent_MakeAvailable ( DGM SFML )
+
+set ( SFML_STATIC_LIBRARIES ON )
+find_package ( SFML
+    ${SFML_VERSION} REQUIRED
+    COMPONENTS Main Window Graphics
+    PATHS "${SFML_FOLDER}/lib/cmake"
+)
+
+find_package ( dgm-lib
+    ${DGM_VERSION} REQUIRED
+    PATHS "${DGM_FOLDER}/lib/cmake"
+)
+
+# ...
+target_link_libraries ( ${TARGET} PUBLIC dgm::dgm-lib )
 ```
 
-DGM only has 1 static lib, so it is quite easy, setting up SFML is more verbose because it has 6. The full source for that can be found [here](../integration_tests/fetch_release).
+The full source for that can be found [here](../integration_tests/fetch_release).
