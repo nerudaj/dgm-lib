@@ -12,6 +12,7 @@ message ( "Latest tag: ${LATEST_TAG}" )
 set ( SFML_VERSION "3.0.0" )
 
 # Fetch zips with compiled libraries
+# fetch_prebuilt_dependency comes from cpp-init, internally calls FetchContent_Declare/MakeAvailable
 fetch_prebuilt_dependency (
     SFML
     URL "https://github.com/SFML/SFML/releases/download/${SFML_VERSION}/SFML-${SFML_VERSION}-windows-vc17-64-bit.zip"
