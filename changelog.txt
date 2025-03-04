@@ -19,7 +19,9 @@ dgm-lib v3.0.0
  * Previously deprecated default constructors were removed (`dgm::Clip`, `dgm::TileMap`, `dgm::Path`)
  * Moved `PreallocatedMemoryAmount` from `dgm::DynamicBuffer` template parameters to the constructor parameters
     * Also made the whole thing explicit
- * Added example for `dgm::NavMesh` called `example-08-pathfinding`
+ * Added examples
+    * `example-08-pathfinding` showcasing `dgm::NavMesh`
+    * `example-09-collisions` showcasing `dgm::Collision`
  * Default constructor of `dgm::Animation` was removed
  * `dgm::Animation` is nodiscard and final, most of the interface is noexcept
  * `dgm::Time` is nodiscard
