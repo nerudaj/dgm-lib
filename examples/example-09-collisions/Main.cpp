@@ -1,6 +1,7 @@
 /*
 Move the yellow dot by pressing
-WASD.The yellow dot will properly* collide with the environment around it.
+WASD.The yellow dot will properly collide with the environment around it.
+It also collides with red squares that disappear afterwards.
 */
 
 #include "DemoData.hpp"
