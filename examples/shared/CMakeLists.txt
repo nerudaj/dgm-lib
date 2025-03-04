@@ -10,6 +10,8 @@ add_library ( ${TARGET} STATIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/Helpers.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/FpsCounter.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/WhiteRectangleParticle.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/SimpleController.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/SimpleController.cpp"
 )
 
 target_include_directories ( ${TARGET}

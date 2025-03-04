@@ -1,7 +1,6 @@
 /*
-Move the yellow dot by pressing
-WASD.The yellow dot will properly collide with the environment around it.
-It also collides with red squares that disappear afterwards.
+Move the yellow dot by pressing WASD.
+Top-left corner shows a minimap of the level.
 */
 
 #include "DemoData.hpp"
@@ -41,9 +40,25 @@ void handleCollisionsWithCherries(
     if (cherryIdxToDelete) cherries.eraseAtIndex(*cherryIdxToDelete);
 }
 
+sf::FloatRect computeMinimapRect(
+    const sf::Vector2u& minimapResolution, const sf::Vector2u& windowResolution)
+{
+    const auto size = sf::Vector2f(
+        static_cast<float>(minimapResolution.x) / windowResolution.x,
+        static_cast<float>(minimapResolution.y) / windowResolution.y);
+
+    return sf::FloatRect({ 0.f, 0.f }, size);
+}
+
+sf::Vector2u computeMeshBoundingBoxSize(const dgm::Mesh& mesh)
+{
+    return mesh.getDataSize().componentWiseMul(mesh.getVoxelSize());
+}
+
 int main()
 {
-    auto&& window = dgm::Window({ 1280, 720 }, "Example: Collisions", false);
+    auto&& window =
+        dgm::Window({ 1280, 720 }, "Example: Camera minimap", false);
     auto&& resmgr = DemoData::loadDemoResources();
     auto&& level = DemoData::createDemoLevel(
         resmgr.get<sf::Texture>("tileset.png"),
@@ -55,11 +70,17 @@ int main()
     sf::Vector2f forward;
     const float SPEED = 256.f; // px per second
 
-    auto&& cherries = spawnCherries();
-
-    auto&& camera = dgm::Camera(
+    // Main camera is for rendering the scene, level, player, etc
+    auto&& mainCamera = dgm::Camera(
         sf::FloatRect({ 0.f, 0.f }, { 1.f, 1.f }),
         sf::Vector2f(window.getSize()));
+
+    // This camera is only for rendering minimap
+    // This camera resolution is the same as size of the level mesh, so it can
+    // be rendered fully
+    auto&& minimapCamera = dgm::Camera(
+        computeMinimapRect(sf::Vector2u(196, 196), window.getSize()),
+        sf::Vector2f(computeMeshBoundingBoxSize(level.getMesh())));
 
     while (window.isOpen())
     {
@@ -81,19 +102,21 @@ int main()
         // to move 'player' and not end up stuck in the level mesh
         dgm::Collision::advanced(level.getMesh(), player, forward);
         player.move(forward);
-        camera.setPosition(player.getPosition());
-
-        handleCollisionsWithCherries(player, cherries);
+        mainCamera.setPosition(player.getPosition());
 
         /* DRAW */
-        window.setViewFromCamera(camera);
         window.clear();
 
-        level.draw(window);
-        player.debugRender(window);
+        { // First, render the main scene
+            window.setViewFromCamera(mainCamera);
+            level.draw(window);
+            player.debugRender(window);
+        }
 
-        for (auto&& [cherry, _] : cherries)
-            cherry.debugRender(window, sf::Color::Red);
+        { // And then, render the minimap over it
+            window.setViewFromCamera(minimapCamera);
+            level.draw(window);
+        }
 
         window.display();
     }

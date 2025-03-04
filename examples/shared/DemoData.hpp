@@ -14,4 +14,6 @@ public:
     createDemoLevel2(const sf::Texture& texture, const dgm::Clip& clip);
 
     static dgm::ResourceManager loadDemoResources();
+
+    static dgm::Controller createSimpleController();
 };

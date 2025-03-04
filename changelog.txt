@@ -22,6 +22,7 @@ dgm-lib v3.0.0
  * Added examples
     * `example-08-pathfinding` showcasing `dgm::NavMesh`
     * `example-09-collisions` showcasing `dgm::Collision`
+    * `example-10-camera-minimap` showcasing how to use multiple `dgm::Camera` objects
  * Default constructor of `dgm::Animation` was removed
  * `dgm::Animation` is nodiscard and final, most of the interface is noexcept
  * `dgm::Time` is nodiscard
