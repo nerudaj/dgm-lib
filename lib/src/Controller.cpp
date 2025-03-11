@@ -10,6 +10,7 @@ void dgm::Controller::update()
 
 bool dgm::Controller::isInputToggled(const int code) const
 {
+    assert(bindings.contains(code));
     auto& binding = bindings.at(code);
 
     // Extra checks on mouse and keyboard are needed because:
@@ -27,6 +28,7 @@ bool dgm::Controller::isInputToggled(const int code) const
 
 float dgm::Controller::getInputValue(const int code) const
 {
+    assert(bindings.contains(code));
     auto& binding = bindings.at(code);
     if (isMouseInputToggled(binding) || isKeyboardInputToggled(binding)
         || isGamepadInputToggled(binding))
