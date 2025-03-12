@@ -8,6 +8,13 @@ struct Dummy
     Dummy(int value) : value(value) {}
 };
 
+struct Aggregate
+{
+    float f;
+    char c;
+    std::string s;
+};
+
 TEST_CASE("[DynamicBuffer]")
 {
     SECTION("Iterators")
@@ -197,5 +204,13 @@ TEST_CASE("[DynamicBuffer]")
 
             REQUIRE(buffer.isEmpty());
         }
+    }
+
+    SECTION("emplaceBack works as should for aggregate types")
+    {
+        dgm::DynamicBuffer<Aggregate> buffer;
+
+        // this line needs to compile
+        buffer.emplaceBack(6.9f, 'a', "hello");
     }
 }

@@ -1,4 +1,4 @@
-lib/tests/include/TestDataDir.hpp
+tests/include/TestDataDir.hpp
 _build
 
 # Prerequisites

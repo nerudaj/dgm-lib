@@ -19,7 +19,7 @@ dgm::DynamicBuffer<dgm::Rect> spawnCherries()
     auto&& cherries = dgm::DynamicBuffer<dgm::Rect>(16);
 
     for (auto&& position : positions)
-        cherries.emplaceBack(dgm::Rect(position, size));
+        cherries.emplaceBack(position, size);
 
     return cherries;
 }
