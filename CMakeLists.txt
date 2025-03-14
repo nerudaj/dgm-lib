@@ -17,7 +17,15 @@ if ( ${BOOTSTRAP_CPM} )
 	bootstrap_cpm ()
 endif ()
 
-set_cpp23_x64()
+
+if ( NOT ${CMAKE_GENERATOR_PLATFORM} )
+	set ( CMAKE_GENERATOR_PLATFORM x64 )
+else()
+	message ("Detected platform: ${CMAKE_GENERATOR_PLATFORM}" )
+endif ()
+
+set ( CMAKE_CXX_STANDARD 23 )
+set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 
 get_version_from_git (
 	PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION

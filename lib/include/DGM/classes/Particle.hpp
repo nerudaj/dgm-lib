@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -31,8 +32,7 @@ namespace dgm
              *
              *  \param [in] vertices Pointer to topleft vertex of particle
              */
-            [[nodiscard]] explicit Particle(
-                std::span<sf::Vertex> vertices) noexcept
+            explicit Particle(std::span<sf::Vertex> vertices) noexcept
                 : vertices(vertices)
             {
             }
@@ -43,7 +43,7 @@ namespace dgm
             /**
              *  \brief Get position of particle (center of the particle)
              */
-            [[nodiscard]] sf::Vector2f getPosition() const noexcept
+            NODISCARD_RESULT sf::Vector2f getPosition() const noexcept
             {
                 return (vertices[0].position + vertices[4].position) / 2.f;
             }
@@ -51,12 +51,12 @@ namespace dgm
             /**
              *  \brief Get forward vector of the particle
              */
-            [[nodiscard]] const sf::Vector2f& getForward() const noexcept
+            NODISCARD_RESULT const sf::Vector2f& getForward() const noexcept
             {
                 return forward;
             }
 
-            [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
+            NODISCARD_RESULT constexpr sf::Angle getRotation() const noexcept
             {
                 return rotation;
             }
@@ -66,7 +66,7 @@ namespace dgm
              *
              *  \details Test whether lifespan is greater than zero
              */
-            [[nodiscard]] constexpr bool isAlive() const noexcept
+            NODISCARD_RESULT constexpr bool isAlive() const noexcept
             {
                 return lifespan > 0.f;
             }

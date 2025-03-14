@@ -1,16 +1,24 @@
 #pragma once
 
 #include <expected>
+#ifndef ANDROID
 #include <format>
 #include <stacktrace>
+#endif
 #include <stdexcept>
 #include <string>
 
 namespace dgm
 {
-    class Exception : public std::runtime_error
+    class [[nodiscard]] Exception : public std::runtime_error
     {
     public:
+#ifdef ANDROID
+        Exception(const std::string& message)
+            : std::runtime_error("Error message: " + message)
+        {
+        }
+#else
         Exception(
             const std::string& message,
             std::stacktrace trace = std::stacktrace::current())
@@ -20,13 +28,17 @@ namespace dgm
                   std::to_string(trace)))
         {
         }
+#endif
     };
 
     class [[nodiscard]] Error final
     {
     public:
         Error(const std::string& message)
-            : message(message), trace(std::stacktrace::current())
+            : message(message)
+#ifndef ANDROID
+            , trace(std::stacktrace::current())
+#endif
         {
         }
 
@@ -36,14 +48,18 @@ namespace dgm
             return message;
         }
 
+#ifndef ANDROID
         const std::stacktrace& getTrace() const noexcept
         {
             return trace;
         }
+#endif
 
     private:
         std::string message;
+#ifndef ANDROID
         std::stacktrace trace;
+#endif
     };
 
     using ExpectedSuccess = std::expected<std::true_type, Error>;

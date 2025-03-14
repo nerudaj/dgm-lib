@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Traits.hpp>
 #include <algorithm>
 #include <cassert>
@@ -37,7 +38,7 @@ namespace dgm
         DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
-        [[nodiscard]] constexpr DynamicBuffer clone() const
+        NODISCARD_RESULT constexpr DynamicBuffer clone() const
         {
             return DynamicBuffer(data, firstFreeSlot);
         }
@@ -64,7 +65,7 @@ namespace dgm
             }
 
         public:
-            [[nodiscard]] std::pair<
+            NODISCARD_RESULT std::pair<
                 std::conditional_t<IsConst, const DataType&, DataType&>,
                 IndexType>
             operator*() noexcept
@@ -72,7 +73,7 @@ namespace dgm
                 return { backref[index], index };
             }
 
-            constexpr [[nodiscard]] IteratorBase<BackrefType>&
+            constexpr NODISCARD_RESULT IteratorBase<BackrefType>&
             operator++() noexcept
             {
                 ++index;
@@ -80,7 +81,7 @@ namespace dgm
                 return *this;
             }
 
-            constexpr [[nodiscard]] IteratorBase<BackrefType>
+            constexpr NODISCARD_RESULT IteratorBase<BackrefType>
             operator++(int) noexcept
             {
                 auto copy = IteratorBase<BackrefType>(*this);
@@ -88,13 +89,13 @@ namespace dgm
                 return copy;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator==(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index == other.index;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator!=(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index != other.index;
@@ -123,14 +124,14 @@ namespace dgm
          *
          *  Returns true if either there are no data or no valid indices
          */
-        [[nodiscard]] constexpr bool isEmpty() const noexcept
+        NODISCARD_RESULT constexpr bool isEmpty() const noexcept
         {
             for (auto&& item : data)
                 if (std::holds_alternative<T>(item)) return false;
             return true;
         }
 
-        [[nodiscard]] constexpr bool
+        NODISCARD_RESULT constexpr bool
         isIndexValid(IndexType index) const noexcept
         {
             return index < data.size()
@@ -143,10 +144,21 @@ namespace dgm
          * \warn Index is not checked for out-of-bounds! See at()
          */
         template<class Self>
-        [[nodiscard]] constexpr auto&&
-        operator[](this Self&& self, IndexType index) noexcept
+        NODISCARD_RESULT constexpr T& operator[](IndexType index) noexcept
         {
-            return std::get<T>(self.data[index]);
+            return std::get<T>(data[index]);
+        }
+
+        /**
+         * Get reference to item at given index
+         *
+         * \warn Index is not checked for out-of-bounds! See at()
+         */
+        template<class Self>
+        NODISCARD_RESULT constexpr const T&
+        operator[](IndexType index) const noexcept
+        {
+            return std::get<T>(data[index]);
         }
 
         /**
@@ -193,29 +205,29 @@ namespace dgm
             firstFreeSlot = index;
         }
 
-        [[nodiscard]] constexpr iterator begin() noexcept
+        NODISCARD_RESULT constexpr iterator begin() noexcept
         {
             return iterator(0, *this);
         }
 
-        [[nodiscard]] constexpr iterator end() noexcept
+        NODISCARD_RESULT constexpr iterator end() noexcept
         {
             return iterator(static_cast<IndexType>(data.size()), *this);
         }
 
-        [[nodiscard]] constexpr const_iterator begin() const noexcept
+        NODISCARD_RESULT constexpr const_iterator begin() const noexcept
         {
             return const_iterator(0, std::cref(*this));
         }
 
-        [[nodiscard]] constexpr const_iterator end() const noexcept
+        NODISCARD_RESULT constexpr const_iterator end() const noexcept
         {
             return const_iterator(
                 static_cast<IndexType>(data.size()), std::cref(*this));
         }
 
     private:
-        [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept
+        NODISCARD_RESULTconstexpr bool hasNoDeletedItems() const noexcept
         {
             return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }
@@ -225,7 +237,7 @@ namespace dgm
         {
             IndexType nextFreeSlot;
 
-            [[nodiscard]] constexpr explicit Index(IndexType nfs) noexcept
+            NODISCARD_RESULT constexpr explicit Index(IndexType nfs) noexcept
                 : nextFreeSlot(nfs)
             {
             }
@@ -233,7 +245,7 @@ namespace dgm
 
         using Element = std::variant<T, Index>;
 
-        [[nodiscard]] constexpr DynamicBuffer(
+        NODISCARD_RESULT constexpr DynamicBuffer(
             std::vector<Element> data, IndexType firstFreeSlot)
             : data(data), firstFreeSlot(firstFreeSlot)
         {

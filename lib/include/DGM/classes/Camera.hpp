@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/Collision.hpp>
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Objects.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Time.hpp>
@@ -90,19 +91,21 @@ namespace dgm
         Effect<sf::Angle> rotationEffect;
         ShakeEffect shakeEffect;
 
-        [[nodiscard]] dgm::Rect getViewBoundingBox() const
+        NODISCARD_RESULT dgm::Rect getViewBoundingBox() const
         {
             return dgm::Rect(
                 view.getCenter() - view.getSize() / 2.f, view.getSize());
         }
 
     public:
-        [[nodiscard]] constexpr const sf::View& getCurrentView() const noexcept
+        NODISCARD_RESULT constexpr const sf::View&
+        getCurrentView() const noexcept
         {
             return view;
         }
 
-        [[nodiscard]] constexpr const sf::View& getDefaultView() const noexcept
+        NODISCARD_RESULT constexpr const sf::View&
+        getDefaultView() const noexcept
         {
             return view;
         }
@@ -110,7 +113,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating movement
          */
-        [[nodiscard]] constexpr bool isMoving() const noexcept
+        NODISCARD_RESULT constexpr bool isMoving() const noexcept
         {
             return moveEffect.isActive();
         }
@@ -118,7 +121,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating zooming
          */
-        [[nodiscard]] constexpr bool isZooming() const noexcept
+        NODISCARD_RESULT constexpr bool isZooming() const noexcept
         {
             return zoomEffect.isActive();
         }
@@ -126,7 +129,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating rotation
          */
-        [[nodiscard]] constexpr bool isRotating() const noexcept
+        NODISCARD_RESULT constexpr bool isRotating() const noexcept
         {
             return rotationEffect.isActive();
         }
@@ -134,18 +137,18 @@ namespace dgm
         /**
          *  \brief True if camera is animating shaking
          */
-        [[nodiscard]] constexpr bool isShaking() const noexcept
+        NODISCARD_RESULT constexpr bool isShaking() const noexcept
         {
             return shakeEffect.isActive();
         }
 
-        [[nodiscard]] bool
+        NODISCARD_RESULT bool
         isObjectVisible(const dgm::Rect& object) const noexcept
         {
             return dgm::Collision::basic(getViewBoundingBox(), object);
         }
 
-        [[nodiscard]] bool
+        NODISCARD_RESULT bool
         isObjectVisible(const dgm::Circle& object) const noexcept
         {
             return dgm::Collision::basic(getViewBoundingBox(), object);

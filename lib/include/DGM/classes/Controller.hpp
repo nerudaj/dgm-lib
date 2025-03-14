@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <Windows.h>
@@ -94,7 +95,7 @@ namespace dgm
          * a revolver gun and you want the player to press the fire
          * button separately for every single bullet.
          */
-        [[nodiscard]] bool isInputToggled(const int code) const;
+        NODISCARD_RESULT bool isInputToggled(const int code) const;
 
         /**
          * \brief Get analog value for associated input
@@ -114,7 +115,7 @@ namespace dgm
          *
          * \releaseInput does not affect this method.
          */
-        [[nodiscard]] float getInputValue(const int code) const;
+        NODISCARD_RESULT float getInputValue(const int code) const;
 
         /**
          * \brief Marks input as released
@@ -140,7 +141,7 @@ namespace dgm
          *  \pre update was called, this method returns value valid since last
          * update call
          */
-        [[nodiscard]] constexpr bool isControllerConnected() const noexcept
+        NODISCARD_RESULT constexpr bool isControllerConnected() const noexcept
         {
             return controllerConnected;
         }
@@ -224,7 +225,7 @@ namespace dgm
         };
 
     protected:
-        [[nodiscard]] inline bool
+        NODISCARD_RESULT inline bool
         isMouseInputToggled(const Binding& binding) const noexcept
         {
             // Extra check is required because:
@@ -234,7 +235,7 @@ namespace dgm
                    && sf::Mouse::isButtonPressed(binding.btn);
         }
 
-        [[nodiscard]] inline bool
+        NODISCARD_RESULT inline bool
         isKeyboardInputToggled(const Binding& binding) const noexcept
         {
             // Extra check is required because:
@@ -243,7 +244,7 @@ namespace dgm
                    && sf::Keyboard::isKeyPressed(binding.key);
         }
 
-        [[nodiscard]] inline bool
+        NODISCARD_RESULT inline bool
         isGamepadInputToggled(const Binding& binding) const noexcept
         {
             return controllerConnected
@@ -251,7 +252,8 @@ namespace dgm
                        & static_cast<WORD>(binding.xbtn));
         }
 
-        [[nodiscard]] float getAxisValue(const Binding& binding) const noexcept;
+        NODISCARD_RESULT float
+        getAxisValue(const Binding& binding) const noexcept;
 
     protected:
         mutable std::map<int, Binding> bindings = {};

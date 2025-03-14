@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Time.hpp>
 #include <DGM/classes/Window.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -106,7 +107,7 @@ namespace dgm
         /**
          *  \brief Get reference to top state on the stack
          */
-        [[nodiscard]] dgm::AppState& getTopState() noexcept(
+        NODISCARD_RESULT dgm::AppState& getTopState() noexcept(
             noexcept(states.back()) && noexcept(states.back().get()))
         {
             assert(not states.empty());

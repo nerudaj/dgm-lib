@@ -2,6 +2,7 @@
 
 #include <DGM/classes/App.hpp>
 #include <DGM/classes/AppStateConfig.hpp>
+#include <DGM/classes/Compatibility.hpp>
 
 namespace dgm
 {
@@ -54,18 +55,20 @@ namespace dgm
         }
 
     public:
-        [[nodiscard]] constexpr const sf::Color& getClearColor() const noexcept
+        NODISCARD_RESULT constexpr const sf::Color&
+        getClearColor() const noexcept
         {
             return config.clearColor;
         }
 
-        [[nodiscard]] constexpr bool
+        NODISCARD_RESULT constexpr bool
         shouldUpdateUnderlyingState() const noexcept
         {
             return config.shouldUpdateUnderlyingState;
         }
 
-        [[nodiscard]] constexpr bool shouldDrawUnderlyingState() const noexcept
+        NODISCARD_RESULT constexpr bool
+        shouldDrawUnderlyingState() const noexcept
         {
             return config.shouldDrawUnderlyingState;
         }
