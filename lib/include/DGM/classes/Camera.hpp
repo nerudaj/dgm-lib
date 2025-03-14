@@ -90,7 +90,7 @@ namespace dgm
         Effect<sf::Angle> rotationEffect;
         ShakeEffect shakeEffect;
 
-        [[nodiscard]] dgm::Rect getVíewBoundingBox() const
+        [[nodiscard]] dgm::Rect getViewBoundingBox() const
         {
             return dgm::Rect(
                 view.getCenter() - view.getSize() / 2.f, view.getSize());
@@ -142,13 +142,13 @@ namespace dgm
         [[nodiscard]] bool
         isObjectVisible(const dgm::Rect& object) const noexcept
         {
-            return dgm::Collision::basic(getVíewBoundingBox(), object);
+            return dgm::Collision::basic(getViewBoundingBox(), object);
         }
 
         [[nodiscard]] bool
         isObjectVisible(const dgm::Circle& object) const noexcept
         {
-            return dgm::Collision::basic(getVíewBoundingBox(), object);
+            return dgm::Collision::basic(getViewBoundingBox(), object);
         }
 
         /**
