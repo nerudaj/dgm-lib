@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Error.hpp>
 #include <concepts>
 #include <expected>

@@ -236,14 +236,14 @@ bool dgm::Collision::advanced(
         return false;
     }
 
-    body.move(0.f, -localForward.y);
+    body.move({ 0.f, -localForward.y });
     if (!dgm::Collision::basic(mesh, body, meshHitPosition))
     {
         forward.y = 0.f;
         return true;
     }
 
-    body.move(-localForward.x, localForward.y);
+    body.move({ -localForward.x, localForward.y });
     if (!dgm::Collision::basic(mesh, body, meshHitPosition))
     {
         forward.x = 0.f;

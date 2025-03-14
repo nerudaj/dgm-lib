@@ -34,7 +34,7 @@ namespace dgm
     {
     public:
         template<UniversalReference<dgm::Clip> _Clip>
-        [[nodiscard]] explicit TileMap(const sf::Texture& texture, _Clip&& clip)
+        explicit TileMap(const sf::Texture& texture, _Clip&& clip)
             : texturePtr(&texture), clip(std::forward<_Clip>(clip))
         {
         }
@@ -87,7 +87,7 @@ namespace dgm
             const std::vector<int>& imageData,
             const sf::Vector2u& dataSize);
 
-        [[nodiscard]] const dgm::Clip& getClip() const noexcept
+        const dgm::Clip& getClip() const noexcept
         {
             return clip;
         }

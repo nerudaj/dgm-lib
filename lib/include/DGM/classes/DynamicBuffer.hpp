@@ -227,7 +227,7 @@ namespace dgm
         }
 
     private:
-        NODISCARD_RESULTconstexpr bool hasNoDeletedItems() const noexcept
+        NODISCARD_RESULT constexpr bool hasNoDeletedItems() const noexcept
         {
             return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }
