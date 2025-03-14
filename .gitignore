@@ -40,3 +40,4 @@ RELEASE
 
 # GoogleBench
 lib/benchmarks/googlebench
+examples/example-android/local.properties
