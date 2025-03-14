@@ -92,7 +92,7 @@ namespace dgm
         if anything fails (for example loadCallback throws an error)
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] ExpectedSuccess loadResource(
+        NODISCARD_RESULT ExpectedSuccess loadResource(
             const std::filesystem::path& path, LoadCallback<T> loadCallback)
         {
             const auto&& tid = typeid(T).hash_code();
@@ -172,7 +172,7 @@ namespace dgm
         \warn \p allowedExtensions must not be empty!
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] ExpectedSuccess loadResourcesFromDirectory(
+        NODISCARD_RESULT ExpectedSuccess loadResourcesFromDirectory(
             const std::filesystem::path& folderPath,
             LoadCallback<T> loadCallback,
             const std::vector<std::string>& allowedExtensions = {})
@@ -198,7 +198,8 @@ namespace dgm
                 return std::find_if(
                            allowedExtensions.begin(),
                            allowedExtensions.end(),
-                           [&path](const std::string& extension) -> bool {
+                           [&path](const std::string& extension) -> bool
+                           {
                                return path.extension().string().ends_with(
                                    extension);
                            })
@@ -220,11 +221,11 @@ namespace dgm
             return std::true_type {};
         }
 
-        [[nodiscard]] std::expected<std::string, Error>
+        NODISCARD_RESULT std::expected<std::string, Error>
         getResourceId(const std::filesystem::path& path) const noexcept;
 
         template<CompatibleResourceType T>
-        [[nodiscard]] bool hasResource(const std::string& id) const noexcept
+        NODISCARD_RESULT bool hasResource(const std::string& id) const noexcept
         {
             const auto&& tid = typeid(T).hash_code();
             return data.contains(tid) && data.at(tid).contains(id);
@@ -237,7 +238,7 @@ namespace dgm
         If no resources has been loaded
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] std::expected<std::vector<std::string>, Error>
+        NODISCARD_RESULT std::expected<std::vector<std::string>, Error>
         getLoadedResourceIds() const noexcept
         {
             try

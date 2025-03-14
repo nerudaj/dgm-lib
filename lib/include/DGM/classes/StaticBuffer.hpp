@@ -17,7 +17,7 @@ namespace dgm
      * and swappable. If it isn't, wrap it in a smart pointer.
      */
     template<TrivialType T>
-    class StaticBuffer final
+    class [[nodiscard]] StaticBuffer final
     {
     public:
         template<
@@ -35,19 +35,18 @@ namespace dgm
                 assert(ptr);
             }
 
-            [[nodiscard]] IteratorBase(IteratorBase<PtrType>&& other)
-                : ptr(other.ptr)
+            IteratorBase(IteratorBase<PtrType>&& other) : ptr(other.ptr)
             {
                 other.ptr = nullptr;
             }
 
         public:
-            [[nodiscard]] std::
-                conditional_t<IsConst, const ValueType&, ValueType&>
-                operator*(this std::conditional_t<
-                          IsConst,
-                          const IteratorBase<PtrType>&,
-                          IteratorBase<PtrType>&> self) noexcept
+            NODISCARD_RESULT
+            std::conditional_t<IsConst, const ValueType&, ValueType&>
+            operator*(this std::conditional_t<
+                      IsConst,
+                      const IteratorBase<PtrType>&,
+                      IteratorBase<PtrType>&> self) noexcept
             {
                 // This function uses explicit this to be const
                 // based on whether it is const_iterator or not
@@ -60,7 +59,7 @@ namespace dgm
                 return *this;
             }
 
-            [[nodiscard]] constexpr IteratorBase<PtrType>
+            NODISCARD_RESULT constexpr IteratorBase<PtrType>
             operator++(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
@@ -68,13 +67,14 @@ namespace dgm
                 return copy;
             }
 
-            [[nodiscard]] constexpr IteratorBase<PtrType>& operator--() noexcept
+            NODISCARD_RESULT constexpr IteratorBase<PtrType>&
+            operator--() noexcept
             {
                 ptr--;
                 return *this;
             }
 
-            [[nodiscard]] constexpr IteratorBase<PtrType>
+            NODISCARD_RESULT constexpr IteratorBase<PtrType>
             operator--(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
@@ -82,31 +82,31 @@ namespace dgm
                 return copy;
             }
 
-            [[nodiscard]] constexpr std::size_t
+            NODISCARD_RESULT constexpr std::size_t
             operator-(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr - other.ptr;
             }
 
-            [[nodiscard]] constexpr std::size_t
+            NODISCARD_RESULT constexpr std::size_t
             operator+(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr + other.ptr;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator==(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr == other.ptr;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator!=(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr != other.ptr;
             }
 
-            [[nodiscard]] constexpr auto
+            NODISCARD_RESULT constexpr auto
             operator<=>(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr <=> other.ptr;
@@ -120,7 +120,7 @@ namespace dgm
         using const_iterator = IteratorBase<const T*>;
 
     public:
-        [[nodiscard]] constexpr explicit StaticBuffer(unsigned maxCapacity)
+        constexpr explicit StaticBuffer(unsigned maxCapacity)
         {
             data = new T[maxCapacity];
             if (!data) throw std::bad_alloc();
@@ -129,7 +129,7 @@ namespace dgm
 
         StaticBuffer(const StaticBuffer&) = delete;
 
-        [[nodiscard]] constexpr StaticBuffer(StaticBuffer&& other) noexcept
+        constexpr StaticBuffer(StaticBuffer&& other) noexcept
         {
             std::swap(data, other.data);
             std::swap(capacity, other.capacity);
@@ -152,7 +152,7 @@ namespace dgm
          *  If T is not trivially copyable then the array is iterated and
          *  the copy constructor is called per each item.
          */
-        [[nodiscard]] constexpr StaticBuffer clone()
+        constexpr StaticBuffer clone()
         {
             auto clonedData = new T[capacity];
             if (!clonedData) throw std::bad_alloc();
@@ -170,7 +170,7 @@ namespace dgm
         }
 
     private:
-        [[nodiscard]] constexpr StaticBuffer(
+        constexpr StaticBuffer(
             T* data, std::size_t dataSize, std::size_t capacity) noexcept
             : data(data), dataSize(dataSize), capacity(capacity)
         {
@@ -200,7 +200,7 @@ namespace dgm
          *  \details Does the same thing as grow, but it always returns
          *  result of getLast even if capacity was reached.
          */
-        [[nodiscard]] constexpr T& growUnchecked() noexcept
+        NODISCARD_RESULT constexpr T& growUnchecked() noexcept
         {
             grow();
             return getLast();
@@ -241,14 +241,14 @@ namespace dgm
          * to initialize the unhid item.
          */
         template<class Self>
-        [[nodiscard]] constexpr auto&& getLast(this Self&& self) noexcept
+        NODISCARD_RESULT constexpr auto&& getLast(this Self&& self) noexcept
         {
             return self.operator[](self.dataSize - 1);
         }
 
         // Deducing this getter
         template<class Self>
-        [[nodiscard]] constexpr auto&&
+        NODISCARD_RESULT constexpr auto&&
         operator[](this Self&& self, std::size_t index) noexcept
         {
             return self.data[index];
@@ -257,7 +257,7 @@ namespace dgm
         /**
          * \brief Get number of used items
          */
-        [[nodiscard]] constexpr std::size_t getSize() const noexcept
+        NODISCARD_RESULT constexpr std::size_t getSize() const noexcept
         {
             return dataSize;
         }
@@ -265,7 +265,7 @@ namespace dgm
         /**
          * \brief Get total number of available items
          */
-        [[nodiscard]] constexpr std::size_t getCapacity() const noexcept
+        NODISCARD_RESULT constexpr std::size_t getCapacity() const noexcept
         {
             return capacity;
         }
@@ -273,7 +273,7 @@ namespace dgm
         /**
          * \brief Test whether buffer is empty
          */
-        [[nodiscard]] constexpr bool isEmpty() const noexcept
+        NODISCARD_RESULT constexpr bool isEmpty() const noexcept
         {
             return dataSize == 0;
         }
@@ -281,17 +281,17 @@ namespace dgm
         /**
          * \brief Test whether buffer is full
          */
-        [[nodiscard]] constexpr bool isFull() const noexcept
+        NODISCARD_RESULT constexpr bool isFull() const noexcept
         {
             return dataSize == capacity;
         }
 
-        [[nodiscard]] constexpr const_iterator begin() const noexcept
+        NODISCARD_RESULT constexpr const_iterator begin() const noexcept
         {
             return const_iterator(data);
         }
 
-        [[nodiscard]] constexpr const_iterator end() const noexcept
+        NODISCARD_RESULT constexpr const_iterator end() const noexcept
         {
             return const_iterator(data + dataSize);
         }

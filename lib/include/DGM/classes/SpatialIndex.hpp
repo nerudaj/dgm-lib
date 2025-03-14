@@ -21,25 +21,25 @@ namespace dgm
     template<
         typename IndexType = std::size_t,
         typename GridResolutionType = unsigned>
-    class SpatialIndex
+    class [[nodiscard]] SpatialIndex
     {
     public:
         using IndexingType = IndexType;
         using IndexListType = std::vector<IndexType>;
 
     public:
-        [[nodiscard]] constexpr SpatialIndex(
+        constexpr SpatialIndex(
             dgm::Rect boundingBox, GridResolutionType gridResolution)
             : BOUNDING_BOX(std::move(boundingBox))
             , GRID_RESOLUTION(gridResolution)
             , COORD_TO_GRID_X(gridResolution / BOUNDING_BOX.getSize().x)
             , COORD_TO_GRID_Y(gridResolution / BOUNDING_BOX.getSize().y)
+            , grid(
+                  std::vector<IndexListType>(GRID_RESOLUTION * GRID_RESOLUTION))
         {
-            grid =
-                std::vector<IndexListType>(GRID_RESOLUTION * GRID_RESOLUTION);
         }
 
-        [[nodiscard]] SpatialIndex(SpatialIndex&&) = default;
+        SpatialIndex(SpatialIndex&&) = default;
         SpatialIndex(const SpatialIndex&) = delete;
         ~SpatialIndex() = default;
 
@@ -102,7 +102,8 @@ namespace dgm
          * until next call to erase that might delete given id.
          */
         template<AaBbType AABB>
-        std::vector<IndexType> getOverlapCandidates(const AABB& box) const
+        NODISCARD_RESULT std::vector<IndexType>
+        getOverlapCandidates(const AABB& box) const
         {
             if (!dgm::Collision::basic(BOUNDING_BOX, box)) return {};
 
@@ -123,7 +124,8 @@ namespace dgm
             return result;
         }
 
-        [[nodiscard]] const constexpr dgm::Rect& getBoundingBox() const noexcept
+        NODISCARD_RESULT const constexpr dgm::Rect&
+        getBoundingBox() const noexcept
         {
             return BOUNDING_BOX;
         }
@@ -140,7 +142,7 @@ namespace dgm
             unsigned x1, y1, x2, y2;
         };
 
-        [[nodiscard]] constexpr sf::Vector2u
+        NODISCARD_RESULT constexpr sf::Vector2u
         getGridIndexFromCoord(const sf::Vector2f& coord) const noexcept
         {
             return {
@@ -155,14 +157,14 @@ namespace dgm
             };
         }
 
-        [[nodiscard]] GridRect
+        NODISCARD_RESULT GridRect
         convertBoxToGridRect(const sf::Vector2f& point) const noexcept
         {
             const auto&& coord = getGridIndexFromCoord(point);
             return { coord.x, coord.y, coord.x, coord.y };
         }
 
-        [[nodiscard]] GridRect
+        NODISCARD_RESULT GridRect
         convertBoxToGridRect(const dgm::Circle& box) const noexcept
         {
             auto&& center = box.getPosition();
@@ -174,7 +176,7 @@ namespace dgm
             return { topLft.x, topLft.y, btmRgt.x, btmRgt.y };
         }
 
-        [[nodiscard]] GridRect
+        NODISCARD_RESULT GridRect
         convertBoxToGridRect(const dgm::Rect& box) const noexcept
         {
             const auto&& topLft = getGridIndexFromCoord(box.getPosition());

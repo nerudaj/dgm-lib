@@ -70,7 +70,7 @@ namespace dgm
         /**
          *  \brief Close the Window and return configuration of closed window
          */
-        [[nodiscard]] WindowSettings close();
+        NODISCARD_RESULT WindowSettings close();
 
         /**
          *  \brief Pop the next event from the front of the FIFO event queue, if
@@ -90,7 +90,7 @@ namespace dgm
          *
          * \return The event, otherwise `std::nullopt` if no events are pending
          */
-        [[nodiscard]] inline auto pollEvent()
+        NODISCARD_RESULT inline auto pollEvent()
         {
             return window.pollEvent();
         }
@@ -125,7 +125,7 @@ namespace dgm
         /**
          *  \brief Test whether window is still open
          */
-        [[nodiscard]] virtual bool isOpen() const
+        NODISCARD_RESULT virtual bool isOpen() const
         {
             return window.isOpen();
         }
@@ -133,7 +133,7 @@ namespace dgm
         /**
          *  \brief Test whether window is in fullscreen mode
          */
-        [[nodiscard]] constexpr bool isFullscreen() const noexcept
+        NODISCARD_RESULT constexpr bool isFullscreen() const noexcept
         {
             return fullscreen;
         }
@@ -143,7 +143,7 @@ namespace dgm
          *
          *  \return Width and height of window render area in pixels
          */
-        [[nodiscard]] sf::Vector2u getSize() const
+        NODISCARD_RESULT sf::Vector2u getSize() const
         {
             return window.getSize();
         }
@@ -154,15 +154,27 @@ namespace dgm
          *  Use this method whether you need something from sf::RenderWindow API
          *  not supported directly by this class
          */
-        [[nodiscard]] auto& getSfmlWindowContext(this auto&& self) noexcept
+        NODISCARD_RESULT sf::RenderWindow& getSfmlWindowContext() noexcept
         {
-            return self.window;
+            return window;
+        }
+
+        /**
+         *  \brief Get handle to internal instance of sf::RenderWindow
+         *
+         *  Use this method whether you need something from sf::RenderWindow API
+         *  not supported directly by this class
+         */
+        NODISCARD_RESULT const sf::RenderWindow&
+        getSfmlWindowContext() const noexcept
+        {
+            return window;
         }
 
         /**
          *  \brief Get title text of the window
          */
-        [[nodiscard]] constexpr const std::string& getTitle() const noexcept
+        NODISCARD_RESULT constexpr const std::string& getTitle() const noexcept
         {
             return title;
         }
@@ -195,7 +207,7 @@ namespace dgm
             window.display();
         }
 
-        [[nodiscard]] sf::Image getScreenshot() const;
+        NODISCARD_RESULT sf::Image getScreenshot() const;
 
     protected:
         sf::RenderWindow window;
