@@ -1,6 +1,11 @@
 tests/include/TestDataDir.hpp
 _build*
 
+examples/example-android/.idea
+examples/example-android/.gradle
+examples/example-android/app/.cxx
+examples/example-android/app/build
+
 # Prerequisites
 *.d
 
