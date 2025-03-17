@@ -29,7 +29,6 @@ namespace dgm
 
     public:
         Camera(const sf::FloatRect& viewport, const sf::Vector2f& resolution)
-            : view(view)
         {
             defaultView.setViewport(viewport);
             defaultView.setSize(resolution);
