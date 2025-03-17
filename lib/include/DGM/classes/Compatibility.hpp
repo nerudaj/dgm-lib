@@ -1,9 +1,7 @@
 #pragma once
 
-#define ANDROID
-
 #ifdef ANDROID
-	#define NODISCARD_RESULT
+#define NODISCARD_RESULT
 #else
-	#define NODISCARD_RESULT [[nodiscard]]
+#define NODISCARD_RESULT [[nodiscard]]
 #endif
