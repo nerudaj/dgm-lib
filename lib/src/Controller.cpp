@@ -45,10 +45,12 @@ void dgm::Controller::vibrate(
     const std::uint16_t leftMotorForce,
     const std::uint16_t rightMotorForce) noexcept
 {
+#ifndef ANDROID
     XINPUT_VIBRATION vibration;
     vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotorForce);
     vibration.wRightMotorSpeed = static_cast<WORD>(rightMotorForce);
     XInputSetState(controllerIndex, &vibration);
+#endif
 }
 
 void dgm::Controller::bindInput(const int code, dgm::Xbox::Axis axis)

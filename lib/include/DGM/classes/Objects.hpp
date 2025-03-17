@@ -351,13 +351,13 @@ namespace dgm
             return data[pos.y * dataSize.x + pos.x];
         }
 #else
-        NODISCARD_RESULT constexpr inline DataType&
+        NODISCARD_RESULT constexpr inline auto&&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
         }
 
-        NODISCARD_RESULT constexpr inline DataType&
+        NODISCARD_RESULT constexpr inline auto&&
         operator[](this auto&& self, const sf::Vector2u& pos) noexcept
         {
             return self.data[pos.y * self.dataSize.x + pos.x];

@@ -16,7 +16,9 @@ Animation::PlaybackStatus Animation::update(const dgm::Time& time) noexcept
     static_assert(noexcept(time.getElapsed()));
     static_assert(noexcept(hasClipFinishedPlaying()));
     static_assert(noexcept(isLooping()));
+#ifndef ANDROID
     static_assert(noexcept(currentState->second.getFrameCount()));
+#endif
 
     if (hasClipFinishedPlaying())
     {

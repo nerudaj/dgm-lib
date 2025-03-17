@@ -139,8 +139,7 @@ namespace dgm
                 auto&& resources = data.at(tid);
                 auto&& itr = resources.find(id);
                 if (itr == resources.end())
-                    throw std::runtime_error(
-                        "Id '" + id + "' is not loaded", id);
+                    throw std::runtime_error("Id '" + id + "' is not loaded");
 
                 destructors.at(tid)(itr->second);
                 ::operator delete(itr->second);

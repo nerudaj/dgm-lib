@@ -185,14 +185,14 @@ namespace dgm
             if (hasNoDeletedItems())
             {
                 data.emplace_back(Index(IndexType {}));
-                data.back().emplace<T>(std::forward<Args>(args)...);
+                data.back().template emplace<T>(std::forward<Args>(args)...);
                 return static_cast<IndexType>(data.size() - 1);
             }
             else
             {
                 auto index = firstFreeSlot;
                 firstFreeSlot = std::get<Index>(data[index]).nextFreeSlot;
-                data[index].emplace<T>(std::forward<Args>(args)...);
+                data[index].template emplace<T>(std::forward<Args>(args)...);
                 return index;
             }
         }

@@ -213,6 +213,6 @@ namespace dgm
         sf::RenderWindow window;
         bool fullscreen = false;
         std::string title = "";
-        std::int64_t style = sf::Style::Default;
+        std::int32_t style = sf::Style::Default;
     };
 }; // namespace dgm

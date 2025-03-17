@@ -67,13 +67,14 @@ namespace dgm
 
         Path<T>& operator=(dgm::Path<T>&& other) = default;
 
-        NODISCARD_RESULT Path<T> clone() const
+        NODISCARD_RESULT
+        Path<T> clone() const
         {
             return Path(*this);
         }
 
     private:
-        NODISCARD_RESULT explicit Path(const Path&) = default;
+        explicit Path(const Path&) = default;
 
     public:
         /**

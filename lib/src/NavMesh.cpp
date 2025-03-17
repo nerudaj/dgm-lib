@@ -7,12 +7,6 @@
 #include <map>
 #include <queue>
 
-/*
-TODO: When CMake is able to set Scan sources for module dependencies, then
-import modules: import <queue>; import <array>; import <functional>; import
-<map>; import <cmath>;
-*/
-
 template<class T>
 concept AstarNode =
     std::is_class<T>::value
@@ -35,18 +29,18 @@ public:
         nodes[node.point] = node;
     }
 
-    [[nodiscard]] bool hasElements() const noexcept
+    NODISCARD_RESULT bool hasElements() const noexcept
     {
         return !nodes.empty();
     }
 
-    [[nodiscard]] bool contains(const sf::Vector2u& p) const noexcept
+    NODISCARD_RESULT bool contains(const sf::Vector2u& p) const noexcept
     {
         const auto itr = nodes.find(p);
         return itr != nodes.end();
     }
 
-    [[nodiscard]] NodeType popBestNode()
+    NODISCARD_RESULT NodeType popBestNode()
     {
         auto minElem = nodes.begin();
         for (auto itr = (++nodes.begin()); itr != nodes.end(); itr++)
@@ -62,7 +56,7 @@ public:
         return copy;
     }
 
-    [[nodiscard]] const NodeType& getNode(const sf::Vector2u& point) const
+    NODISCARD_RESULT const NodeType& getNode(const sf::Vector2u& point) const
     {
         return nodes.at(point);
     }
@@ -70,17 +64,17 @@ public:
 
 namespace custom
 {
-    constexpr [[nodiscard]] unsigned max(unsigned a, unsigned b) noexcept
+    constexpr NODISCARD_RESULT unsigned max(unsigned a, unsigned b) noexcept
     {
         return a < b ? b : a;
     }
 
-    constexpr [[nodiscard]] unsigned min(unsigned a, unsigned b) noexcept
+    constexpr NODISCARD_RESULT unsigned min(unsigned a, unsigned b) noexcept
     {
         return a < b ? a : b;
     }
 
-    constexpr [[nodiscard]] unsigned
+    constexpr NODISCARD_RESULT unsigned
     getScalarDistance(unsigned a, unsigned b) noexcept
     {
         return max(a, b) - min(a, b);
@@ -164,7 +158,7 @@ public:
 
     TileNode(const TileNode& other) = default;
 
-    [[nodiscard]] constexpr bool
+    NODISCARD_RESULT constexpr bool
     isCloserThan(const TileNode& other) const noexcept
     {
         return fcost < other.fcost
@@ -175,7 +169,7 @@ public:
 std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
     const sf::Vector2u& from, const sf::Vector2u& to, const dgm::Mesh& mesh)
 {
-    if (mesh.at(from) == 1)
+    if (mesh[from] == 1)
         return std::nullopt;
     else if (from == to)
         return dgm::Path<TileNavpoint>({}, false);
@@ -190,7 +184,7 @@ std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
         auto canVisit = [&](const sf::Vector2u& point)
         {
             const bool notInClosedSet = !closedSet.contains(point);
-            const bool emptyInMesh = mesh.at(point.x, point.y) <= 0;
+            const bool emptyInMesh = mesh[point] <= 0;
             return notInClosedSet && emptyInMesh;
         };
 
@@ -282,7 +276,7 @@ struct WorldNode
 
     WorldNode(const WorldNode& other) = default;
 
-    [[nodiscard]] constexpr bool
+    NODISCARD_RESULT constexpr bool
     isCloserThan(const WorldNode& other) const noexcept
     {
         return fcost < other.fcost
@@ -310,18 +304,18 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
          *  # # #
          */
 
-        const bool northOpened = mesh.at(point.x, point.y - 1) <= 0;
-        const bool westOpened = mesh.at(point.x - 1, point.y) <= 0;
-        const bool southOpened = mesh.at(point.x, point.y + 1) <= 0;
-        const bool eastOpened = mesh.at(point.x + 1, point.y) <= 0;
+        const bool northOpened = mesh[{ point.x, point.y - 1 }] <= 0;
+        const bool westOpened = mesh[{ point.x - 1, point.y }] <= 0;
+        const bool southOpened = mesh[{ point.x, point.y + 1 }] <= 0;
+        const bool eastOpened = mesh[{ point.x + 1, point.y }] <= 0;
         const bool northWestCorner =
-            mesh.at(point.x - 1, point.y - 1) > 0 && westOpened && northOpened;
+            mesh[{ point.x - 1, point.y - 1 }] > 0 && westOpened && northOpened;
         const bool northEastCorner =
-            mesh.at(point.x + 1, point.y - 1) > 0 && eastOpened && northOpened;
+            mesh[{ point.x + 1, point.y - 1 }] > 0 && eastOpened && northOpened;
         const bool southWestCorner =
-            mesh.at(point.x - 1, point.y + 1) > 0 && westOpened && southOpened;
+            mesh[{ point.x - 1, point.y + 1 }] > 0 && westOpened && southOpened;
         const bool southEastCorner =
-            mesh.at(point.x + 1, point.y + 1) > 0 && eastOpened && southOpened;
+            mesh[{ point.x + 1, point.y + 1 }] > 0 && eastOpened && southOpened;
 
         return northWestCorner || northEastCorner || southWestCorner
                || southEastCorner;
@@ -334,7 +328,7 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
             for (unsigned x = 1; x < mesh.getDataSize().x - 1; x++)
             {
                 // Skip impassable blocks
-                if (mesh.at(x, y) > 0) continue;
+                if (mesh[{ x, y }] > 0) continue;
 
                 sf::Vector2u point(x, y);
                 if (isJumpPoint(point))
@@ -386,7 +380,7 @@ dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
     // Early search pruning
     if (tileFrom == tileTo) // Identity
         return dgm::Path<WorldNavpoint>({}, false);
-    else if (mesh.at(tileTo) > 0) // Destination is a wall
+    else if (mesh[tileTo] > 0) // Destination is a wall
         return std::nullopt;
 
     connectToAndFromPointsToTheNetwork(tileFrom, tileTo);
