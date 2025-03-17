@@ -1,6 +1,6 @@
 #include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Utility.hpp>
 #include <cassert>
-#include <format>
 #include <iostream>
 
 void dgm::Clip::init(
@@ -38,21 +38,15 @@ void dgm::Clip::init(
 
     if (frameCount > MAX_AVAILABLE_FRAMES)
     {
-        std::cerr << std::format(
-            "dgm::Clip::init called with frame count {}, but only {} frames "
-            "are available"
-            " given frameSize [{}, {}], boundaries [{}, {}, {}, {}] and "
-            "frameSpacing [{}, {}]\n",
-            frameCount,
-            MAX_AVAILABLE_FRAMES,
-            frameSize.x,
-            frameSize.y,
-            boundaries.position.x,
-            boundaries.position.y,
-            boundaries.size.x,
-            boundaries.size.y,
-            frameSpacing.x,
-            frameSpacing.y);
+        std::cerr << "dgm::Clip::init called with frame count '"
+                         + std::to_string(frameCount) + "', but only '"
+                         + std::to_string(MAX_AVAILABLE_FRAMES)
+                         + "' frames are available given frameSize "
+                         + dgm::Utility::to_string(frameSize) + ", boundaries ["
+                         + dgm::Utility::to_string(boundaries.position) + ", "
+                         + dgm::Utility::to_string(boundaries.size)
+                         + "] and  frameSpacing "
+                         + dgm::Utility::to_string(frameSpacing) + "\n";
     }
 
     const std::size_t CONCRETE_FRAME_COUNT =

@@ -5,7 +5,6 @@
 #include <concepts>
 #include <expected>
 #include <filesystem>
-#include <format>
 #include <functional>
 #include <map>
 #include <string>
@@ -48,8 +47,7 @@ namespace dgm
         const T& get(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error(
-                    std::format("Resource with id {} is not loaded.", id));
+                throw Error("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
@@ -60,8 +58,7 @@ namespace dgm
         T& getMutable(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error(
-                    std::format("Resource with id {} is not loaded.", id));
+                throw Error("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
@@ -102,9 +99,9 @@ namespace dgm
 
             if (hasResource<T>(resId.value()))
             {
-                return std::unexpected(std::format(
-                    "Resource with id {} is already loaded in the manager.",
-                    resId.value()));
+                return std::unexpected(
+                    "Resource with id '" + resId.value()
+                    + "' is already loaded in the manager.");
             }
 
             try
@@ -118,8 +115,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Unable to load resource. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Unable to load resource. Reason: ")
+                    + e.what());
             }
 
             return std::true_type {};
@@ -142,7 +140,7 @@ namespace dgm
                 auto&& itr = resources.find(id);
                 if (itr == resources.end())
                     throw std::runtime_error(
-                        std::format("Id {} is not loaded", id));
+                        "Id '" + id + "' is not loaded", id);
 
                 destructors.at(tid)(itr->second);
                 ::operator delete(itr->second);
@@ -150,8 +148,9 @@ namespace dgm
             }
             catch (std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Unloading resource failed. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Unloading resource failed. Reason: ")
+                    + e.what());
             }
 
             return std::true_type {};
@@ -189,8 +188,8 @@ namespace dgm
             fs::path path(folderPath);
             if (!fs::is_directory(path))
             {
-                return std::unexpected(std::format(
-                    "Path '{}' is not a directory!", folderPath.string()));
+                return std::unexpected(
+                    "Path '" + folderPath.string() + "' is not a directory!");
             }
 
             auto hasAllowedExtension =
@@ -255,8 +254,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Cannot list all resource ids. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Cannot list all resource ids. Reason: ")
+                    + e.what());
             }
         }
 

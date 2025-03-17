@@ -10,7 +10,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <expected>
-#include <format>
 #include <iostream>
 #include <string>
 
@@ -46,8 +45,8 @@ namespace dgm
             auto&& texture = sf::Texture();
             if (!texture.loadFromFile(path.string()))
             {
-                return std::unexpected(std::format(
-                    "Could not load texture from path '{}'", path.string()));
+                return std::unexpected(
+                    "Could not load texture from path '" + path.string() + "'");
             }
             return texture;
         }
@@ -61,8 +60,8 @@ namespace dgm
             auto&& font = sf::Font();
             if (!font.openFromFile(path.string()))
             {
-                return std::unexpected(std::format(
-                    "Could not load font from path '{}'", path.string()));
+                return std::unexpected(
+                    "Could not load font from path '" + path.string() + "'");
             }
             return font;
         }
@@ -76,8 +75,8 @@ namespace dgm
             auto&& sound = sf::SoundBuffer();
             if (!sound.loadFromFile(path.string()))
             {
-                return std::unexpected(std::format(
-                    "Could not load sound from path '{}'", path.string()));
+                return std::unexpected(
+                    "Could not load sound from path '" + path.string() + "'");
             }
             return sound;
         }
@@ -94,10 +93,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Could not load dgm::Clip from file '{}', reason: {}",
-                    path.string(),
-                    e.what()));
+                return std::unexpected(
+                    "Could not load dgm::Clip from file '" + path.string()
+                    + "', reason: " + e.what());
             }
         }
 
@@ -113,11 +111,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Could not load dgm::AnimationStates from file '{}', "
-                    "reason: {}",
-                    path.string(),
-                    e.what()));
+                return std::unexpected(
+                    "Could not load dgm::AnimationStates from file '"
+                    + path.string() + "', reason: " + e.what());
             }
         }
     };

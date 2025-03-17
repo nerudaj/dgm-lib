@@ -1,7 +1,6 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Error.hpp>
 #include <cassert>
-#include <format>
 #include <fstream>
 
 using dgm::Animation;
@@ -54,8 +53,7 @@ void Animation::setState(const std::string& stateName, bool shouldLoop)
     auto newState = states.find(stateName);
     if (newState == states.end())
     {
-        throw dgm::Exception(
-            std::format("Cannot find animation state '{}'", stateName));
+        throw dgm::Exception("Cannot find animation state '" + stateName + "'");
     }
 
     currentState = newState;

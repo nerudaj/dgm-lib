@@ -102,9 +102,9 @@ dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
 
         if (frame.x == 0u || frame.y == 0u)
         {
-            throw dgm::Exception(std::format(
-                "No frame was defined either in defaults block or for state {}",
-                name));
+            throw dgm::Exception(
+                "No frame was defined either in defaults block or for state "
+                + name);
         }
 
         result.insert({ name, dgm::Clip(frame, bounds, frameCount, spacing) });
