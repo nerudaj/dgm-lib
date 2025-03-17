@@ -326,23 +326,43 @@ namespace dgm
         // and replace it with a clone method
 
     public:
-        NODISCARD_RESULT constexpr inline auto&&
+#ifdef ANDROID
+        NODISCARD_RESULT constexpr inline DataType&
+        operator[](std::size_t index) noexcept
+        {
+            return data[index];
+        }
+
+        NODISCARD_RESULT constexpr inline const DataType&
+        operator[](std::size_t index) const noexcept
+        {
+            return data[index];
+        }
+
+        NODISCARD_RESULT constexpr inline DataType&
+        operator[](const sf::Vector2u& pos) noexcept
+        {
+            return data[pos.y * dataSize.x + pos.x];
+        }
+
+        NODISCARD_RESULT constexpr inline const DataType&
+        operator[](const sf::Vector2u& pos) const noexcept
+        {
+            return data[pos.y * dataSize.x + pos.x];
+        }
+#else
+        NODISCARD_RESULT constexpr inline DataType&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
         }
 
-        NODISCARD_RESULT constexpr inline auto&&
-        at(this auto&& self, unsigned x, unsigned y) noexcept
+        NODISCARD_RESULT constexpr inline DataType&
+        operator[](this auto&& self, const sf::Vector2u& pos) noexcept
         {
-            return self[y * self.dataSize.x + x];
+            return self.data[pos.y * self.dataSize.x + pos.x];
         }
-
-        NODISCARD_RESULT constexpr inline auto&&
-        at(this auto&& self, const sf::Vector2u& pos) noexcept
-        {
-            return self.at(pos.x, pos.y);
-        }
+#endif
 
         NODISCARD_RESULT constexpr inline std::vector<DataType>&
         getRawData() noexcept

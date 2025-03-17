@@ -41,7 +41,7 @@ namespace dgm
             }
 
         public:
-            NODISCARD_RESULT
+            /* NODISCARD_RESULT
             std::conditional_t<IsConst, const ValueType&, ValueType&>
             operator*(this std::conditional_t<
                       IsConst,
@@ -51,7 +51,7 @@ namespace dgm
                 // This function uses explicit this to be const
                 // based on whether it is const_iterator or not
                 return *self.ptr;
-            }
+            }*/
 
             IteratorBase<PtrType>& operator++() noexcept
             {
@@ -233,6 +233,7 @@ namespace dgm
             remove(itr - begin());
         }
 
+#ifdef ANDROID
         /**
          * \brief Get element to last available item
          *
@@ -240,19 +241,53 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        template<class Self>
-        NODISCARD_RESULT constexpr auto&& getLast(this Self&& self) noexcept
+        NODISCARD_RESULT constexpr T& getLast() noexcept
+        {
+            return operator[](dataSize - 1);
+        }
+
+        /**
+         * \brief Get element to last available item
+         *
+         * \details Last item equals to last added item with \ref expand
+         * unless \ref remove was called. Use this immediately \ref expand
+         * to initialize the unhid item.
+         */
+        NODISCARD_RESULT constexpr const T& getLast() const noexcept
+        {
+            return operator[](dataSize - 1);
+        }
+
+        NODISCARD_RESULT constexpr T& operator[](std::size_t index) noexcept
+        {
+            return data[index];
+        }
+
+        NODISCARD_RESULT constexpr const T&
+        operator[](std::size_t index) const noexcept
+        {
+            return data[index];
+        }
+#else
+        /**
+         * \brief Get element to last available item
+         *
+         * \details Last item equals to last added item with \ref expand
+         * unless \ref remove was called. Use this immediately \ref expand
+         * to initialize the unhid item.
+         */
+        NODISCARD_RESULT constexpr auto&& getLast(this auto&& self) noexcept
         {
             return self.operator[](self.dataSize - 1);
         }
 
         // Deducing this getter
-        template<class Self>
         NODISCARD_RESULT constexpr auto&&
-        operator[](this Self&& self, std::size_t index) noexcept
+        operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
         }
+#endif
 
         /**
          * \brief Get number of used items
