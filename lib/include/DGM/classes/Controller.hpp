@@ -3,8 +3,10 @@
 #include <DGM/classes/Compatibility.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+#ifndef ANDROID
 #include <Windows.h>
 #include <Xinput.h>
+#endif
 #include <cassert>
 #include <map>
 
@@ -247,9 +249,13 @@ namespace dgm
         NODISCARD_RESULT inline bool
         isGamepadInputToggled(const Binding& binding) const noexcept
         {
+#ifdef ANDROID
+            return false;
+#else
             return controllerConnected
                    && (xstate.Gamepad.wButtons
                        & static_cast<WORD>(binding.xbtn));
+#endif
         }
 
         NODISCARD_RESULT float
@@ -257,7 +263,9 @@ namespace dgm
 
     protected:
         mutable std::map<int, Binding> bindings = {};
+#ifndef ANDROID
         XINPUT_STATE xstate = {};
+#endif
         unsigned short controllerIndex = 0;
         bool controllerConnected = false;
         float controllerDeadzone = 0.1f;

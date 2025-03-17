@@ -4,8 +4,10 @@
 
 void dgm::Controller::update()
 {
+#ifndef ANDROID
     controllerConnected =
         XInputGetState(controllerIndex, &xstate) == ERROR_SUCCESS;
+#endif
 }
 
 bool dgm::Controller::isInputToggled(const int code) const
@@ -97,7 +99,11 @@ constexpr static float getNormalizedAxisValue(
 
 float dgm::Controller::getAxisValue(const Binding& binding) const noexcept
 {
+#ifdef ANDROID
+    return 0.f;
+#else
     if (!controllerConnected) return 0.f;
     const auto value = getNormalizedAxisValue(binding.xaxis, xstate.Gamepad);
     return (std::abs(value) < controllerDeadzone) ? 0.f : value;
+#endif
 }
