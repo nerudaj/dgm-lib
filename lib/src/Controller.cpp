@@ -1,111 +1,201 @@
 #include <DGM/classes/Controller.hpp>
-#include <algorithm>
-#include <cassert>
+#include <DGM/classes/Error.hpp>
 
-void dgm::Controller::update()
+dgm::NativeGamepadInput dgm::translateGamepadCode(
+    GamepadCode code, const sf::Joystick::Identification& identity)
 {
-#ifndef ANDROID
-    controllerConnected =
-        XInputGetState(controllerIndex, &xstate) == ERROR_SUCCESS;
-#endif
-}
-
-bool dgm::Controller::isInputToggled(const int code) const
-{
-    assert(bindings.contains(code));
-    auto& binding = bindings.at(code);
-
-    // Extra checks on mouse and keyboard are needed because:
-    const bool mousePressed = isMouseInputToggled(binding);
-    const bool keyPressed = isKeyboardInputToggled(binding);
-    const bool gamepadButtonPressed = isGamepadInputToggled(binding);
-    const bool axisToggled = std::abs(getAxisValue(binding)) > 0.5f;
-    const bool pressed =
-        mousePressed || keyPressed || gamepadButtonPressed || axisToggled;
-
-    return pressed ? not bindings.at(code).released
-                   : (bindings.at(code).released =
-                          false); // assignment is on purpose
-}
-
-float dgm::Controller::getInputValue(const int code) const
-{
-    assert(bindings.contains(code));
-    auto& binding = bindings.at(code);
-    if (isMouseInputToggled(binding) || isKeyboardInputToggled(binding)
-        || isGamepadInputToggled(binding))
-        return bindings[code].negateMultiplier;
-
-    if (!controllerConnected) return 0.f;
-
-    return getAxisValue(binding);
-}
-
-void dgm::Controller::vibrate(
-    const std::uint16_t leftMotorForce,
-    const std::uint16_t rightMotorForce) noexcept
-{
-#ifndef ANDROID
-    XINPUT_VIBRATION vibration;
-    vibration.wLeftMotorSpeed = static_cast<WORD>(leftMotorForce);
-    vibration.wRightMotorSpeed = static_cast<WORD>(rightMotorForce);
-    XInputSetState(controllerIndex, &vibration);
-#endif
-}
-
-void dgm::Controller::bindInput(const int code, dgm::Xbox::Axis axis)
-{
-    bindings[code].xaxis = axis;
-    // If enum code is for negative half of axis
-    if (static_cast<std::size_t>(axis) >= 200)
-        bindings[code].negateMultiplier = -1.f;
-}
-
-constinit const SHORT S_0 = 0;
-constinit const SHORT STICK_MAX = 32767;
-constinit const SHORT STICK_MAX_N = -32767;
-constinit const float STICK_MAX_F = static_cast<float>(STICK_MAX);
-
-constexpr static float getNormalizedAxisValue(
-    const dgm::Xbox::Axis axis, XINPUT_GAMEPAD state) noexcept
-{
-    // Normalize everything to intervals <-1, 1>
-    // see docs for more details:
-    // https://docs.microsoft.com/en-us/windows/win32/api/xinput/ns-xinput-xinput_gamepad
-    switch (axis)
+    if (identity.vendorId == 0x045E) // Microsoft
     {
-    case dgm::Xbox::Axis::LStickXpos:
-        return std::clamp<SHORT>(state.sThumbLX, 0, STICK_MAX) / STICK_MAX_F;
-    case dgm::Xbox::Axis::LStickXneg:
-        return std::clamp<SHORT>(state.sThumbLX, -STICK_MAX, 0) / STICK_MAX_F;
-    case dgm::Xbox::Axis::LStickYpos:
-        return std::clamp<SHORT>(state.sThumbLY, 0, STICK_MAX) / STICK_MAX_F;
-    case dgm::Xbox::Axis::LStickYneg:
-        return std::clamp<SHORT>(state.sThumbLY, -STICK_MAX, 0) / STICK_MAX_F;
-    case dgm::Xbox::Axis::RStickXpos:
-        return std::clamp<SHORT>(state.sThumbRX, 0, STICK_MAX) / STICK_MAX_F;
-    case dgm::Xbox::Axis::RStickXneg:
-        return std::clamp<SHORT>(state.sThumbRX, -STICK_MAX, 0) / STICK_MAX_F;
-    case dgm::Xbox::Axis::RStickYpos:
-        return std::clamp<SHORT>(state.sThumbRY, 0, STICK_MAX) / STICK_MAX_F;
-    case dgm::Xbox::Axis::RStickYneg:
-        return std::clamp<SHORT>(state.sThumbRY, -STICK_MAX, 0) / STICK_MAX_F;
-    case dgm::Xbox::Axis::LTrigger:
-        return state.bLeftTrigger / 255.f;
-    case dgm::Xbox::Axis::RTrigger:
-        return state.bRightTrigger / 255.f;
-    default:
-        return 0.f;
+        if (identity.productId == 0x02FF) // Controller (Xbox One For Windows)
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 0u;
+            case B:
+                return 1u;
+            case X:
+                return 2u;
+            case Y:
+                return 3u;
+            case Start:
+                return 7u;
+            case Select:
+                return 6u;
+            case Capture:
+                return 12u;
+            case LBumper:
+                return 4u;
+            case RBumper:
+                return 5u;
+            case LTrigger:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Positive };
+            case RTrigger:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Negative };
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Positive };
+            case LStickPress:
+                return 8u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::U, AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::U, AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::V, AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::V, AxisHalf::Positive };
+            case RStickPress:
+                return 14u;
+            }
+        }
     }
-}
+    else if (identity.vendorId == 0x358A) // Backbone
+    {
+        if (identity.productId == 0x0)
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 4u;
+            case B:
+                return 5u;
+            case X:
+                return 7u;
+            case Y:
+                return 8u;
+            case Start:
+                return 15u;
+            case Select:
+                return 14u;
+            case Capture:
+                return 0u; // not a real button, unused
+            case LBumper:
+                return 10u;
+            case RBumper:
+                return 11u;
+            case LTrigger:
+                return 12u;
+            case RTrigger:
+                return 13u;
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Positive };
+            case LStickPress:
+                return 17u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::R, AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::R, AxisHalf::Positive };
+            case RStickPress:
+                return 18u;
+            }
+        }
+    }
+    else if (identity.vendorId == 0x0079) // DragonRise Inc. / Canyon?
+    {
+        if (identity.productId == 0x0304) // Canyon controller GPW3
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 0u;
+            case B:
+                return 1u;
+            case X:
+                return 3u;
+            case Y:
+                return 4u;
+            case Start:
+                return 11u;
+            case Select:
+                return 10u;
+            case Capture:
+                return 12u;
+            case LBumper:
+                return 6u;
+            case RBumper:
+                return 7u;
+            case LTrigger:
+                return 8u;
+            case RTrigger:
+                return 9u;
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X, AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y, AxisHalf::Positive };
+            case LStickPress:
+                return 13u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::Z, AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::R, AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::R, AxisHalf::Positive };
+            case RStickPress:
+                return 14u;
+            }
+        }
+    }
 
-float dgm::Controller::getAxisValue(const Binding& binding) const noexcept
-{
-#ifdef ANDROID
-    return 0.f;
-#else
-    if (!controllerConnected) return 0.f;
-    const auto value = getNormalizedAxisValue(binding.xaxis, xstate.Gamepad);
-    return (std::abs(value) < controllerDeadzone) ? 0.f : value;
-#endif
+    throw dgm::Exception("Unrecognized gamepad: " + identity.name);
 }

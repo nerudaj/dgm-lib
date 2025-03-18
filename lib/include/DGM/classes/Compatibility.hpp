@@ -10,22 +10,6 @@
 #define CONSTEXPR_NODISCARD constexpr
 #endif
 
-#include <cstdint>
-using BYTE = std::uint8_t;
-using WORD = std::uint16_t;
-using SHORT = std::int16_t;
-
-typedef struct _XINPUT_GAMEPAD
-{
-    WORD wButtons;
-    BYTE bLeftTrigger;
-    BYTE bRightTrigger;
-    SHORT sThumbLX;
-    SHORT sThumbLY;
-    SHORT sThumbRX;
-    SHORT sThumbRY;
-} XINPUT_GAMEPAD, *PXINPUT_GAMEPAD;
-
 namespace std
 {
     namespace ranges

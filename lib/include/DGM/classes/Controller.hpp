@@ -1,62 +1,64 @@
 #pragma once
 
 #include <DGM/classes/Compatibility.hpp>
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
-#ifndef ANDROID
-#include <Windows.h>
-#include <Xinput.h>
-#endif
+#include <algorithm>
 #include <cassert>
 #include <map>
+#include <type_traits>
+#include <utility>
+#include <variant>
 
 namespace dgm
 {
-    /**
-     *  \brief Xbox controller related data structures
-     */
-    namespace Xbox
+    enum class [[nodiscard]] GamepadCode
     {
-        /**
-         *  \brief Enumerator for buttons on Xbox controller
-         */
-        enum class Button : std::size_t
-        {
-            Unknown = 0x0000,
-            DPadUp = 0x0001,
-            DPadDown = 0x0002,
-            DPadLeft = 0x0004,
-            DPadRight = 0x0008,
-            Start = 0x0010,
-            Back = 0x0020,
-            LStick = 0x0040,
-            RStick = 0x0080,
-            LBumper = 0x0100,
-            RBumper = 0x0200,
-            A = 0x1000,
-            B = 0x2000,
-            X = 0x4000,
-            Y = 0x8000,
-        };
+        A,
+        B,
+        X,
+        Y,
+        Start,
+        Select,
+        Capture,
+        LBumper,
+        RBumper,
+        LTrigger,
+        RTrigger,
+        DPadLeft,
+        DPadRight,
+        DPadUp,
+        DPadDown,
+        LStickLeft,
+        LStickRight,
+        LStickUp,
+        LStickDown,
+        LStickPress,
+        RStickLeft,
+        RStickRight,
+        RStickUp,
+        RStickDown,
+        RStickPress,
+    };
 
-        /**
-         *  \brief Enumeration of non-binary axii on Xbox controller
-         */
-        enum class Axis : std::size_t
-        {
-            Unknown = 0,
-            LTrigger = 1,
-            RTrigger,
-            LStickXpos = 100,
-            LStickYpos,
-            RStickXpos,
-            RStickYpos,
-            LStickXneg = 200,
-            LStickYneg,
-            RStickXneg,
-            RStickYneg
-        };
-    } // namespace Xbox
+    enum class [[nodiscard]] AxisHalf
+    {
+        Negative,
+        Positive,
+    };
+
+    using NativeGamepadInput =
+        std::variant<size_t, std::pair<sf::Joystick::Axis, AxisHalf>>;
+
+    NODISCARD_RESULT NativeGamepadInput translateGamepadCode(
+        GamepadCode code, const sf::Joystick::Identification& identity);
+
+    enum class [[nodiscard]] DigitalReadKind
+    {
+        OnPress,
+        OnHold,
+    };
 
     /**
      *  \brief Concrete implementation of controller that interfaces
@@ -73,51 +75,50 @@ namespace dgm
      *  You can even bind for example keyboard key and xbox controller
      *  button to the same input code.
      */
+    template<class Action>
+        requires std::is_scoped_enum_v<Action>
     class [[nodiscard]] Controller final
     {
-
     public:
-        /**
-         *  \brief Update state on xbox controller
-         *
-         *  You only need to call this method if you intend on using
-         *  the controller. You don't need to call this if you only
-         *  use mouse and keyboard.
-         */
-        void update();
+        NODISCARD_RESULT bool readDigital(Action code) const
+        {
+            assert(bindings.contains(code));
+            auto& binding = bindings.at(code);
 
-        /**
-         * \brief Test whether particular input code is pressed
-         *
-         * If input code was previously released using releaseInput,
-         * then the physical input has to be physically released and
-         * pressed again for this function to return true again.
-         *
-         * This can be useful for example when you want to implement
-         * a revolver gun and you want the player to press the fire
-         * button separately for every single bullet.
-         */
-        NODISCARD_RESULT bool isInputToggled(const int code) const;
+            const bool mousePressed = isMouseInputToggled(binding);
+            const bool keyPressed = isKeyboardInputToggled(binding);
+            const bool gamepadButtonPressed = isGamepadInputToggled(binding);
+            const bool axisToggled = std::abs(getAxisValue(binding)) > 0.5f;
+            const bool pressed = mousePressed || keyPressed
+                                 || gamepadButtonPressed || axisToggled;
 
-        /**
-         * \brief Get analog value for associated input
-         *
-         * Remarks:
-         *
-         * Both trigger Axii return value from 0.f to 1.f.
-         *
-         * Keyboard key, Xbox gamepad buttons and mouse keys always return -1.f,
-         * 0.f or 1.f based on whether positive or negative Axis was associated
-         * with the same input.
-         *
-         * Positive Axii return 0.f to 1.f negative Axii return -1.f to 0.f
-         *
-         * If controller deadzone was configured and queried Axis
-         * holds a abs(value) < deadzone, then 0.f is returned by this method.
-         *
-         * \releaseInput does not affect this method.
-         */
-        NODISCARD_RESULT float getInputValue(const int code) const;
+            if (pressed && !binding.released)
+            {
+                if (binding.readKind == DigitalReadKind::OnPress
+                    && !binding.released)
+                {
+                    binding.released = true;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        NODISCARD_RESULT float readAnalog(Action code) const
+        {
+            assert(bindings.contains(code));
+            auto& binding = bindings.at(code);
+            if (isMouseInputToggled(binding) || isKeyboardInputToggled(binding)
+                || isGamepadInputToggled(binding))
+                return bindings[code].axisHalf == AxisHalf::Positive ? 1.f
+                                                                     : -1.f;
+
+            if (!sf::Joystick::isConnected(controllerIndex)) return 0.f;
+
+            return getAxisValue(binding);
+        }
 
         /**
          * \brief Marks input as released
@@ -131,51 +132,58 @@ namespace dgm
          * \note In order to function properly, isInputToggled should be called
          * every frame (to ensure that controller will notice the released key)
          */
-        void releaseInput(const int code) noexcept
+        void forceRelease(Action code)
         {
             bindings[code].released = true;
         }
 
         /**
-         *  \brief Test if controller is connected
-         *
-         *  \pre setControllerIndex was called, otherwise index 0 is used
-         *  \pre update was called, this method returns value valid since last
-         * update call
-         */
-        NODISCARD_RESULT constexpr bool isControllerConnected() const noexcept
-        {
-            return controllerConnected;
-        }
-
-        /**
          *  \brief Bind keyboard key to numerical action code
          */
-        inline void bindInput(const int code, sf::Keyboard::Key key)
+        inline void bindInput(
+            const Action code,
+            const sf::Keyboard::Key key,
+            DigitalReadKind readKind = DigitalReadKind::OnHold)
         {
             bindings[code].key = key;
+            bindings[code].readKind = readKind;
         }
 
         /**
          *  \brief Bind mouse button to numerical action code
          */
-        inline void bindInput(const int code, sf::Mouse::Button btn)
+        inline void bindInput(
+            const Action code,
+            const sf::Mouse::Button btn,
+            DigitalReadKind readKind = DigitalReadKind::OnHold)
         {
-            bindings[code].btn = btn;
+            bindings[code].mouseButton = btn;
+            bindings[code].readKind = readKind;
         }
 
         /**
          *  \brief Bind xbox controller button to numerical action code
          */
-        inline void bindInput(const int code, dgm::Xbox::Button btn)
+        inline void bindInput(
+            const Action code,
+            const unsigned joystickButtonIdx,
+            const DigitalReadKind readKind = DigitalReadKind::OnHold)
         {
-            bindings[code].xbtn = btn;
+            bindings[code].gamepadButton = joystickButtonIdx;
+            bindings[code].readKind = readKind;
         }
 
         /**
          *  \brief Bind xbox controller axis to numerical action code
          */
-        void bindInput(const int code, dgm::Xbox::Axis axis);
+        void bindInput(
+            const Action code,
+            const sf::Joystick::Axis axis,
+            const AxisHalf axisHalf)
+        {
+            bindings[code].axis = axis;
+            bindings[code].axisHalf = axisHalf;
+        }
 
         /**
          *  \brief Set an index of a gamepad that should be used
@@ -183,24 +191,6 @@ namespace dgm
         constexpr void setGamepadIndex(const unsigned short index) noexcept
         {
             controllerIndex = index;
-        }
-
-        /**
-         * \brief Set a vibration force on a connected gamepad
-         *
-         * std::numerical_limits<std::uint16_t>::max() means
-         * maximum vibration force.
-         */
-        void vibrate(
-            const std::uint16_t leftMotorForce,
-            const std::uint16_t rightMotorForce) noexcept;
-
-        /**
-         * \brief Resets vibrations on a connected gamepad
-         */
-        inline void stopVibrating() noexcept(noexcept(vibrate(0, 0)))
-        {
-            vibrate(0, 0);
         }
 
         /**
@@ -218,12 +208,14 @@ namespace dgm
         struct Binding
         {
             bool released = false;
-            float negateMultiplier = 1.f;
+            DigitalReadKind readKind = DigitalReadKind::OnHold;
             sf::Keyboard::Key key = sf::Keyboard::Key::Unknown;
-            sf::Mouse::Button btn =
+            sf::Mouse::Button mouseButton =
                 static_cast<sf::Mouse::Button>(sf::Mouse::ButtonCount);
-            dgm::Xbox::Button xbtn = dgm::Xbox::Button::Unknown;
-            dgm::Xbox::Axis xaxis = dgm::Xbox::Axis::Unknown;
+            sf::Joystick::Axis axis =
+                static_cast<sf::Joystick::Axis>(sf::Joystick::AxisCount);
+            AxisHalf axisHalf = AxisHalf::Positive;
+            unsigned gamepadButton = sf::Joystick::ButtonCount;
         };
 
     protected:
@@ -232,9 +224,9 @@ namespace dgm
         {
             // Extra check is required because:
             // sf::Mouse::isButtonPressed(sf::Mouse::ButtonCount) returns true
-            return (binding.btn
+            return (binding.mouseButton
                     != static_cast<sf::Mouse::Button>(sf::Mouse::ButtonCount))
-                   && sf::Mouse::isButtonPressed(binding.btn);
+                   && sf::Mouse::isButtonPressed(binding.mouseButton);
         }
 
         NODISCARD_RESULT inline bool
@@ -249,25 +241,26 @@ namespace dgm
         NODISCARD_RESULT inline bool
         isGamepadInputToggled(const Binding& binding) const noexcept
         {
-#ifdef ANDROID
-            return false;
-#else
-            return controllerConnected
-                   && (xstate.Gamepad.wButtons
-                       & static_cast<WORD>(binding.xbtn));
-#endif
+            return (
+                binding.gamepadButton != sf::Joystick::ButtonCount
+                && sf::Joystick::isButtonPressed(
+                    controllerIndex, binding.gamepadButton));
         }
 
-        NODISCARD_RESULT float
-        getAxisValue(const Binding& binding) const noexcept;
+        NODISCARD_RESULT float getAxisValue(const Binding& binding) const
+        {
+            if (std::to_underlying(binding.axis) == sf::Joystick::AxisCount)
+                return 0.f;
+            return std::clamp(
+                sf::Joystick::getAxisPosition(controllerIndex, binding.axis)
+                    / 100.f,
+                binding.axisHalf == dgm::AxisHalf::Negative ? -1.f : 0.f,
+                binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f);
+        }
 
-    protected:
-        mutable std::map<int, Binding> bindings = {};
-#ifndef ANDROID
-        XINPUT_STATE xstate = {};
-#endif
+    private:
+        mutable std::map<Action, Binding> bindings = {};
         unsigned short controllerIndex = 0;
-        bool controllerConnected = false;
         float controllerDeadzone = 0.1f;
     };
 } // namespace dgm
