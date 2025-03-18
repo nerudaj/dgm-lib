@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Traits.hpp>
 #include <cassert>
 
@@ -41,7 +42,7 @@ namespace dgm
             }
 
         public:
-            /* NODISCARD_RESULT
+            // NODISCARD_RESULT
             std::conditional_t<IsConst, const ValueType&, ValueType&>
             operator*(this std::conditional_t<
                       IsConst,
@@ -51,7 +52,7 @@ namespace dgm
                 // This function uses explicit this to be const
                 // based on whether it is const_iterator or not
                 return *self.ptr;
-            }*/
+            }
 
             IteratorBase<PtrType>& operator++() noexcept
             {
@@ -59,54 +60,51 @@ namespace dgm
                 return *this;
             }
 
-            NODISCARD_RESULT constexpr IteratorBase<PtrType>
-            operator++(int) noexcept
+            CONSTEXPR_NODISCARD IteratorBase<PtrType> operator++(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
                 ptr++;
                 return copy;
             }
 
-            NODISCARD_RESULT constexpr IteratorBase<PtrType>&
-            operator--() noexcept
+            CONSTEXPR_NODISCARD IteratorBase<PtrType>& operator--() noexcept
             {
                 ptr--;
                 return *this;
             }
 
-            NODISCARD_RESULT constexpr IteratorBase<PtrType>
-            operator--(int) noexcept
+            CONSTEXPR_NODISCARD IteratorBase<PtrType> operator--(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
                 ptr--;
                 return copy;
             }
 
-            NODISCARD_RESULT constexpr std::size_t
+            CONSTEXPR_NODISCARD std::size_t
             operator-(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr - other.ptr;
             }
 
-            NODISCARD_RESULT constexpr std::size_t
+            CONSTEXPR_NODISCARD std::size_t
             operator+(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr + other.ptr;
             }
 
-            NODISCARD_RESULT constexpr bool
+            CONSTEXPR_NODISCARD bool
             operator==(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr == other.ptr;
             }
 
-            NODISCARD_RESULT constexpr bool
+            CONSTEXPR_NODISCARD bool
             operator!=(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr != other.ptr;
             }
 
-            NODISCARD_RESULT constexpr auto
+            CONSTEXPR_NODISCARD auto
             operator<=>(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr <=> other.ptr;
@@ -200,7 +198,7 @@ namespace dgm
          *  \details Does the same thing as grow, but it always returns
          *  result of getLast even if capacity was reached.
          */
-        NODISCARD_RESULT constexpr T& growUnchecked() noexcept
+        CONSTEXPR_NODISCARD T& growUnchecked() noexcept
         {
             grow();
             return getLast();
@@ -241,7 +239,7 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        NODISCARD_RESULT constexpr T& getLast() noexcept
+        CONSTEXPR_NODISCARD T& getLast() noexcept
         {
             return operator[](dataSize - 1);
         }
@@ -253,17 +251,17 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        NODISCARD_RESULT constexpr const T& getLast() const noexcept
+        CONSTEXPR_NODISCARD const T& getLast() const noexcept
         {
             return operator[](dataSize - 1);
         }
 
-        NODISCARD_RESULT constexpr T& operator[](std::size_t index) noexcept
+        CONSTEXPR_NODISCARD T& operator[](std::size_t index) noexcept
         {
             return data[index];
         }
 
-        NODISCARD_RESULT constexpr const T&
+        CONSTEXPR_NODISCARD const T&
         operator[](std::size_t index) const noexcept
         {
             return data[index];
@@ -276,13 +274,13 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        NODISCARD_RESULT constexpr auto&& getLast(this auto&& self) noexcept
+        CONSTEXPR_NODISCARD auto&& getLast(this auto&& self) noexcept
         {
             return self.operator[](self.dataSize - 1);
         }
 
         // Deducing this getter
-        NODISCARD_RESULT constexpr auto&&
+        CONSTEXPR_NODISCARD auto&&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
@@ -292,7 +290,7 @@ namespace dgm
         /**
          * \brief Get number of used items
          */
-        NODISCARD_RESULT constexpr std::size_t getSize() const noexcept
+        CONSTEXPR_NODISCARD std::size_t getSize() const noexcept
         {
             return dataSize;
         }
@@ -300,7 +298,7 @@ namespace dgm
         /**
          * \brief Get total number of available items
          */
-        NODISCARD_RESULT constexpr std::size_t getCapacity() const noexcept
+        CONSTEXPR_NODISCARD std::size_t getCapacity() const noexcept
         {
             return capacity;
         }
@@ -308,7 +306,7 @@ namespace dgm
         /**
          * \brief Test whether buffer is empty
          */
-        NODISCARD_RESULT constexpr bool isEmpty() const noexcept
+        CONSTEXPR_NODISCARD bool isEmpty() const noexcept
         {
             return dataSize == 0;
         }
@@ -316,17 +314,17 @@ namespace dgm
         /**
          * \brief Test whether buffer is full
          */
-        NODISCARD_RESULT constexpr bool isFull() const noexcept
+        CONSTEXPR_NODISCARD bool isFull() const noexcept
         {
             return dataSize == capacity;
         }
 
-        NODISCARD_RESULT constexpr const_iterator begin() const noexcept
+        CONSTEXPR_NODISCARD const_iterator begin() const noexcept
         {
             return const_iterator(data);
         }
 
-        NODISCARD_RESULT constexpr const_iterator end() const noexcept
+        CONSTEXPR_NODISCARD const_iterator end() const noexcept
         {
             return const_iterator(data + dataSize);
         }

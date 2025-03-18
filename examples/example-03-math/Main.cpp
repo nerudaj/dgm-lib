@@ -20,7 +20,7 @@
 int main()
 {
     auto&& window = dgm::Window({ 1280, 720 }, "Example: Math", false);
-    auto&& circle = dgm::Circle(1000.f, 500.f, 140.f);
+    auto&& circle = dgm::Circle({ 1000.f, 500.f }, 140.f);
 
     // Line is defined as direction and position
     auto&& center = sf::Vector2f(window.getSize() / 2u);

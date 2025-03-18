@@ -138,13 +138,13 @@ namespace dgm
                    && std::holds_alternative<T>(data[index]);
         }
 
+#ifdef ANDROID
         /**
          * Get reference to item at given index
          *
          * \warn Index is not checked for out-of-bounds! See at()
          */
-        template<class Self>
-        NODISCARD_RESULT constexpr T& operator[](IndexType index) noexcept
+        CONSTEXPR_NODISCARD T& operator[](IndexType index) noexcept
         {
             return std::get<T>(data[index]);
         }
@@ -154,12 +154,17 @@ namespace dgm
          *
          * \warn Index is not checked for out-of-bounds! See at()
          */
-        template<class Self>
-        NODISCARD_RESULT constexpr const T&
-        operator[](IndexType index) const noexcept
+        CONSTEXPR_NODISCARD const T& operator[](IndexType index) const noexcept
         {
             return std::get<T>(data[index]);
         }
+#else
+        CONSTEXPR_NODISCARD auto&&
+        operator[](this auto&& self, IndexType index) noexcept
+        {
+            return std::get<T>(self.data[index]);
+        }
+#endif
 
         /**
          * Get reference to item at given index
@@ -205,29 +210,29 @@ namespace dgm
             firstFreeSlot = index;
         }
 
-        NODISCARD_RESULT constexpr iterator begin() noexcept
+        CONSTEXPR_NODISCARD iterator begin() noexcept
         {
             return iterator(0, *this);
         }
 
-        NODISCARD_RESULT constexpr iterator end() noexcept
+        CONSTEXPR_NODISCARD iterator end() noexcept
         {
             return iterator(static_cast<IndexType>(data.size()), *this);
         }
 
-        NODISCARD_RESULT constexpr const_iterator begin() const noexcept
+        CONSTEXPR_NODISCARD const_iterator begin() const noexcept
         {
             return const_iterator(0, std::cref(*this));
         }
 
-        NODISCARD_RESULT constexpr const_iterator end() const noexcept
+        CONSTEXPR_NODISCARD const_iterator end() const noexcept
         {
             return const_iterator(
                 static_cast<IndexType>(data.size()), std::cref(*this));
         }
 
     private:
-        NODISCARD_RESULT constexpr bool hasNoDeletedItems() const noexcept
+        CONSTEXPR_NODISCARD bool hasNoDeletedItems() const noexcept
         {
             return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }
@@ -237,7 +242,7 @@ namespace dgm
         {
             IndexType nextFreeSlot;
 
-            NODISCARD_RESULT constexpr explicit Index(IndexType nfs) noexcept
+            CONSTEXPR_NODISCARD explicit Index(IndexType nfs) noexcept
                 : nextFreeSlot(nfs)
             {
             }
@@ -245,8 +250,8 @@ namespace dgm
 
         using Element = std::variant<T, Index>;
 
-        NODISCARD_RESULT constexpr DynamicBuffer(
-            std::vector<Element> data, IndexType firstFreeSlot)
+        CONSTEXPR_NODISCARD
+        DynamicBuffer(std::vector<Element> data, IndexType firstFreeSlot)
             : data(data), firstFreeSlot(firstFreeSlot)
         {
         }

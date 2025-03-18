@@ -66,8 +66,6 @@ void renderButtons(
         sf::Vector2f { 0.f, 0.f }, sf::Vector2f { size }, backgroundColor);
     window.draw(background);
 
-    const float BTN_OFFSET = 15.f;
-
     for (auto&& [idx, button] : std::views::enumerate(buttons))
     {
         button.box.debugRender(window, sf::Color(96, 96, 96));

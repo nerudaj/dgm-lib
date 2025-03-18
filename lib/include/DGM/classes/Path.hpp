@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cassert>
@@ -107,7 +108,7 @@ namespace dgm
         /**
          *  \brief Move processing to next navpoint
          */
-        NODISCARD_RESULT constexpr void advance() noexcept
+        constexpr void advance() noexcept
         {
             currentPointIndex++;
             if (isLooping() && isTraversed()) currentPointIndex = 0;

@@ -99,9 +99,6 @@ int main()
     input.bindInput(Action::LTrigger, sf::Mouse::Button::Left);
     input.bindInput(Action::RTrigger, sf::Mouse::Button::Right);
 
-    // Decorations
-    auto&& text = sf::Text(resmgr.get<sf::Font>("cruft.ttf"));
-
     sf::RectangleShape dpadUp, dpadLeft, dpadDown, dpadRight;
     dpadUp.setSize({ 20.f, 50.f });
     dpadUp.setOrigin({ 10.f, 50.f });

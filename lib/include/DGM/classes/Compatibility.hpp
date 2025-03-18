@@ -1,8 +1,16 @@
 #pragma once
 
 #ifdef ANDROID
-#include <cstdint>
+
+#ifndef NODISCARD_RESULT
 #define NODISCARD_RESULT
+#endif
+
+#ifndef CONSTEXPR_NODISCARD
+#define CONSTEXPR_NODISCARD constexpr
+#endif
+
+#include <cstdint>
 using BYTE = std::uint8_t;
 using WORD = std::uint16_t;
 using SHORT = std::int16_t;
@@ -30,5 +38,12 @@ namespace std
     } // namespace ranges
 } // namespace std
 #else
+#ifndef NODISCARD_RESULT
 #define NODISCARD_RESULT [[nodiscard]]
+#endif
+
+#ifndef CONSTEXPR_NODISCARD
+#define CONSTEXPR_NODISCARD constexpr [[nodiscard]]
+#endif
+
 #endif

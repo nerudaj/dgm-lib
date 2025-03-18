@@ -14,7 +14,7 @@ private:
     const float SPEED = 256.f;
     const float RADIUS = 16.f;
 
-    dgm::Circle body = dgm::Circle(100.f, 100.f, RADIUS);
+    dgm::Circle body = dgm::Circle({ 100.f, 100.f }, RADIUS);
     dgm::WorldNavMesh navMesh;
     std::optional<dgm::Path<dgm::WorldNavpoint>> path;
 
