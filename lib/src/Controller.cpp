@@ -1,7 +1,7 @@
 #include <DGM/classes/Controller.hpp>
 #include <DGM/classes/Error.hpp>
 
-dgm::NativeGamepadInput dgm::translateGamepadCode(
+dgm::SfmlGamepadInput dgm::translateGamepadCode(
     GamepadCode code, const sf::Joystick::Identification& identity)
 {
     if (identity.vendorId == 0x045E) // Microsoft

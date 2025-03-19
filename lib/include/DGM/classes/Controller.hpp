@@ -48,10 +48,10 @@ namespace dgm
         Positive,
     };
 
-    using NativeGamepadInput =
+    using SfmlGamepadInput =
         std::variant<size_t, std::pair<sf::Joystick::Axis, AxisHalf>>;
 
-    NODISCARD_RESULT NativeGamepadInput translateGamepadCode(
+    NODISCARD_RESULT SfmlGamepadInput translateGamepadCode(
         GamepadCode code, const sf::Joystick::Identification& identity);
 
     enum class [[nodiscard]] DigitalReadKind
@@ -80,7 +80,9 @@ namespace dgm
     class [[nodiscard]] Controller final
     {
     public:
-        NODISCARD_RESULT bool readDigital(Action code) const
+        NODISCARD_RESULT bool readDigital(
+            Action code,
+            DigitalReadKind readKind = DigitalReadKind::OnHold) const
         {
             assert(bindings.contains(code));
             auto& binding = bindings.at(code);
@@ -94,8 +96,7 @@ namespace dgm
 
             if (pressed && !binding.released)
             {
-                if (binding.readKind == DigitalReadKind::OnPress
-                    && !binding.released)
+                if (readKind == DigitalReadKind::OnPress && !binding.released)
                 {
                     binding.released = true;
                 }
@@ -140,37 +141,26 @@ namespace dgm
         /**
          *  \brief Bind keyboard key to numerical action code
          */
-        inline void bindInput(
-            const Action code,
-            const sf::Keyboard::Key key,
-            DigitalReadKind readKind = DigitalReadKind::OnHold)
+        inline void bindInput(const Action code, const sf::Keyboard::Key key)
         {
             bindings[code].key = key;
-            bindings[code].readKind = readKind;
         }
 
         /**
          *  \brief Bind mouse button to numerical action code
          */
-        inline void bindInput(
-            const Action code,
-            const sf::Mouse::Button btn,
-            DigitalReadKind readKind = DigitalReadKind::OnHold)
+        inline void bindInput(const Action code, const sf::Mouse::Button btn)
         {
             bindings[code].mouseButton = btn;
-            bindings[code].readKind = readKind;
         }
 
         /**
          *  \brief Bind xbox controller button to numerical action code
          */
-        inline void bindInput(
-            const Action code,
-            const unsigned joystickButtonIdx,
-            const DigitalReadKind readKind = DigitalReadKind::OnHold)
+        inline void
+        bindInput(const Action code, const unsigned joystickButtonIdx)
         {
             bindings[code].gamepadButton = joystickButtonIdx;
-            bindings[code].readKind = readKind;
         }
 
         /**
@@ -183,6 +173,17 @@ namespace dgm
         {
             bindings[code].axis = axis;
             bindings[code].axisHalf = axisHalf;
+        }
+
+        void bindInput(const Action code, const SfmlGamepadInput& input)
+        {
+            std::visit(
+                overloads {
+                    [&](unsigned idx) { bindInput(code, idx); },
+                    [&](const std::pair<sf::Joystick::Axis, AxisHalf>& pair)
+                    { bindInput(code, pair.first, pair.second); },
+                },
+                input);
         }
 
         /**
@@ -204,11 +205,10 @@ namespace dgm
             controllerDeadzone = deadzone;
         }
 
-    protected:
+    private:
         struct Binding
         {
             bool released = false;
-            DigitalReadKind readKind = DigitalReadKind::OnHold;
             sf::Keyboard::Key key = sf::Keyboard::Key::Unknown;
             sf::Mouse::Button mouseButton =
                 static_cast<sf::Mouse::Button>(sf::Mouse::ButtonCount);
@@ -218,7 +218,13 @@ namespace dgm
             unsigned gamepadButton = sf::Joystick::ButtonCount;
         };
 
-    protected:
+        template<class... Ts>
+        struct overloads : Ts...
+        {
+            using Ts::operator()...;
+        };
+
+    private:
         NODISCARD_RESULT inline bool
         isMouseInputToggled(const Binding& binding) const noexcept
         {
@@ -251,9 +257,11 @@ namespace dgm
         {
             if (std::to_underlying(binding.axis) == sf::Joystick::AxisCount)
                 return 0.f;
-            return std::clamp(
+            const float value =
                 sf::Joystick::getAxisPosition(controllerIndex, binding.axis)
-                    / 100.f,
+                / 100.f;
+            return std::clamp(
+                std::abs(value) < controllerDeadzone ? 0.f : value,
                 binding.axisHalf == dgm::AxisHalf::Negative ? -1.f : 0.f,
                 binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f);
         }

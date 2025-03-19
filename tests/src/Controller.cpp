@@ -7,21 +7,6 @@ enum class Action
     Two,
 };
 
-struct ApplyBind
-{
-    void operator()(unsigned idx)
-    {
-        input.bindInput(Action::One, idx);
-    }
-
-    void operator()(std::pair<sf::Joystick::Axis, dgm::AxisHalf> val)
-    {
-        input.bindInput(Action::Two, val.first, val.second);
-    }
-
-    dgm::Controller<Action>& input;
-};
-
 TEST_CASE("[Controller]")
 {
     dgm::Controller<Action> input;
@@ -40,18 +25,15 @@ TEST_CASE("[Controller]")
 
     SECTION("Can bind all possible inputs to the same code")
     {
-        std::visit(
-            ApplyBind(input),
+        input.bindInput(
+            Action::Two,
             dgm::translateGamepadCode(
                 dgm::GamepadCode::A,
                 sf::Joystick::Identification { .vendorId = 0x045E,
                                                .productId = 0x02FF }));
 
         input.bindInput(Action::One, sf::Keyboard::Key::A);
-        input.bindInput(
-            Action::One,
-            sf::Mouse::Button::Left,
-            dgm::DigitalReadKind::OnPress);
+        input.bindInput(Action::One, sf::Mouse::Button::Left);
         input.bindInput(
             Action::One, sf::Joystick::Axis::PovX, dgm::AxisHalf::Negative);
     }

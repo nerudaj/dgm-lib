@@ -11,7 +11,7 @@ SimpleController::SimpleController()
 sf::Vector2f SimpleController::getForward() const
 {
     return dgm::Math::toUnit(sf::Vector2f {
-        -input.getInputValue(Action::Left) + input.getInputValue(Action::Right),
-        -input.getInputValue(Action::Up) + input.getInputValue(Action::Down),
+        -input.readAnalog(Action::Left) + input.readAnalog(Action::Right),
+        -input.readAnalog(Action::Up) + input.readAnalog(Action::Down),
     });
 }
