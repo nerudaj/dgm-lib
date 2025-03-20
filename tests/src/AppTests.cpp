@@ -75,7 +75,7 @@ public:
         reporter->drawCalled = true;
     }
 
-    void restoreFocusImpl(const std::string& message)
+    void restoreFocusImpl(const std::string& message) override
     {
         reporter->hasFocus = true;
         reporter->restoreMessage = message;
@@ -90,7 +90,7 @@ public:
         }
     }
 
-    void loseFocusImpl()
+    void loseFocusImpl() override
     {
         reporter->hasFocus = false;
     }

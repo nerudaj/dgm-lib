@@ -347,13 +347,15 @@ dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
         discoverConnectionsForJumpPoint(point, false);
 }
 
-static std::optional<dgm::Path<dgm::WorldNavpoint>> convertRawPathToWorldPath(
+static dgm::Path<dgm::WorldNavpoint> convertRawPathToWorldPath(
     const NodeSet<WorldNode>& rawPath,
     const sf::Vector2u& tileFrom,
     const sf::Vector2u& tileTo,
     std::function<dgm::WorldNavpoint(const sf::Vector2u&)> toWorldNavpoint)
 {
-    if (!rawPath.hasElements()) return std::nullopt;
+    if (!rawPath.hasElements())
+        return dgm::Path<dgm::WorldNavpoint>(
+            {}, false); // should be nullopt (c++20)
 
     std::vector<dgm::WorldNavpoint> points;
     points.push_back(toWorldNavpoint(tileTo));
@@ -371,7 +373,7 @@ static std::optional<dgm::Path<dgm::WorldNavpoint>> convertRawPathToWorldPath(
     return dgm::Path<dgm::WorldNavpoint>(points, false);
 }
 
-std::optional<dgm::Path<dgm::WorldNavpoint>>
+dgm::Path<dgm::WorldNavpoint>
 dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
 {
     const auto&& tileFrom = toTileCoord(from);
@@ -383,7 +385,8 @@ dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
     if (tileFrom == tileTo) // Identity
         return dgm::Path<WorldNavpoint>({}, false);
     else if (mesh[tileTo] > 0) // Destination is a wall
-        return std::nullopt;
+        return dgm::Path<WorldNavpoint>(
+            {}, false); // should be nullopt, but only since c++20
 
     connectToAndFromPointsToTheNetwork(tileFrom, tileTo);
 

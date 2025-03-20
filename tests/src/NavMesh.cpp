@@ -130,16 +130,14 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
         SECTION("From-To identity")
         {
             auto path =
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(1, 1))
-                    .value();
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(1, 1));
             REQUIRE(path.isTraversed());
         }
 
         SECTION("Direct path between from-to")
         {
             auto path =
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(2, 1))
-                    .value();
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(2, 1));
             REQUIRE_FALSE(path.isLooping());
             REQUIRE_FALSE(path.isTraversed());
 
@@ -156,7 +154,8 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
                 std::find_if(
                     connections.begin(),
                     connections.end(),
-                    [](const auto& conn) {
+                    [](const auto& conn)
+                    {
                         return conn.destination.x == 2u
                                && conn.destination.y == 1u;
                     })
@@ -170,8 +169,7 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
         SECTION("Normal path")
         {
             auto path =
-                navmesh.computePath(toWorldCoord(5, 1), toWorldCoord(1, 3))
-                    .value();
+                navmesh.computePath(toWorldCoord(5, 1), toWorldCoord(1, 3));
             REQUIRE_FALSE(path.isLooping());
             REQUIRE_FALSE(path.isTraversed());
 
@@ -199,9 +197,11 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
         SECTION("No viable path")
         {
             REQUIRE_FALSE(
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1)));
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1))
+                    .isTraversed());
             REQUIRE_FALSE(
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1)));
+                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1))
+                    .isTraversed());
         }
     }
 }
@@ -435,11 +435,16 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
         dgm::Mesh mesh(blockMesh, { 15u, 15u }, { 64u, 64u });
         dgm::WorldNavMesh navmesh(mesh);
 
-        REQUIRE(navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f }));
-        REQUIRE(navmesh.computePath({ 288.f, 864.f }, { 796.f, 158.f }));
-        REQUIRE(navmesh.computePath({ 800.f, 160.f }, { 542.f, 731.f }));
-        REQUIRE(navmesh.computePath({ 544.f, 736.f }, { 676.f, 733.f }));
-        REQUIRE(navmesh.computePath({ 672.f, 736.f }, { 545.f, 613.f }));
+        REQUIRE(!navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f })
+                     .isTraversed());
+        REQUIRE(!navmesh.computePath({ 288.f, 864.f }, { 796.f, 158.f })
+                     .isTraversed());
+        REQUIRE(!navmesh.computePath({ 800.f, 160.f }, { 542.f, 731.f })
+                     .isTraversed());
+        REQUIRE(!navmesh.computePath({ 544.f, 736.f }, { 676.f, 733.f })
+                     .isTraversed());
+        REQUIRE(!navmesh.computePath({ 672.f, 736.f }, { 545.f, 613.f })
+                     .isTraversed());
 
         /**
          *  NOTE: This bug was caused by the fact that some points in the repro
@@ -483,6 +488,6 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
         dgm::WorldNavMesh navmesh(mesh);
 
         auto path = navmesh.computePath({ 104.f, 56.f }, { 120.f, 24.f });
-        REQUIRE(path.has_value());
+        REQUIRE(!path.isTraversed());
     }
 }

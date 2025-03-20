@@ -67,13 +67,9 @@ public:
     {
         std::cout << dgm::Utility::to_string(body.getPosition()) << " -> "
                   << dgm::Utility::to_string(point) << std::endl;
+
         auto result = navMesh.computePath(body.getPosition(), point);
-
-        if (result)
-        {
-            path = std::move(result.value());
-        }
-
+        if (!result.isTraversed()) path = std::move(result);
         beginTransitionToNextPoint();
     }
 

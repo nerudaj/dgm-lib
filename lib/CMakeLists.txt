@@ -6,7 +6,6 @@ make_static_library ( ${TARGET} )
 
 target_link_libraries ( ${TARGET}
 	PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
-	PUBLIC xinput.lib
 	PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
 

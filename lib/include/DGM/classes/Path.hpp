@@ -117,7 +117,8 @@ namespace dgm
             if (isLooping() && isTraversed()) currentPointIndex = 0;
         }
 
-        template<typename = std::enable_if_t<std::is_same_v<T, TileNavpoint>>>
+        // template<typename = std::enable_if_t<std::is_same_v<T,
+        // TileNavpoint>>>
         NODISCARD_RESULT constexpr std::size_t getLength() const noexcept
         {
             return points.size();

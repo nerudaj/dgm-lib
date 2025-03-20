@@ -10,6 +10,7 @@
 #define CONSTEXPR_NODISCARD constexpr
 #endif
 
+#include <ranges>
 #include <vector>
 
 namespace std
@@ -21,6 +22,15 @@ namespace std
         {
             return Container(std::forward<Args>(args)...);
         }
+
+        namespace views
+        {
+            auto enumerate(auto&& r)
+            {
+                return std::views::zip(
+                    std::views::iota(0, static_cast<ptrdiff_t>(r.size())), r);
+            }
+        } // namespace views
     } // namespace ranges
 } // namespace std
 #else

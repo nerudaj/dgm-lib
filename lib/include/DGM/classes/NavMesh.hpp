@@ -118,13 +118,11 @@ namespace dgm
          *  The resulting path will not include 'from' coord, but it includes
          * 'to' coord.
          *
-         *  If no path exists, empty optional is returned
-         *  If from == to, then empty path (which returns true for isTraversed)
-         * is returned
+         *  If no path exists, empty path is returned (isTraversed is true)
          *
          *  \warn This function is not thread-safe.
          */
-        NODISCARD_RESULT std::optional<dgm::Path<WorldNavpoint>>
+        NODISCARD_RESULT dgm::Path<WorldNavpoint>
         computePath(const sf::Vector2f& from, const sf::Vector2f& to);
 
     protected:
