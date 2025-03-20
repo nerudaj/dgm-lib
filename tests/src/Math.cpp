@@ -126,7 +126,7 @@ TEST_CASE("Line with circle intersection", "[Math]")
     {
         auto&& points = dgm::Math::getIntersection(
             dgm::Math::Line(sf::Vector2f(100.f, 0.f), sf::Vector2f(0.f, 0.f)),
-            dgm::Circle(100.f, 100.f, 10.f));
+            dgm::Circle({ 100.f, 100.f }, 10.f));
         REQUIRE_FALSE(points.has_value());
     }
 
@@ -134,7 +134,7 @@ TEST_CASE("Line with circle intersection", "[Math]")
     {
         auto&& points = dgm::Math::getIntersection(
             dgm::Math::Line(sf::Vector2f(10.f, 0.f), sf::Vector2f(0.f, 0.f)),
-            dgm::Circle(100.f, 0.f, 10.f));
+            dgm::Circle({ 100.f, 0.f }, 10.f));
         REQUIRE(points.has_value());
         COMPARE_VECTORS(points->second, sf::Vector2f(90.f, 0.f));
         COMPARE_VECTORS(points->first, sf::Vector2f(110.f, 0.f));

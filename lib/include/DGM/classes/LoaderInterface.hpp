@@ -2,8 +2,9 @@
 
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
-#include <istream>
+#include <DGM/classes/Compatibility.hpp>
 #include <filesystem>
+#include <istream>
 
 namespace dgm
 {
@@ -16,10 +17,10 @@ namespace dgm
     class LoaderInterface
     {
     public:
-        [[nodiscard]] virtual dgm::Clip
+        NODISCARD_RESULT virtual dgm::Clip
         loadClipFromFile(const std::filesystem::path&) const = 0;
 
-        [[nodiscard]] virtual dgm::AnimationStates
+        NODISCARD_RESULT virtual dgm::AnimationStates
         loadAnimationsFromFile(const std::filesystem::path&) const = 0;
 
         virtual ~LoaderInterface() = default;

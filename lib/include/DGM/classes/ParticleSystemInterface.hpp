@@ -77,7 +77,7 @@ namespace dgm
             virtual void update(const dgm::Time& time) = 0;
 
         protected:
-            [[nodiscard]] inline std::unique_ptr<dgm::ps::Particle>
+            NODISCARD_RESULT inline std::unique_ptr<dgm::ps::Particle>
             createParticle(std::span<sf::Vertex> vertices, unsigned index) const
             {
                 return createParticleImpl(vertices, index);

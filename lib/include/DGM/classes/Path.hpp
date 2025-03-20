@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cassert>
@@ -22,7 +23,7 @@ namespace dgm
     template<class T>
         requires std::is_same<float, T>::value
                  || std::is_same<unsigned, T>::value
-    struct Navpoint
+    struct [[nodiscard]] Navpoint
     {
         sf::Vector2<T> coord; ///< Coordinate of the point
         uint32_t value = 0;   ///< General purpose value ensuring compatibility
@@ -38,6 +39,9 @@ namespace dgm
      *  \brief Navigation point within world
      */
     using WorldNavpoint = Navpoint<float>;
+
+    static_assert(std::is_trivially_destructible_v<TileNavpoint>);
+    static_assert(std::is_trivially_destructible_v<WorldNavpoint>);
 
     /**
      *  \brief Class represeting a list of navigation paths to traverse
@@ -67,13 +71,14 @@ namespace dgm
 
         Path<T>& operator=(dgm::Path<T>&& other) = default;
 
-        [[nodiscard]] Path<T> clone() const
+        NODISCARD_RESULT
+        Path<T> clone() const
         {
             return Path(*this);
         }
 
     private:
-        [[nodiscard]] explicit Path(const Path&) = default;
+        explicit Path(const Path&) = default;
 
     public:
         /**
@@ -81,12 +86,12 @@ namespace dgm
          *
          *  \note Path can never be traversed if it is a looping path
          */
-        [[nodiscard]] constexpr bool isTraversed() const noexcept
+        NODISCARD_RESULT constexpr bool isTraversed() const noexcept
         {
             return points.size() <= currentPointIndex;
         }
 
-        [[nodiscard]] constexpr bool isLooping() const noexcept
+        NODISCARD_RESULT constexpr bool isLooping() const noexcept
         {
             return looping;
         }
@@ -97,7 +102,7 @@ namespace dgm
          *  Once you finish processing this navpoint (i.e.: you reach it)
          *  call advance() to move to next point.
          */
-        [[nodiscard]] constexpr const T& getCurrentPoint() const noexcept
+        NODISCARD_RESULT constexpr const T& getCurrentPoint() const noexcept
         {
             assert(not isTraversed());
             return points[currentPointIndex];
@@ -106,14 +111,15 @@ namespace dgm
         /**
          *  \brief Move processing to next navpoint
          */
-        [[nodiscard]] constexpr void advance() noexcept
+        constexpr void advance() noexcept
         {
             currentPointIndex++;
             if (isLooping() && isTraversed()) currentPointIndex = 0;
         }
 
-        template<typename = std::enable_if_t<std::is_same_v<T, TileNavpoint>>>
-        [[nodiscard]] constexpr std::size_t getLength() const noexcept
+        // template<typename = std::enable_if_t<std::is_same_v<T,
+        // TileNavpoint>>>
+        NODISCARD_RESULT constexpr std::size_t getLength() const noexcept
         {
             return points.size();
         }

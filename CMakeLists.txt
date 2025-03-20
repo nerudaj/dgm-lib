@@ -14,33 +14,41 @@ option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIR
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 
 if ( ${BOOTSTRAP_CPM} )
-	bootstrap_cpm ()
+    bootstrap_cpm ()
 endif ()
 
-set_cpp23_x64()
+
+if ( NOT ${CMAKE_GENERATOR_PLATFORM} )
+    set ( CMAKE_GENERATOR_PLATFORM x64 )
+else()
+    message ("Detected platform: ${CMAKE_GENERATOR_PLATFORM}" )
+endif ()
+
+set ( CMAKE_CXX_STANDARD 23 )
+set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 
 get_version_from_git (
-	PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
-	FULL_VERSION_VARIABLE FULL_PROJECT_VERSION
+    PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
+    FULL_VERSION_VARIABLE FULL_PROJECT_VERSION
 )
 
 # Project setup
 project ( dgm-lib VERSION "${GIT_PROJECT_VERSION}" )
 
 if (NOT ${PROJECT_IS_TOP_LEVEL} )
-	message ( "INFO: dgm-lib is used as a dependency, turning off unwanted features" )
-	set ( ENABLE_TESTS OFF )
-	set ( ENABLE_SANDBOX OFF )
-	set ( ENABLE_EXAMPLES OFF )
-	set ( OVERRIDE_RUNTIME_OUTPUT_DIR OFF )
+    message ( "INFO: dgm-lib is used as a dependency, turning off unwanted features" )
+    set ( ENABLE_TESTS OFF )
+    set ( ENABLE_SANDBOX OFF )
+    set ( ENABLE_EXAMPLES OFF )
+    set ( OVERRIDE_RUNTIME_OUTPUT_DIR OFF )
 endif ()
 
 if ( ${OVERRIDE_RUNTIME_OUTPUT_DIR} )
-	set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${DGM_BINARY_DIR}/Compiled" )
+    set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${DGM_BINARY_DIR}/Compiled" )
 endif ()
 
 if ( ${ENABLE_TESTS} )
-	enable_testing()
+    enable_testing()
 endif ()
 
 set ( SFML_VERSION "3.0.0" )
@@ -53,32 +61,34 @@ add_subdirectory ( lib )
 add_library ( dgm::dgm-lib ALIAS dgm-lib )
 
 if ( ${ENABLE_SANDBOX} )
-	add_subdirectory ( sandbox )
+    add_subdirectory ( sandbox )
 endif()
 
 if ( ${ENABLE_EXAMPLES} )
-	add_subdirectory ( examples )
+    add_subdirectory ( examples )
 endif ()
 
 if ( ${ENABLE_TESTS} )
-	add_subdirectory ( tests )
+    add_subdirectory ( tests )
 endif ()
 
 # Installation
 install (
-	FILES       "${DGM_SOURCE_DIR}/changelog.txt"
-	DESTINATION "."
+    FILES       "${DGM_SOURCE_DIR}/changelog.txt"
+    DESTINATION "."
 )
 
 install (
-	DIRECTORY   "${DGM_SOURCE_DIR}/licenses"
-	DESTINATION "."
+    DIRECTORY   "${DGM_SOURCE_DIR}/licenses"
+    DESTINATION "."
 )
 
 # Packaging
 if ( ${PROJECT_IS_TOP_LEVEL} )
     if ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
         set ( COMPILER_ID "${CMAKE_CXX_COMPILER_ID}-${MSVC_TOOLSET_VERSION}" )
+    elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" )
+        set ( COMPILER_ID "Clang" )
     else ()
         message ( FATAL_ERROR "Unsupported compiler ID: ${CMAKE_CXX_COMPILER_ID}" )
     endif ()

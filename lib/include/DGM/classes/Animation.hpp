@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <functional>
@@ -69,7 +70,7 @@ namespace dgm
          */
         void setSpeed(unsigned framesPerSecond) noexcept;
 
-        bool hasClipFinishedPlaying() const noexcept
+        NODISCARD_RESULT bool hasClipFinishedPlaying() const noexcept
         {
             return currentFrameIndex >= currentState->second.getFrameCount();
         }
@@ -82,7 +83,7 @@ namespace dgm
         /**
          *  \brief Get speed as number of frames per second
          */
-        [[nodiscard]] unsigned getSpeed() const noexcept
+        NODISCARD_RESULT unsigned getSpeed() const noexcept
         {
             return static_cast<unsigned>(
                 std::round(1000.f / timePerFrame.asMilliseconds()));
@@ -91,17 +92,17 @@ namespace dgm
         /**
          *  \brief Get name of currently selected state
          */
-        [[nodiscard]] const std::string& getStateName() const noexcept
+        NODISCARD_RESULT const std::string& getStateName() const noexcept
         {
             return currentState->first;
         }
 
-        [[nodiscard]] constexpr bool isLooping() const noexcept
+        NODISCARD_RESULT constexpr bool isLooping() const noexcept
         {
             return looping;
         }
 
-        [[nodiscard]] const sf::IntRect& getCurrentFrame() const noexcept
+        NODISCARD_RESULT const sf::IntRect& getCurrentFrame() const noexcept
         {
             return currentState->second.getFrame(currentFrameIndex);
         }

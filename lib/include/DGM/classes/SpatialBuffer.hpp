@@ -58,7 +58,7 @@ namespace dgm
         class T,
         typename IndexType = std::size_t,
         typename GridResolutionType = unsigned>
-    class SpatialBuffer final
+    class [[nodiscard]] SpatialBuffer final
         : public SpatialIndex<IndexType, GridResolutionType>
     {
     public:
@@ -67,13 +67,13 @@ namespace dgm
         using StorageType = dgm::DynamicBuffer<T, IndexType>;
 
     public:
-        [[nodiscard]] constexpr SpatialBuffer(
+        constexpr SpatialBuffer(
             dgm::Rect boundingBox, GridResolutionType gridResolution)
             : super(boundingBox, gridResolution), items(1024)
         {
         }
 
-        [[nodiscard]] SpatialBuffer(SpatialBuffer&&) = default;
+        SpatialBuffer(SpatialBuffer&&) = default;
         SpatialBuffer(const SpatialBuffer&) = delete;
         ~SpatialBuffer() = default;
 
@@ -116,18 +116,29 @@ namespace dgm
             super::removeFromLookup(id, box);
         }
 
-        template<class Self>
-        auto&& operator[](this Self&& self, IndexType id)
+#ifdef ANDROID
+        T& operator[](IndexType id)
+        {
+            return items[id];
+        }
+
+        const T& operator[](IndexType id) const
+        {
+            return items[id];
+        }
+#else
+        auto&& operator[](this auto&& self, IndexType id)
         {
             return self.items[id];
         }
+#endif
 
-        [[nodiscard]] constexpr StorageType::iterator begin() noexcept
+        NODISCARD_RESULT constexpr StorageType::iterator begin() noexcept
         {
             return items.begin();
         }
 
-        [[nodiscard]] constexpr StorageType::iterator end() noexcept
+        NODISCARD_RESULT constexpr StorageType::iterator end() noexcept
         {
             return items.end();
         }

@@ -1,7 +1,6 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Error.hpp>
 #include <cassert>
-#include <format>
 #include <fstream>
 
 using dgm::Animation;
@@ -17,7 +16,9 @@ Animation::PlaybackStatus Animation::update(const dgm::Time& time) noexcept
     static_assert(noexcept(time.getElapsed()));
     static_assert(noexcept(hasClipFinishedPlaying()));
     static_assert(noexcept(isLooping()));
+#ifndef ANDROID
     static_assert(noexcept(currentState->second.getFrameCount()));
+#endif
 
     if (hasClipFinishedPlaying())
     {
@@ -54,8 +55,7 @@ void Animation::setState(const std::string& stateName, bool shouldLoop)
     auto newState = states.find(stateName);
     if (newState == states.end())
     {
-        throw dgm::Exception(
-            std::format("Cannot find animation state '{}'", stateName));
+        throw dgm::Exception("Cannot find animation state '" + stateName + "'");
     }
 
     currentState = newState;

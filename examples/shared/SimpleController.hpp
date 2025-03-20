@@ -5,7 +5,7 @@
 class SimpleController
 {
 public:
-    enum Action
+    enum class Action
     {
         Up,
         Down,
@@ -20,5 +20,5 @@ public:
     sf::Vector2f getForward() const;
 
 private:
-    dgm::Controller input;
+    dgm::Controller<Action> input;
 };

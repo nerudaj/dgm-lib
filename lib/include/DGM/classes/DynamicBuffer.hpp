@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Traits.hpp>
 #include <algorithm>
 #include <cassert>
@@ -37,7 +38,7 @@ namespace dgm
         DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
-        [[nodiscard]] constexpr DynamicBuffer clone() const
+        NODISCARD_RESULT constexpr DynamicBuffer clone() const
         {
             return DynamicBuffer(data, firstFreeSlot);
         }
@@ -64,7 +65,7 @@ namespace dgm
             }
 
         public:
-            [[nodiscard]] std::pair<
+            NODISCARD_RESULT std::pair<
                 std::conditional_t<IsConst, const DataType&, DataType&>,
                 IndexType>
             operator*() noexcept
@@ -72,7 +73,7 @@ namespace dgm
                 return { backref[index], index };
             }
 
-            constexpr [[nodiscard]] IteratorBase<BackrefType>&
+            constexpr NODISCARD_RESULT IteratorBase<BackrefType>&
             operator++() noexcept
             {
                 ++index;
@@ -80,7 +81,7 @@ namespace dgm
                 return *this;
             }
 
-            constexpr [[nodiscard]] IteratorBase<BackrefType>
+            constexpr NODISCARD_RESULT IteratorBase<BackrefType>
             operator++(int) noexcept
             {
                 auto copy = IteratorBase<BackrefType>(*this);
@@ -88,13 +89,13 @@ namespace dgm
                 return copy;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator==(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index == other.index;
             }
 
-            [[nodiscard]] constexpr bool
+            NODISCARD_RESULT constexpr bool
             operator!=(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index != other.index;
@@ -123,18 +124,29 @@ namespace dgm
          *
          *  Returns true if either there are no data or no valid indices
          */
-        [[nodiscard]] constexpr bool isEmpty() const noexcept
+        NODISCARD_RESULT constexpr bool isEmpty() const noexcept
         {
             for (auto&& item : data)
                 if (std::holds_alternative<T>(item)) return false;
             return true;
         }
 
-        [[nodiscard]] constexpr bool
+        NODISCARD_RESULT constexpr bool
         isIndexValid(IndexType index) const noexcept
         {
             return index < data.size()
                    && std::holds_alternative<T>(data[index]);
+        }
+
+#ifdef ANDROID
+        /**
+         * Get reference to item at given index
+         *
+         * \warn Index is not checked for out-of-bounds! See at()
+         */
+        CONSTEXPR_NODISCARD T& operator[](IndexType index) noexcept
+        {
+            return std::get<T>(data[index]);
         }
 
         /**
@@ -142,12 +154,17 @@ namespace dgm
          *
          * \warn Index is not checked for out-of-bounds! See at()
          */
-        template<class Self>
-        [[nodiscard]] constexpr auto&&
-        operator[](this Self&& self, IndexType index) noexcept
+        CONSTEXPR_NODISCARD const T& operator[](IndexType index) const noexcept
+        {
+            return std::get<T>(data[index]);
+        }
+#else
+        CONSTEXPR_NODISCARD auto&&
+        operator[](this auto&& self, IndexType index) noexcept
         {
             return std::get<T>(self.data[index]);
         }
+#endif
 
         /**
          * Get reference to item at given index
@@ -173,14 +190,14 @@ namespace dgm
             if (hasNoDeletedItems())
             {
                 data.emplace_back(Index(IndexType {}));
-                data.back().emplace<T>(std::forward<Args>(args)...);
+                data.back().template emplace<T>(std::forward<Args>(args)...);
                 return static_cast<IndexType>(data.size() - 1);
             }
             else
             {
                 auto index = firstFreeSlot;
                 firstFreeSlot = std::get<Index>(data[index]).nextFreeSlot;
-                data[index].emplace<T>(std::forward<Args>(args)...);
+                data[index].template emplace<T>(std::forward<Args>(args)...);
                 return index;
             }
         }
@@ -193,29 +210,29 @@ namespace dgm
             firstFreeSlot = index;
         }
 
-        [[nodiscard]] constexpr iterator begin() noexcept
+        CONSTEXPR_NODISCARD iterator begin() noexcept
         {
             return iterator(0, *this);
         }
 
-        [[nodiscard]] constexpr iterator end() noexcept
+        CONSTEXPR_NODISCARD iterator end() noexcept
         {
             return iterator(static_cast<IndexType>(data.size()), *this);
         }
 
-        [[nodiscard]] constexpr const_iterator begin() const noexcept
+        CONSTEXPR_NODISCARD const_iterator begin() const noexcept
         {
             return const_iterator(0, std::cref(*this));
         }
 
-        [[nodiscard]] constexpr const_iterator end() const noexcept
+        CONSTEXPR_NODISCARD const_iterator end() const noexcept
         {
             return const_iterator(
                 static_cast<IndexType>(data.size()), std::cref(*this));
         }
 
     private:
-        [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept
+        CONSTEXPR_NODISCARD bool hasNoDeletedItems() const noexcept
         {
             return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }
@@ -225,7 +242,7 @@ namespace dgm
         {
             IndexType nextFreeSlot;
 
-            [[nodiscard]] constexpr explicit Index(IndexType nfs) noexcept
+            CONSTEXPR_NODISCARD explicit Index(IndexType nfs) noexcept
                 : nextFreeSlot(nfs)
             {
             }
@@ -233,8 +250,8 @@ namespace dgm
 
         using Element = std::variant<T, Index>;
 
-        [[nodiscard]] constexpr DynamicBuffer(
-            std::vector<Element> data, IndexType firstFreeSlot)
+        CONSTEXPR_NODISCARD
+        DynamicBuffer(std::vector<Element> data, IndexType firstFreeSlot)
             : data(data), firstFreeSlot(firstFreeSlot)
         {
         }

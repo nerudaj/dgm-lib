@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-feature android:glEsVersion="0x00010001" />
+
+    <application android:label="Example"
+                 android:hasCode="false"
+                 android:allowBackup="true">
+
+    <activity android:name="android.app.NativeActivity"
+              android:configChanges="keyboardHidden|orientation|screenSize"
+              android:exported="true">
+
+        <meta-data android:name="android.app.lib_name" android:value="example" />
+
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    </application>
+</manifest>

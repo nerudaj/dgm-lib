@@ -56,7 +56,8 @@ namespace dgm
          *  If from == to, then empty path (which returns true for isTraversed
          * and has zero length) is returned
          */
-        static [[nodiscard]] std::optional<dgm::Path<TileNavpoint>> computePath(
+        static NODISCARD_RESULT std::optional<dgm::Path<TileNavpoint>>
+        computePath(
             const sf::Vector2u& from,
             const sf::Vector2u& to,
             const dgm::Mesh& mesh);
@@ -117,13 +118,11 @@ namespace dgm
          *  The resulting path will not include 'from' coord, but it includes
          * 'to' coord.
          *
-         *  If no path exists, empty optional is returned
-         *  If from == to, then empty path (which returns true for isTraversed)
-         * is returned
+         *  If no path exists, empty path is returned (isTraversed is true)
          *
          *  \warn This function is not thread-safe.
          */
-        [[nodiscard]] std::optional<dgm::Path<WorldNavpoint>>
+        NODISCARD_RESULT dgm::Path<WorldNavpoint>
         computePath(const sf::Vector2f& from, const sf::Vector2f& to);
 
     protected:
@@ -149,7 +148,7 @@ namespace dgm
             jumpPointConnections = {};
 
     protected:
-        [[nodiscard]] bool isJumpPoint(const sf::Vector2u& p) const
+        NODISCARD_RESULT bool isJumpPoint(const sf::Vector2u& p) const
         {
             return jumpPointConnections.contains(p);
         }
@@ -165,16 +164,16 @@ namespace dgm
         void connectToAndFromPointsToTheNetwork(
             const sf::Vector2u& tileFrom, const sf::Vector2u& tileTo);
 
-
         void eraseFromAndToPointsFromTheNetwork(
             const sf::Vector2u& tileFrom,
             bool wasTileFromOriginallyJumpPoint,
             const sf::Vector2u& tileTo,
             bool wasTileToOriginallyJumpPoint);
 
-        [[nodiscard]] sf::Vector2u toTileCoord(const sf::Vector2f& coord);
+        NODISCARD_RESULT sf::Vector2u toTileCoord(const sf::Vector2f& coord);
 
-        [[nodiscard]] WorldNavpoint toWorldNavpoint(const sf::Vector2u& coord);
+        NODISCARD_RESULT WorldNavpoint
+        toWorldNavpoint(const sf::Vector2u& coord);
     };
 
 } // namespace dgm

@@ -22,7 +22,7 @@ public:
 public:
     CollidingAgentsParticleSystem(unsigned particleCount)
         : renderer(particleCount)
-        , particles(dgm::Rect(0.f, 0.f, 1280.f, 1280.f), 640)
+        , particles(dgm::Rect({ 0.f, 0.f }, { 1280.f, 1280.f }), 640)
     {
         for (unsigned i = 0; i < particleCount; i++)
         {

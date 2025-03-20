@@ -14,7 +14,7 @@ private:
     const float SPEED = 256.f;
     const float RADIUS = 16.f;
 
-    dgm::Circle body = dgm::Circle(100.f, 100.f, RADIUS);
+    dgm::Circle body = dgm::Circle({ 100.f, 100.f }, RADIUS);
     dgm::WorldNavMesh navMesh;
     std::optional<dgm::Path<dgm::WorldNavpoint>> path;
 
@@ -67,13 +67,9 @@ public:
     {
         std::cout << dgm::Utility::to_string(body.getPosition()) << " -> "
                   << dgm::Utility::to_string(point) << std::endl;
+
         auto result = navMesh.computePath(body.getPosition(), point);
-
-        if (result)
-        {
-            path = std::move(result.value());
-        }
-
+        if (!result.isTraversed()) path = std::move(result);
         beginTransitionToNextPoint();
     }
 

@@ -13,13 +13,12 @@ namespace dgm
 {
     namespace ps
     {
-        class ParticleSystemRenderer final
+        class [[nodiscard]] ParticleSystemRenderer final
             : public sf::Drawable
             , public sf::Transformable
         {
         public:
-            [[nodiscard]] explicit ParticleSystemRenderer(
-                unsigned particleCount)
+            explicit ParticleSystemRenderer(unsigned particleCount)
                 : sf::Drawable(), sf::Transformable()
             {
                 vertices = sf::VertexArray(
@@ -33,7 +32,7 @@ namespace dgm
              *
              *  \param[in] index  Index of particle
              */
-            [[nodiscard]] std::span<sf::Vertex>
+            NODISCARD_RESULT std::span<sf::Vertex>
             getParticleVertices(const std::size_t index) noexcept
             {
                 assert(index < vertices.getVertexCount() / VERTICES_PER_QUAD);

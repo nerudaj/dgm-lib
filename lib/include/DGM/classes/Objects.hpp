@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <cassert>
@@ -24,11 +25,7 @@ namespace dgm
     public:
         virtual const sf::Vector2f& getPosition() const noexcept = 0;
 
-        virtual void setPosition(const float x, const float y) noexcept = 0;
-
         virtual void setPosition(const sf::Vector2f& position) noexcept = 0;
-
-        virtual void move(const float x, const float y) noexcept = 0;
 
         virtual void move(const sf::Vector2f& position) noexcept = 0;
 
@@ -43,11 +40,14 @@ namespace dgm
      *  top-down games. Circle is defined by position
      *  of its center and radius.
      */
-    class Circle final : public Object
+    class [[nodiscard]] Circle final : public Object
     {
-    protected:
-        sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
-        float radius = 0.f;                   ///< Radius of circle
+    public:
+        constexpr Circle(
+            const sf::Vector2f& position, const float radius) noexcept
+            : position(position), radius(radius)
+        {
+        }
 
     public:
         /**
@@ -61,7 +61,8 @@ namespace dgm
         /**
          *  \brief Returns position of circle
          */
-        [[nodiscard]] constexpr const sf::Vector2f& getPosition() const noexcept
+        NODISCARD_RESULT constexpr const sf::Vector2f&
+        getPosition() const noexcept override
         {
             return position;
         }
@@ -69,24 +70,16 @@ namespace dgm
         /**
          *  \brief Returns radius of circle
          */
-        [[nodiscard]] constexpr const float getRadius() const noexcept
+        NODISCARD_RESULT constexpr const float getRadius() const noexcept
         {
             return radius;
         }
 
         /**
-         *  \brief Sets position of circle by setting new XY coordinates
-         */
-        constexpr void setPosition(const float x, const float y) noexcept
-        {
-            position.x = x;
-            position.y = y;
-        }
-
-        /**
          *  \brief Sets new position of circle with SFML vector
          */
-        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void
+        setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
         }
@@ -102,31 +95,14 @@ namespace dgm
         /**
          *  \brief Moves object
          */
-        constexpr void move(const float x, const float y) noexcept
-        {
-            position.x += x;
-            position.y += y;
-        }
-
-        /**
-         *  \brief Moves object
-         */
-        void move(const sf::Vector2f& forward) noexcept
+        void move(const sf::Vector2f& forward) noexcept override
         {
             position += forward;
         }
 
-        [[nodiscard]] Circle(
-            const float x, const float y, const float radius) noexcept
-            : position(x, y), radius(radius)
-        {
-        }
-
-        [[nodiscard]] constexpr Circle(
-            const sf::Vector2f& position, const float radius) noexcept
-            : position(position), radius(radius)
-        {
-        }
+    protected:
+        sf::Vector2f position = { 0.f, 0.f }; ///< Position of the center
+        float radius = 0.f;                   ///< Radius of circle
     };
 
     /**
@@ -135,12 +111,14 @@ namespace dgm
      *  \details Rectangle is defined by position
      *  of its top left corner and its dimesions.
      */
-    class Rect final : public Object
+    class [[nodiscard]] Rect final : public Object
     {
-    protected:
-        sf::Vector2f position = { 0.f,
-                                  0.f };  ///< Position of the topleft corner
-        sf::Vector2f size = { 0.f, 0.f }; ///< Dimensions of the rectangle
+    public:
+        constexpr Rect(
+            const sf::Vector2f& position, const sf::Vector2f& size) noexcept
+            : position(position), size(size)
+        {
+        }
 
     public:
         /**
@@ -154,7 +132,8 @@ namespace dgm
         /**
          *  \brief Returns position of topleft vertex of rectangle
          */
-        [[nodiscard]] constexpr const sf::Vector2f& getPosition() const noexcept
+        NODISCARD_RESULT constexpr const sf::Vector2f&
+        getPosition() const noexcept override
         {
             return position;
         }
@@ -162,12 +141,12 @@ namespace dgm
         /**
          *  \brief Returns dimensions of rectangle
          */
-        [[nodiscard]] constexpr const sf::Vector2f& getSize() const noexcept
+        NODISCARD_RESULT constexpr const sf::Vector2f& getSize() const noexcept
         {
             return size;
         }
 
-        [[nodiscard]] constexpr sf::Vector2f getCenter() const noexcept
+        NODISCARD_RESULT constexpr sf::Vector2f getCenter() const noexcept
         {
             return getPosition() + getSize() / 2.f;
         }
@@ -175,16 +154,8 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        constexpr void setPosition(const float x, const float y) noexcept
-        {
-            position.x = x;
-            position.y = y;
-        }
-
-        /**
-         *  \brief Set position of top-left corner
-         */
-        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void
+        setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
         }
@@ -192,27 +163,9 @@ namespace dgm
         /**
          *  \brief Moves object
          */
-        constexpr void move(const float x, const float y) noexcept
-        {
-            position.x += x;
-            position.y += y;
-        }
-
-        /**
-         *  \brief Moves object
-         */
-        void move(const sf::Vector2f& forward) noexcept
+        void move(const sf::Vector2f& forward) noexcept override
         {
             position += forward;
-        }
-
-        /**
-         *  \brief Set dimensions of rectangle
-         */
-        constexpr void setSize(const float width, const float height) noexcept
-        {
-            size.x = width;
-            size.y = height;
         }
 
         /**
@@ -223,20 +176,10 @@ namespace dgm
             size = newSize;
         }
 
-        [[nodiscard]] Rect(
-            const float x,
-            const float y,
-            const float width,
-            const float height) noexcept
-            : position({ x, y }), size({ width, height })
-        {
-        }
-
-        [[nodiscard]] constexpr Rect(
-            const sf::Vector2f& position, const sf::Vector2f& size) noexcept
-            : position(position), size(size)
-        {
-        }
+    protected:
+        sf::Vector2f position = { 0.f,
+                                  0.f };  ///< Position of the topleft corner
+        sf::Vector2f size = { 0.f, 0.f }; ///< Dimensions of the rectangle
     };
 
     /**
@@ -260,10 +203,8 @@ namespace dgm
      */
     class [[nodiscard]] VisionCone final : public Object
     {
-        sf::Vector2f position = { 0.f, 0.f };
-        sf::Vector2f forward = { 0.f, 0.f };
-        float width = 0.f;
-        sf::Angle rotation = sf::Angle::Zero;
+    public:
+        VisionCone(const float length, const float width);
 
     public:
         /**
@@ -280,22 +221,10 @@ namespace dgm
             return position;
         }
 
-        virtual void setPosition(const float x, const float y) noexcept override
-        {
-            position = { x, y };
-        }
-
         virtual constexpr void
         setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
-        }
-
-        constexpr virtual void
-        move(const float x, const float y) noexcept override
-        {
-            position.x += x;
-            position.y += y;
         }
 
         virtual void move(const sf::Vector2f& direction) noexcept override
@@ -303,7 +232,7 @@ namespace dgm
             position += direction;
         }
 
-        [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
+        NODISCARD_RESULT constexpr sf::Angle getRotation() const noexcept
         {
             return rotation;
         }
@@ -311,17 +240,21 @@ namespace dgm
         void setRotation(const sf::Angle angle) noexcept;
         void rotate(const sf::Angle angle) noexcept;
 
-        [[nodiscard]] float getLength() const noexcept
+        NODISCARD_RESULT float getLength() const noexcept
         {
             return forward.length();
         }
 
-        [[nodiscard]] constexpr float getWidth() const noexcept
+        NODISCARD_RESULT constexpr float getWidth() const noexcept
         {
             return width;
         }
 
-        [[nodiscard]] VisionCone(const float length, const float width);
+    private:
+        sf::Vector2f position = { 0.f, 0.f };
+        sf::Vector2f forward = { 0.f, 0.f };
+        float width = 0.f;
+        sf::Angle rotation = sf::Angle::Zero;
     };
 
     /**
@@ -339,47 +272,105 @@ namespace dgm
      * by y * dataSize.x + x.
      */
     template<class T>
-    class GenericMesh final : public Object
+    class [[nodiscard]] GenericMesh final : public Object
     {
     public:
         using DataType = T;
 
-    protected:
-        std::vector<DataType> data = {}; ///< Array for holding collision data
-        sf::Vector2f position = { 0.f, 0.f }; ///< Position of top-left corner
-        sf::Vector2u dataSize = {
-            0u, 0u
-        }; ///< dataSize.x * dataSize.y is size of data array
-        sf::Vector2u voxelSize = {
-            0u, 0u
-        }; ///< How big rectangle does single cell of data represents
+    public:
+        /**
+         *  \brief Construct mesh object from data array
+         *
+         *  Data array is supposed to be row-major, meaning that
+         *  for 2D map with items
+         *
+         *  1 2 3
+         *  4 5 6
+         *  7 8 9
+         *
+         *  the data will be layed out like: 1 2 3 4 5 6 7 8 9.
+         *
+         *  Size of data should be dataSize.x * dataSize.y.
+         */
+        GenericMesh(
+            const std::vector<DataType>& data,
+            const sf::Vector2u& dataSize,
+            const sf::Vector2u& voxelSize)
+            : data(data), dataSize(dataSize), voxelSize(voxelSize)
+        {
+            assert(
+                data.size() == dataSize.x * dataSize.y
+                && "Mesh data.size() must equal dataSize.x * dataSize.y");
+        }
+
+        GenericMesh(const sf::Vector2u& dataSize, const sf::Vector2u& voxelSize)
+            : GenericMesh(
+                  std::vector<DataType>(dataSize.x * dataSize.y, DataType {}),
+                  dataSize,
+                  voxelSize)
+        {
+        }
+
+        GenericMesh(
+            const std::vector<bool>& data,
+            const sf::Vector2u& dataSize,
+            const sf::Vector2u& voxelSize)
+            : GenericMesh(
+                  std::vector<DataType>(data.begin(), data.end()),
+                  dataSize,
+                  voxelSize)
+        {
+        }
+
+        // TODO: Upcoming minor version update should delete copy constructor
+        // and replace it with a clone method
 
     public:
-        [[nodiscard]] constexpr inline auto&&
+#ifdef ANDROID
+        NODISCARD_RESULT constexpr inline DataType&
+        operator[](std::size_t index) noexcept
+        {
+            return data[index];
+        }
+
+        NODISCARD_RESULT constexpr inline const DataType&
+        operator[](std::size_t index) const noexcept
+        {
+            return data[index];
+        }
+
+        NODISCARD_RESULT constexpr inline DataType&
+        operator[](const sf::Vector2u& pos) noexcept
+        {
+            return data[pos.y * dataSize.x + pos.x];
+        }
+
+        NODISCARD_RESULT constexpr inline const DataType&
+        operator[](const sf::Vector2u& pos) const noexcept
+        {
+            return data[pos.y * dataSize.x + pos.x];
+        }
+#else
+        NODISCARD_RESULT constexpr inline auto&&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
         }
 
-        [[nodiscard]] constexpr inline auto&&
-        at(this auto&& self, unsigned x, unsigned y) noexcept
+        NODISCARD_RESULT constexpr inline auto&&
+        operator[](this auto&& self, const sf::Vector2u& pos) noexcept
         {
-            return self[y * self.dataSize.x + x];
+            return self.data[pos.y * self.dataSize.x + pos.x];
         }
+#endif
 
-        [[nodiscard]] constexpr inline auto&&
-        at(this auto&& self, const sf::Vector2u& pos) noexcept
-        {
-            return self.at(pos.x, pos.y);
-        }
-
-        [[nodiscard]] constexpr inline std::vector<DataType>&
+        NODISCARD_RESULT constexpr inline std::vector<DataType>&
         getRawData() noexcept
         {
             return data;
         }
 
-        [[nodiscard]] constexpr inline const std::vector<DataType>&
+        NODISCARD_RESULT constexpr inline const std::vector<DataType>&
         getRawConstData() const noexcept
         {
             return data;
@@ -388,8 +379,8 @@ namespace dgm
         /**
          *  \brief get position of top-left corner
          */
-        [[nodiscard]] constexpr inline const sf::Vector2f&
-        getPosition() const noexcept
+        NODISCARD_RESULT constexpr inline const sf::Vector2f&
+        getPosition() const noexcept override
         {
             return position;
         }
@@ -397,7 +388,7 @@ namespace dgm
         /**
          *  \brief get dimensions of *data array
          */
-        [[nodiscard]] constexpr inline const sf::Vector2u&
+        NODISCARD_RESULT constexpr inline const sf::Vector2u&
         getDataSize() const noexcept
         {
             return dataSize;
@@ -406,7 +397,7 @@ namespace dgm
         /**
          *  \brief get dimensions of single voxel
          */
-        [[nodiscard]] constexpr inline const sf::Vector2u&
+        NODISCARD_RESULT constexpr inline const sf::Vector2u&
         getVoxelSize() const noexcept
         {
             return voxelSize;
@@ -415,16 +406,8 @@ namespace dgm
         /**
          *  \brief Set position of top-left corner
          */
-        constexpr void setPosition(const float x, const float y) noexcept
-        {
-            position.x = x;
-            position.y = y;
-        }
-
-        /**
-         *  \brief Set position of top-left corner
-         */
-        constexpr void setPosition(const sf::Vector2f& newPosition) noexcept
+        constexpr void
+        setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
         }
@@ -475,67 +458,20 @@ namespace dgm
         /**
          *  \brief Moves object
          */
-        constexpr void move(const float x, const float y) noexcept
-        {
-            position.x += x;
-            position.y += y;
-        }
-
-        /**
-         *  \brief Moves object
-         */
-        constexpr void move(const sf::Vector2f& forward) noexcept
+        constexpr void move(const sf::Vector2f& forward) noexcept override
         {
             position += forward;
         }
 
-        /**
-         *  \brief Construct mesh object from data array
-         *
-         *  Data array is supposed to be row-major, meaning that
-         *  for 2D map with items
-         *
-         *  1 2 3
-         *  4 5 6
-         *  7 8 9
-         *
-         *  the data will be layed out like: 1 2 3 4 5 6 7 8 9.
-         *
-         *  Size of data should be dataSize.x * dataSize.y.
-         */
-        [[nodiscard]] GenericMesh(
-            const std::vector<DataType>& data,
-            const sf::Vector2u& dataSize,
-            const sf::Vector2u& voxelSize)
-            : data(data), dataSize(dataSize), voxelSize(voxelSize)
-        {
-            assert(
-                data.size() == dataSize.x * dataSize.y
-                && "Mesh data.size() must equal dataSize.x * dataSize.y");
-        }
-
-        [[nodiscard]] GenericMesh(
-            const sf::Vector2u& dataSize, const sf::Vector2u& voxelSize)
-            : GenericMesh(
-                std::vector<DataType>(dataSize.x * dataSize.y, DataType {}),
-                dataSize,
-                voxelSize)
-        {
-        }
-
-        [[nodiscard]] GenericMesh(
-            const std::vector<bool>& data,
-            const sf::Vector2u& dataSize,
-            const sf::Vector2u& voxelSize)
-            : GenericMesh(
-                std::vector<DataType>(data.begin(), data.end()),
-                dataSize,
-                voxelSize)
-        {
-        }
-
-        // TODO: Upcoming minor version update should delete copy constructor
-        // and replace it with a clone method
+    protected:
+        std::vector<DataType> data = {}; ///< Array for holding collision data
+        sf::Vector2f position = { 0.f, 0.f }; ///< Position of top-left corner
+        sf::Vector2u dataSize = {
+            0u, 0u
+        }; ///< dataSize.x * dataSize.y is size of data array
+        sf::Vector2u voxelSize = {
+            0u, 0u
+        }; ///< How big rectangle does single cell of data represents
     };
 
     using Mesh = GenericMesh<int>;

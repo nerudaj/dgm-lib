@@ -4,11 +4,17 @@ set ( TARGET dgm-lib )
 
 make_static_library ( ${TARGET} )
 
-target_link_libraries ( ${TARGET}
-	PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
-	PUBLIC xinput.lib
-	PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
-)
+if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
+    target_link_libraries ( ${TARGET}
+        PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main android log
+        PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
+    )
+else ()
+    target_link_libraries ( ${TARGET}
+        PUBLIC SFML::System SFML::Window SFML::Graphics SFML::Main
+        PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
+    )
+endif()
 
 if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
     install (

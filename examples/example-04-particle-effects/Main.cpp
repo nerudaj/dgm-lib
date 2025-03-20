@@ -47,12 +47,11 @@ int main()
     // It could be all written more nicely, but the goal here was to have
     // effect with interfaces that are compatible with real world project so
     // they can be copy-pasted without many modifications
-    auto&& boxes =
-        std::views::cartesian_product(
-            std::views::iota(0u, 4u), std::views::iota(0u, 1u))
-        | std::views::transform(
-            [](auto t) { return std::apply(createVisualContainer, t); })
-        | std::ranges::to<std::vector>();
+    auto&& boxes = std::vector<sf::RectangleShape>(4u);
+    for (auto&& [idx, box] : std::views::enumerate(boxes))
+    {
+        createVisualContainer(idx, 0u);
+    }
 
     // Create actual effects
     EffectWaterFountain effectFountain(

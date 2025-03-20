@@ -51,6 +51,10 @@ namespace dgm
             return states[location.idx];
         }
 
+        static std::vector<sf::IntRect> subdivideArea(
+            const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
+
+    private:
         static constexpr bool
         fits(const sf::Vector2i& textureDims, const sf::IntRect& area) noexcept
         {
@@ -62,12 +66,6 @@ namespace dgm
         void adjustFreeArea(
             std::vector<sf::IntRect>::const_iterator&& freeAreaItr,
             const sf::Vector2i& takenTextureDims);
-
-        static std::vector<sf::IntRect> subdivideArea(
-            const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
-
-        friend std::vector<sf::IntRect> subdivideAreaTest(
-            const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
 
         static dgm::Clip recomputeClip(
             const dgm::Clip& clip,

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <string>
@@ -38,7 +39,8 @@ namespace dgm
          *
          *  This function throws if index is out of bounds.
          */
-        [[nodiscard]] const sf::IntRect& getFrame(const std::size_t index) const
+        NODISCARD_RESULT const sf::IntRect&
+        getFrame(const std::size_t index) const
         {
             return frames.at(index);
         }
@@ -48,7 +50,7 @@ namespace dgm
          *
          * \param [in] index Index of the frame
          */
-        [[nodiscard]] const sf::IntRect&
+        NODISCARD_RESULT const sf::IntRect&
         getFrameUnchecked(const std::size_t index) const noexcept
         {
             return frames[index];
@@ -57,7 +59,7 @@ namespace dgm
         /**
          *  \brief Get number of frames stored in object
          */
-        [[nodiscard]] std::size_t getFrameCount() const noexcept
+        NODISCARD_RESULT std::size_t getFrameCount() const noexcept
         {
             return frames.size();
         }
@@ -65,7 +67,7 @@ namespace dgm
         /**
          *  \brief Get resolution of every frame in object
          */
-        [[nodiscard]] const sf::Vector2u& getFrameSize() const noexcept
+        NODISCARD_RESULT const sf::Vector2u& getFrameSize() const noexcept
         {
             return size;
         }
@@ -89,7 +91,7 @@ namespace dgm
             const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0));
 
     protected:
-        [[nodiscard]] constexpr const sf::Vector2u&
+        NODISCARD_RESULT constexpr const sf::Vector2u&
         getOriginalSpacing() const noexcept
         {
             return originalSpacing;

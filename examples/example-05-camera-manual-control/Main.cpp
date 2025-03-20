@@ -54,11 +54,14 @@ int main(int, char*[])
                 std::ignore = window.close();
             else if (const auto key = event->getIf<sf::Event::KeyPressed>())
             {
-                if (key->code == sf::Keyboard::Key::W) playerDot.move(0, -3.f);
+                if (key->code == sf::Keyboard::Key::W)
+                    playerDot.move({ 0.f, -3.f });
                 if (key->code == sf::Keyboard::Key::A)
-                    playerDot.move(-3.f, 0.f);
-                if (key->code == sf::Keyboard::Key::S) playerDot.move(0, 3.f);
-                if (key->code == sf::Keyboard::Key::D) playerDot.move(3.f, 0.f);
+                    playerDot.move({ -3.f, 0.f });
+                if (key->code == sf::Keyboard::Key::S)
+                    playerDot.move({ 0.f, 3.f });
+                if (key->code == sf::Keyboard::Key::D)
+                    playerDot.move({ 3.f, 0.f });
                 if (key->code == sf::Keyboard::Key::Up) zoomLevel -= 0.1f;
                 if (key->code == sf::Keyboard::Key::Down) zoomLevel += 0.1f;
                 if (key->code == sf::Keyboard::Key::Space)

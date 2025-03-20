@@ -8,7 +8,7 @@ abstract inputs.
 // Each physical input needs to be mapped to
 // some abstract action represented as a value
 // in this enum.
-enum Action
+enum class Action
 {
     L_Up,
     L_Left,
@@ -44,7 +44,7 @@ int main()
     // physical inputs to abstract actions
     // A single physical input can be bound to multiple actions
     // and a multiple physical inputs can be bound to a single action
-    dgm::Controller input;
+    dgm::Controller<Action> input;
 
     // IMPORTANT!
     // When an action is associated with just a key, it will return
@@ -69,38 +69,87 @@ int main()
     input.bindInput(Action::Back, Key::B);
     input.bindInput(Action::Start, Key::N);
 
-    // Bind controller
-    input.bindInput(Action::L_Up, dgm::Xbox::Button::DPadUp);
-    input.bindInput(Action::L_Left, dgm::Xbox::Button::DPadLeft);
-    input.bindInput(Action::L_Down, dgm::Xbox::Button::DPadDown);
-    input.bindInput(Action::L_Right, dgm::Xbox::Button::DPadRight);
-    input.bindInput(Action::L_Up, dgm::Xbox::Axis::LStickYneg);
-    input.bindInput(Action::L_Left, dgm::Xbox::Axis::LStickXneg);
-    input.bindInput(Action::L_Down, dgm::Xbox::Axis::LStickYpos);
-    input.bindInput(Action::L_Right, dgm::Xbox::Axis::LStickXpos);
-    input.bindInput(Action::R_Up, dgm::Xbox::Axis::RStickYneg);
-    input.bindInput(Action::R_Left, dgm::Xbox::Axis::RStickXneg);
-    input.bindInput(Action::R_Down, dgm::Xbox::Axis::RStickYpos);
-    input.bindInput(Action::R_Right, dgm::Xbox::Axis::RStickXpos);
-    input.bindInput(Action::A, dgm::Xbox::Button::A);
-    input.bindInput(Action::B, dgm::Xbox::Button::B);
-    input.bindInput(Action::X, dgm::Xbox::Button::X);
-    input.bindInput(Action::Y, dgm::Xbox::Button::Y);
-    input.bindInput(Action::Back, dgm::Xbox::Button::Back);
-    input.bindInput(Action::Start, dgm::Xbox::Button::Start);
-    input.bindInput(Action::LBumper, dgm::Xbox::Button::LBumper);
-    input.bindInput(Action::RBumper, dgm::Xbox::Button::RBumper);
-    input.bindInput(Action::LTrigger, dgm::Xbox::Axis::LTrigger);
-    input.bindInput(Action::RTrigger, dgm::Xbox::Axis::RTrigger);
-    input.bindInput(Action::LStick, dgm::Xbox::Button::LStick);
-    input.bindInput(Action::RStick, dgm::Xbox::Button::RStick);
+    try
+    {
+        const auto id = sf::Joystick::getIdentification(0);
+
+        // Bind controller
+        input.bindInput(
+            Action::L_Up,
+            dgm::translateGamepadCode(dgm::GamepadCode::DPadUp, id));
+        input.bindInput(
+            Action::L_Left,
+            dgm::translateGamepadCode(dgm::GamepadCode::DPadLeft, id));
+        input.bindInput(
+            Action::L_Down,
+            dgm::translateGamepadCode(dgm::GamepadCode::DPadDown, id));
+        input.bindInput(
+            Action::L_Right,
+            dgm::translateGamepadCode(dgm::GamepadCode::DPadRight, id));
+        input.bindInput(
+            Action::L_Up,
+            dgm::translateGamepadCode(dgm::GamepadCode::LStickUp, id));
+        input.bindInput(
+            Action::L_Left,
+            dgm::translateGamepadCode(dgm::GamepadCode::LStickLeft, id));
+        input.bindInput(
+            Action::L_Down,
+            dgm::translateGamepadCode(dgm::GamepadCode::LStickDown, id));
+        input.bindInput(
+            Action::L_Right,
+            dgm::translateGamepadCode(dgm::GamepadCode::LStickRight, id));
+        input.bindInput(
+            Action::R_Up,
+            dgm::translateGamepadCode(dgm::GamepadCode::RStickUp, id));
+        input.bindInput(
+            Action::R_Left,
+            dgm::translateGamepadCode(dgm::GamepadCode::RStickLeft, id));
+        input.bindInput(
+            Action::R_Down,
+            dgm::translateGamepadCode(dgm::GamepadCode::RStickDown, id));
+        input.bindInput(
+            Action::R_Right,
+            dgm::translateGamepadCode(dgm::GamepadCode::RStickRight, id));
+        input.bindInput(
+            Action::A, dgm::translateGamepadCode(dgm::GamepadCode::A, id));
+        input.bindInput(
+            Action::B, dgm::translateGamepadCode(dgm::GamepadCode::B, id));
+        input.bindInput(
+            Action::X, dgm::translateGamepadCode(dgm::GamepadCode::X, id));
+        input.bindInput(
+            Action::Y, dgm::translateGamepadCode(dgm::GamepadCode::Y, id));
+        input.bindInput(
+            Action::Back,
+            dgm::translateGamepadCode(dgm::GamepadCode::Select, id));
+        input.bindInput(
+            Action::Start,
+            dgm::translateGamepadCode(dgm::GamepadCode::Start, id));
+        input.bindInput(
+            Action::LBumper,
+            dgm::translateGamepadCode(dgm::GamepadCode::LBumper, id));
+        input.bindInput(
+            Action::RBumper,
+            dgm::translateGamepadCode(dgm::GamepadCode::RBumper, id));
+        input.bindInput(
+            Action::LTrigger,
+            dgm::translateGamepadCode(dgm::GamepadCode::LTrigger, id));
+        input.bindInput(
+            Action::RTrigger,
+            dgm::translateGamepadCode(dgm::GamepadCode::RTrigger, id));
+        input.bindInput(
+            Action::LStick,
+            dgm::translateGamepadCode(dgm::GamepadCode::LStickPress, id));
+        input.bindInput(
+            Action::RStick,
+            dgm::translateGamepadCode(dgm::GamepadCode::RStickPress, id));
+    }
+    catch (...)
+    {
+    }
 
     // Bind mouse
     input.bindInput(Action::LTrigger, sf::Mouse::Button::Left);
     input.bindInput(Action::RTrigger, sf::Mouse::Button::Right);
-
-    // Decorations
-    auto&& text = sf::Text(resmgr.get<sf::Font>("cruft.ttf"));
 
     sf::RectangleShape dpadUp, dpadLeft, dpadDown, dpadRight;
     dpadUp.setSize({ 20.f, 50.f });
@@ -169,7 +218,7 @@ int main()
     auto setFillColor = [&input](sf::Shape& shape, Action action)
     {
         shape.setFillColor(
-            input.isInputToggled(action) ? sf::Color::Green : sf::Color::Red);
+            input.readDigital(action) ? sf::Color::Green : sf::Color::Red);
     };
 
     auto getDirection =
@@ -177,8 +226,8 @@ int main()
             Action up, Action down, Action left, Action right) -> sf::Vector2f
     {
         return sf::Vector2f(
-                   input.getInputValue(left) + input.getInputValue(right),
-                   input.getInputValue(up) + input.getInputValue(down))
+                   input.readAnalog(left) + input.readAnalog(right),
+                   input.readAnalog(up) + input.readAnalog(down))
                * 100.f;
     };
 
@@ -193,8 +242,6 @@ int main()
         }
 
         /* LOGIC */
-        input.update();
-
         setFillColor(dpadUp, Action::L_Up);
         setFillColor(dpadLeft, Action::L_Left);
         setFillColor(dpadDown, Action::L_Down);
@@ -205,10 +252,8 @@ int main()
 
         setFillColor(lbumper, Action::LBumper);
         setFillColor(rbumper, Action::RBumper);
-        ltrigger.setSize(
-            { 20.f, input.getInputValue(Action::LTrigger) * 100.f });
-        rtrigger.setSize(
-            { 20.f, input.getInputValue(Action::RTrigger) * 100.f });
+        ltrigger.setSize({ 20.f, input.readAnalog(Action::LTrigger) * 100.f });
+        rtrigger.setSize({ 20.f, input.readAnalog(Action::RTrigger) * 100.f });
 
         setFillColor(a, Action::A);
         setFillColor(b, Action::B);

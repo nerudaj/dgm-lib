@@ -50,35 +50,35 @@ namespace dgm
         bool shouldStopStraightDiscovery(
             const sf::Vector2u& point, const dgm::Mesh& mesh)
         {
-            return mesh.at(point) > 0;
+            return mesh[point] > 0;
         }
 
         bool shouldStopUpRightDiscovery(
             const sf::Vector2u& point, const dgm::Mesh& mesh)
         {
-            return mesh.at(point) > 0 || mesh.at(point.x - 1, point.y) > 0
-                   || mesh.at(point.x, point.y + 1) > 0;
+            return mesh[point] > 0 || mesh[{ point.x - 1, point.y }] > 0
+                   || mesh[{ point.x, point.y + 1 }] > 0;
         }
 
         bool shouldStopDownRightDiscovery(
             const sf::Vector2u& point, const dgm::Mesh& mesh)
         {
-            return mesh.at(point) > 0 || mesh.at(point.x - 1, point.y) > 0
-                   || mesh.at(point.x, point.y - 1) > 0;
+            return mesh[point] > 0 || mesh[{ point.x - 1, point.y }] > 0
+                   || mesh[{ point.x, point.y - 1 }] > 0;
         }
 
         bool shouldStopDownLeftDiscovery(
             const sf::Vector2u& point, const dgm::Mesh& mesh)
         {
-            return mesh.at(point) > 0 || mesh.at(point.x + 1, point.y) > 0
-                   || mesh.at(point.x, point.y - 1) > 0;
+            return mesh[point] > 0 || mesh[{ point.x + 1, point.y }] > 0
+                   || mesh[{ point.x, point.y - 1 }] > 0;
         }
 
         bool shouldStopUpLeftDiscovery(
             const sf::Vector2u& point, const dgm::Mesh& mesh)
         {
-            return mesh.at(point) > 0 || mesh.at(point.x + 1, point.y) > 0
-                   || mesh.at(point.x, point.y + 1) > 0;
+            return mesh[point] > 0 || mesh[{ point.x + 1, point.y }] > 0
+                   || mesh[{ point.x, point.y + 1 }] > 0;
         }
 
     } // namespace priv

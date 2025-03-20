@@ -1,5 +1,3 @@
-#pragma once
-
 #include <DGM/classes/Camera.hpp>
 #include <DGM/classes/Time.hpp>
 #include <algorithm>

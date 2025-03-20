@@ -1,10 +1,10 @@
 #pragma once
 
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Error.hpp>
 #include <concepts>
 #include <expected>
 #include <filesystem>
-#include <format>
 #include <functional>
 #include <map>
 #include <string>
@@ -34,7 +34,7 @@ namespace dgm
 
         ResourceManager(const ResourceManager&) = delete;
 
-        ~ResourceManager() noexcept;
+        ~ResourceManager();
 
     public:
         /**
@@ -47,8 +47,7 @@ namespace dgm
         const T& get(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error(
-                    std::format("Resource with id {} is not loaded.", id));
+                throw Error("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
@@ -59,8 +58,7 @@ namespace dgm
         T& getMutable(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error(
-                    std::format("Resource with id {} is not loaded.", id));
+                throw Error("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
@@ -92,7 +90,7 @@ namespace dgm
         if anything fails (for example loadCallback throws an error)
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] ExpectedSuccess loadResource(
+        NODISCARD_RESULT ExpectedSuccess loadResource(
             const std::filesystem::path& path, LoadCallback<T> loadCallback)
         {
             const auto&& tid = typeid(T).hash_code();
@@ -101,9 +99,9 @@ namespace dgm
 
             if (hasResource<T>(resId.value()))
             {
-                return std::unexpected(std::format(
-                    "Resource with id {} is already loaded in the manager.",
-                    resId.value()));
+                return std::unexpected(
+                    "Resource with id '" + resId.value()
+                    + "' is already loaded in the manager.");
             }
 
             try
@@ -117,8 +115,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Unable to load resource. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Unable to load resource. Reason: ")
+                    + e.what());
             }
 
             return std::true_type {};
@@ -140,8 +139,7 @@ namespace dgm
                 auto&& resources = data.at(tid);
                 auto&& itr = resources.find(id);
                 if (itr == resources.end())
-                    throw std::runtime_error(
-                        std::format("Id {} is not loaded", id));
+                    throw std::runtime_error("Id '" + id + "' is not loaded");
 
                 destructors.at(tid)(itr->second);
                 ::operator delete(itr->second);
@@ -149,8 +147,9 @@ namespace dgm
             }
             catch (std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Unloading resource failed. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Unloading resource failed. Reason: ")
+                    + e.what());
             }
 
             return std::true_type {};
@@ -172,7 +171,7 @@ namespace dgm
         \warn \p allowedExtensions must not be empty!
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] ExpectedSuccess loadResourcesFromDirectory(
+        NODISCARD_RESULT ExpectedSuccess loadResourcesFromDirectory(
             const std::filesystem::path& folderPath,
             LoadCallback<T> loadCallback,
             const std::vector<std::string>& allowedExtensions = {})
@@ -188,8 +187,8 @@ namespace dgm
             fs::path path(folderPath);
             if (!fs::is_directory(path))
             {
-                return std::unexpected(std::format(
-                    "Path '{}' is not a directory!", folderPath.string()));
+                return std::unexpected(
+                    "Path '" + folderPath.string() + "' is not a directory!");
             }
 
             auto hasAllowedExtension =
@@ -198,7 +197,8 @@ namespace dgm
                 return std::find_if(
                            allowedExtensions.begin(),
                            allowedExtensions.end(),
-                           [&path](const std::string& extension) -> bool {
+                           [&path](const std::string& extension) -> bool
+                           {
                                return path.extension().string().ends_with(
                                    extension);
                            })
@@ -220,11 +220,11 @@ namespace dgm
             return std::true_type {};
         }
 
-        [[nodiscard]] std::expected<std::string, Error>
+        NODISCARD_RESULT std::expected<std::string, Error>
         getResourceId(const std::filesystem::path& path) const noexcept;
 
         template<CompatibleResourceType T>
-        [[nodiscard]] bool hasResource(const std::string& id) const noexcept
+        NODISCARD_RESULT bool hasResource(const std::string& id) const noexcept
         {
             const auto&& tid = typeid(T).hash_code();
             return data.contains(tid) && data.at(tid).contains(id);
@@ -237,7 +237,7 @@ namespace dgm
         If no resources has been loaded
         */
         template<CompatibleResourceType T>
-        [[nodiscard]] std::expected<std::vector<std::string>, Error>
+        NODISCARD_RESULT std::expected<std::vector<std::string>, Error>
         getLoadedResourceIds() const noexcept
         {
             try
@@ -253,8 +253,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(std::format(
-                    "Cannot list all resource ids. Reason: {}", e.what()));
+                return std::unexpected(
+                    std::string("Cannot list all resource ids. Reason: ")
+                    + e.what());
             }
         }
 
