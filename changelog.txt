@@ -30,6 +30,12 @@ dgm-lib v3.0.0
  * `dgm::Window::getWindowContext` renamed to `getSfmlWindowContext`
  * `dgm::Window::beginDraw` renamed to `clear`
  * `dgm::Window::endDraw` renamed to `display`
+ * `dgm::Controller` completely revamped
+    * No longer dependent on xinput
+    * `getInputValue`/`isInputToggled` replaced with `readAnalog`/`readDigital`
+    * `update` method was removed
+    * bindings for supported gamepads can be resolved via `translateGamepadCode` function
+ * Compilation for Android is supported
  * SFML bumped to v3.0.0
 	* `dgm::Camera` dropped all methods that used separate x, y coordinates in favor of `sf::Vector` versions
 	* `setRotation`/`rotateGradually` now accepts `sf::Angle` instead of float
