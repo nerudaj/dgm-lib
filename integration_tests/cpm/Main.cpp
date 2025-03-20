@@ -4,7 +4,7 @@ int main(int, char* [])
 {
 	auto&& window = dgm::Window({ 1280,720 }, "Test", false);
 
-	dgm::Circle circle(640.f, 360.f, 20.f);
+	dgm::Circle circle({640.f, 360.f}, 20.f);
 
 	while (window.isOpen())
 	{
