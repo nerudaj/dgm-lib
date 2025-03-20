@@ -27,8 +27,16 @@ namespace dgm
         class [[nodiscard]] IteratorBase final
         {
         public:
-            using ValueType = std::remove_pointer_t<PtrType>;
+            using ValueType =
+                std::remove_const_t<std::remove_pointer_t<PtrType>>;
             using iterator_category = std::random_access_iterator_tag;
+            using RefType =
+                std::conditional_t<IsConst, const ValueType&, ValueType&>;
+
+            using ItrType = std::conditional_t<
+                IsConst,
+                const IteratorBase<PtrType>&,
+                IteratorBase<PtrType>&>;
 
         public:
             constexpr explicit IteratorBase(PtrType ptr) noexcept : ptr(ptr)
@@ -42,16 +50,17 @@ namespace dgm
             }
 
         public:
-            // NODISCARD_RESULT
-            std::conditional_t<IsConst, const ValueType&, ValueType&>
-            operator*(this std::conditional_t<
-                      IsConst,
-                      const IteratorBase<PtrType>&,
-                      IteratorBase<PtrType>&> self) noexcept
+            NODISCARD_RESULT const ValueType& operator*() const noexcept
             {
-                // This function uses explicit this to be const
-                // based on whether it is const_iterator or not
-                return *self.ptr;
+                return *ptr;
+            }
+
+            template<
+                typename U = void,
+                typename std::enable_if<!IsConst, U>::type* = nullptr>
+            NODISCARD_RESULT ValueType& operator*() noexcept
+            {
+                return *ptr;
             }
 
             IteratorBase<PtrType>& operator++() noexcept

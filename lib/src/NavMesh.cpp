@@ -127,7 +127,7 @@ enum class Backdir
 struct TileNode
 {
 protected:
-    static constexpr [[nodiscard]] unsigned
+    static CONSTEXPR_NODISCARD unsigned
     getManhattanDistance(const sf::Vector2u& a, const sf::Vector2u& b) noexcept
     {
         return custom::getScalarDistance(a.x, b.x)
@@ -235,6 +235,8 @@ std::optional<dgm::Path<dgm::TileNavpoint>> dgm::TileNavMesh::computePath(
             break;
         case Backdir::Right:
             ++point.x;
+            break;
+        case Backdir::Undefined:
             break;
         }
 

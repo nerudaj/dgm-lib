@@ -34,7 +34,7 @@ namespace dgm
 
         ResourceManager(const ResourceManager&) = delete;
 
-        ~ResourceManager() noexcept;
+        ~ResourceManager();
 
     public:
         /**

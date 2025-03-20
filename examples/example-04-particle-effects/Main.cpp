@@ -52,7 +52,7 @@ int main()
             std::views::iota(0u, 4u), std::views::iota(0u, 1u))
         | std::views::transform(
             [](auto t) { return std::apply(createVisualContainer, t); })
-        | std::ranges::to<std::vector>();
+        | std::ranges::to<std::vector<sf::RectangleShape>>();
 
     // Create actual effects
     EffectWaterFountain effectFountain(

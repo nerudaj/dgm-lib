@@ -117,20 +117,17 @@ namespace dgm
         }
 
 #ifdef ANDROID
-        template<class Self>
         T& operator[](IndexType id)
         {
             return items[id];
         }
 
-        template<class Self>
         const T& operator[](IndexType id) const
         {
             return items[id];
         }
 #else
-        template<class Self>
-        auto&& operator[](this Self&& self, IndexType id)
+        auto&& operator[](this auto&& self, IndexType id)
         {
             return self.items[id];
         }

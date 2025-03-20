@@ -40,6 +40,9 @@ namespace dgm
      */
     using WorldNavpoint = Navpoint<float>;
 
+    static_assert(std::is_trivially_destructible_v<TileNavpoint>);
+    static_assert(std::is_trivially_destructible_v<WorldNavpoint>);
+
     /**
      *  \brief Class represeting a list of navigation paths to traverse
      *

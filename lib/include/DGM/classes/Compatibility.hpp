@@ -10,14 +10,16 @@
 #define CONSTEXPR_NODISCARD constexpr
 #endif
 
+#include <vector>
+
 namespace std
 {
     namespace ranges
     {
-        template<class T>
-        T to(auto&& range)
+        template<class Container, class... Args>
+        Container to(Args&&... args)
         {
-            return T(std::begin(range), std::end(range));
+            return Container(std::forward<Args>(args)...);
         }
     } // namespace ranges
 } // namespace std

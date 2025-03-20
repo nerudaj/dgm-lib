@@ -224,6 +224,12 @@ namespace dgm
             using Ts::operator()...;
         };
 
+#ifdef ANDROID
+        // Deduction guide not needed since C++20
+        template<class... Ts>
+        overloads(Ts...) -> overloads<Ts...>;
+#endif
+
     private:
         NODISCARD_RESULT inline bool
         isMouseInputToggled(const Binding& binding) const noexcept
