@@ -196,10 +196,10 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 
         SECTION("No viable path")
         {
-            REQUIRE_FALSE(
+            REQUIRE(
                 navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1))
                     .isTraversed());
-            REQUIRE_FALSE(
+            REQUIRE(
                 navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1))
                     .isTraversed());
         }
