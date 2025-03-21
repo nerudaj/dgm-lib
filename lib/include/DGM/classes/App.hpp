@@ -126,11 +126,13 @@ namespace dgm
             Exit
         };
 
+#ifndef ANDROID
         std::ofstream outbuf;
         std::ofstream errbuf;
         std::streambuf* stdoutBackup = nullptr;
         std::streambuf* stderrBackup = nullptr;
         std::streambuf* sferrBackup = nullptr;
+#endif
         std::deque<std::unique_ptr<AppState>> states;
         ScheduledCleanup scheduledCleanup = ScheduledCleanup::None;
         std::string messageForRestore = "";

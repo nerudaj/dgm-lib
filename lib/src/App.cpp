@@ -5,8 +5,13 @@
 #include <iostream>
 
 dgm::App::App(dgm::Window& window)
-    : window(window), outbuf("stdout.txt"), errbuf("stderr.txt")
+    : window(window)
+#ifndef ANDROID
+    , outbuf("stdout.txt")
+    , errbuf("stderr.txt")
+#endif
 {
+#ifndef ANDROID
     if (outbuf.rdbuf() == nullptr || errbuf.rdbuf() == nullptr)
         throw dgm::Exception("Cannot redirect stdout/stderr to file");
 
@@ -17,6 +22,7 @@ dgm::App::App(dgm::Window& window)
     std::cout.rdbuf(outbuf.rdbuf());
     std::cerr.rdbuf(errbuf.rdbuf());
     sf::err().rdbuf(errbuf.rdbuf());
+#endif
 
     time.reset();
 }
@@ -28,6 +34,7 @@ dgm::App::~App()
     std::cout.rdbuf(stdoutBackup);
     std::cerr.rdbuf(stderrBackup);
     sf::err().rdbuf(sferrBackup);
+#endif
 }
 
 void dgm::App::run()
