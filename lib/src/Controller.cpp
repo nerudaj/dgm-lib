@@ -4,9 +4,13 @@
 dgm::SfmlGamepadInput dgm::translateGamepadCode(
     GamepadCode code, const sf::Joystick::Identification& identity)
 {
-    if (identity.vendorId == 0x045E) // Microsoft
+    if (identity.vendorId == 0 && identity.productId == 0) {
+        sf::err() << "No joystick identification provided, rolling with Xbox One bindings" << std::endl;
+    }
+    
+    if (identity.vendorId == 0x045E || identity.vendorId == 0) // Microsoft
     {
-        if (identity.productId == 0x02FF) // Controller (Xbox One For Windows)
+        if (identity.productId == 0x02FF || identity.productId == 0) // Controller (Xbox One For Windows)
         {
             switch (code)
             {

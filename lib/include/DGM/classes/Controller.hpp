@@ -13,6 +13,10 @@
 
 namespace dgm
 {
+    /**
+     *  \brief Abstract gamepad codes that can be translated to native
+     *  SFML bindings using dgm::translateGamepadCode.
+     */
     enum class [[nodiscard]] GamepadCode
     {
         A,
@@ -42,6 +46,10 @@ namespace dgm
         RStickPress,
     };
 
+    /**
+     *  \brief sf::Joystick::Axis binds to whole range <-1,1>. AxisHalf is
+     *  there to allow bindings for only negative or positive half.
+     */
     enum class [[nodiscard]] AxisHalf
     {
         Negative,
@@ -51,9 +59,24 @@ namespace dgm
     using SfmlGamepadInput =
         std::variant<size_t, std::pair<sf::Joystick::Axis, AxisHalf>>;
 
+    /**
+     *  \brief Map abstract dgm::GamepadCode to either sf::Joystick::Axis or
+     *  gamepad button index.
+     *
+     *  Mapping is different for each device, supported devices are:
+     *  Xbox One controller (wired)
+     *  Backbone One (v2)
+     *  Canyon controller GPW3
+     *
+     *  Unsupported gamepad identification throws dgm::Exception. Empty identification
+     *  (vendor and product are 0), Xbox One binding will be used as a fallback.
+     */
     NODISCARD_RESULT SfmlGamepadInput translateGamepadCode(
         GamepadCode code, const sf::Joystick::Identification& identity);
 
+    /**
+     *
+     */
     enum class [[nodiscard]] DigitalReadKind
     {
         OnPress,
@@ -80,6 +103,14 @@ namespace dgm
     class [[nodiscard]] Controller final
     {
     public:
+        /**
+         *  \brief Test if an input is pressed (in case of axis that it is
+         *  moved more than halfway through).
+         *
+         *  If readKind is set to OnPress, TRUE will only be returned the first
+         *  time the input is read, after that it needs to be physucally released
+         *  and pressed again.
+         */
         NODISCARD_RESULT bool readDigital(
             Action code,
             DigitalReadKind readKind = DigitalReadKind::OnHold) const
@@ -107,6 +138,9 @@ namespace dgm
             return false;
         }
 
+        /**
+         *  \brief
+         */
         NODISCARD_RESULT float readAnalog(Action code) const
         {
             assert(bindings.contains(code));
@@ -139,7 +173,7 @@ namespace dgm
         }
 
         /**
-         *  \brief Bind keyboard key to numerical action code
+         *  \brief Bind keyboard key to action code.
          */
         inline void bindInput(const Action code, const sf::Keyboard::Key key)
         {
@@ -147,7 +181,7 @@ namespace dgm
         }
 
         /**
-         *  \brief Bind mouse button to numerical action code
+         *  \brief Bind mouse button to action code.
          */
         inline void bindInput(const Action code, const sf::Mouse::Button btn)
         {
@@ -155,7 +189,7 @@ namespace dgm
         }
 
         /**
-         *  \brief Bind xbox controller button to numerical action code
+         *  \brief Bind joystick button action code.
          */
         inline void
         bindInput(const Action code, const unsigned joystickButtonIdx)
@@ -164,7 +198,7 @@ namespace dgm
         }
 
         /**
-         *  \brief Bind xbox controller axis to numerical action code
+         *  \brief Bind joystick axis half to action code.
          */
         void bindInput(
             const Action code,
@@ -175,6 +209,9 @@ namespace dgm
             bindings[code].axisHalf = axisHalf;
         }
 
+        /**
+         *  \brief Bind input retrieved from dgm::translateGamepadCode to action code.
+         */
         void bindInput(const Action code, const SfmlGamepadInput& input)
         {
             std::visit(
