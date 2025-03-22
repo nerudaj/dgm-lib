@@ -31,6 +31,7 @@ dgm::App::~App()
 {
     clearStack();
 
+#ifndef ANDROID
     std::cout.rdbuf(stdoutBackup);
     std::cerr.rdbuf(stderrBackup);
     sf::err().rdbuf(sferrBackup);
