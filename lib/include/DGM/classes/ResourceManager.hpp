@@ -221,12 +221,15 @@ namespace dgm
             }
 
 #ifdef ANDROID
-            while (auto item = AAssetDir_getNextFileName(dir.get()))
+            while (auto fname = AAssetDir_getNextFileName(dir.get()))
 #else
             auto&& itr = fs::directory_iterator(path);
             for (auto item : itr)
 #endif
             {
+#ifdef ANDROID
+                auto&& item = folderPath / fname;
+#endif
                 auto&& itemPath = fs::path(item);
 
                 if (hasAllowedExtension(itemPath))
