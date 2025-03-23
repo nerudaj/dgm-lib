@@ -14,7 +14,7 @@
 [[nodiscard]] dgm::Mesh buildMeshForTesting()
 {
     // clang-format off
-    const std::vector<bool> map = {
+    const std::vector<int> map = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
         1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
@@ -154,8 +154,7 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
                 std::find_if(
                     connections.begin(),
                     connections.end(),
-                    [](const auto& conn)
-                    {
+                    [](const auto& conn) {
                         return conn.destination.x == 2u
                                && conn.destination.y == 1u;
                     })
@@ -196,12 +195,10 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
 
         SECTION("No viable path")
         {
-            REQUIRE(
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1))
-                    .isTraversed());
-            REQUIRE(
-                navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1))
-                    .isTraversed());
+            REQUIRE(navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(8, 1))
+                        .isTraversed());
+            REQUIRE(navmesh.computePath(toWorldCoord(1, 1), toWorldCoord(6, 1))
+                        .isTraversed());
         }
     }
 }
@@ -211,7 +208,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
     SECTION("Case 1 - Jump point is truly obstructed")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
             1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -231,7 +228,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
     SECTION("Case 2")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
@@ -256,7 +253,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
     SECTION("Case 3 - Diagonal seeker cannot go past corner")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 1,
             1, 1, 0, 0, 0, 0, 0, 0, 1,
@@ -281,7 +278,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
         "(although technically well visible)")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 1,
@@ -304,7 +301,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
     SECTION("Case 5 - Similar to case 1 but not obstructed")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
@@ -322,7 +319,7 @@ TEST_CASE("Limiting neighbor connections", "[WorldNavMesh]")
     SECTION("Case 6")
     {
         // clang-format off
-        const std::vector<bool> map = {
+        const std::vector<int> map = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
@@ -413,7 +410,7 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
     SECTION("Crashing after several queries")
     {
         // clang-format off
-        std::vector<bool> blockMesh = {
+        std::vector<int> blockMesh = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
@@ -464,7 +461,7 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
     SECTION("Can't find a path in a room without jump points")
     {
         // clang-format off
-        const std::vector<bool> blockMesh = {
+        const std::vector<int> blockMesh = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,

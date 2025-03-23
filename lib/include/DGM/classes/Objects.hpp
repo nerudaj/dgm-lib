@@ -314,14 +314,6 @@ namespace dgm
         {
         }
 
-        GenericMesh(
-            const std::vector<bool>& data,
-            const sf::Vector2u& dataSize,
-            const sf::Vector2u& voxelSize)
-            : GenericMesh(
-                  std::vector<DataType>(data.begin(), data.end()),
-                  dataSize,
-                  voxelSize)
         GenericMesh(GenericMesh<T>&&) = default;
         GenericMesh(const GenericMesh<T>&) = delete;
 
@@ -329,9 +321,6 @@ namespace dgm
         {
             return GenericMesh<T>(data, dataSize, voxelSize);
         }
-
-        // TODO: Upcoming minor version update should delete copy constructor
-        // and replace it with a clone method
 
     public:
 #ifdef ANDROID

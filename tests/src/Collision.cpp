@@ -95,7 +95,7 @@ TEST_CASE("Circle-to-point", "Collision")
 TEST_CASE("Mesh-to-rect", "Collision")
 {
     auto&& mesh = dgm::Mesh(
-        std::vector<bool> { 1, 0, 1, 1 },
+        std::vector<int> { 1, 0, 1, 1 },
         sf::Vector2u(2u, 2u),
         sf::Vector2u(10u, 10u));
 
@@ -119,7 +119,7 @@ TEST_CASE("Mesh-to-rect", "Collision")
 TEST_CASE("Mesh-to-circle", "Collision")
 {
     auto&& mesh = dgm::Mesh(
-        std::vector<bool> { 1, 0, 1, 1 },
+        std::vector<int> { 1, 0, 1, 1 },
         sf::Vector2u(2u, 2u),
         sf::Vector2u(10u, 10u));
 
