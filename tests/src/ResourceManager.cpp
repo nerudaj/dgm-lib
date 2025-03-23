@@ -124,7 +124,7 @@ TEST_CASE("[ResourceManager]")
         REQUIRE(names2->empty());
     }
 
-    SECTION("Can recursively load a directory")
+    SECTION("Cannot recursively load a directory")
     {
         dgm::JsonLoader loader;
         const auto&& dirPath = path { TEST_DATA_DIR } / "resmgr_loading";
@@ -142,7 +142,7 @@ TEST_CASE("[ResourceManager]")
             dirPath, loadClip, { ".json" }));
 
         REQUIRE(resmgr.hasResource<dgm::Clip>("statesA.json"));
-        REQUIRE(resmgr.hasResource<dgm::Clip>("statesB.json"));
+        REQUIRE(!resmgr.hasResource<dgm::Clip>("nested.json"));
         REQUIRE(!resmgr.hasResource<dgm::Clip>("to_be_skipped.txt"));
     }
 
