@@ -9,6 +9,11 @@
 #include <map>
 #include <string>
 
+#ifdef ANDROID
+#include <SFML/System/NativeActivity.hpp>
+#include <android/native_activity.h>
+#endif
+
 namespace dgm
 {
     template<class T>
@@ -156,7 +161,8 @@ namespace dgm
         }
 
         /**
-        Recursively loads resources from a directory.
+        Loads resources from a directory (non-recursive due to Android
+        limitations).
 
         Only files that have the \p allowedExtensions will be
         loaded via provided \p loadCallback.
@@ -184,13 +190,6 @@ namespace dgm
                     dgm::Error("Allowed extensions must not be empty!"));
             }
 
-            fs::path path(folderPath);
-            if (!fs::is_directory(path))
-            {
-                return std::unexpected(
-                    "Path '" + folderPath.string() + "' is not a directory!");
-            }
-
             auto hasAllowedExtension =
                 [&allowedExtensions](fs::path path) -> bool
             {
@@ -205,9 +204,32 @@ namespace dgm
                        != allowedExtensions.end();
             };
 
-            auto&& itr = fs::recursive_directory_iterator(path);
-            for (auto item : itr)
+#ifdef ANDROID
+            auto& activity = *sf::getNativeActivity();
+            auto dir = std::unique_ptr<AAssetDir, decltype(&AAssetDir_close)>(
+                AAssetManager_openDir(
+                    activity.assetManager, folderPath.string().c_str()),
+                AAssetDir_close);
+            if (!dir)
+#else
+            fs::path path(folderPath);
+            if (!fs::is_directory(path))
+#endif
             {
+                return std::unexpected(
+                    "Path '" + folderPath.string() + "' is not a directory!");
+            }
+
+#ifdef ANDROID
+            while (auto fname = AAssetDir_getNextFileName(dir.get()))
+#else
+            auto&& itr = fs::directory_iterator(path);
+            for (auto item : itr)
+#endif
+            {
+#ifdef ANDROID
+                auto&& item = folderPath / fname;
+#endif
                 auto&& itemPath = fs::path(item);
 
                 if (hasAllowedExtension(itemPath))

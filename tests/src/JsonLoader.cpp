@@ -1,9 +1,12 @@
 #include <DGM/classes/JsonLoader.hpp>
+#include <SFML/System/MemoryInputStream.hpp>
 #include <catch2/catch_all.hpp>
 
 #define COMPARE_UNSIGNED_VECTORS(v1, v2)                                       \
     REQUIRE(v1.x == v2.y);                                                     \
     REQUIRE(v1.y == v2.y);
+
+#define DATA(x) x, sizeof(x)
 
 TEST_CASE("Loading Clip", "JsonLoader")
 {
@@ -11,7 +14,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("JSON ok, all keys defined")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -27,7 +30,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 				"vertical": 10
 			},
 			"nframes": 3
-		})");
+		})"));
 
         dgm::Clip clip = loader.loadClipFromStream(stream);
 
@@ -37,7 +40,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("JSON ok, spacing is missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -49,7 +52,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 				"height": 42
 			},
 			"nframes": 3
-		})");
+		})"));
 
         dgm::Clip clip = loader.loadClipFromStream(stream);
 
@@ -59,7 +62,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("JSON ok, nframes is missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -74,7 +77,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 				"horizontal": 10,
 				"vertical": 10
 			}
-		})");
+		})"));
 
         dgm::Clip clip = loader.loadClipFromStream(stream);
 
@@ -84,7 +87,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("JSON ok, optional properties missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"frame": {
 				"width": 16,
 				"height": 16
@@ -95,7 +98,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 				"width": 42,
 				"height": 42
 			}
-		})");
+		})"));
 
         dgm::Clip clip = loader.loadClipFromStream(stream);
 
@@ -105,7 +108,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("Throws if type mismatches")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"frame": {
 				"width": "sixteen",
 				"height": 16
@@ -116,7 +119,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 				"width": 42,
 				"height": 42
 			}
-		})");
+		})"));
 
         REQUIRE_THROWS(
             [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
@@ -124,14 +127,14 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("Throws if mandatory properties are missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"bounds": {
 				"left": 10,
 				"top": 10,
 				"width": 42,
 				"height": 42
 			}
-		})");
+		})"));
 
         REQUIRE_THROWS(
             [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
@@ -139,7 +142,7 @@ TEST_CASE("Loading Clip", "JsonLoader")
 
     SECTION("Throws if JSON is not valid")
     {
-        std::stringstream stream(R"(invalid)");
+        sf::MemoryInputStream stream(DATA(R"(invalid)"));
 
         REQUIRE_THROWS(
             [&]() { dgm::Clip clip = loader.loadClipFromStream(stream); }());
@@ -152,7 +155,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
     SECTION("JSON ok, all keys defined")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"defaults": {
 				"frame": {
 					"width": 16,
@@ -193,7 +196,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 					"nframes": 7
 				}
 			]
-		})");
+		})"));
 
         auto states = loader.loadAnimationsFromStream(stream);
 
@@ -211,7 +214,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
     SECTION(
         "Loads JSON even if default not present and frame is defined per state")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"states": [
 				{
 					"name": "idle",
@@ -250,7 +253,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 					"nframes": 7
 				}
 			]
-		})");
+		})"));
 
         auto states = loader.loadAnimationsFromStream(stream);
 
@@ -267,7 +270,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
     SECTION("Loads JSON even if nframes are missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"defaults": {
 				"frame": {
 					"width": 16,
@@ -289,7 +292,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 					}
 				}
 			]
-		})");
+		})"));
 
         auto states = loader.loadAnimationsFromStream(stream);
 
@@ -302,7 +305,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
     SECTION("Throws if frame block is completely missing")
     {
-        std::stringstream stream(R"({
+        sf::MemoryInputStream stream(DATA(R"({
 			"states": [
 				{
 					"name": "idle",
@@ -315,7 +318,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 					"nframes": 3
 				}
 			]
-		})");
+		})"));
 
         REQUIRE_THROWS(
             [&]() { auto states = loader.loadAnimationsFromStream(stream); }());
@@ -323,7 +326,7 @@ TEST_CASE("Loading AnimationStates", "JsonLoader")
 
     SECTION("Throws if JSON is not valid")
     {
-        std::stringstream stream(R"(invalid)");
+        sf::MemoryInputStream stream(DATA(R"(invalid)"));
 
         REQUIRE_THROWS(
             [&]() { auto states = loader.loadAnimationsFromStream(stream); }());

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <DGM/classes/LoaderInterface.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <filesystem>
 
 namespace dgm
@@ -43,7 +44,7 @@ namespace dgm
         NODISCARD_RESULT virtual dgm::Clip
         loadClipFromFile(const std::filesystem::path&) const override;
 
-        NODISCARD_RESULT dgm::Clip loadClipFromStream(std::istream&) const;
+        NODISCARD_RESULT dgm::Clip loadClipFromStream(sf::InputStream&) const;
 
         /**
          * Required format of JSON:
@@ -101,6 +102,6 @@ namespace dgm
         loadAnimationsFromFile(const std::filesystem::path&) const override;
 
         NODISCARD_RESULT dgm::AnimationStates
-        loadAnimationsFromStream(std::istream&) const;
+        loadAnimationsFromStream(sf::InputStream&) const;
     };
 } // namespace dgm

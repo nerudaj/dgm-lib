@@ -1,8 +1,30 @@
 #include <DGM/classes/Error.hpp>
 #include <DGM/classes/JsonLoader.hpp>
+#include <SFML/System/FileInputStream.hpp>
 #include <format>
 #include <fstream>
 #include <nlohmann/json.hpp>
+
+nlohmann::json readStreamAsJson(sf::InputStream& stream)
+{
+    auto size = stream.getSize();
+    if (!size) throw dgm::Exception("Cannot get stream size");
+
+    std::string buffer(*size, '\0');
+    auto readBytes = stream.read(buffer.data(), *size);
+
+    if (!readBytes)
+    {
+        throw dgm::Exception("Error while reading stream");
+    }
+
+    if (*readBytes != *size)
+    {
+        throw dgm::Exception("Could not read requested amount of bytes");
+    }
+
+    return nlohmann::json::parse(buffer);
+}
 
 sf::Vector2u getFrameFromJson(const nlohmann::json& jsonFrame)
 {
@@ -35,14 +57,13 @@ sf::IntRect getBoundsFromJson(const nlohmann::json& jsonBounds)
 dgm::Clip
 dgm::JsonLoader::loadClipFromFile(const std::filesystem::path& filename) const
 {
-    std::ifstream load(filename);
+    sf::FileInputStream load(filename);
     return loadClipFromStream(load);
 }
 
-dgm::Clip dgm::JsonLoader::loadClipFromStream(std::istream& stream) const
+dgm::Clip dgm::JsonLoader::loadClipFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json json;
-    stream >> json;
+    nlohmann::json json = readStreamAsJson(stream);
 
     const sf::Vector2u frame = getFrameFromJson(json["frame"]);
     const sf::IntRect bounds = getBoundsFromJson(json["bounds"]);
@@ -58,15 +79,14 @@ dgm::Clip dgm::JsonLoader::loadClipFromStream(std::istream& stream) const
 dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(
     const std::filesystem::path& filename) const
 {
-    std::ifstream load(filename);
+    sf::FileInputStream load(filename);
     return loadAnimationsFromStream(load);
 }
 
 dgm::AnimationStates
-dgm::JsonLoader::loadAnimationsFromStream(std::istream& stream) const
+dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json file;
-    stream >> file;
+    nlohmann::json file = readStreamAsJson(stream);
 
     AnimationStates result;
 
