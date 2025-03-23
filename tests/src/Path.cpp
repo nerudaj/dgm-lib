@@ -18,8 +18,7 @@ namespace PathTests
 
         SECTION("Move assigment")
         {
-            auto mesh = dgm::Mesh({ 1u, 1u }, { 1u, 1u });
-            dgm::WorldNavMesh navmesh(mesh);
+            dgm::WorldNavMesh navmesh(dgm::Mesh({ 1u, 1u }, { 1u, 1u }));
             auto destinationPath =
                 navmesh.computePath({ 0.f, 0.f }, { 0.f, 0.f });
             auto path2 = std::move(destinationPath);

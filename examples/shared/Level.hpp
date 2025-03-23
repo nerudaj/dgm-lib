@@ -13,7 +13,7 @@ public:
         const dgm::Mesh& tileData,
         const sf::Texture& texture,
         const dgm::Clip& textureClip,
-        const dgm::Mesh& collisionData);
+        dgm::Mesh collisionData);
 
 public:
     void draw(dgm::Window& window)

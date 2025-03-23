@@ -286,7 +286,7 @@ struct WorldNode
     }
 };
 
-dgm::WorldNavMesh::WorldNavMesh(const dgm::Mesh& mesh) : mesh(mesh)
+dgm::WorldNavMesh::WorldNavMesh(dgm::Mesh _mesh) : mesh(std::move(_mesh))
 {
     auto isJumpPoint = [&](const sf::Vector2u& point)
     {

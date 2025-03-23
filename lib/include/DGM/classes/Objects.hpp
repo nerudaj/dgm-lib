@@ -303,6 +303,9 @@ namespace dgm
                 && "Mesh data.size() must equal dataSize.x * dataSize.y");
         }
 
+        /**
+         *  \brief Construct mesh populated with default values
+         */
         GenericMesh(const sf::Vector2u& dataSize, const sf::Vector2u& voxelSize)
             : GenericMesh(
                   std::vector<DataType>(dataSize.x * dataSize.y, DataType {}),
@@ -319,7 +322,12 @@ namespace dgm
                   std::vector<DataType>(data.begin(), data.end()),
                   dataSize,
                   voxelSize)
+        GenericMesh(GenericMesh<T>&&) = default;
+        GenericMesh(const GenericMesh<T>&) = delete;
+
+        NODISCARD_RESULT GenericMesh clone() const
         {
+            return GenericMesh<T>(data, dataSize, voxelSize);
         }
 
         // TODO: Upcoming minor version update should delete copy constructor

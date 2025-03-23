@@ -78,7 +78,7 @@ public:
         return path && !path->isTraversed();
     }
 
-    Actor(const dgm::Mesh& mesh) : navMesh(mesh) {}
+    Actor(const dgm::Mesh& mesh) : navMesh(mesh.clone()) {}
 };
 
 int main()

@@ -59,7 +59,7 @@ public:
         return false;
     }
 
-    TestableNavMesh(const dgm::Mesh& mesh) : dgm::WorldNavMesh(mesh) {}
+    TestableNavMesh(dgm::Mesh mesh) : dgm::WorldNavMesh(std::move(mesh)) {}
 };
 
 TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
@@ -432,8 +432,8 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
         };
         // clang-format on
 
-        dgm::Mesh mesh(blockMesh, { 15u, 15u }, { 64u, 64u });
-        dgm::WorldNavMesh navmesh(mesh);
+        dgm::WorldNavMesh navmesh(
+            dgm::Mesh(blockMesh, { 15u, 15u }, { 64u, 64u }));
 
         REQUIRE(!navmesh.computePath({ 100.f, 100.f }, { 288.f, 862.f })
                      .isTraversed());
@@ -484,8 +484,8 @@ TEST_CASE("BUGS", "[WorldNavMesh]")
         };
         // clang-format on
 
-        dgm::Mesh mesh(blockMesh, { 16u, 16u }, { 16u, 16u });
-        dgm::WorldNavMesh navmesh(mesh);
+        dgm::WorldNavMesh navmesh(
+            dgm::Mesh(blockMesh, { 16u, 16u }, { 16u, 16u }));
 
         auto path = navmesh.computePath({ 104.f, 56.f }, { 120.f, 24.f });
         REQUIRE(!path.isTraversed());

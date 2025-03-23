@@ -107,7 +107,7 @@ namespace dgm
     {
     public:
         WorldNavMesh() = delete;
-        explicit WorldNavMesh(const dgm::Mesh& mesh);
+        explicit WorldNavMesh(dgm::Mesh mesh);
         WorldNavMesh(WorldNavMesh&& other) = default;
         WorldNavMesh(const WorldNavMesh& other) = delete;
 

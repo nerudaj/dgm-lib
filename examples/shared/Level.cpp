@@ -4,8 +4,8 @@ Level::Level(
     const dgm::Mesh& tileData,
     const sf::Texture& texture,
     const dgm::Clip& textureClip,
-    const dgm::Mesh& collisionData)
-    : tilemap(texture, textureClip), mesh(collisionData)
+    dgm::Mesh collisionData)
+    : tilemap(texture, textureClip), mesh(std::move(collisionData))
 {
     // TileMap is initialized with a particular texture and clipping
     // but can be rebuilt from ground up any amount of times
