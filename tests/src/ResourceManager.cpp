@@ -168,4 +168,9 @@ TEST_CASE("[ResourceManager]")
         resmgr.getMutable<int>("a") = 42;
         REQUIRE(resmgr.get<int>("a") == 42);
     }
+
+    SECTION("Does not crash when resource not in DB (throws instead)")
+    {
+        REQUIRE_THROWS_AS([&]() { resmgr.get<int>("none"); }(), dgm::Exception);
+    }
 }
