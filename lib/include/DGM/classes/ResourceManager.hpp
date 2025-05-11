@@ -52,7 +52,7 @@ namespace dgm
         const T& get(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error("Resource with id '" + id + "' is not loaded.");
+                throw Exception("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
@@ -63,7 +63,7 @@ namespace dgm
         T& getMutable(const std::string& id) const
         {
             if (!hasResource<T>(id))
-                throw Error("Resource with id '" + id + "' is not loaded.");
+                throw Exception("Resource with id '" + id + "' is not loaded.");
 
             const auto&& tid = typeid(T).hash_code();
             auto&& ptr = data.at(tid).at(id);
