@@ -18,11 +18,17 @@ if ( ${BOOTSTRAP_CPM} )
 endif ()
 
 
-if ( NOT ${CMAKE_GENERATOR_PLATFORM} )
-    set ( CMAKE_GENERATOR_PLATFORM x64 )
-else()
-    message ("Detected platform: ${CMAKE_GENERATOR_PLATFORM}" )
+if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
+    message ( "Building for Android" )
+else ()
+    if (  "${CMAKE_GENERATOR_PLATFORM}" STREQUAL "" )
+        message ("CMAKE_GENERATOR_PLATFORM not set, defaulting to x64")
+        set ( CMAKE_GENERATOR_PLATFORM x64 )
+    else()
+        message ("Detected CMAKE_GENERATOR_PLATFORM: '${CMAKE_GENERATOR_PLATFORM}'" )
+    endif ()
 endif ()
+
 
 set ( CMAKE_CXX_STANDARD 23 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )

@@ -1,8 +1,8 @@
-[![CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml)
+[![Windows-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![Android-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml) 
 
 # Readme
 
-This project is an extension library for [SFML](http://sfml-dev.org). The library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation.
+This project is an extension library for [SFML](http://sfml-dev.org). The library provides primitives for collision computations, vector manipulations, animations, particle system and convenience wrappers for main render window and camera manipulation. The library is fully compatible with Visual Studio 2022 and Clang for Android (shipped with Android Studio).
 
 ## Requirements
 
@@ -37,12 +37,6 @@ All these options are disabled when the library is used as a dependency to impro
 
  * [App State Pattern](docs/app.md)
  * [Texture Atlas](docs/texture_atlas.md)
-
-## Packaging
-
-To create full release package, just run the `make-release.bat`. It will configure the project, build it and run the tests prior to packaging. If everything goes well, you will end up with `RELEASE` with zipfile with full package.
-
-Version bump must be performed in both `changelog.txt` and `cmake/version.cmake`.
 
 ## Dependencies
 
