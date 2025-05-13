@@ -94,16 +94,18 @@ namespace dgm
             const bool pressed = mousePressed || keyPressed
                                  || gamepadButtonPressed || axisToggled;
 
-            if (pressed && !binding.released)
+            if (pressed)
             {
                 if (readKind == DigitalReadKind::OnPress && !binding.released)
                 {
                     binding.released = true;
+                    return true;
                 }
 
-                return true;
+                return !binding.released;
             }
 
+            binding.released = false;
             return false;
         }
 
