@@ -73,7 +73,7 @@ if ( ${DONT_LOOK_FOR_SFML} )
     message ( "INFO: Not looking for SFML, using CPM to download it" )
 else ()
     message ( "INFO: Looking for SFML, using find_package..." )
-    find_package ( SFML 3.0 COMPONENTS system window graphics REQUIRED )
+    find_package ( SFML 3.0 QUIET COMPONENTS system window graphics )
 
     if ( ${SFML_FOUND} )
         message ( "SFML found: version ${SFML_VERSION} and ${SFML_DIR}" )
