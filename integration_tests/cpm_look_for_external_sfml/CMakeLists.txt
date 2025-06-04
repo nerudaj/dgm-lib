@@ -12,7 +12,6 @@ CPMAddPackage(
     GITHUB_REPOSITORY nerudaj/dgm-lib
     GIT_TAG ${GIT_BRANCH}
     OPTIONS
-        DONT_LOOK_FOR_SFML OFF
         DONT_FETCH_SFML ON
 )
 
