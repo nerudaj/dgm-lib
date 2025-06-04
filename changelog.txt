@@ -1,6 +1,7 @@
 dgm-lib v3.0.0
  * Library target has been renamed to `dgm-lib` and a `dgm::dgm-lib` alias has been added. Use that for linking
  * You can now use `find_package` on a downloaded release to easily link the library. See docs/integration for details
+ * You can force dgm-lib to use an external installation / clone of SFML to maintain a consistent version with other libraries. See docs/integration for details
  * `dgm::AppStateConfig` marked as final
  * `dgm::Clip` is now nodiscard and final
  * `dgm::Camera` is now final

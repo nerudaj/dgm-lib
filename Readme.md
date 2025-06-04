@@ -17,7 +17,7 @@ This project is an extension library for [SFML](http://sfml-dev.org). The librar
 
 ### Integration from releases
 
-Under Releases section on Github you can find prepared releases. To integrate those, you need to properly include and link SFML and also link `xinput.lib`.
+Under Releases section on Github you can find prepared releases.
 
 ## Development
 
@@ -30,8 +30,10 @@ Project has following options:
  * `ENABLE_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
  * `BOOTSTRAP_CPM` - Default: ON. When enable, newest version of CMake Package Manager is downloaded and included. This is required for dependencies. Only turn OFF when your project is also using CPM.
  * `OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
+ * `DONT_LOOK_FOR_SFML` - Default: OFF. When enabled, CMake won't attempt to locate SFML through `find_package`.
+ * `DONT_FETCH_SFML` - Default: OFF. When enabled, CMake won't bring in SFML through CPM.
 
-All these options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts.
+`ENABLE_*` and `BOOTSTRAP_CPM` options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts. The `DONT_LOOK_FOR_SFML` and `DONT_FETCH_SFML` are used to affect how SFML is sourced into the library. If you for example use both TGUI and dgm-lib, you want to ensure both these libraries are using the same version of SFML. Therefore, you can disable automatic fetching. On the other hand, if you only want to use SFLM from within dgm-lib, you can save time during configure by not looking for SFML and fetching it through CPM right away.
 
 ## Documentation
 

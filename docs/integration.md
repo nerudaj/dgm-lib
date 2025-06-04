@@ -129,3 +129,19 @@ target_link_libraries ( ${TARGET} PUBLIC dgm::dgm-lib )
 ```
 
 The full source for that can be found [here](../integration_tests/fetch_release).
+
+# Automatic SFML fetching
+
+By default, dgm-lib first checks via `find_package` if SFML of a correct version is already available somewhere. If not, it will download it through CPM. In the case you want a hard error if SFML is not found and not download it, you can disable that behavior, even when using CPM:
+
+```
+CPMAddPackage(
+    NAME dgm-lib
+    GITHUB_REPOSITORY nerudaj/dgm-lib
+    GIT_TAG main
+    OPTIONS
+        DONT_FETCH_SFML ON
+)
+```
+
+The full source for that can be found [here](../integration_tests/cpm_look_for_external_sfml/).
