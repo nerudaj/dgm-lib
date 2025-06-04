@@ -35,7 +35,6 @@ dgm-lib v3.0.0
     * No longer dependent on xinput
     * `getInputValue`/`isInputToggled` replaced with `readAnalog`/`readDigital`
     * `update` method was removed
-    * bindings for supported gamepads can be resolved via `translateGamepadCode` function
  * `dgm::GenericMesh` has deleted copy constructor and an explicit `clone`method
  * `dgm::GeneralMesh` constructor accepting vector of bools has been removed
  * Compilation for Android is supported

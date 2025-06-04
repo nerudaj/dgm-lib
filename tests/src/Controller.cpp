@@ -23,21 +23,6 @@ TEST_CASE("[Controller]")
         input.bindInput(Action::Two, 1);
     }
 
-    SECTION("Can bind all possible inputs to the same code")
-    {
-        input.bindInput(
-            Action::Two,
-            dgm::translateGamepadCode(
-                dgm::GamepadCode::A,
-                sf::Joystick::Identification { .vendorId = 0x045E,
-                                               .productId = 0x02FF }));
-
-        input.bindInput(Action::One, sf::Keyboard::Key::A);
-        input.bindInput(Action::One, sf::Mouse::Button::Left);
-        input.bindInput(
-            Action::One, sf::Joystick::Axis::PovX, dgm::AxisHalf::Negative);
-    }
-
     SECTION(
         "BUG: Does not return false when mouse button is not bound and nothing "
         "is pressed")
