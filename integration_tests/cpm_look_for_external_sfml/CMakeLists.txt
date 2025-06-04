@@ -6,7 +6,15 @@ set ( CMAKE_CXX_STANDARD 23 )
 
 project ( test-cpm )
 
-CPMAddPackage("gh:nerudaj/dgm-lib#${GIT_BRANCH}")
+CPMAddPackage("gh:SFML/SFML#3.0.1")
+CPMAddPackage(
+    NAME dgm-lib
+    GITHUB_REPOSITORY nerudaj/dgm-lib
+    GIT_TAG ${GIT_BRANCH}
+    OPTIONS
+        DONT_LOOK_FOR_SFML OFF
+        DONT_FETCH_SFML ON
+)
 
 add_executable ( ${PROJECT_NAME} Main.cpp )
 

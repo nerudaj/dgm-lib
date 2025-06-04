@@ -9,6 +9,7 @@ option ( ENABLE_SANDBOX "Generate sandbox target" ON )
 option ( ENABLE_EXAMPLES "Generate example targets" ON )
 option ( BOOTSTRAP_CPM "Whether to download CPM" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
+option ( DONT_LOOK_FOR_SFML "Don't look for SFML, use CPM to download it" ON )
 
 # CppInit
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
@@ -47,6 +48,8 @@ if (NOT ${PROJECT_IS_TOP_LEVEL} )
     set ( ENABLE_SANDBOX OFF )
     set ( ENABLE_EXAMPLES OFF )
     set ( OVERRIDE_RUNTIME_OUTPUT_DIR OFF )
+    set ( DONT_LOOK_FOR_SFML ON )
+    set ( DONT_FETCH_SFML OFF )
 endif ()
 
 if ( ${OVERRIDE_RUNTIME_OUTPUT_DIR} )
@@ -57,9 +60,29 @@ if ( ${ENABLE_TESTS} )
     enable_testing()
 endif ()
 
+set ( SFML_FOUND FALSE )
+if ( ${DONT_LOOK_FOR_SFML} )
+    message ( "INFO: Not looking for SFML, using CPM to download it" )
+else ()
+    find_package ( SFML 3.0 COMPONENTS system window graphics REQUIRED )
+    if ( SFML_FOUND )
+        message ( "SFML found: version ${SFML_VERSION} and ${SFML_DIR}" )
+    else()
+        message ( "SFML not found, using CPM to download it" )
+    endif()
+endif()
+
 set ( SFML_VERSION "3.0.0" )
 
-CPMAddPackage( "gh:SFML/SFML#${SFML_VERSION}" )
+if ( NOT SFML_FOUND )
+    if ( ${DONT_FETCH_SFML} )
+        message ( FATAL_ERROR "SFML not found, auto-fetching is disabled, exiting!" )
+    else ()
+        message ( "SFML not found, using CPM to download it" )
+        CPMAddPackage( "gh:SFML/SFML#${SFML_VERSION}" )
+    endif()
+endif()
+
 CPMAddPackage( "gh:nlohmann/json@3.11.2" )
 
 # Subprojects
