@@ -29,37 +29,6 @@ int main()
 	input.bindInput(Action::Back, sf::Keyboard::Key::B);
 	input.bindInput(Action::Start, sf::Keyboard::Key::N);
 
-	try {
-		const auto id = sf::Joystick::getIdentification(0);
-
-		// Bind controller
-		input.bindInput(Action::L_Up, dgm::translateGamepadCode(dgm::GamepadCode::DPadUp, id));
-		input.bindInput(Action::L_Left, dgm::translateGamepadCode(dgm::GamepadCode::DPadLeft, id));
-		input.bindInput(Action::L_Down, dgm::translateGamepadCode(dgm::GamepadCode::DPadDown, id));
-		input.bindInput(Action::L_Right, dgm::translateGamepadCode(dgm::GamepadCode::DPadRight, id));
-		input.bindInput(Action::L_Up, dgm::translateGamepadCode(dgm::GamepadCode::LStickUp, id));
-		input.bindInput(Action::L_Left, dgm::translateGamepadCode(dgm::GamepadCode::LStickLeft, id));
-		input.bindInput(Action::L_Down, dgm::translateGamepadCode(dgm::GamepadCode::LStickDown, id));
-		input.bindInput(Action::L_Right, dgm::translateGamepadCode(dgm::GamepadCode::LStickRight, id));
-		input.bindInput(Action::R_Up, dgm::translateGamepadCode(dgm::GamepadCode::RStickUp, id));
-		input.bindInput(Action::R_Left, dgm::translateGamepadCode(dgm::GamepadCode::RStickLeft, id));
-		input.bindInput(Action::R_Down, dgm::translateGamepadCode(dgm::GamepadCode::RStickDown, id));
-		input.bindInput(Action::R_Right, dgm::translateGamepadCode(dgm::GamepadCode::RStickRight, id));
-		input.bindInput(Action::A, dgm::translateGamepadCode(dgm::GamepadCode::A, id));
-		input.bindInput(Action::B, dgm::translateGamepadCode(dgm::GamepadCode::B, id));
-		input.bindInput(Action::X, dgm::translateGamepadCode(dgm::GamepadCode::X, id));
-		input.bindInput(Action::Y, dgm::translateGamepadCode(dgm::GamepadCode::Y, id));
-		input.bindInput(Action::Back, dgm::translateGamepadCode(dgm::GamepadCode::Select, id));
-		input.bindInput(Action::Start, dgm::translateGamepadCode(dgm::GamepadCode::Start, id));
-		input.bindInput(Action::LBumper, dgm::translateGamepadCode(dgm::GamepadCode::LBumper, id));
-		input.bindInput(Action::RBumper, dgm::translateGamepadCode(dgm::GamepadCode::RBumper, id));
-		input.bindInput(Action::LTrigger, dgm::translateGamepadCode(dgm::GamepadCode::LTrigger, id));
-		input.bindInput(Action::RTrigger, dgm::translateGamepadCode(dgm::GamepadCode::RTrigger, id));
-		input.bindInput(Action::LStick, dgm::translateGamepadCode(dgm::GamepadCode::LStickPress, id));
-		input.bindInput(Action::RStick, dgm::translateGamepadCode(dgm::GamepadCode::RStickPress, id));
-	}
-	catch (...) {}
-
 	input.setGamepadDeadzone(0.05f);
 
 	// Bind mouse

@@ -135,7 +135,7 @@ if ( ${PROJECT_IS_TOP_LEVEL} )
     set ( CPACK_GENERATOR "ZIP" )
     set ( CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${FULL_PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_GENERATOR_PLATFORM}-${COMPILER_ID}-for-SFML-${SFML_VERSION}" )
     
-    message ( "${CPACK_PACKAGE_FILE_NAME}" )
+    message ( "Computed package name: ${CPACK_PACKAGE_FILE_NAME}" )
 
     include ( CPack )
 endif ()

@@ -13,46 +13,11 @@
 
 namespace dgm
 {
-    enum class [[nodiscard]] GamepadCode
-    {
-        A,
-        B,
-        X,
-        Y,
-        Start,
-        Select,
-        Capture,
-        LBumper,
-        RBumper,
-        LTrigger,
-        RTrigger,
-        DPadLeft,
-        DPadRight,
-        DPadUp,
-        DPadDown,
-        LStickLeft,
-        LStickRight,
-        LStickUp,
-        LStickDown,
-        LStickPress,
-        RStickLeft,
-        RStickRight,
-        RStickUp,
-        RStickDown,
-        RStickPress,
-    };
-
     enum class [[nodiscard]] AxisHalf
     {
         Negative,
         Positive,
     };
-
-    using SfmlGamepadInput =
-        std::variant<size_t, std::pair<sf::Joystick::Axis, AxisHalf>>;
-
-    NODISCARD_RESULT SfmlGamepadInput translateGamepadCode(
-        GamepadCode code, const sf::Joystick::Identification& identity);
 
     enum class [[nodiscard]] DigitalReadKind
     {
@@ -177,17 +142,6 @@ namespace dgm
             bindings[code].axisHalf = axisHalf;
         }
 
-        void bindInput(const Action code, const SfmlGamepadInput& input)
-        {
-            std::visit(
-                overloads {
-                    [&](unsigned idx) { bindInput(code, idx); },
-                    [&](const std::pair<sf::Joystick::Axis, AxisHalf>& pair)
-                    { bindInput(code, pair.first, pair.second); },
-                },
-                input);
-        }
-
         /**
          *  \brief Set an index of a gamepad that should be used
          */
@@ -219,18 +173,6 @@ namespace dgm
             AxisHalf axisHalf = AxisHalf::Positive;
             unsigned gamepadButton = sf::Joystick::ButtonCount;
         };
-
-        template<class... Ts>
-        struct overloads : Ts...
-        {
-            using Ts::operator()...;
-        };
-
-#ifdef ANDROID
-        // Deduction guide not needed since C++20
-        template<class... Ts>
-        overloads(Ts...) -> overloads<Ts...>;
-#endif
 
     private:
         NODISCARD_RESULT inline bool

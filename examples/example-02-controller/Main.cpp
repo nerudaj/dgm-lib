@@ -32,6 +32,285 @@ enum class Action
     RStick
 };
 
+enum class [[nodiscard]] GamepadCode
+{
+    A,
+    B,
+    X,
+    Y,
+    Start,
+    Select,
+    Capture,
+    LBumper,
+    RBumper,
+    LTrigger,
+    RTrigger,
+    DPadLeft,
+    DPadRight,
+    DPadUp,
+    DPadDown,
+    LStickLeft,
+    LStickRight,
+    LStickUp,
+    LStickDown,
+    LStickPress,
+    RStickLeft,
+    RStickRight,
+    RStickUp,
+    RStickDown,
+    RStickPress,
+};
+
+using SfmlGamepadInput =
+    std::variant<unsigned int, std::pair<sf::Joystick::Axis, dgm::AxisHalf>>;
+
+/**
+ * SFML uses abstract mapping codes because each gamepad is different
+ * and each gamepad low-level API is different.
+ *
+ * In your game, either let the user calibrate inputs themselves, or you
+ * need to come up with a mapping function such as the following one.
+ *
+ * You can use SDL gamepad database, it reportedly contains vendorID and
+ * productID in the GUID, but their mapping for Dpads is weird.
+ */
+SfmlGamepadInput translateGamepadCode(
+    GamepadCode code, const sf::Joystick::Identification& identity)
+{
+    if (identity.vendorId == 0x045E) // Microsoft
+    {
+        if (identity.productId == 0x02FF) // Controller (Xbox One For Windows)
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 0u;
+            case B:
+                return 1u;
+            case X:
+                return 2u;
+            case Y:
+                return 3u;
+            case Start:
+                return 7u;
+            case Select:
+                return 6u;
+            case Capture:
+                return 12u;
+            case LBumper:
+                return 4u;
+            case RBumper:
+                return 5u;
+            case LTrigger:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Positive };
+            case RTrigger:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Negative };
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Positive };
+            case LStickPress:
+                return 8u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::U,
+                                   dgm::AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::U,
+                                   dgm::AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::V,
+                                   dgm::AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::V,
+                                   dgm::AxisHalf::Positive };
+            case RStickPress:
+                return 14u;
+            }
+        }
+    }
+    else if (identity.vendorId == 0x358A) // Backbone
+    {
+        if (identity.productId == 0x0)
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 4u;
+            case B:
+                return 5u;
+            case X:
+                return 7u;
+            case Y:
+                return 8u;
+            case Start:
+                return 15u;
+            case Select:
+                return 14u;
+            case Capture:
+                return 0u; // not a real button, unused
+            case LBumper:
+                return 10u;
+            case RBumper:
+                return 11u;
+            case LTrigger:
+                return 12u;
+            case RTrigger:
+                return 13u;
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Positive };
+            case LStickPress:
+                return 17u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::R,
+                                   dgm::AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::R,
+                                   dgm::AxisHalf::Positive };
+            case RStickPress:
+                return 18u;
+            }
+        }
+    }
+    else if (identity.vendorId == 0x0079) // DragonRise Inc. / Canyon?
+    {
+        if (identity.productId == 0x0304) // Canyon controller GPW3
+        {
+            switch (code)
+            {
+                using enum GamepadCode;
+            case A:
+                return 0u;
+            case B:
+                return 1u;
+            case X:
+                return 3u;
+            case Y:
+                return 4u;
+            case Start:
+                return 11u;
+            case Select:
+                return 10u;
+            case Capture:
+                return 12u;
+            case LBumper:
+                return 6u;
+            case RBumper:
+                return 7u;
+            case LTrigger:
+                return 8u;
+            case RTrigger:
+                return 9u;
+            case DPadLeft:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Negative };
+            case DPadRight:
+                return std::pair { sf::Joystick::Axis::PovX,
+                                   dgm::AxisHalf::Positive };
+            case DPadUp:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Positive };
+            case DPadDown:
+                return std::pair { sf::Joystick::Axis::PovY,
+                                   dgm::AxisHalf::Negative };
+            case LStickLeft:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Negative };
+            case LStickRight:
+                return std::pair { sf::Joystick::Axis::X,
+                                   dgm::AxisHalf::Positive };
+            case LStickUp:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Negative };
+            case LStickDown:
+                return std::pair { sf::Joystick::Axis::Y,
+                                   dgm::AxisHalf::Positive };
+            case LStickPress:
+                return 13u;
+            case RStickLeft:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Negative };
+            case RStickRight:
+                return std::pair { sf::Joystick::Axis::Z,
+                                   dgm::AxisHalf::Positive };
+            case RStickUp:
+                return std::pair { sf::Joystick::Axis::R,
+                                   dgm::AxisHalf::Negative };
+            case RStickDown:
+                return std::pair { sf::Joystick::Axis::R,
+                                   dgm::AxisHalf::Positive };
+            case RStickPress:
+                return 14u;
+            }
+        }
+    }
+
+    throw dgm::Exception("Unrecognized gamepad: " + identity.name);
+}
+
+template<class... Ts>
+struct overloads : Ts...
+{
+    using Ts::operator()...;
+};
+
+#ifdef ANDROID
+// Deduction guide not needed since C++20
+template<class... Ts>
+overloads(Ts...) -> overloads<Ts...>;
+#endif
+
 int main()
 {
     dgm::Window window({ 1280, 720 }, "Example 02: Controller", false);
@@ -71,77 +350,64 @@ int main()
 
     try
     {
+        auto bindInput = [&](Action code, auto binding)
+        {
+            std::visit(
+                overloads {
+                    [&](unsigned idx) { input.bindInput(code, idx); },
+                    [&](const std::pair<sf::Joystick::Axis, dgm::AxisHalf>&
+                            pair)
+                    { input.bindInput(code, pair.first, pair.second); },
+                },
+                binding);
+        };
+
         const auto id = sf::Joystick::getIdentification(0);
 
         // Bind controller
-        input.bindInput(
-            Action::L_Up,
-            dgm::translateGamepadCode(dgm::GamepadCode::DPadUp, id));
-        input.bindInput(
-            Action::L_Left,
-            dgm::translateGamepadCode(dgm::GamepadCode::DPadLeft, id));
-        input.bindInput(
-            Action::L_Down,
-            dgm::translateGamepadCode(dgm::GamepadCode::DPadDown, id));
-        input.bindInput(
+        bindInput(Action::L_Up, translateGamepadCode(GamepadCode::DPadUp, id));
+        bindInput(
+            Action::L_Left, translateGamepadCode(GamepadCode::DPadLeft, id));
+        bindInput(
+            Action::L_Down, translateGamepadCode(GamepadCode::DPadDown, id));
+        bindInput(
+            Action::L_Right, translateGamepadCode(GamepadCode::DPadRight, id));
+        bindInput(
+            Action::L_Up, translateGamepadCode(GamepadCode::LStickUp, id));
+        bindInput(
+            Action::L_Left, translateGamepadCode(GamepadCode::LStickLeft, id));
+        bindInput(
+            Action::L_Down, translateGamepadCode(GamepadCode::LStickDown, id));
+        bindInput(
             Action::L_Right,
-            dgm::translateGamepadCode(dgm::GamepadCode::DPadRight, id));
-        input.bindInput(
-            Action::L_Up,
-            dgm::translateGamepadCode(dgm::GamepadCode::LStickUp, id));
-        input.bindInput(
-            Action::L_Left,
-            dgm::translateGamepadCode(dgm::GamepadCode::LStickLeft, id));
-        input.bindInput(
-            Action::L_Down,
-            dgm::translateGamepadCode(dgm::GamepadCode::LStickDown, id));
-        input.bindInput(
-            Action::L_Right,
-            dgm::translateGamepadCode(dgm::GamepadCode::LStickRight, id));
-        input.bindInput(
-            Action::R_Up,
-            dgm::translateGamepadCode(dgm::GamepadCode::RStickUp, id));
-        input.bindInput(
-            Action::R_Left,
-            dgm::translateGamepadCode(dgm::GamepadCode::RStickLeft, id));
-        input.bindInput(
-            Action::R_Down,
-            dgm::translateGamepadCode(dgm::GamepadCode::RStickDown, id));
-        input.bindInput(
+            translateGamepadCode(GamepadCode::LStickRight, id));
+        bindInput(
+            Action::R_Up, translateGamepadCode(GamepadCode::RStickUp, id));
+        bindInput(
+            Action::R_Left, translateGamepadCode(GamepadCode::RStickLeft, id));
+        bindInput(
+            Action::R_Down, translateGamepadCode(GamepadCode::RStickDown, id));
+        bindInput(
             Action::R_Right,
-            dgm::translateGamepadCode(dgm::GamepadCode::RStickRight, id));
-        input.bindInput(
-            Action::A, dgm::translateGamepadCode(dgm::GamepadCode::A, id));
-        input.bindInput(
-            Action::B, dgm::translateGamepadCode(dgm::GamepadCode::B, id));
-        input.bindInput(
-            Action::X, dgm::translateGamepadCode(dgm::GamepadCode::X, id));
-        input.bindInput(
-            Action::Y, dgm::translateGamepadCode(dgm::GamepadCode::Y, id));
-        input.bindInput(
-            Action::Back,
-            dgm::translateGamepadCode(dgm::GamepadCode::Select, id));
-        input.bindInput(
-            Action::Start,
-            dgm::translateGamepadCode(dgm::GamepadCode::Start, id));
-        input.bindInput(
-            Action::LBumper,
-            dgm::translateGamepadCode(dgm::GamepadCode::LBumper, id));
-        input.bindInput(
-            Action::RBumper,
-            dgm::translateGamepadCode(dgm::GamepadCode::RBumper, id));
-        input.bindInput(
-            Action::LTrigger,
-            dgm::translateGamepadCode(dgm::GamepadCode::LTrigger, id));
-        input.bindInput(
-            Action::RTrigger,
-            dgm::translateGamepadCode(dgm::GamepadCode::RTrigger, id));
-        input.bindInput(
-            Action::LStick,
-            dgm::translateGamepadCode(dgm::GamepadCode::LStickPress, id));
-        input.bindInput(
-            Action::RStick,
-            dgm::translateGamepadCode(dgm::GamepadCode::RStickPress, id));
+            translateGamepadCode(GamepadCode::RStickRight, id));
+        bindInput(Action::A, translateGamepadCode(GamepadCode::A, id));
+        bindInput(Action::B, translateGamepadCode(GamepadCode::B, id));
+        bindInput(Action::X, translateGamepadCode(GamepadCode::X, id));
+        bindInput(Action::Y, translateGamepadCode(GamepadCode::Y, id));
+        bindInput(Action::Back, translateGamepadCode(GamepadCode::Select, id));
+        bindInput(Action::Start, translateGamepadCode(GamepadCode::Start, id));
+        bindInput(
+            Action::LBumper, translateGamepadCode(GamepadCode::LBumper, id));
+        bindInput(
+            Action::RBumper, translateGamepadCode(GamepadCode::RBumper, id));
+        bindInput(
+            Action::LTrigger, translateGamepadCode(GamepadCode::LTrigger, id));
+        bindInput(
+            Action::RTrigger, translateGamepadCode(GamepadCode::RTrigger, id));
+        bindInput(
+            Action::LStick, translateGamepadCode(GamepadCode::LStickPress, id));
+        bindInput(
+            Action::RStick, translateGamepadCode(GamepadCode::RStickPress, id));
     }
     catch (...)
     {
