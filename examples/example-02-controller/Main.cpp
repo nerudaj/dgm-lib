@@ -492,8 +492,8 @@ int main()
             Action up, Action down, Action left, Action right) -> sf::Vector2f
     {
         return sf::Vector2f(
-                   input.readAnalog(left) + input.readAnalog(right),
-                   input.readAnalog(up) + input.readAnalog(down))
+                   -input.readAnalog(left) + input.readAnalog(right),
+                   -input.readAnalog(up) + input.readAnalog(down))
                * 100.f;
     };
 
