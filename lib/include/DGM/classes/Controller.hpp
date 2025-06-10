@@ -80,8 +80,7 @@ namespace dgm
             auto& binding = bindings.at(code);
             if (isMouseInputToggled(binding) || isKeyboardInputToggled(binding)
                 || isGamepadInputToggled(binding))
-                return bindings[code].axisHalf == AxisHalf::Positive ? 1.f
-                                                                     : -1.f;
+                return 1.f;
 
             if (!sf::Joystick::isConnected(controllerIndex)) return 0.f;
 
@@ -207,13 +206,15 @@ namespace dgm
         {
             if (std::to_underlying(binding.axis) == sf::Joystick::AxisCount)
                 return 0.f;
-            const float value =
+
+            const float rawValue =
                 sf::Joystick::getAxisPosition(controllerIndex, binding.axis)
                 / 100.f;
-            return std::clamp(
-                std::abs(value) < controllerDeadzone ? 0.f : value,
+            const float axisHalfValue = std::abs(std::clamp(
+                rawValue,
                 binding.axisHalf == dgm::AxisHalf::Negative ? -1.f : 0.f,
-                binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f);
+                binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f));
+            return axisHalfValue < controllerDeadzone ? 0.f : axisHalfValue;
         }
 
     private:
