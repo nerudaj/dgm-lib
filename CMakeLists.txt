@@ -84,7 +84,7 @@ find_or_fetch_dependency(
 )
 
 find_or_fetch_dependency(
-	PACKAGE_NAME NLOHMANN_JSON
+	PACKAGE_NAME json
 	VERSION 3
 	CPM_URL "gh:nlohmann/json@3.12.0"
 	DONT_LOOK ${DONT_LOOK_FOR_JSON}
