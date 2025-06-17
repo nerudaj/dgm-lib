@@ -20,7 +20,7 @@ function (find_or_fetch_dependency)
     endif()
     
     if ( F_O_F_COMPONENTS )
-        set ( F_O_F_COMPONENTS "COMPONENTS ${F_O_F_COMPONENTS}" )
+        set ( F_O_F_COMPONENTS COMPONENTS ${F_O_F_COMPONENTS} )
     endif()
 
     set ( DEP_FOUND FALSE )
