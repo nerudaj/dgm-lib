@@ -1,0 +1,52 @@
+function (find_or_fetch_dependency)
+    set ( oneValueArgs DONT_LOOK DONT_FETCH PACKAGE_NAME VERSION CPM_URL )
+    set ( multiValueArgs COMPONENTS )
+    cmake_parse_arguments ( F_O_F "" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+    if ( NOT F_O_F_DONT_LOOK )
+        set ( F_O_F_DONT_LOOK FALSE )
+    endif()
+    
+    if ( NOT F_O_F_DONT_FETCH )
+        set ( F_O_F_DONT_FETCH FALSE )
+    endif()
+
+    if ( NOT F_O_F_PACKAGE_NAME )
+        message ( FATAL_ERROR "find_or_fetch_dependency: PACKAGE_NAME is required!" )
+    endif()
+    
+    if ( NOT F_O_F_VERSION )
+        message ( FATAL_ERROR "find_or_fetch_dependency: VERSION is required!" )
+    endif()
+    
+    if ( F_O_F_COMPONENTS )
+        set ( F_O_F_COMPONENTS "COMPONENTS ${F_O_F_COMPONENTS}" )
+    endif()
+
+    set ( DEP_FOUND FALSE )
+    if ( ${F_O_F_DONT_LOOK} )
+        message ( "INFO: Not looking for ${F_O_F_PACKAGE_NAME}, using CPM to download it" )
+    else ()
+        message ( "INFO: Looking for ${F_O_F_PACKAGE_NAME}, using find_package..." )
+        find_package ( ${F_O_F_PACKAGE_NAME} ${F_O_F_VERSION} QUIET ${F_O_F_COMPONENTS} )
+
+        if ( ${${F_O_F_PACKAGE_NAME}_FOUND} )
+            set ( DEP_FOUND TRUE )
+            message ( "  ${F_O_F_PACKAGE_NAME} found: version ${${F_O_F_PACKAGE_NAME}_VERSION} and ${${F_O_F_PACKAGE_NAME}_DIR}" )
+        endif()
+    endif()
+
+    if ( NOT ${DEP_FOUND} )
+        if ( ${F_O_F_DONT_FETCH} )
+            message ( FATAL_ERROR "  ${F_O_F_PACKAGE_NAME} not found, auto-fetching is disabled, exiting!" )
+        else ()
+            message ( "  ${F_O_F_PACKAGE_NAME} not found, using CPM to download it" )
+            if ( F_O_F_CPM_URL )
+                CPMAddPackage( "${F_O_F_CPM_URL}" )
+            else ()
+                message ( FATAL_ERROR "CPM_URL is required for fetching ${F_O_F_PACKAGE_NAME}!" )
+            endif()
+        endif()
+    endif()
+
+endfunction()
