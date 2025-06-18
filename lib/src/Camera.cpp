@@ -50,8 +50,8 @@ void dgm::Camera::update(const dgm::Time& time)
 {
     if (isMoving())
     {
-        setPosition(
-            moveEffect.start + moveEffect.update(time) * moveEffect.amount);
+        basePosition =
+            moveEffect.start + moveEffect.update(time) * moveEffect.amount;
 
         if (isShaking()) shakeEffect.start = view.getCenter();
     }
@@ -68,15 +68,16 @@ void dgm::Camera::update(const dgm::Time& time)
             + rotationEffect.update(time) * rotationEffect.amount);
     }
 
+    offsetPosition = sf::Vector2f {};
     if (isShaking())
     {
         const float f = shakeEffect.update(time);
         const unsigned vecIndex =
             unsigned(shakeEffect.elapsed / shakeEffect.hold) % 20;
-        setPosition(
-            shakeEffect.start
-            + f * SHAKE_POSITIONS[vecIndex] * shakeEffect.amount.x);
+        offsetPosition = f * SHAKE_POSITIONS[vecIndex] * shakeEffect.amount.x;
     }
+
+    view.setCenter(basePosition + offsetPosition);
 }
 
 void dgm::Camera::moveGradually(

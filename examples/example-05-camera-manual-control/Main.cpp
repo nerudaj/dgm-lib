@@ -1,6 +1,8 @@
 #include "DemoData.hpp"
 #include <DGM/dgm.hpp>
 
+const float SPEED = 128.f;
+
 // This function is copied from example-01-tilemap
 dgm::TileMap createSampleTilemap(const dgm::ResourceManager& resmgr)
 {
@@ -54,14 +56,6 @@ int main(int, char*[])
                 std::ignore = window.close();
             else if (const auto key = event->getIf<sf::Event::KeyPressed>())
             {
-                if (key->code == sf::Keyboard::Key::W)
-                    playerDot.move({ 0.f, -3.f });
-                if (key->code == sf::Keyboard::Key::A)
-                    playerDot.move({ -3.f, 0.f });
-                if (key->code == sf::Keyboard::Key::S)
-                    playerDot.move({ 0.f, 3.f });
-                if (key->code == sf::Keyboard::Key::D)
-                    playerDot.move({ 3.f, 0.f });
                 if (key->code == sf::Keyboard::Key::Up) zoomLevel -= 0.1f;
                 if (key->code == sf::Keyboard::Key::Down) zoomLevel += 0.1f;
                 if (key->code == sf::Keyboard::Key::Space)
@@ -70,6 +64,17 @@ int main(int, char*[])
                 if (key->code == sf::Keyboard::Key::E) rotation += 0.5f;
             }
         }
+
+        const auto forward = sf::Vector2f {
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)   ? -SPEED
+            : sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) ? SPEED
+                                                               : 0.f,
+            sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)   ? -SPEED
+            : sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) ? SPEED
+                                                               : 0.f,
+        };
+
+        playerDot.move(forward * time.getDeltaTime());
 
         // First center camera on the player dot
         camera.setPosition(playerDot.getPosition());
