@@ -62,10 +62,10 @@ namespace dgm
             return states[location.idx];
         }
 
-    private:
         static std::vector<sf::IntRect> subdivideArea(
             const sf::IntRect& area, const sf::Vector2i& takenTextureDims);
 
+    private:
         static constexpr bool
         fits(const sf::Vector2i& textureDims, const sf::IntRect& area) noexcept
         {
