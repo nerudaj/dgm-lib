@@ -1,5 +1,6 @@
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
+#include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Error.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -26,25 +27,35 @@ namespace dgm
         TextureAtlas(int atlasWidth, int atlasHeight);
 
     public:
-        std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
+        /// <summary>
+        /// Add a texture to atlas as a single image
+        /// </summary>
+        ///
+        /// Clip for this texture will have single frame encompassing
+        /// the whole texture.
+        NODISCARD_RESULT std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
+        addImage(const sf::Texture& texture);
+
+        NODISCARD_RESULT std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
         addTileset(const sf::Texture& texture, const dgm::Clip& clip);
 
+        NODISCARD_RESULT
         std::expected<ResourceLocation<dgm::AnimationStates>, dgm::Error>
         addSpritesheet(
             const sf::Texture& texture, const dgm::AnimationStates& states);
 
-        const sf::Texture& getTexture() const noexcept
+        CONSTEXPR_NODISCARD const sf::Texture& getTexture() const noexcept
         {
             return atlasTexture;
         }
 
-        const dgm::Clip&
+        NODISCARD_RESULT const dgm::Clip&
         getClip(const ResourceLocation<dgm::Clip>& location) const noexcept
         {
             return clips[location.idx];
         }
 
-        const dgm::AnimationStates& getAnimationStates(
+        NODISCARD_RESULT const dgm::AnimationStates& getAnimationStates(
             const ResourceLocation<dgm::AnimationStates>& location)
             const noexcept
         {

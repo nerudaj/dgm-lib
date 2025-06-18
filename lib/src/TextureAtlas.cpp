@@ -20,6 +20,19 @@ dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
     });
 }
 
+NODISCARD_RESULT std::expected<ClipLocation, dgm::Error>
+dgm::TextureAtlas::addImage(const sf::Texture& texture)
+{
+    return addTileset(
+        texture,
+        dgm::Clip(
+            texture.getSize(),
+            sf::IntRect {
+                sf::Vector2i { 0, 0 },
+                sf::Vector2i(texture.getSize()),
+            }));
+}
+
 std::expected<ClipLocation, dgm::Error>
 dgm::TextureAtlas::addTileset(const sf::Texture& texture, const dgm::Clip& clip)
 {
