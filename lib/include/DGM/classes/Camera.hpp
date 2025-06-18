@@ -165,6 +165,7 @@ namespace dgm
          */
         inline void setPosition(const sf::Vector2f& position)
         {
+            basePosition = position;
             view.setCenter(position);
         }
 
@@ -264,5 +265,7 @@ namespace dgm
     protected:
         sf::View view;
         sf::View defaultView;
+        sf::Vector2f basePosition;
+        sf::Vector2f offsetPosition;
     };
 } // namespace dgm
