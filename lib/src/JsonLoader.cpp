@@ -1,30 +1,9 @@
 #include <DGM/classes/Error.hpp>
 #include <DGM/classes/JsonLoader.hpp>
-#include <SFML/System/FileInputStream.hpp>
+#include <DGM/classes/Utlity.hpp>
 #include <format>
 #include <fstream>
 #include <nlohmann/json.hpp>
-
-nlohmann::json readStreamAsJson(sf::InputStream& stream)
-{
-    auto size = stream.getSize();
-    if (!size) throw dgm::Exception("Cannot get stream size");
-
-    std::string buffer(*size, '\0');
-    auto readBytes = stream.read(buffer.data(), *size);
-
-    if (!readBytes)
-    {
-        throw dgm::Exception("Error while reading stream");
-    }
-
-    if (*readBytes != *size)
-    {
-        throw dgm::Exception("Could not read requested amount of bytes");
-    }
-
-    return nlohmann::json::parse(buffer);
-}
 
 sf::Vector2u getFrameFromJson(const nlohmann::json& jsonFrame)
 {
@@ -63,7 +42,7 @@ dgm::JsonLoader::loadClipFromFile(const std::filesystem::path& filename) const
 
 dgm::Clip dgm::JsonLoader::loadClipFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json json = readStreamAsJson(stream);
+    nlohmann::json json = dgm::Utility::loadFileAllText(stream);
 
     const sf::Vector2u frame = getFrameFromJson(json["frame"]);
     const sf::IntRect bounds = getBoundsFromJson(json["bounds"]);
@@ -86,7 +65,7 @@ dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(
 dgm::AnimationStates
 dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json file = readStreamAsJson(stream);
+    nlohmann::json file = dgm::Utility::loadFileAllText(stream);
 
     AnimationStates result;
 

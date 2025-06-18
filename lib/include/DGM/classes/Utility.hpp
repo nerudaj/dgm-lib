@@ -8,6 +8,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/InputStream.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <expected>
 #include <iostream>
@@ -116,5 +117,25 @@ namespace dgm
                     + path.string() + "', reason: " + e.what());
             }
         }
+
+        /**
+         * \brief Platform-independent helper for loading file into a string
+         *
+         * \param path The path to the file to load
+         *
+         * \return std::string on success, dgm::Error on failure
+         */
+        static std::expected<std::string, dgm::Error>
+        loadFileAllText(const std::filesystem::path& path);
+
+        /**
+         * \brief Platform-independent helper for loading file into a string
+         *
+         * \param stream The stream to read from
+         *
+         * \return std::string on success, dgm::Error on failure
+         */
+        static std::expected<std::string, dgm::Error>
+        loadFileAllText(sf::InputStream& stream);
     };
 } // namespace dgm

@@ -3,6 +3,7 @@ dgm-lib v3.1.0
     * One gamepad could've a negative half on up, second could have it on down, it is easier to handle in client code this way
  * Fixed `dgm::Camera` shaking algoritm so the camera can be moved while being shaked
  * `dgm::TextureAtlas` got a convenience `addImage` method
+ * Added `dgm::Utility::loadFileAllText` helper
 
 dgm-lib v3.0.0
  * Library target has been renamed to `dgm-lib` and a `dgm::dgm-lib` alias has been added. Use that for linking
