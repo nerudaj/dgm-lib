@@ -17,12 +17,6 @@ namespace std
 {
     namespace ranges
     {
-        template<class Container, class... Args>
-        Container to(Args&&... args)
-        {
-            return Container(std::forward<Args>(args)...);
-        }
-
         namespace views
         {
             auto enumerate(auto&& r)
@@ -33,6 +27,7 @@ namespace std
         } // namespace views
     } // namespace ranges
 } // namespace std
+
 #else
 #ifndef NODISCARD_RESULT
 #define NODISCARD_RESULT [[nodiscard]]
