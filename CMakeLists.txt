@@ -11,9 +11,12 @@ option ( BOOTSTRAP_CPM "Whether to download CPM" ON )
 option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT_DIRECTORY variable" ON )
 option ( DONT_LOOK_FOR_SFML "Don't look for SFML, use CPM to download it" OFF )
 option ( DONT_FETCH_SFML "Don't auto-fetch SFML, fail if not found" OFF )
+option ( DONT_LOOK_FOR_JSON "Don't look for nlohmann::json, use CPM to download it" OFF )
+option ( DONT_FETCH_JSON "Don't auto-fetch SFML, fail if not found" OFF )
 
 # CppInit
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
+include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
 if ( ${BOOTSTRAP_CPM} )
     bootstrap_cpm ()
@@ -59,6 +62,8 @@ message ("  BOOTSTRAP_CPM: ${BOOTSTRAP_CPM}")
 message ("  OVERRIDE_RUNTIME_OUTPUT_DIR: ${OVERRIDE_RUNTIME_OUTPUT_DIR}")
 message ("  DONT_LOOK_FOR_SFML: ${DONT_LOOK_FOR_SFML}")
 message ("  DONT_FETCH_SFML: ${DONT_FETCH_SFML}")
+message ("  DONT_LOOK_FOR_JSON: ${DONT_LOOK_FOR_JSON}")
+message ("  DONT_FETCH_JSON: ${DONT_FETCH_JSON}")
 
 if ( ${OVERRIDE_RUNTIME_OUTPUT_DIR} )
     set ( CMAKE_RUNTIME_OUTPUT_DIRECTORY "${DGM_BINARY_DIR}/Compiled" )
@@ -68,32 +73,23 @@ if ( ${ENABLE_TESTS} )
     enable_testing()
 endif ()
 
-set ( SFML_FOUND FALSE )
-if ( ${DONT_LOOK_FOR_SFML} )
-    message ( "INFO: Not looking for SFML, using CPM to download it" )
-else ()
-    message ( "INFO: Looking for SFML, using find_package..." )
-    find_package ( SFML 3.0 QUIET COMPONENTS system window graphics )
+# Dependencies
+find_or_fetch_dependency(
+	PACKAGE_NAME SFML
+	VERSION 3.0
+	CPM_URL "gh:SFML/SFML#3.0.1"
+	COMPONENTS System Window Graphics
+	DONT_LOOK ${DONT_LOOK_FOR_SFML}
+	DONT_FETCH ${DONT_FETCH_SFML}
+)
 
-    if ( ${SFML_FOUND} )
-        message ( "SFML found: version ${SFML_VERSION} and ${SFML_DIR}" )
-    else()
-        message ( "SFML not found, will try CPM fallback if allowed" )
-    endif()
-endif()
-
-set ( SFML_VERSION "3.0.0" )
-
-if ( NOT ${SFML_FOUND} )
-    if ( ${DONT_FETCH_SFML} )
-        message ( FATAL_ERROR "SFML not found, auto-fetching is disabled, exiting!" )
-    else ()
-        message ( "SFML not found, using CPM to download it" )
-        CPMAddPackage( "gh:SFML/SFML#${SFML_VERSION}" )
-    endif()
-endif()
-
-CPMAddPackage( "gh:nlohmann/json@3.11.2" )
+find_or_fetch_dependency(
+	PACKAGE_NAME json
+	VERSION 3
+	CPM_URL "gh:nlohmann/json@3.12.0"
+	DONT_LOOK ${DONT_LOOK_FOR_JSON}
+	DONT_FETCH ${DONT_FETCH_JSON}
+)
 
 # Subprojects
 add_subdirectory ( lib )
