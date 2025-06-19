@@ -1,6 +1,7 @@
 #include <DGM/classes/Error.hpp>
 #include <DGM/classes/JsonLoader.hpp>
-#include <DGM/classes/Utlity.hpp>
+#include <DGM/classes/Utility.hpp>
+#include <SFML/System/FileInputStream.hpp>
 #include <format>
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -42,14 +43,16 @@ dgm::JsonLoader::loadClipFromFile(const std::filesystem::path& filename) const
 
 dgm::Clip dgm::JsonLoader::loadClipFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json json = dgm::Utility::loadFileAllText(stream);
+    const auto&& fileText = dgm::Utility::loadFileAllText(stream);
+    if (!fileText) throw dgm::Exception(fileText.error().getMessage());
+    auto&& json = nlohmann::json::parse(fileText.value());
 
-    const sf::Vector2u frame = getFrameFromJson(json["frame"]);
-    const sf::IntRect bounds = getBoundsFromJson(json["bounds"]);
-    const sf::Vector2u spacing = json.contains("spacing")
-                                     ? getSpacingFromJson(json["spacing"])
-                                     : sf::Vector2u(0u, 0u);
-    const unsigned nframes =
+    const auto&& frame = getFrameFromJson(json["frame"]);
+    const auto&& bounds = getBoundsFromJson(json["bounds"]);
+    const auto&& spacing = json.contains("spacing")
+                               ? getSpacingFromJson(json["spacing"])
+                               : sf::Vector2u(0u, 0u);
+    const auto&& nframes =
         json.contains("nframes") ? json["nframes"].get<unsigned>() : 0;
 
     return dgm::Clip(frame, bounds, nframes, spacing);
@@ -65,7 +68,9 @@ dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(
 dgm::AnimationStates
 dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
 {
-    nlohmann::json file = dgm::Utility::loadFileAllText(stream);
+    const auto&& fileText = dgm::Utility::loadFileAllText(stream);
+    if (!fileText) throw dgm::Exception(fileText.error().getMessage());
+    auto&& file = nlohmann::json::parse(fileText.value());
 
     AnimationStates result;
 
@@ -88,16 +93,16 @@ dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
     // Parse through states
     for (auto&& state : file["states"])
     {
-        const std::string name = state["name"];
-        const sf::Vector2u frame = state.contains("frame")
-                                       ? getFrameFromJson(state["frame"])
-                                       : defaultFrame;
-        const sf::Vector2u spacing = state.contains("spacing")
-                                         ? getSpacingFromJson(state["spacing"])
-                                         : defaultSpacing;
-        const unsigned frameCount =
+        const auto& name = state["name"];
+        const auto&& frame = state.contains("frame")
+                                 ? getFrameFromJson(state["frame"])
+                                 : defaultFrame;
+        const auto&& spacing = state.contains("spacing")
+                                   ? getSpacingFromJson(state["spacing"])
+                                   : defaultSpacing;
+        const auto&& frameCount =
             state.contains("nframes") ? state["nframes"].get<unsigned>() : 0;
-        const sf::IntRect bounds = getBoundsFromJson(state["bounds"]);
+        const auto&& bounds = getBoundsFromJson(state["bounds"]);
 
         if (frame.x == 0u || frame.y == 0u)
         {

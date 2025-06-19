@@ -4,14 +4,17 @@
 std::expected<std::string, dgm::Error>
 dgm::Utility::loadFileAllText(const std::filesystem::path& path)
 {
-    sf::FileInputStream stream(path);
-    if (!stream)
+    try
+    {
+        sf::FileInputStream stream(path);
+        return dgm::Utility::loadFileAllText(stream);
+    }
+    catch (const std::exception& ex)
     {
         return std::unexpected(
-            "Could not open file '" + path.string() + "' for reading");
+            "Could not open file '" + path.string()
+            + "' for reading: " + ex.what());
     }
-
-    return dgm::Utility::loadFileAllText(stream);
 }
 
 std::expected<std::string, dgm::Error>
