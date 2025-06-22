@@ -1,5 +1,6 @@
 ﻿#include <DGM/dgm.hpp>
 #include <catch2/catch_all.hpp>
+#include <iostream>
 
 struct Reporter
 {
