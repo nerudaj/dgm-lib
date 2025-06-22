@@ -46,7 +46,7 @@ dgm::Utility::loadFileAllText(const std::filesystem::path& path)
     try
     {
         std::ifstream load(path);
-        return std::expected<std::string, dgm::Error>();
+        return loadFileAllText(load);
     }
     catch (const std::exception& e)
     {
@@ -55,7 +55,7 @@ dgm::Utility::loadFileAllText(const std::filesystem::path& path)
 }
 
 std::expected<std::string, dgm::Error>
-dgm::Utility::loadFileAllText(std::ifstream& stream)
+dgm::Utility::loadFileAllText(std::istream& stream)
 {
     stream.seekg(0, std::ios::end);
     size_t len = stream.tellg();

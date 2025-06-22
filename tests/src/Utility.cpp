@@ -1,3 +1,4 @@
+#include "TestDataDir.hpp"
 #include <DGM/classes/Utility.hpp>
 #include <catch2/catch_all.hpp>
 
@@ -20,4 +21,23 @@ TEST_CASE("Vector less implementation", "[Utility]")
 
     REQUIRE(less {}(sf::Vector2u(2, 1), sf::Vector2u(1, 2)));
     REQUIRE_FALSE(less {}(sf::Vector2u(1, 2), sf::Vector2u(2, 1)));
+}
+
+TEST_CASE("loadFileAllText", "[Utility]")
+{
+    SECTION("load from stream")
+    {
+        std::stringstream str("hello");
+        auto result = dgm::Utility::loadFileAllText(str);
+        REQUIRE(result.has_value());
+        REQUIRE(result.value() == "hello");
+    }
+
+    SECTION("load from disc")
+    {
+        auto result = dgm::Utility::loadFileAllText(
+            TEST_DATA_DIR + "/loadFileAllText.txt");
+        REQUIRE(result.has_value());
+        REQUIRE(result.value() == "hello");
+    }
 }
