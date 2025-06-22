@@ -154,7 +154,7 @@ TEST_CASE("[ResourceManager]")
 
         REQUIRE(resmgr.loadResource<LoggableResource>(
             "unloadable", loadMocked<LoggableResource>));
-        resmgr.unloadResource<LoggableResource>("unloadable");
+        std::ignore = resmgr.unloadResource<LoggableResource>("unloadable");
 
         REQUIRE(loadedCnt + 1u == LoggableResource::ctorCalledCount);
         REQUIRE(movedCnt + 2u == LoggableResource::moveCalledCount);
