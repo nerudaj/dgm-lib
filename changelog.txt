@@ -4,6 +4,9 @@ dgm-lib v3.1.0
  * Fixed `dgm::Camera` shaking algoritm so the camera can be moved while being shaked
  * `dgm::TextureAtlas` got a convenience `addImage` method
  * Added `dgm::Utility::loadFileAllText` helper
+    * Used for loading regular text files with one command
+ * Added `dgm::Utility::loadAssetAllText` helper
+    * Used for loading asset files inside APKs with one command
 
 dgm-lib v3.0.0
  * Library target has been renamed to `dgm-lib` and a `dgm::dgm-lib` alias has been added. Use that for linking

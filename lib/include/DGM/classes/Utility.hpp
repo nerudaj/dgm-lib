@@ -11,7 +11,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <expected>
-#include <iostream>
+#include <fstream>
 #include <string>
 
 namespace dgm
@@ -119,9 +119,52 @@ namespace dgm
         }
 
         /**
-         * \brief Platform-independent helper for loading file into a string
+         * \brief Platform-independent helper for loading an asset file into a
+         * string
          *
          * \param path The path to the file to load
+         *
+         * If you develop for Android, use this function to load any file
+         * that is bundled inside the APK as an asset. These files don't sit
+         * in a regular filesystem, so they require a different treatment.
+         *
+         * For files placed inside internal/external storage, use
+         * loadFileAllText. On Windows, you can safely intermix this method and
+         * loadFileAllText.
+         *
+         * \return std::string on success, dgm::Error on failure
+         */
+        static std::expected<std::string, dgm::Error>
+        loadAssetAllText(const std::filesystem::path& path);
+
+        /**
+         * \brief Platform-independent helper for loading file into a string
+         *
+         * \param stream The stream to read from
+         *
+         * If you develop for Android, use this function to load any file
+         * that is bundled inside the APK as an asset. These files don't sit
+         * in a regular filesystem, so they require a different treatment.
+         *
+         * For files placed inside internal/external storage, use
+         * loadFileAllText. On Windows, you can safely intermix this method and
+         * loadFileAllText.
+         *
+         * \return std::string on success, dgm::Error on failure
+         */
+        static std::expected<std::string, dgm::Error>
+        loadAssetAllText(sf::InputStream& stream);
+
+        /**
+         * \brief Platform-independent helper for loading an asset file into a
+         * string
+         *
+         * \param path The path to the file to load
+         *
+         * If you develop for Android, use this function for loading files
+         * located inside internal/external storage. For loading files packaged
+         * as assets inside the APK itself, use loadAssetAllText. On Windows,
+         * you can safely use whichever.
          *
          * \return std::string on success, dgm::Error on failure
          */
@@ -133,9 +176,14 @@ namespace dgm
          *
          * \param stream The stream to read from
          *
+         * If you develop for Android, use this function for loading files
+         * located inside internal/external storage. For loading files packaged
+         * as assets inside the APK itself, use loadAssetAllText. On Windows,
+         * you can safely use whichever.
+         *
          * \return std::string on success, dgm::Error on failure
          */
         static std::expected<std::string, dgm::Error>
-        loadFileAllText(sf::InputStream& stream);
+        loadFileAllText(std::ifstream& stream);
     };
 } // namespace dgm
