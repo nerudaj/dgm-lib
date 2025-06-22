@@ -43,7 +43,7 @@ dgm::JsonLoader::loadClipFromFile(const std::filesystem::path& filename) const
 
 dgm::Clip dgm::JsonLoader::loadClipFromStream(sf::InputStream& stream) const
 {
-    const auto&& fileText = dgm::Utility::loadFileAllText(stream);
+    const auto&& fileText = dgm::Utility::loadAssetAllText(stream);
     if (!fileText) throw dgm::Exception(fileText.error().getMessage());
     auto&& json = nlohmann::json::parse(fileText.value());
 
@@ -68,7 +68,7 @@ dgm::AnimationStates dgm::JsonLoader::loadAnimationsFromFile(
 dgm::AnimationStates
 dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
 {
-    const auto&& fileText = dgm::Utility::loadFileAllText(stream);
+    const auto&& fileText = dgm::Utility::loadAssetAllText(stream);
     if (!fileText) throw dgm::Exception(fileText.error().getMessage());
     auto&& file = nlohmann::json::parse(fileText.value());
 
