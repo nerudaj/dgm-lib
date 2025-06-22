@@ -4,6 +4,7 @@
 #include <DGM/classes/Utility.hpp>
 #include <algorithm>
 #include <catch2/catch_all.hpp>
+#include <iostream>
 
 #define NUMBER_DISTANCE(a, b) (std::max(a, b) - std::min(a, b))
 
@@ -154,7 +155,8 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
                 std::find_if(
                     connections.begin(),
                     connections.end(),
-                    [](const auto& conn) {
+                    [](const auto& conn)
+                    {
                         return conn.destination.x == 2u
                                && conn.destination.y == 1u;
                     })

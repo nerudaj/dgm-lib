@@ -7,6 +7,7 @@
 #include "../shared/DemoData.hpp"
 #include "../shared/Level.hpp"
 #include <DGM/dgm.hpp>
+#include <iostream>
 
 class Actor
 {

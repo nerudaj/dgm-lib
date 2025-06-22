@@ -1,6 +1,8 @@
 #pragma once
 
-#include <DGM\dgm.hpp>
+#include <DGM/classes/Compatibility.hpp>
+#include <SFML/System/Angle.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <cassert>
 #include <cmath>
 #include <numbers>
@@ -8,6 +10,8 @@
 
 namespace dgm
 {
+    class Circle;
+
     /**
      *  \brief Various mathematical functions, mainly
      *  for working with vectors

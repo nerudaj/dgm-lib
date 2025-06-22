@@ -1,4 +1,5 @@
 #include <DGM/classes/Math.hpp>
+#include <DGM/classes/Objects.hpp>
 
 namespace dgm
 {
