@@ -184,6 +184,6 @@ namespace dgm
          * \return std::string on success, dgm::Error on failure
          */
         static std::expected<std::string, dgm::Error>
-        loadFileAllText(std::ifstream& stream);
+        loadFileAllText(std::istream& stream);
     };
 } // namespace dgm
