@@ -1,6 +1,8 @@
 #include "TestDataDir.hpp"
 #include <DGM/classes/JsonLoader.hpp>
 #include <DGM/classes/ResourceManager.hpp>
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <array>
 #include <catch2/catch_all.hpp>
 
@@ -172,5 +174,20 @@ TEST_CASE("[ResourceManager]")
     SECTION("Does not crash when resource not in DB (throws instead)")
     {
         REQUIRE_THROWS_AS([&]() { resmgr.get<int>("none"); }(), dgm::Exception);
+    }
+
+    SECTION("Can insert resource")
+    {
+        auto&& image = sf::Image({ 256u, 256u }, sf::Color::White);
+        auto&& texture = sf::Texture(image);
+
+        SECTION("Via move")
+        {
+            auto result =
+                resmgr.insertResource("my_texture", std::move(texture));
+            REQUIRE(result);
+
+            resmgr.unloadResource<sf::Texture>("my_texture");
+        }
     }
 }

@@ -129,6 +129,45 @@ namespace dgm
         }
 
         /**
+        Inserts already initialized resource into the database under
+        given id.
+
+        The resource needs to either be movable.
+
+        Function return std::true_type on success and error message if
+        anything fails.
+         */
+        template<CompatibleResourceType T>
+        NODISCARD_RESULT ExpectedSuccess
+        insertResource(const std::string& id, T&& resource)
+            requires std::movable<T>
+        {
+            const auto&& tid = typeid(T).hash_code();
+
+            if (hasResource<T>(id))
+            {
+                return std::unexpected(
+                    "Resource with id '" + id
+                    + "' is already loaded in the manager.");
+            }
+
+            try
+            {
+                registerDestructor<T>(tid);
+                data[tid][id] = allocateInitializedMemory<T>();
+                new (data[tid][id]) T(std::forward<T>(resource));
+            }
+            catch (const std::exception& e)
+            {
+                return std::unexpected(
+                    std::string("Unable to load resource. Reason: ")
+                    + e.what());
+            }
+
+            return std::true_type {};
+        }
+
+        /**
          *  Remove resource with a given id from the database
          *
          *  If no resource of given type or with given id is in
