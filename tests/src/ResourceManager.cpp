@@ -183,11 +183,8 @@ TEST_CASE("[ResourceManager]")
 
         SECTION("Via move")
         {
-            auto result =
-                resmgr.insertResource("my_texture", std::move(texture));
-            REQUIRE(result);
-
-            resmgr.unloadResource<sf::Texture>("my_texture");
+            REQUIRE(resmgr.insertResource("my_texture", std::move(texture)));
+            REQUIRE(resmgr.unloadResource<sf::Texture>("my_texture"));
         }
     }
 }
