@@ -1,15 +1,6 @@
 #pragma once
 
-#ifdef ANDROID
-
-#ifndef NODISCARD_RESULT
-#define NODISCARD_RESULT
-#endif
-
-#ifndef CONSTEXPR_NODISCARD
-#define CONSTEXPR_NODISCARD constexpr
-#endif
-
+#ifndef __cpp_lib_ranges_enumerate
 #include <ranges>
 #include <vector>
 
@@ -27,6 +18,17 @@ namespace std
         } // namespace views
     } // namespace ranges
 } // namespace std
+#endif
+
+#ifdef ANDROID
+
+#ifndef NODISCARD_RESULT
+#define NODISCARD_RESULT
+#endif
+
+#ifndef CONSTEXPR_NODISCARD
+#define CONSTEXPR_NODISCARD constexpr
+#endif
 
 #else
 #ifndef NODISCARD_RESULT
@@ -34,7 +36,7 @@ namespace std
 #endif
 
 #ifndef CONSTEXPR_NODISCARD
-#define CONSTEXPR_NODISCARD constexpr [[nodiscard]]
+#define CONSTEXPR_NODISCARD [[nodiscard]] constexpr
 #endif
 
 #endif
