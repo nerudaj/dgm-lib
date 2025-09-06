@@ -1,9 +1,6 @@
 #pragma once
 
 #include <expected>
-#ifndef ANDROID
-#include <format>
-#endif
 #ifdef __cpp_lib_stacktrace
 #include <stacktrace>
 #endif
@@ -23,9 +20,7 @@ namespace dgm
             std::string trace = "Trace is not available with your compiler")
 #endif
             : std::runtime_error(
-                  std::format(
-                      "Error message: {}\n\nStacktrace: \n{}",
-                      message,
+                "Error message: " + message + "\n\nStacktrace: " +
 #ifdef __cpp_lib_stacktrace
                       std::to_string(trace)))
 #else
