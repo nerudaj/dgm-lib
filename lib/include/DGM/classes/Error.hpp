@@ -1,6 +1,7 @@
 #pragma once
 
 #include <expected>
+#include <version>
 #ifdef __cpp_lib_stacktrace
 #include <stacktrace>
 #endif

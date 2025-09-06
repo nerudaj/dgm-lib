@@ -1,5 +1,7 @@
 #pragma once
 
+#include <version>
+
 #ifndef __cpp_lib_ranges_enumerate
 #include <ranges>
 #include <vector>
