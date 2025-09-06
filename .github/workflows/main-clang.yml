@@ -29,7 +29,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake -G Ninja -D CMAKE_CXX_COMPILER=Clang ..
+        cmake -G Ninja -D CMAKE_C_COMPILER=Clang -D CMAKE_CXX_COMPILER=Clang ..
       shell: cmd
 
     - name: Build
