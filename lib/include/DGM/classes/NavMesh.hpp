@@ -56,7 +56,7 @@ namespace dgm
          *  If from == to, then empty path (which returns true for isTraversed
          * and has zero length) is returned
          */
-        static NODISCARD_RESULT std::optional<dgm::Path<TileNavpoint>>
+        NODISCARD_RESULT static std::optional<dgm::Path<TileNavpoint>>
         computePath(
             const sf::Vector2u& from,
             const sf::Vector2u& to,

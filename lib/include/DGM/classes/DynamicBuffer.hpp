@@ -73,15 +73,14 @@ namespace dgm
                 return { backref[index], index };
             }
 
-            constexpr NODISCARD_RESULT IteratorBase<BackrefType>&
-            operator++() noexcept
+            CONSTEXPR_NODISCARD IteratorBase<BackrefType>& operator++() noexcept
             {
                 ++index;
                 skipDeletedElements();
                 return *this;
             }
 
-            constexpr NODISCARD_RESULT IteratorBase<BackrefType>
+            CONSTEXPR_NODISCARD IteratorBase<BackrefType>
             operator++(int) noexcept
             {
                 auto copy = IteratorBase<BackrefType>(*this);

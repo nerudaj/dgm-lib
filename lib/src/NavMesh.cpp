@@ -64,17 +64,17 @@ public:
 
 namespace custom
 {
-    constexpr NODISCARD_RESULT unsigned max(unsigned a, unsigned b) noexcept
+    CONSTEXPR_NODISCARD unsigned max(unsigned a, unsigned b) noexcept
     {
         return a < b ? b : a;
     }
 
-    constexpr NODISCARD_RESULT unsigned min(unsigned a, unsigned b) noexcept
+    CONSTEXPR_NODISCARD unsigned min(unsigned a, unsigned b) noexcept
     {
         return a < b ? a : b;
     }
 
-    constexpr NODISCARD_RESULT unsigned
+    CONSTEXPR_NODISCARD unsigned
     getScalarDistance(unsigned a, unsigned b) noexcept
     {
         return max(a, b) - min(a, b);
@@ -127,7 +127,7 @@ enum class Backdir
 struct TileNode
 {
 protected:
-    static CONSTEXPR_NODISCARD unsigned
+    CONSTEXPR_NODISCARD static unsigned
     getManhattanDistance(const sf::Vector2u& a, const sf::Vector2u& b) noexcept
     {
         return custom::getScalarDistance(a.x, b.x)

@@ -93,7 +93,7 @@ dgm::JsonLoader::loadAnimationsFromStream(sf::InputStream& stream) const
     // Parse through states
     for (auto&& state : file["states"])
     {
-        const auto& name = state["name"];
+        const std::string name = state["name"];
         const auto&& frame = state.contains("frame")
                                  ? getFrameFromJson(state["frame"])
                                  : defaultFrame;
