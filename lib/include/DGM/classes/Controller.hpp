@@ -33,7 +33,7 @@ namespace dgm
      *  Expected workflow is to call bindInput to bind keys and buttons
      *  to particular numerical code representing certain action.
      *
-     *  You can then call update, keyPressed and getAxísValue with
+     *  You can then call update, keyPressed and getAxisValue with
      *  those codes to get current state for that input, disregarding
      *  of physical input device.
      *
@@ -210,10 +210,11 @@ namespace dgm
             const float rawValue =
                 sf::Joystick::getAxisPosition(controllerIndex, binding.axis)
                 / 100.f;
-            const float axisHalfValue = std::abs(std::clamp(
-                rawValue,
-                binding.axisHalf == dgm::AxisHalf::Negative ? -1.f : 0.f,
-                binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f));
+            const float axisHalfValue = std::abs(
+                std::clamp(
+                    rawValue,
+                    binding.axisHalf == dgm::AxisHalf::Negative ? -1.f : 0.f,
+                    binding.axisHalf == dgm::AxisHalf::Positive ? 1.f : 0.f));
             return axisHalfValue < controllerDeadzone ? 0.f : axisHalfValue;
         }
 

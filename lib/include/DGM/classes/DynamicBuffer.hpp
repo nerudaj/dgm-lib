@@ -123,15 +123,14 @@ namespace dgm
          *
          *  Returns true if either there are no data or no valid indices
          */
-        NODISCARD_RESULT constexpr bool isEmpty() const noexcept
+        CONSTEXPR_NODISCARD bool isEmpty() const noexcept
         {
             for (auto&& item : data)
                 if (std::holds_alternative<T>(item)) return false;
             return true;
         }
 
-        NODISCARD_RESULT constexpr bool
-        isIndexValid(IndexType index) const noexcept
+        CONSTEXPR_NODISCARD bool isIndexValid(IndexType index) const noexcept
         {
             return index < data.size()
                    && std::holds_alternative<T>(data[index]);
@@ -170,7 +169,7 @@ namespace dgm
          * If index is out of bounds, empty optional
          * is returned.
          */
-        [[nodiscard]] constexpr std::optional<std::reference_wrapper<T>>
+        CONSTEXPR_NODISCARD std::optional<std::reference_wrapper<T>>
         at(IndexType index) noexcept
         {
             try
