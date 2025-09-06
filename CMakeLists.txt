@@ -22,9 +22,12 @@ if ( ${BOOTSTRAP_CPM} )
     bootstrap_cpm ()
 endif ()
 
+message ( "Generator used: ${CMAKE_GENERATOR}" )
 
 if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
     message ( "Building for Android" )
+elseif ( "${CMAKE_GENERATOR}" STREQUAL "Ninja" )
+    message ( "Ninja generator used, not setting CMAKE_GENERATOR_PLATFORM" )
 else ()
     if (  "${CMAKE_GENERATOR_PLATFORM}" STREQUAL "" )
         message ("CMAKE_GENERATOR_PLATFORM not set, defaulting to x64")
@@ -73,11 +76,13 @@ if ( ${ENABLE_TESTS} )
     enable_testing()
 endif ()
 
+set ( SFML_VERSION "3.0.1" )
+
 # Dependencies
 find_or_fetch_dependency(
 	PACKAGE_NAME SFML
 	VERSION 3.0
-	CPM_URL "gh:SFML/SFML#3.0.1"
+	CPM_URL "gh:SFML/SFML#${SFML_VERSION}"
 	COMPONENTS System Window Graphics
 	DONT_LOOK ${DONT_LOOK_FOR_SFML}
 	DONT_FETCH ${DONT_FETCH_SFML}
