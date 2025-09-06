@@ -3,6 +3,8 @@
 #include <expected>
 #ifndef ANDROID
 #include <format>
+#endif
+#ifdef __cpp_lib_stacktrace
 #include <stacktrace>
 #endif
 #include <stdexcept>
@@ -13,22 +15,24 @@ namespace dgm
     class [[nodiscard]] Exception : public std::runtime_error
     {
     public:
-#ifdef ANDROID
-        Exception(const std::string& message)
-            : std::runtime_error("Error message: " + message)
-        {
-        }
-#else
         Exception(
             const std::string& message,
+#ifdef __cpp_lib_stacktrace
             std::stacktrace trace = std::stacktrace::current())
-            : std::runtime_error(std::format(
-                  "Error message: {}\n\nStacktrace: \n{}",
-                  message,
-                  std::to_string(trace)))
+#else
+            std::string trace = "Trace is not available with your compiler")
+#endif
+            : std::runtime_error(
+                  std::format(
+                      "Error message: {}\n\nStacktrace: \n{}",
+                      message,
+#ifdef __cpp_lib_stacktrace
+                      std::to_string(trace)))
+#else
+                      trace))
+#endif
         {
         }
-#endif
     };
 
     class [[nodiscard]] Error final
@@ -36,7 +40,7 @@ namespace dgm
     public:
         Error(const std::string& message)
             : message(message)
-#ifndef ANDROID
+#ifdef __cpp_lib_stacktrace
             , trace(std::stacktrace::current())
 #endif
         {
@@ -48,7 +52,7 @@ namespace dgm
             return message;
         }
 
-#ifndef ANDROID
+#ifdef __cpp_lib_stacktrace
         const std::stacktrace& getTrace() const noexcept
         {
             return trace;
@@ -57,7 +61,7 @@ namespace dgm
 
     private:
         std::string message;
-#ifndef ANDROID
+#ifdef __cpp_lib_stacktrace
         std::stacktrace trace;
 #endif
     };
