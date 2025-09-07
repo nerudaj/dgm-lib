@@ -71,7 +71,7 @@ namespace dgm
 
         Path<T>& operator=(dgm::Path<T>&& other) = default;
 
-        NODISCARD_RESULT
+        [[nodiscard]]
         Path<T> clone() const
         {
             return Path(*this);
@@ -86,12 +86,12 @@ namespace dgm
          *
          *  \note Path can never be traversed if it is a looping path
          */
-        NODISCARD_RESULT constexpr bool isTraversed() const noexcept
+        [[nodiscard]] constexpr bool isTraversed() const noexcept
         {
             return points.size() <= currentPointIndex;
         }
 
-        NODISCARD_RESULT constexpr bool isLooping() const noexcept
+        [[nodiscard]] constexpr bool isLooping() const noexcept
         {
             return looping;
         }
@@ -102,7 +102,7 @@ namespace dgm
          *  Once you finish processing this navpoint (i.e.: you reach it)
          *  call advance() to move to next point.
          */
-        NODISCARD_RESULT constexpr const T& getCurrentPoint() const noexcept
+        [[nodiscard]] constexpr const T& getCurrentPoint() const noexcept
         {
             assert(not isTraversed());
             return points[currentPointIndex];
@@ -119,7 +119,7 @@ namespace dgm
 
         // template<typename = std::enable_if_t<std::is_same_v<T,
         // TileNavpoint>>>
-        NODISCARD_RESULT constexpr std::size_t getLength() const noexcept
+        [[nodiscard]] constexpr std::size_t getLength() const noexcept
         {
             return points.size();
         }

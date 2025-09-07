@@ -43,7 +43,7 @@ namespace dgm
             /**
              *  \brief Get position of particle (center of the particle)
              */
-            NODISCARD_RESULT sf::Vector2f getPosition() const noexcept
+            [[nodiscard]] sf::Vector2f getPosition() const noexcept
             {
                 return (vertices[0].position + vertices[4].position) / 2.f;
             }
@@ -51,12 +51,12 @@ namespace dgm
             /**
              *  \brief Get forward vector of the particle
              */
-            NODISCARD_RESULT const sf::Vector2f& getForward() const noexcept
+            [[nodiscard]] const sf::Vector2f& getForward() const noexcept
             {
                 return forward;
             }
 
-            NODISCARD_RESULT constexpr sf::Angle getRotation() const noexcept
+            [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
             {
                 return rotation;
             }
@@ -66,7 +66,7 @@ namespace dgm
              *
              *  \details Test whether lifespan is greater than zero
              */
-            NODISCARD_RESULT constexpr bool isAlive() const noexcept
+            [[nodiscard]] constexpr bool isAlive() const noexcept
             {
                 return lifespan > 0.f;
             }

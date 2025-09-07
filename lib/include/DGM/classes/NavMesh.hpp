@@ -56,7 +56,7 @@ namespace dgm
          *  If from == to, then empty path (which returns true for isTraversed
          * and has zero length) is returned
          */
-        static NODISCARD_RESULT std::optional<dgm::Path<TileNavpoint>>
+        [[nodiscard]] static std::optional<dgm::Path<TileNavpoint>>
         computePath(
             const sf::Vector2u& from,
             const sf::Vector2u& to,
@@ -122,7 +122,7 @@ namespace dgm
          *
          *  \warn This function is not thread-safe.
          */
-        NODISCARD_RESULT dgm::Path<WorldNavpoint>
+        [[nodiscard]] dgm::Path<WorldNavpoint>
         computePath(const sf::Vector2f& from, const sf::Vector2f& to);
 
     protected:
@@ -148,7 +148,7 @@ namespace dgm
             jumpPointConnections = {};
 
     protected:
-        NODISCARD_RESULT bool isJumpPoint(const sf::Vector2u& p) const
+        [[nodiscard]] bool isJumpPoint(const sf::Vector2u& p) const
         {
             return jumpPointConnections.contains(p);
         }
@@ -170,9 +170,9 @@ namespace dgm
             const sf::Vector2u& tileTo,
             bool wasTileToOriginallyJumpPoint);
 
-        NODISCARD_RESULT sf::Vector2u toTileCoord(const sf::Vector2f& coord);
+        [[nodiscard]] sf::Vector2u toTileCoord(const sf::Vector2f& coord);
 
-        NODISCARD_RESULT WorldNavpoint
+        [[nodiscard]] WorldNavpoint
         toWorldNavpoint(const sf::Vector2u& coord);
     };
 

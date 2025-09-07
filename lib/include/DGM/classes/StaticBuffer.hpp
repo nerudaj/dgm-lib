@@ -50,7 +50,7 @@ namespace dgm
             }
 
         public:
-            NODISCARD_RESULT const ValueType& operator*() const noexcept
+            [[nodiscard]] const ValueType& operator*() const noexcept
             {
                 return *ptr;
             }
@@ -58,7 +58,7 @@ namespace dgm
             template<
                 typename U = void,
                 typename std::enable_if<!IsConst, U>::type* = nullptr>
-            NODISCARD_RESULT ValueType& operator*() noexcept
+            [[nodiscard]] ValueType& operator*() noexcept
             {
                 return *ptr;
             }
@@ -69,51 +69,51 @@ namespace dgm
                 return *this;
             }
 
-            CONSTEXPR_NODISCARD IteratorBase<PtrType> operator++(int) noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType> operator++(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
                 ptr++;
                 return copy;
             }
 
-            CONSTEXPR_NODISCARD IteratorBase<PtrType>& operator--() noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType>& operator--() noexcept
             {
                 ptr--;
                 return *this;
             }
 
-            CONSTEXPR_NODISCARD IteratorBase<PtrType> operator--(int) noexcept
+            [[nodiscard]] constexpr IteratorBase<PtrType> operator--(int) noexcept
             {
                 auto&& copy = IteratorBase<PtrType>(*this);
                 ptr--;
                 return copy;
             }
 
-            CONSTEXPR_NODISCARD std::size_t
+            [[nodiscard]] constexpr std::size_t
             operator-(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr - other.ptr;
             }
 
-            CONSTEXPR_NODISCARD std::size_t
+            [[nodiscard]] constexpr std::size_t
             operator+(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr + other.ptr;
             }
 
-            CONSTEXPR_NODISCARD bool
+            [[nodiscard]] constexpr bool
             operator==(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr == other.ptr;
             }
 
-            CONSTEXPR_NODISCARD bool
+            [[nodiscard]] constexpr bool
             operator!=(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr != other.ptr;
             }
 
-            CONSTEXPR_NODISCARD auto
+            [[nodiscard]] constexpr auto
             operator<=>(const IteratorBase<PtrType>& other) const noexcept
             {
                 return ptr <=> other.ptr;
@@ -207,7 +207,7 @@ namespace dgm
          *  \details Does the same thing as grow, but it always returns
          *  result of getLast even if capacity was reached.
          */
-        CONSTEXPR_NODISCARD T& growUnchecked() noexcept
+        [[nodiscard]] constexpr T& growUnchecked() noexcept
         {
             grow();
             return getLast();
@@ -248,7 +248,7 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        CONSTEXPR_NODISCARD T& getLast() noexcept
+        [[nodiscard]] constexpr T& getLast() noexcept
         {
             return operator[](dataSize - 1);
         }
@@ -260,17 +260,17 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        CONSTEXPR_NODISCARD const T& getLast() const noexcept
+        [[nodiscard]] constexpr const T& getLast() const noexcept
         {
             return operator[](dataSize - 1);
         }
 
-        CONSTEXPR_NODISCARD T& operator[](std::size_t index) noexcept
+        [[nodiscard]] constexpr T& operator[](std::size_t index) noexcept
         {
             return data[index];
         }
 
-        CONSTEXPR_NODISCARD const T&
+        [[nodiscard]] constexpr const T&
         operator[](std::size_t index) const noexcept
         {
             return data[index];
@@ -283,13 +283,13 @@ namespace dgm
          * unless \ref remove was called. Use this immediately \ref expand
          * to initialize the unhid item.
          */
-        CONSTEXPR_NODISCARD auto&& getLast(this auto&& self) noexcept
+        [[nodiscard]] constexpr auto&& getLast(this auto&& self) noexcept
         {
             return self.operator[](self.dataSize - 1);
         }
 
         // Deducing this getter
-        CONSTEXPR_NODISCARD auto&&
+        [[nodiscard]] constexpr auto&&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
@@ -299,7 +299,7 @@ namespace dgm
         /**
          * \brief Get number of used items
          */
-        CONSTEXPR_NODISCARD std::size_t getSize() const noexcept
+        [[nodiscard]] constexpr std::size_t getSize() const noexcept
         {
             return dataSize;
         }
@@ -307,7 +307,7 @@ namespace dgm
         /**
          * \brief Get total number of available items
          */
-        CONSTEXPR_NODISCARD std::size_t getCapacity() const noexcept
+        [[nodiscard]] constexpr std::size_t getCapacity() const noexcept
         {
             return capacity;
         }
@@ -315,7 +315,7 @@ namespace dgm
         /**
          * \brief Test whether buffer is empty
          */
-        CONSTEXPR_NODISCARD bool isEmpty() const noexcept
+        [[nodiscard]] constexpr bool isEmpty() const noexcept
         {
             return dataSize == 0;
         }
@@ -323,17 +323,17 @@ namespace dgm
         /**
          * \brief Test whether buffer is full
          */
-        CONSTEXPR_NODISCARD bool isFull() const noexcept
+        [[nodiscard]] constexpr bool isFull() const noexcept
         {
             return dataSize == capacity;
         }
 
-        CONSTEXPR_NODISCARD const_iterator begin() const noexcept
+        [[nodiscard]] constexpr const_iterator begin() const noexcept
         {
             return const_iterator(data);
         }
 
-        CONSTEXPR_NODISCARD const_iterator end() const noexcept
+        [[nodiscard]] constexpr const_iterator end() const noexcept
         {
             return const_iterator(data + dataSize);
         }

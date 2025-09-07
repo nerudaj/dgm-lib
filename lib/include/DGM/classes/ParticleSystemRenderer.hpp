@@ -32,7 +32,7 @@ namespace dgm
              *
              *  \param[in] index  Index of particle
              */
-            NODISCARD_RESULT std::span<sf::Vertex>
+            [[nodiscard]] std::span<sf::Vertex>
             getParticleVertices(const std::size_t index) noexcept
             {
                 assert(index < vertices.getVertexCount() / VERTICES_PER_QUAD);

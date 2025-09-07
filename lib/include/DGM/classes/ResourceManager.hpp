@@ -95,7 +95,7 @@ namespace dgm
         if anything fails (for example loadCallback throws an error)
         */
         template<CompatibleResourceType T>
-        NODISCARD_RESULT ExpectedSuccess loadResource(
+        [[nodiscard]] ExpectedSuccess loadResource(
             const std::filesystem::path& path, LoadCallback<T> loadCallback)
         {
             const auto&& tid = typeid(T).hash_code();
@@ -138,7 +138,7 @@ namespace dgm
         anything fails.
          */
         template<CompatibleResourceType T>
-        NODISCARD_RESULT ExpectedSuccess
+        [[nodiscard]] ExpectedSuccess
         insertResource(const std::string& id, T&& resource)
             requires std::movable<T>
         {
@@ -216,7 +216,7 @@ namespace dgm
         \warn \p allowedExtensions must not be empty!
         */
         template<CompatibleResourceType T>
-        NODISCARD_RESULT ExpectedSuccess loadResourcesFromDirectory(
+        [[nodiscard]] ExpectedSuccess loadResourcesFromDirectory(
             const std::filesystem::path& folderPath,
             LoadCallback<T> loadCallback,
             const std::vector<std::string>& allowedExtensions = {})
@@ -281,11 +281,11 @@ namespace dgm
             return std::true_type {};
         }
 
-        NODISCARD_RESULT std::expected<std::string, Error>
+        [[nodiscard]] std::expected<std::string, Error>
         getResourceId(const std::filesystem::path& path) const noexcept;
 
         template<CompatibleResourceType T>
-        NODISCARD_RESULT bool hasResource(const std::string& id) const noexcept
+        [[nodiscard]] bool hasResource(const std::string& id) const noexcept
         {
             const auto&& tid = typeid(T).hash_code();
             return data.contains(tid) && data.at(tid).contains(id);
@@ -298,7 +298,7 @@ namespace dgm
         If no resources has been loaded
         */
         template<CompatibleResourceType T>
-        NODISCARD_RESULT std::expected<std::vector<std::string>, Error>
+        [[nodiscard]] std::expected<std::vector<std::string>, Error>
         getLoadedResourceIds() const noexcept
         {
             try

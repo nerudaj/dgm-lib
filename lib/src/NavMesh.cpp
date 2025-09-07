@@ -29,18 +29,18 @@ public:
         nodes[node.point] = node;
     }
 
-    NODISCARD_RESULT bool hasElements() const noexcept
+    [[nodiscard]] bool hasElements() const noexcept
     {
         return !nodes.empty();
     }
 
-    NODISCARD_RESULT bool contains(const sf::Vector2u& p) const noexcept
+    [[nodiscard]] bool contains(const sf::Vector2u& p) const noexcept
     {
         const auto itr = nodes.find(p);
         return itr != nodes.end();
     }
 
-    NODISCARD_RESULT NodeType popBestNode()
+    [[nodiscard]] NodeType popBestNode()
     {
         auto minElem = nodes.begin();
         for (auto itr = (++nodes.begin()); itr != nodes.end(); itr++)
@@ -56,7 +56,7 @@ public:
         return copy;
     }
 
-    NODISCARD_RESULT const NodeType& getNode(const sf::Vector2u& point) const
+    [[nodiscard]] const NodeType& getNode(const sf::Vector2u& point) const
     {
         return nodes.at(point);
     }
@@ -64,17 +64,17 @@ public:
 
 namespace custom
 {
-    constexpr NODISCARD_RESULT unsigned max(unsigned a, unsigned b) noexcept
+    [[nodiscard]] constexpr unsigned max(unsigned a, unsigned b) noexcept
     {
         return a < b ? b : a;
     }
 
-    constexpr NODISCARD_RESULT unsigned min(unsigned a, unsigned b) noexcept
+    [[nodiscard]] constexpr unsigned min(unsigned a, unsigned b) noexcept
     {
         return a < b ? a : b;
     }
 
-    constexpr NODISCARD_RESULT unsigned
+    [[nodiscard]] constexpr unsigned
     getScalarDistance(unsigned a, unsigned b) noexcept
     {
         return max(a, b) - min(a, b);
@@ -127,7 +127,7 @@ enum class Backdir
 struct TileNode
 {
 protected:
-    static CONSTEXPR_NODISCARD unsigned
+    [[nodiscard]] constexpr static unsigned
     getManhattanDistance(const sf::Vector2u& a, const sf::Vector2u& b) noexcept
     {
         return custom::getScalarDistance(a.x, b.x)
@@ -158,7 +158,7 @@ public:
 
     TileNode(const TileNode& other) = default;
 
-    NODISCARD_RESULT constexpr bool
+    [[nodiscard]] constexpr bool
     isCloserThan(const TileNode& other) const noexcept
     {
         return fcost < other.fcost
@@ -278,7 +278,7 @@ struct WorldNode
 
     WorldNode(const WorldNode& other) = default;
 
-    NODISCARD_RESULT constexpr bool
+    [[nodiscard]] constexpr bool
     isCloserThan(const WorldNode& other) const noexcept
     {
         return fcost < other.fcost

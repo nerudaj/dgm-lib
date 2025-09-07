@@ -41,10 +41,10 @@ namespace dgm
          * is maximum avaialable in regards to frame size
          * and boundaries.
          */
-        NODISCARD_RESULT virtual dgm::Clip
+        [[nodiscard]] virtual dgm::Clip
         loadClipFromFile(const std::filesystem::path&) const override;
 
-        NODISCARD_RESULT dgm::Clip loadClipFromStream(sf::InputStream&) const;
+        [[nodiscard]] dgm::Clip loadClipFromStream(sf::InputStream&) const;
 
         /**
          * Required format of JSON:
@@ -98,10 +98,10 @@ namespace dgm
          * One can use the defaults key to specify common
          * frame size and common spacing.
          */
-        NODISCARD_RESULT virtual dgm::AnimationStates
+        [[nodiscard]] virtual dgm::AnimationStates
         loadAnimationsFromFile(const std::filesystem::path&) const override;
 
-        NODISCARD_RESULT dgm::AnimationStates
+        [[nodiscard]] dgm::AnimationStates
         loadAnimationsFromStream(sf::InputStream&) const;
     };
 } // namespace dgm

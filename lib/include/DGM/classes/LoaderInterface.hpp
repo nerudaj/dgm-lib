@@ -17,10 +17,10 @@ namespace dgm
     class LoaderInterface
     {
     public:
-        NODISCARD_RESULT virtual dgm::Clip
+        [[nodiscard]] virtual dgm::Clip
         loadClipFromFile(const std::filesystem::path&) const = 0;
 
-        NODISCARD_RESULT virtual dgm::AnimationStates
+        [[nodiscard]] virtual dgm::AnimationStates
         loadAnimationsFromFile(const std::filesystem::path&) const = 0;
 
         virtual ~LoaderInterface() = default;

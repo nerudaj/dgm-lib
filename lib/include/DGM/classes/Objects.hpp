@@ -61,7 +61,7 @@ namespace dgm
         /**
          *  \brief Returns position of circle
          */
-        NODISCARD_RESULT constexpr const sf::Vector2f&
+        [[nodiscard]] constexpr const sf::Vector2f&
         getPosition() const noexcept override
         {
             return position;
@@ -70,7 +70,7 @@ namespace dgm
         /**
          *  \brief Returns radius of circle
          */
-        NODISCARD_RESULT constexpr const float getRadius() const noexcept
+        [[nodiscard]] constexpr const float getRadius() const noexcept
         {
             return radius;
         }
@@ -132,7 +132,7 @@ namespace dgm
         /**
          *  \brief Returns position of topleft vertex of rectangle
          */
-        NODISCARD_RESULT constexpr const sf::Vector2f&
+        [[nodiscard]] constexpr const sf::Vector2f&
         getPosition() const noexcept override
         {
             return position;
@@ -141,12 +141,12 @@ namespace dgm
         /**
          *  \brief Returns dimensions of rectangle
          */
-        NODISCARD_RESULT constexpr const sf::Vector2f& getSize() const noexcept
+        [[nodiscard]] constexpr const sf::Vector2f& getSize() const noexcept
         {
             return size;
         }
 
-        NODISCARD_RESULT constexpr sf::Vector2f getCenter() const noexcept
+        [[nodiscard]] constexpr sf::Vector2f getCenter() const noexcept
         {
             return getPosition() + getSize() / 2.f;
         }
@@ -232,7 +232,7 @@ namespace dgm
             position += direction;
         }
 
-        NODISCARD_RESULT constexpr sf::Angle getRotation() const noexcept
+        [[nodiscard]] constexpr sf::Angle getRotation() const noexcept
         {
             return rotation;
         }
@@ -240,12 +240,12 @@ namespace dgm
         void setRotation(const sf::Angle angle) noexcept;
         void rotate(const sf::Angle angle) noexcept;
 
-        NODISCARD_RESULT float getLength() const noexcept
+        [[nodiscard]] float getLength() const noexcept
         {
             return forward.length();
         }
 
-        NODISCARD_RESULT constexpr float getWidth() const noexcept
+        [[nodiscard]] constexpr float getWidth() const noexcept
         {
             return width;
         }
@@ -317,57 +317,57 @@ namespace dgm
         GenericMesh(GenericMesh<T>&&) = default;
         GenericMesh(const GenericMesh<T>&) = delete;
 
-        NODISCARD_RESULT GenericMesh clone() const
+        [[nodiscard]] GenericMesh clone() const
         {
             return GenericMesh<T>(data, dataSize, voxelSize);
         }
 
     public:
 #ifdef ANDROID
-        NODISCARD_RESULT constexpr inline DataType&
+        [[nodiscard]] constexpr inline DataType&
         operator[](std::size_t index) noexcept
         {
             return data[index];
         }
 
-        NODISCARD_RESULT constexpr inline const DataType&
+        [[nodiscard]] constexpr inline const DataType&
         operator[](std::size_t index) const noexcept
         {
             return data[index];
         }
 
-        NODISCARD_RESULT constexpr inline DataType&
+        [[nodiscard]] constexpr inline DataType&
         operator[](const sf::Vector2u& pos) noexcept
         {
             return data[pos.y * dataSize.x + pos.x];
         }
 
-        NODISCARD_RESULT constexpr inline const DataType&
+        [[nodiscard]] constexpr inline const DataType&
         operator[](const sf::Vector2u& pos) const noexcept
         {
             return data[pos.y * dataSize.x + pos.x];
         }
 #else
-        NODISCARD_RESULT constexpr inline auto&&
+        [[nodiscard]] constexpr inline auto&&
         operator[](this auto&& self, std::size_t index) noexcept
         {
             return self.data[index];
         }
 
-        NODISCARD_RESULT constexpr inline auto&&
+        [[nodiscard]] constexpr inline auto&&
         operator[](this auto&& self, const sf::Vector2u& pos) noexcept
         {
             return self.data[pos.y * self.dataSize.x + pos.x];
         }
 #endif
 
-        NODISCARD_RESULT constexpr inline std::vector<DataType>&
+        [[nodiscard]] constexpr inline std::vector<DataType>&
         getRawData() noexcept
         {
             return data;
         }
 
-        NODISCARD_RESULT constexpr inline const std::vector<DataType>&
+        [[nodiscard]] constexpr inline const std::vector<DataType>&
         getRawConstData() const noexcept
         {
             return data;
@@ -376,7 +376,7 @@ namespace dgm
         /**
          *  \brief get position of top-left corner
          */
-        NODISCARD_RESULT constexpr inline const sf::Vector2f&
+        [[nodiscard]] constexpr inline const sf::Vector2f&
         getPosition() const noexcept override
         {
             return position;
@@ -385,7 +385,7 @@ namespace dgm
         /**
          *  \brief get dimensions of *data array
          */
-        NODISCARD_RESULT constexpr inline const sf::Vector2u&
+        [[nodiscard]] constexpr inline const sf::Vector2u&
         getDataSize() const noexcept
         {
             return dataSize;
@@ -394,7 +394,7 @@ namespace dgm
         /**
          *  \brief get dimensions of single voxel
          */
-        NODISCARD_RESULT constexpr inline const sf::Vector2u&
+        [[nodiscard]] constexpr inline const sf::Vector2u&
         getVoxelSize() const noexcept
         {
             return voxelSize;

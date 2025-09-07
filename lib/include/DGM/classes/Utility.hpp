@@ -30,7 +30,7 @@ namespace dgm
         template<SfmlVectorType T>
         struct less
         {
-            NODISCARD_RESULT constexpr inline bool
+            [[nodiscard]] constexpr inline bool
             operator()(const T& a, const T& b) const noexcept
             {
                 return a.y == b.y ? a.x < b.x : a.y < b.y;

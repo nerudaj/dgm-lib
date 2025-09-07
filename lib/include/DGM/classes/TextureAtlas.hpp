@@ -33,29 +33,29 @@ namespace dgm
         ///
         /// Clip for this texture will have single frame encompassing
         /// the whole texture.
-        NODISCARD_RESULT std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
+        [[nodiscard]] std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
         addImage(const sf::Texture& texture);
 
-        NODISCARD_RESULT std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
+        [[nodiscard]] std::expected<ResourceLocation<dgm::Clip>, dgm::Error>
         addTileset(const sf::Texture& texture, const dgm::Clip& clip);
 
-        NODISCARD_RESULT
+        [[nodiscard]]
         std::expected<ResourceLocation<dgm::AnimationStates>, dgm::Error>
         addSpritesheet(
             const sf::Texture& texture, const dgm::AnimationStates& states);
 
-        CONSTEXPR_NODISCARD const sf::Texture& getTexture() const noexcept
+        [[nodiscard]] constexpr const sf::Texture& getTexture() const noexcept
         {
             return atlasTexture;
         }
 
-        NODISCARD_RESULT const dgm::Clip&
+        [[nodiscard]] const dgm::Clip&
         getClip(const ResourceLocation<dgm::Clip>& location) const noexcept
         {
             return clips[location.idx];
         }
 
-        NODISCARD_RESULT const dgm::AnimationStates& getAnimationStates(
+        [[nodiscard]] const dgm::AnimationStates& getAnimationStates(
             const ResourceLocation<dgm::AnimationStates>& location)
             const noexcept
         {

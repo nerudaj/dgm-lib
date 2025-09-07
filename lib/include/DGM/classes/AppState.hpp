@@ -55,19 +55,19 @@ namespace dgm
         }
 
     public:
-        NODISCARD_RESULT constexpr const sf::Color&
+        [[nodiscard]] constexpr const sf::Color&
         getClearColor() const noexcept
         {
             return config.clearColor;
         }
 
-        NODISCARD_RESULT constexpr bool
+        [[nodiscard]] constexpr bool
         shouldUpdateUnderlyingState() const noexcept
         {
             return config.shouldUpdateUnderlyingState;
         }
 
-        NODISCARD_RESULT constexpr bool
+        [[nodiscard]] constexpr bool
         shouldDrawUnderlyingState() const noexcept
         {
             return config.shouldDrawUnderlyingState;
