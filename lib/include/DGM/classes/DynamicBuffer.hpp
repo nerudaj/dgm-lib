@@ -38,7 +38,7 @@ namespace dgm
         DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
-        NODISCARD_RESULT constexpr DynamicBuffer clone() const
+        CONSTEXPR_NODISCARD DynamicBuffer clone() const
         {
             return DynamicBuffer(data, firstFreeSlot);
         }
@@ -73,28 +73,27 @@ namespace dgm
                 return { backref[index], index };
             }
 
-            CONSTEXPR_NODISCARD IteratorBase<BackrefType>& operator++() noexcept
+            constexpr IteratorBase<BackrefType>& operator++() noexcept
             {
                 ++index;
                 skipDeletedElements();
                 return *this;
             }
 
-            CONSTEXPR_NODISCARD IteratorBase<BackrefType>
-            operator++(int) noexcept
+            constexpr IteratorBase<BackrefType> operator++(int) noexcept
             {
                 auto copy = IteratorBase<BackrefType>(*this);
                 ++*this;
                 return copy;
             }
 
-            NODISCARD_RESULT constexpr bool
+            CONSTEXPR_NODISCARD bool
             operator==(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index == other.index;
             }
 
-            NODISCARD_RESULT constexpr bool
+            CONSTEXPR_NODISCARD bool
             operator!=(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index != other.index;
@@ -236,20 +235,19 @@ namespace dgm
         }
 
     private:
-        struct Index
+        struct [[nodiscard]] Index final
         {
             IndexType nextFreeSlot;
 
-            CONSTEXPR_NODISCARD explicit Index(IndexType nfs) noexcept
-                : nextFreeSlot(nfs)
+            constexpr explicit Index(IndexType nfs) noexcept : nextFreeSlot(nfs)
             {
             }
         };
 
         using Element = std::variant<T, Index>;
 
-        CONSTEXPR_NODISCARD
-        DynamicBuffer(std::vector<Element> data, IndexType firstFreeSlot)
+        constexpr DynamicBuffer(
+            std::vector<Element> data, IndexType firstFreeSlot)
             : data(data), firstFreeSlot(firstFreeSlot)
         {
         }
