@@ -45,7 +45,7 @@ namespace dgm
     class [[nodiscard]] Controller final
     {
     public:
-        NODISCARD_RESULT bool readDigital(
+        [[nodiscard]] bool readDigital(
             Action code,
             DigitalReadKind readKind = DigitalReadKind::OnHold) const
         {
@@ -74,7 +74,7 @@ namespace dgm
             return false;
         }
 
-        NODISCARD_RESULT float readAnalog(Action code) const
+        [[nodiscard]] float readAnalog(Action code) const
         {
             assert(bindings.contains(code));
             auto& binding = bindings.at(code);
@@ -174,7 +174,7 @@ namespace dgm
         };
 
     private:
-        NODISCARD_RESULT inline bool
+        [[nodiscard]] inline bool
         isMouseInputToggled(const Binding& binding) const noexcept
         {
             // Extra check is required because:
@@ -184,7 +184,7 @@ namespace dgm
                    && sf::Mouse::isButtonPressed(binding.mouseButton);
         }
 
-        NODISCARD_RESULT inline bool
+        [[nodiscard]] inline bool
         isKeyboardInputToggled(const Binding& binding) const noexcept
         {
             // Extra check is required because:
@@ -193,7 +193,7 @@ namespace dgm
                    && sf::Keyboard::isKeyPressed(binding.key);
         }
 
-        NODISCARD_RESULT inline bool
+        [[nodiscard]] inline bool
         isGamepadInputToggled(const Binding& binding) const noexcept
         {
             return (
@@ -202,7 +202,7 @@ namespace dgm
                     controllerIndex, binding.gamepadButton));
         }
 
-        NODISCARD_RESULT float getAxisValue(const Binding& binding) const
+        [[nodiscard]] float getAxisValue(const Binding& binding) const
         {
             if (std::to_underlying(binding.axis) == sf::Joystick::AxisCount)
                 return 0.f;

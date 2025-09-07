@@ -21,24 +21,3 @@ namespace std
     } // namespace ranges
 } // namespace std
 #endif
-
-#ifdef ANDROID
-
-#ifndef NODISCARD_RESULT
-#define NODISCARD_RESULT
-#endif
-
-#ifndef CONSTEXPR_NODISCARD
-#define CONSTEXPR_NODISCARD constexpr
-#endif
-
-#else
-#ifndef NODISCARD_RESULT
-#define NODISCARD_RESULT [[nodiscard]]
-#endif
-
-#ifndef CONSTEXPR_NODISCARD
-#define CONSTEXPR_NODISCARD [[nodiscard]] constexpr
-#endif
-
-#endif

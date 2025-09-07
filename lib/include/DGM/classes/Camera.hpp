@@ -90,20 +90,20 @@ namespace dgm
         Effect<sf::Angle> rotationEffect;
         ShakeEffect shakeEffect;
 
-        NODISCARD_RESULT dgm::Rect getViewBoundingBox() const
+        [[nodiscard]] dgm::Rect getViewBoundingBox() const
         {
             return dgm::Rect(
                 view.getCenter() - view.getSize() / 2.f, view.getSize());
         }
 
     public:
-        NODISCARD_RESULT constexpr const sf::View&
+        [[nodiscard]] constexpr const sf::View&
         getCurrentView() const noexcept
         {
             return view;
         }
 
-        NODISCARD_RESULT constexpr const sf::View&
+        [[nodiscard]] constexpr const sf::View&
         getDefaultView() const noexcept
         {
             return view;
@@ -112,7 +112,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating movement
          */
-        NODISCARD_RESULT constexpr bool isMoving() const noexcept
+        [[nodiscard]] constexpr bool isMoving() const noexcept
         {
             return moveEffect.isActive();
         }
@@ -120,7 +120,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating zooming
          */
-        NODISCARD_RESULT constexpr bool isZooming() const noexcept
+        [[nodiscard]] constexpr bool isZooming() const noexcept
         {
             return zoomEffect.isActive();
         }
@@ -128,7 +128,7 @@ namespace dgm
         /**
          *  \brief True if camera is animating rotation
          */
-        NODISCARD_RESULT constexpr bool isRotating() const noexcept
+        [[nodiscard]] constexpr bool isRotating() const noexcept
         {
             return rotationEffect.isActive();
         }
@@ -136,18 +136,18 @@ namespace dgm
         /**
          *  \brief True if camera is animating shaking
          */
-        NODISCARD_RESULT constexpr bool isShaking() const noexcept
+        [[nodiscard]] constexpr bool isShaking() const noexcept
         {
             return shakeEffect.isActive();
         }
 
-        NODISCARD_RESULT bool
+        [[nodiscard]] bool
         isObjectVisible(const dgm::Rect& object) const noexcept
         {
             return dgm::Collision::basic(getViewBoundingBox(), object);
         }
 
-        NODISCARD_RESULT bool
+        [[nodiscard]] bool
         isObjectVisible(const dgm::Circle& object) const noexcept
         {
             return dgm::Collision::basic(getViewBoundingBox(), object);

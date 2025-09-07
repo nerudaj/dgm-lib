@@ -24,7 +24,7 @@ namespace dgm
          *
          *  \return Float representation of seconds, 1.f = 1s
          */
-        NODISCARD_RESULT constexpr float getDeltaTime() const noexcept
+        [[nodiscard]] constexpr float getDeltaTime() const noexcept
         {
             return deltaTime;
         }
@@ -32,7 +32,7 @@ namespace dgm
         /**
          *  \brief Get time between last two calls to reset
          */
-        NODISCARD_RESULT const sf::Time& getElapsed() const noexcept
+        [[nodiscard]] const sf::Time& getElapsed() const noexcept
         {
             return elapsed;
         }

@@ -107,7 +107,7 @@ namespace dgm
         /**
          *  \brief Get reference to top state on the stack
          */
-        NODISCARD_RESULT dgm::AppState& getTopState() noexcept(
+        [[nodiscard]] dgm::AppState& getTopState() noexcept(
             noexcept(states.back()) && noexcept(states.back().get()))
         {
             assert(not states.empty());

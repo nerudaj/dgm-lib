@@ -38,7 +38,7 @@ namespace dgm
         DynamicBuffer(DynamicBuffer&&) = default;
         ~DynamicBuffer() = default;
 
-        CONSTEXPR_NODISCARD DynamicBuffer clone() const
+        [[nodiscard]] constexpr DynamicBuffer clone() const
         {
             return DynamicBuffer(data, firstFreeSlot);
         }
@@ -65,7 +65,7 @@ namespace dgm
             }
 
         public:
-            NODISCARD_RESULT std::pair<
+            [[nodiscard]] std::pair<
                 std::conditional_t<IsConst, const DataType&, DataType&>,
                 IndexType>
             operator*() noexcept
@@ -87,13 +87,13 @@ namespace dgm
                 return copy;
             }
 
-            CONSTEXPR_NODISCARD bool
+            [[nodiscard]] constexpr bool
             operator==(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index == other.index;
             }
 
-            CONSTEXPR_NODISCARD bool
+            [[nodiscard]] constexpr bool
             operator!=(const IteratorBase<BackrefType>& other) const noexcept
             {
                 return index != other.index;
@@ -122,14 +122,14 @@ namespace dgm
          *
          *  Returns true if either there are no data or no valid indices
          */
-        CONSTEXPR_NODISCARD bool isEmpty() const noexcept
+        [[nodiscard]] constexpr bool isEmpty() const noexcept
         {
             for (auto&& item : data)
                 if (std::holds_alternative<T>(item)) return false;
             return true;
         }
 
-        CONSTEXPR_NODISCARD bool isIndexValid(IndexType index) const noexcept
+        [[nodiscard]] constexpr bool isIndexValid(IndexType index) const noexcept
         {
             return index < data.size()
                    && std::holds_alternative<T>(data[index]);
@@ -141,7 +141,7 @@ namespace dgm
          *
          * \warn Index is not checked for out-of-bounds! See at()
          */
-        CONSTEXPR_NODISCARD T& operator[](IndexType index) noexcept
+        [[nodiscard]] constexpr T& operator[](IndexType index) noexcept
         {
             return std::get<T>(data[index]);
         }
@@ -151,12 +151,12 @@ namespace dgm
          *
          * \warn Index is not checked for out-of-bounds! See at()
          */
-        CONSTEXPR_NODISCARD const T& operator[](IndexType index) const noexcept
+        [[nodiscard]] constexpr const T& operator[](IndexType index) const noexcept
         {
             return std::get<T>(data[index]);
         }
 #else
-        CONSTEXPR_NODISCARD auto&&
+        [[nodiscard]] constexpr auto&&
         operator[](this auto&& self, IndexType index) noexcept
         {
             return std::get<T>(self.data[index]);
@@ -168,7 +168,7 @@ namespace dgm
          * If index is out of bounds, empty optional
          * is returned.
          */
-        CONSTEXPR_NODISCARD std::optional<std::reference_wrapper<T>>
+        [[nodiscard]] constexpr std::optional<std::reference_wrapper<T>>
         at(IndexType index) noexcept
         {
             try
@@ -207,29 +207,29 @@ namespace dgm
             firstFreeSlot = index;
         }
 
-        CONSTEXPR_NODISCARD iterator begin() noexcept
+        [[nodiscard]] constexpr iterator begin() noexcept
         {
             return iterator(0, *this);
         }
 
-        CONSTEXPR_NODISCARD iterator end() noexcept
+        [[nodiscard]] constexpr iterator end() noexcept
         {
             return iterator(static_cast<IndexType>(data.size()), *this);
         }
 
-        CONSTEXPR_NODISCARD const_iterator begin() const noexcept
+        [[nodiscard]] constexpr const_iterator begin() const noexcept
         {
             return const_iterator(0, std::cref(*this));
         }
 
-        CONSTEXPR_NODISCARD const_iterator end() const noexcept
+        [[nodiscard]] constexpr const_iterator end() const noexcept
         {
             return const_iterator(
                 static_cast<IndexType>(data.size()), std::cref(*this));
         }
 
     private:
-        CONSTEXPR_NODISCARD bool hasNoDeletedItems() const noexcept
+        [[nodiscard]] constexpr bool hasNoDeletedItems() const noexcept
         {
             return firstFreeSlot == std::numeric_limits<IndexType>::max();
         }

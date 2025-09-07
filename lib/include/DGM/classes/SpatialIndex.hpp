@@ -102,7 +102,7 @@ namespace dgm
          * until next call to erase that might delete given id.
          */
         template<AaBbType AABB>
-        NODISCARD_RESULT std::vector<IndexType>
+        [[nodiscard]] std::vector<IndexType>
         getOverlapCandidates(const AABB& box) const
         {
             if (!dgm::Collision::basic(BOUNDING_BOX, box)) return {};
@@ -124,7 +124,7 @@ namespace dgm
             return result;
         }
 
-        NODISCARD_RESULT const constexpr dgm::Rect&
+        [[nodiscard]] const constexpr dgm::Rect&
         getBoundingBox() const noexcept
         {
             return BOUNDING_BOX;
@@ -142,7 +142,7 @@ namespace dgm
             unsigned x1, y1, x2, y2;
         };
 
-        NODISCARD_RESULT constexpr sf::Vector2u
+        [[nodiscard]] constexpr sf::Vector2u
         getGridIndexFromCoord(const sf::Vector2f& coord) const noexcept
         {
             return {
@@ -157,14 +157,14 @@ namespace dgm
             };
         }
 
-        NODISCARD_RESULT GridRect
+        [[nodiscard]] GridRect
         convertBoxToGridRect(const sf::Vector2f& point) const noexcept
         {
             const auto&& coord = getGridIndexFromCoord(point);
             return { coord.x, coord.y, coord.x, coord.y };
         }
 
-        NODISCARD_RESULT GridRect
+        [[nodiscard]] GridRect
         convertBoxToGridRect(const dgm::Circle& box) const noexcept
         {
             auto&& center = box.getPosition();
@@ -176,7 +176,7 @@ namespace dgm
             return { topLft.x, topLft.y, btmRgt.x, btmRgt.y };
         }
 
-        NODISCARD_RESULT GridRect
+        [[nodiscard]] GridRect
         convertBoxToGridRect(const dgm::Rect& box) const noexcept
         {
             const auto&& topLft = getGridIndexFromCoord(box.getPosition());

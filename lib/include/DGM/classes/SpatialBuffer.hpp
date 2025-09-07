@@ -133,12 +133,12 @@ namespace dgm
         }
 #endif
 
-        NODISCARD_RESULT constexpr StorageType::iterator begin() noexcept
+        [[nodiscard]] constexpr StorageType::iterator begin() noexcept
         {
             return items.begin();
         }
 
-        NODISCARD_RESULT constexpr StorageType::iterator end() noexcept
+        [[nodiscard]] constexpr StorageType::iterator end() noexcept
         {
             return items.end();
         }

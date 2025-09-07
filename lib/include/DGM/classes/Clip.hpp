@@ -39,7 +39,7 @@ namespace dgm
          *
          *  This function throws if index is out of bounds.
          */
-        NODISCARD_RESULT const sf::IntRect&
+        [[nodiscard]] const sf::IntRect&
         getFrame(const std::size_t index) const
         {
             return frames.at(index);
@@ -50,7 +50,7 @@ namespace dgm
          *
          * \param [in] index Index of the frame
          */
-        NODISCARD_RESULT const sf::IntRect&
+        [[nodiscard]] const sf::IntRect&
         getFrameUnchecked(const std::size_t index) const noexcept
         {
             return frames[index];
@@ -59,7 +59,7 @@ namespace dgm
         /**
          *  \brief Get number of frames stored in object
          */
-        NODISCARD_RESULT std::size_t getFrameCount() const noexcept
+        [[nodiscard]] std::size_t getFrameCount() const noexcept
         {
             return frames.size();
         }
@@ -67,7 +67,7 @@ namespace dgm
         /**
          *  \brief Get resolution of every frame in object
          */
-        NODISCARD_RESULT const sf::Vector2u& getFrameSize() const noexcept
+        [[nodiscard]] const sf::Vector2u& getFrameSize() const noexcept
         {
             return size;
         }
@@ -91,7 +91,7 @@ namespace dgm
             const sf::Vector2u& frameSpacing = sf::Vector2u(0, 0));
 
     protected:
-        NODISCARD_RESULT constexpr const sf::Vector2u&
+        [[nodiscard]] constexpr const sf::Vector2u&
         getOriginalSpacing() const noexcept
         {
             return originalSpacing;
