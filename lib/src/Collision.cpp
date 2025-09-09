@@ -2,7 +2,7 @@
 #include <DGM/classes/Math.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-bool dgm::Collision::basic(const dgm::Rect& rect, const sf::Vector2i& point)
+bool dgm::Collision::basic(const dgm::Rect& rect, const sf::Vector2f& point)
 {
     const sf::Vector2f pos = rect.getPosition();
     const sf::Vector2f sze = rect.getSize();
@@ -11,7 +11,7 @@ bool dgm::Collision::basic(const dgm::Rect& rect, const sf::Vector2i& point)
         && point.y <= (pos.y + sze.y));
 }
 
-bool dgm::Collision::basic(const dgm::Circle& circle, const sf::Vector2i& point)
+bool dgm::Collision::basic(const dgm::Circle& circle, const sf::Vector2f& point)
 {
     const sf::Vector2f cpos = circle.getPosition();
     const float dX = point.x - cpos.x;
@@ -175,7 +175,7 @@ bool dgm::Collision::basic(
     return false;
 }
 
-bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
+bool dgm::Collision::basic(const dgm::VisionCone& cone, const dgm::Circle& c)
 {
     auto transposedCirclePos =
         (c.getPosition() - cone.getPosition()).rotatedBy(-cone.getRotation());
@@ -207,7 +207,7 @@ bool dgm::Collision::basic(const dgm::Circle& c, const dgm::VisionCone& cone)
            > transposedCirclePos.y;
 }
 
-bool dgm::Collision::basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
+bool dgm::Collision::basic(const dgm::VisionCone& cone, const sf::Vector2f& p)
 {
     auto transposedPointPos =
         (sf::Vector2f(p) - cone.getPosition()).rotatedBy(-cone.getRotation());
@@ -219,6 +219,19 @@ bool dgm::Collision::basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
     const float coneRiseFactor = (cone.getWidth() / 2.f) / cone.getLength();
 
     return transposedPointPos.x * coneRiseFactor > transposedPointPos.y;
+}
+
+bool dgm::Collision::basic(const dgm::VisionCone& cone, const dgm::Rect& r)
+{
+    auto pos = r.getPosition();
+    auto size = r.getSize();
+
+    // clang-format off
+    return basic(cone, pos)
+           || basic(cone, pos + sf::Vector2f { size.x, 0.f })
+           || basic(cone, pos + sf::Vector2f { 0.f, size.y })
+           || basic(cone, pos + size);
+    // clang-format on
 }
 
 template<typename T>

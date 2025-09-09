@@ -8,6 +8,9 @@ dgm-lib v3.1.0
  * Added `dgm::Utility::loadAssetAllText` helper
     * Used for loading asset files inside APKs with one command
  * Added `dgm::ResourceManager::insertResource` for insertion of runtime-instantiated resources
+ * Added `dgm::Collision::basic` for Circle, Rectangle and VisionCone with sf::Vector2f
+	* Old collision methods for VisionCone were deprecated, in favor of methods with swapped arguments
+ * Added `dgm::Collision::basic` for VisionCone and Rectangle
 
 dgm-lib v3.0.0
  * Library target has been renamed to `dgm-lib` and a `dgm::dgm-lib` alias has been added. Use that for linking
