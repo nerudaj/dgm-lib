@@ -140,7 +140,7 @@ TEST_CASE("Mesh-to-circle", "Collision")
     }
 }
 
-TEST_CASE("Circle-to-cone", "Collision")
+TEST_CASE("Circle-in-cone", "Collision")
 {
     SECTION("Catches collision when circle lies on the forward line of cone")
     {
@@ -154,25 +154,25 @@ TEST_CASE("Circle-to-cone", "Collision")
             SECTION("Circle is behind the cone")
             {
                 circle.setPosition({ 50.f, 100.f });
-                REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+                REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is fully inside the cone")
             {
                 circle.setPosition({ 150.f, 100.f });
-                REQUIRE(dgm::Collision::basic(circle, cone));
+                REQUIRE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is partially inside the cone")
             {
                 circle.setPosition({ 215.f, 100.f });
-                REQUIRE(dgm::Collision::basic(circle, cone));
+                REQUIRE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is front of the cone")
             {
                 circle.setPosition({ 250.f, 100.f });
-                REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+                REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
             }
         }
 
@@ -183,25 +183,25 @@ TEST_CASE("Circle-to-cone", "Collision")
             SECTION("Circle is behind the cone")
             {
                 circle.setPosition({ 50.f, 50.f });
-                REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+                REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is fully inside the cone")
             {
                 circle.setPosition({ 125.f, 125.f });
-                REQUIRE(dgm::Collision::basic(circle, cone));
+                REQUIRE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is partially inside the cone")
             {
                 circle.setPosition({ 150.f, 150.f });
-                REQUIRE(dgm::Collision::basic(circle, cone));
+                REQUIRE(dgm::Collision::basic(cone, circle));
             }
 
             SECTION("Circle is front of the cone")
             {
                 circle.setPosition({ 250.f, 250.f });
-                REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+                REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
             }
         }
     }
@@ -217,13 +217,13 @@ TEST_CASE("Circle-to-cone", "Collision")
         SECTION("Near enough to have collision")
         {
             circle.setPosition({ 95.f, 90.f });
-            REQUIRE(dgm::Collision::basic(circle, cone));
+            REQUIRE(dgm::Collision::basic(cone, circle));
         }
 
         SECTION("Too far")
         {
             circle.setPosition({ 95.f, 80.f });
-            REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+            REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
         }
     }
 
@@ -237,13 +237,13 @@ TEST_CASE("Circle-to-cone", "Collision")
         SECTION("Near enough to have collision")
         {
             circle.setPosition({ 205.f, 90.f });
-            REQUIRE(dgm::Collision::basic(circle, cone));
+            REQUIRE(dgm::Collision::basic(cone, circle));
         }
 
         SECTION("Too far")
         {
             circle.setPosition({ 205.f, 50.f });
-            REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+            REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
         }
     }
 
@@ -256,24 +256,24 @@ TEST_CASE("Circle-to-cone", "Collision")
         SECTION("Far from cone")
         {
             circle.setPosition({ 150.f, 0.f });
-            REQUIRE_FALSE(dgm::Collision::basic(circle, cone));
+            REQUIRE_FALSE(dgm::Collision::basic(cone, circle));
         }
 
         SECTION("Above the cone, colliding")
         {
             circle.setPosition({ 150.f, 80.f });
-            REQUIRE(dgm::Collision::basic(circle, cone));
+            REQUIRE(dgm::Collision::basic(cone, circle));
         }
 
         SECTION("Under the cone, colliding")
         {
             circle.setPosition({ 150.f, 120.f });
-            REQUIRE(dgm::Collision::basic(circle, cone));
+            REQUIRE(dgm::Collision::basic(cone, circle));
         }
     }
 }
 
-TEST_CASE("Point-to-cone", "Collision")
+TEST_CASE("Point-in-cone", "Collision")
 {
     dgm::VisionCone cone(20.f, 50.f);
     cone.setPosition({ 20.f, 20.f });
@@ -281,30 +281,48 @@ TEST_CASE("Point-to-cone", "Collision")
     SECTION("Point is behind origin")
     {
         sf::Vector2i point(0, 20);
-        REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+        REQUIRE_FALSE(dgm::Collision::basic(cone, point));
     }
 
     SECTION("Point is atop of cone")
     {
         sf::Vector2i point(30, -60);
-        REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+        REQUIRE_FALSE(dgm::Collision::basic(cone, point));
     }
 
     SECTION("Point is front of cone")
     {
         sf::Vector2i point(45, 20);
-        REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+        REQUIRE_FALSE(dgm::Collision::basic(cone, point));
     }
 
     SECTION("Point is under cone")
     {
         sf::Vector2i point(30, 60);
-        REQUIRE_FALSE(dgm::Collision::basic(point, cone));
+        REQUIRE_FALSE(dgm::Collision::basic(cone, point));
     }
 
     SECTION("Point is inside cone")
     {
         sf::Vector2i point(30, 30);
-        REQUIRE(dgm::Collision::basic(point, cone));
+        REQUIRE(dgm::Collision::basic(cone, point));
+    }
+}
+
+TEST_CASE("Rect-in-cone", "Collision")
+{
+    dgm::Rect rect({ 10.f, 5.f }, { 20.f, 10.f });
+    dgm::VisionCone cone(40.f, 30.f);
+    cone.setPosition({ 35.f, 35.f });
+
+    SECTION("No collision")
+    {
+        REQUIRE_FALSE(dgm::Collision::basic(cone, rect));
+    }
+
+    SECTION("Normal collision")
+    {
+        cone.setRotation(sf::degrees(225.f));
+        REQUIRE(dgm::Collision::basic(cone, rect));
     }
 }

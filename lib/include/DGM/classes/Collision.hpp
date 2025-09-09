@@ -16,7 +16,21 @@ namespace dgm
          *
          * 	\return TRUE if collision was detected. FALSE otherwise
          */
-        static bool basic(const dgm::Rect& rect, const sf::Vector2i& point);
+        static bool basic(const dgm::Rect& rect, const sf::Vector2i& point)
+        {
+            return basic(rect, sf::Vector2f(point));
+        }
+
+        /**
+         * 	\brief Tests collision between a rectangle and a point
+         *
+         * 	\param Existing rectangle object
+         *  \param Existing sf::Vector2i serving as point (format returned by
+         * mouse position function)
+         *
+         * 	\return TRUE if collision was detected. FALSE otherwise
+         */
+        static bool basic(const dgm::Rect& rect, const sf::Vector2f& point);
 
         /**
          * 	\brief Tests collision between a circle and a point
@@ -37,7 +51,20 @@ namespace dgm
          *
          * 	\return TRUE if collision was detected. FALSE otherwise
          */
-        static bool basic(const dgm::Circle& circle, const sf::Vector2i& point);
+        static bool basic(const dgm::Circle& circle, const sf::Vector2i& point)
+        {
+            return basic(circle, sf::Vector2f(point));
+        }
+
+        /**
+         * 	\brief Tests collision between a circle and a circle
+         *
+         * 	\param Existing circle object
+         *  \param Existing circle object
+         *
+         * 	\return TRUE if collision was detected. FALSE otherwise
+         */
+        static bool basic(const dgm::Circle& circle, const sf::Vector2f& point);
 
         /**
          * 	\brief Tests collision between a circle and a rectange
@@ -85,9 +112,63 @@ namespace dgm
             const dgm::Rect& B,
             std::size_t* meshHitPosition = nullptr);
 
-        static bool basic(const dgm::Circle& c, const dgm::VisionCone& cone);
+        /**
+         * \brief Detect presense of a circle within a vision cone
+         */
+        [[deprecated("Use the method with swapped parameters")]]
+        static bool basic(const dgm::Circle& c, const dgm::VisionCone& cone)
+        {
+            return basic(cone, c);
+        }
 
-        static bool basic(const sf::Vector2i& p, const dgm::VisionCone& cone);
+        /**
+         * \brief Detect presense of a circle within a vision cone
+         */
+        static bool basic(const dgm::VisionCone& cone, const dgm::Circle& c);
+
+        /**
+         *  \brief Detect presense of a point within a vision cone
+         *
+         * \param cone Vision cone to check within
+         * \param p Point to check
+         * \return TRUE if point is within the cone, FALSE otherwise
+         */
+        [[deprecated("Use the method with swapped parameters")]]
+        static bool basic(const sf::Vector2i& p, const dgm::VisionCone& cone)
+        {
+            return basic(cone, p);
+        }
+
+        /**
+         *  \brief Detect presense of a point within a vision cone
+         *
+         * \param cone Vision cone to check within
+         * \param p Point to check
+         * \return TRUE if point is within the cone, FALSE otherwise
+         */
+        static bool basic(const dgm::VisionCone& cone, const sf::Vector2i& p)
+        {
+            return basic(cone, sf::Vector2f(p));
+        }
+
+        /**
+         *  \brief Detect presense of a point within a vision cone
+         *
+         * \param cone Vision cone to check within
+         * \param p Point to check
+         * \return TRUE if point is within the cone, FALSE otherwise
+         */
+        static bool basic(const dgm::VisionCone& cone, const sf::Vector2f& p);
+
+        /**
+         *  \brief Detect presense of a rectangle within a vision cone
+         *
+         * \param cone Vision cone to check within
+         * \param r Rectange to check
+         * \return TRUE if rectangle is within the cone, FALSE otherwise
+         */
+        [[deprecated("Use the method with swapped parameters")]]
+        static bool basic(const dgm::VisionCone& cone, const dgm::Rect& r);
 
         /**
          *  \brief Elaborates movement of an object within a mesh
