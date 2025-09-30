@@ -50,7 +50,7 @@ int main()
     auto&& boxes = std::vector<sf::RectangleShape>(4u);
     for (auto&& [idx, box] : std::views::enumerate(boxes))
     {
-        createVisualContainer(idx, 0u);
+        box = createVisualContainer(idx, 0u);
     }
 
     // Create actual effects
