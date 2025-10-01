@@ -40,6 +40,14 @@ if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
         COMPATIBILITY SameMinorVersion
     )
 
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/dgm-libConfig.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/dgm-libConfig.cmake"
+        INSTALL_DESTINATION lib/cmake/dgm-lib
+        NO_SET_AND_CHECK_MACRO
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    )
+
     install (
         FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET}ConfigVersion.cmake
         DESTINATION lib/cmake/${TARGET}

@@ -13,6 +13,8 @@ FetchContent_Declare ( LIBDGM_GIT
 
 FetchContent_MakeAvailable ( LIBDGM_GIT )
 
+find_package (dgm-lib REQUIRED)
+
 add_executable ( ${PROJECT_NAME} Main.cpp )
 
 target_link_libraries ( ${PROJECT_NAME} dgm::dgm-lib )
