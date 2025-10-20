@@ -8,6 +8,32 @@ This project is an extension library for [SFML](http://sfml-dev.org). The librar
 
 * CMake v3.26 (FetchContent is unstable in newer versions)
 * Microsoft Visual Studio 2022 v17.3 or newer
+* OR clang 21 (or newer) + Ninja
+
+## How to build:
+
+* Windows + MSVC:
+```
+mkdir _build
+cd _build
+cmake ..
+cmake --build . --config Debug
+```
+
+* Windows + Clang
+```
+mkdir _build
+cd _build
+cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++ ..
+```
+
+* Ubuntu
+```
+mkdir _build
+cd _build
+cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++-21 -D CMAKE_C_COMPILER=clang-21 ..
+```
+
 
 ## Integration
 

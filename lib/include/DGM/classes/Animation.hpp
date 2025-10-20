@@ -7,6 +7,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <cmath>
 
 namespace dgm
 {
@@ -36,7 +37,7 @@ namespace dgm
          *  The states are not copied! They must outlive the animation object.
          */
         Animation(
-            const AnimationStates& states, int framesPerSecond = 30) noexcept;
+            const AnimationStates& states, int framesPerSecond = 30);
 
     public:
         /**
@@ -68,7 +69,7 @@ namespace dgm
         /**
          *  \brief Set speed of animation in frames per second
          */
-        void setSpeed(unsigned framesPerSecond) noexcept;
+        void setSpeed(unsigned framesPerSecond);
 
         [[nodiscard]] bool hasClipFinishedPlaying() const noexcept
         {
@@ -83,7 +84,7 @@ namespace dgm
         /**
          *  \brief Get speed as number of frames per second
          */
-        [[nodiscard]] unsigned getSpeed() const noexcept
+        [[nodiscard]] unsigned getSpeed() const
         {
             return static_cast<unsigned>(
                 std::round(1000.f / timePerFrame.asMilliseconds()));

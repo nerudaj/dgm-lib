@@ -143,8 +143,7 @@ dgm::AnimationStates dgm::TextureAtlas::recomputeAnimationStates(
     const sf::Vector2i& startCoord,
     const sf::Vector2i& textureSize)
 {
-#ifdef ANDROID
-    auto view = animationStates
+    auto&& view = animationStates
                 | std::views::transform(
                     [&](const std::pair<std::string, dgm::Clip>& pair)
                     {
@@ -154,18 +153,6 @@ dgm::AnimationStates dgm::TextureAtlas::recomputeAnimationStates(
                         };
                     });
     return dgm::AnimationStates(view.begin(), view.end());
-#else
-    return animationStates
-           | std::views::transform(
-               [&](const std::pair<std::string, dgm::Clip>& pair)
-               {
-                   return std::pair {
-                       pair.first,
-                       recomputeClip(pair.second, startCoord, textureSize),
-                   };
-               })
-           | std::ranges::to<dgm::AnimationStates>();
-#endif
 }
 
 void dgm::TextureAtlas::copyTexture(

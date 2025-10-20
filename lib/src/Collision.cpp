@@ -76,8 +76,8 @@ bool dgm::Collision::basic(const dgm::Rect& A, const dgm::Rect& B)
     sf::Vector2f cA = A.getPosition() + aHalfSize;
     sf::Vector2f cB = B.getPosition() + bHalfSize;
 
-    const float dX = abs(cA.x - cB.x);
-    const float dY = abs(cA.y - cB.y);
+    const float dX = std::abs(cA.x - cB.x);
+    const float dY = std::abs(cA.y - cB.y);
 
     if (dX <= (aHalfSize.x + bHalfSize.x) && dY <= (aHalfSize.y + bHalfSize.y))
     {

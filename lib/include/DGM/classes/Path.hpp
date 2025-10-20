@@ -7,6 +7,7 @@
 #include <iterator>
 #include <type_traits>
 #include <vector>
+#include <cstdint>
 
 namespace dgm
 {

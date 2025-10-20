@@ -3,6 +3,7 @@
 #include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Traits.hpp>
 #include <cassert>
+#include <cstring>
 
 namespace dgm
 {
