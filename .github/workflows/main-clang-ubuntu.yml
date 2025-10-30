@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake -G Ninja -D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=clang++ ..
+        cmake -G Ninja -D CMAKE_C_COMPILER=clang-21 -D CMAKE_CXX_COMPILER=clang-21++ ..
       shell: cmd
 
     - name: Build
