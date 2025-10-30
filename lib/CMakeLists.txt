@@ -6,11 +6,18 @@ make_static_library ( ${TARGET} )
 
 message ( "Current system: ${CMAKE_SYSTEM_NAME}" )
 
+include(CheckCXXSourceCompiles)
+
+check_cxx_source_compiles(
+    "#include <stacktrace> int main() { auto trace = std::stacktrace::current(); return 0; }"
+    HAS_STACKTRACE
+)
+
 if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
     set ( EXTRA_ANDROID_LIBS android log )
 endif()
 
-if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
+if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" AND HAS_STACKTRACE )
     set ( EXTRA_LINUX_LIBS stdc++_libbacktrace )
 endif()
 
