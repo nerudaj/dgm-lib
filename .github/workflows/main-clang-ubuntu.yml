@@ -23,7 +23,9 @@ jobs:
         cmake-version: '4.0.3'
 
     - name: Setup SFML development libraries
-      run: sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev
+      run: |
+        sudo apt update
+        sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev
       shell: bash
 
     - name: Check cmake version
