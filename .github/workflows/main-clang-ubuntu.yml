@@ -1,4 +1,4 @@
-name: CI-Windows-Ninja-Clang
+name: CI-Ubuntu-Ninja-Clang
 
 on:
   push:
@@ -30,16 +30,16 @@ jobs:
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
         cmake -G Ninja -D CMAKE_C_COMPILER=clang-21 -D CMAKE_CXX_COMPILER=clang-21++ ..
-      shell: cmd
+      shell: bash
 
     - name: Build
       working-directory: ${{env.BUILD_DIR}}
       run: |
         cmake --build .
-      shell: cmd
+      shell: bash
 
     - name: Test
       working-directory: ${{env.BUILD_DIR}}
       run: |
         ctest
-      shell: cmd
+      shell: bash
