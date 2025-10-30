@@ -27,6 +27,13 @@ jobs:
         sudo apt update
         sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev
       shell: bash
+    
+    - name: Install Clang 20
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 20
+      shell: bash
 
     - name: Check cmake version
       run: cmake --version
@@ -35,7 +42,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake -G Ninja -D CMAKE_C_COMPILER=clang-18 -D CMAKE_CXX_COMPILER=clang++-18 ..
+        cmake -G Ninja -D CMAKE_C_COMPILER=clang-20 -D CMAKE_CXX_COMPILER=clang++-20 ..
       shell: bash
 
     - name: Build
