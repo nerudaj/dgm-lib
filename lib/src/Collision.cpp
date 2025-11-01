@@ -73,8 +73,8 @@ bool dgm::Collision::basic(const dgm::Rect& A, const dgm::Rect& B)
 {
     const auto aHalfSize = A.getSize() / 2.f;
     const auto bHalfSize = B.getSize() / 2.f;
-    sf::Vector2f cA = A.getPosition() + aHalfSize;
-    sf::Vector2f cB = B.getPosition() + bHalfSize;
+    const sf::Vector2f cA = A.getPosition() + aHalfSize;
+    const sf::Vector2f cB = B.getPosition() + bHalfSize;
 
     const float dX = abs(cA.x - cB.x);
     const float dY = abs(cA.y - cB.y);
@@ -90,12 +90,10 @@ bool dgm::Collision::basic(const dgm::Rect& A, const dgm::Rect& B)
 static sf::IntRect
 normalizeBoundaries(const sf::IntRect& src, const dgm::Mesh& mesh)
 {
+    const sf::Vector2u meshSize = mesh.getDataSize();
+    const sf::Vector2u tileSize = mesh.getVoxelSize();
+
     sf::IntRect dst;
-
-    sf::Vector2u meshSize = mesh.getDataSize();
-    sf::Vector2u tileSize = mesh.getVoxelSize();
-
-    // TODO: revisit
     dst.position.x = src.position.x / tileSize.x;
     dst.position.y = src.position.y / tileSize.y;
     dst.size.x = (src.position.x + src.size.x) / tileSize.x;
@@ -112,13 +110,13 @@ normalizeBoundaries(const sf::IntRect& src, const dgm::Mesh& mesh)
 bool dgm::Collision::basic(
     const dgm::Mesh& A, const dgm::Circle& B, std::size_t* meshHitPosition)
 {
-    sf::Vector2f radius(B.getRadius(), B.getRadius());
-    sf::IntRect outBody(sf::FloatRect(
+    const sf::Vector2f radius(B.getRadius(), B.getRadius());
+    const sf::IntRect outBody(sf::FloatRect(
         B.getPosition() - radius - A.getPosition(), radius * 2.f));
-    sf::IntRect bounds = normalizeBoundaries(outBody, A);
+    const sf::IntRect bounds = normalizeBoundaries(outBody, A);
 
-    sf::Vector2f tileSize(A.getVoxelSize());
-    unsigned meshWidth = A.getDataSize().x;
+    const sf::Vector2f tileSize(A.getVoxelSize());
+    const unsigned meshWidth = A.getDataSize().x;
 
     dgm::Rect box(sf::Vector2f(0.f, 0.f), tileSize);
 
@@ -150,12 +148,10 @@ bool dgm::Collision::basic(
 bool dgm::Collision::basic(
     const dgm::Mesh& A, const dgm::Rect& B, std::size_t* meshHitPosition)
 {
-    sf::IntRect outBody(
+    const sf::IntRect outBody(
         sf::FloatRect(B.getPosition() - A.getPosition(), B.getSize()));
-    sf::IntRect bounds = normalizeBoundaries(outBody, A);
-
-    sf::Vector2u meshSize = A.getDataSize();
-    unsigned meshWidth = A.getDataSize().x;
+    const sf::IntRect bounds = normalizeBoundaries(outBody, A);
+    const unsigned meshWidth = A.getDataSize().x;
 
     for (int y = bounds.position.y; y <= bounds.size.y; y++)
     {

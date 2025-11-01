@@ -251,7 +251,7 @@ namespace dgm
                 AAssetDir_close);
             if (!dir)
 #else
-            fs::path path(folderPath);
+            const fs::path path(folderPath);
             if (!fs::is_directory(path))
 #endif
             {
