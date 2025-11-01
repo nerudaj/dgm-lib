@@ -11,7 +11,7 @@ if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
 endif()
 
 if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
-    set ( EXTRA_LINUX_LIBS stdc++_libbacktrace )
+    set ( EXTRA_LINUX_LIBS stdc++exp )
 endif()
 
 if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
