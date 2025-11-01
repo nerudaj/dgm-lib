@@ -41,5 +41,5 @@ jobs:
     - name: Test
       working-directory: ${{env.BUILD_DIR}}
       run: |
-        ctest
+        ctest --rerun-failed --output-on-failure
       shell: cmd
