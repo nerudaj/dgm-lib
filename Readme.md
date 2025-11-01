@@ -1,4 +1,4 @@
-[![Windows-MSVC-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![Windows-Clang-Ninja-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang.yml) [![Android-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml) 
+[![Windows-MSVC-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main.yml) [![Windows-Clang-Ninja-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang.yml) [![CI-Ubuntu-Ninja-Clang](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang-ubuntu.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/main-clang-ubuntu.yml)[![Android-CI](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/nerudaj/dgm-lib/actions/workflows/android.yml) [![IntegrationTests](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml/badge.svg)](https://github.com/nerudaj/dgm-lib/actions/workflows/integration.yml) 
 
 # Readme
 
@@ -6,8 +6,34 @@ This project is an extension library for [SFML](http://sfml-dev.org). The librar
 
 ## Requirements
 
-* CMake v3.26 (FetchContent is unstable in newer versions)
+* CMake v3.28 or newer
 * Microsoft Visual Studio 2022 v17.3 or newer
+* OR clang 20 (or newer) + Ninja
+
+## How to build:
+
+* Windows + MSVC:
+```
+mkdir _build
+cd _build
+cmake ..
+cmake --build . --config Debug
+```
+
+* Windows + Clang
+```
+mkdir _build
+cd _build
+cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++ ..
+```
+
+* Ubuntu
+```
+mkdir _build
+cd _build
+cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++-21 -D CMAKE_C_COMPILER=clang-21 ..
+```
+
 
 ## Integration
 

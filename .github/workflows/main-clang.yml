@@ -29,7 +29,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake -G Ninja -D CMAKE_C_COMPILER=Clang -D CMAKE_CXX_COMPILER=Clang ..
+        cmake -G Ninja -D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=clang++ ..
       shell: cmd
 
     - name: Build
@@ -41,5 +41,5 @@ jobs:
     - name: Test
       working-directory: ${{env.BUILD_DIR}}
       run: |
-        ctest
+        ctest --rerun-failed --output-on-failure
       shell: cmd

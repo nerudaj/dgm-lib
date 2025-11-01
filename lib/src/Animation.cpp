@@ -60,21 +60,18 @@ void Animation::setState(const std::string& stateName, bool shouldLoop)
     reset();
 }
 
-void Animation::setSpeed(unsigned framesPerSecond) noexcept
+void Animation::setSpeed(unsigned framesPerSecond)
 {
-    static_assert(noexcept(std::round(0.f)));
-
     assert(framesPerSecond > 0);
     timePerFrame = sf::milliseconds(
         static_cast<std::int32_t>(std::round(1000.f / framesPerSecond)));
 }
 
 Animation::Animation(
-    const AnimationStates& _states, int framesPerSecond) noexcept
+    const AnimationStates& _states, int framesPerSecond)
     : states(_states), currentState(states.begin())
 {
     static_assert(noexcept(states.begin()));
-    static_assert(noexcept(setSpeed(framesPerSecond)));
 
     setSpeed(framesPerSecond);
 }

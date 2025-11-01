@@ -1,0 +1,57 @@
+name: CI-Ubuntu-Ninja-Clang
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  BUILD_DIR: ${{github.workspace}}/vsbuild
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        clang: [20, 21]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup cmake
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '4.0.3'
+
+    - name: Setup SFML development libraries
+      run: |
+        sudo apt update
+        sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev
+      shell: bash
+    
+    - name: Install Clang ${{ matrix.clang }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh ${{ matrix.clang }}
+      shell: bash
+
+    - name: Check cmake version
+      run: cmake --version
+
+    - name: Configure CMake
+      run: |
+        mkdir "${{env.BUILD_DIR}}"
+        cd "${{env.BUILD_DIR}}"
+        cmake -G Ninja -D CMAKE_C_COMPILER=clang-${{ matrix.clang }} -D CMAKE_CXX_COMPILER=clang++-${{ matrix.clang }} ..
+      shell: bash
+
+    - name: Build
+      working-directory: ${{env.BUILD_DIR}}
+      run: |
+        cmake --build .
+      shell: bash
+
+    # NOTE: No tests because X server is returning errors
