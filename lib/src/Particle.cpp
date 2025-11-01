@@ -46,7 +46,7 @@ void Particle::spawn(
     rotation = sf::Angle::Zero;
     diagonalHalfLength = halfSize.length();
 
-    sf::Vector2f offsets[] = {
+    const sf::Vector2f offsets[] = {
         // Upper-left triangle
         { -halfSize.x, -halfSize.y },
         { halfSize.x, -halfSize.y },
@@ -58,7 +58,7 @@ void Particle::spawn(
     };
 
     assert(vertices.size() == std::size(offsets));
-    for (int i = 0; i < vertices.size(); i++)
+    for (size_t i = 0; i < vertices.size(); i++)
     {
         vertices[i].position = newPosition + offsets[i];
     }

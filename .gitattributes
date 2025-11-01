@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+* text eol=lf
+
+*.clang-tidy text
+*.clang-format text
+
+*.png binary
+*.ttf binary

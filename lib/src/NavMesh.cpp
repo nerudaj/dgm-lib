@@ -157,6 +157,7 @@ public:
     }
 
     TileNode(const TileNode& other) = default;
+    TileNode& operator=(const TileNode& other) = default;
 
     [[nodiscard]] constexpr bool
     isCloserThan(const TileNode& other) const noexcept
@@ -332,7 +333,7 @@ dgm::WorldNavMesh::WorldNavMesh(dgm::Mesh _mesh) : mesh(std::move(_mesh))
                 // Skip impassable blocks
                 if (mesh[{ x, y }] > 0) continue;
 
-                sf::Vector2u point(x, y);
+                const sf::Vector2u point(x, y);
                 if (isJumpPoint(point))
                 {
                     jumpPointConnections[point] = {};

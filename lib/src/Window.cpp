@@ -47,7 +47,7 @@ void dgm::Window::changeResolution(const sf::Vector2u& newResolution)
 
 sf::Image dgm::Window::getScreenshot() const
 {
-    sf::Vector2u windowSize = window.getSize();
+    const sf::Vector2u windowSize = window.getSize();
     sf::Texture texture = sf::Texture(sf::Vector2u(windowSize.x, windowSize.y));
     texture.update(window);
     return texture.copyToImage();

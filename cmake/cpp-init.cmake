@@ -327,6 +327,7 @@ macro ( make_static_library TARGET )
     endif ()
 
     enable_autoformatter ( ${TARGET} )
+    enable_linter( ${TARGET} )
     apply_compile_options ( ${TARGET} )
 endmacro()
 
@@ -348,6 +349,7 @@ macro ( make_executable TARGET )
     endif ()
 
     enable_autoformatter ( ${TARGET} )
+    enable_linter( ${TARGET} )
     apply_compile_options ( ${TARGET} )
 endmacro()
 

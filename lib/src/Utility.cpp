@@ -58,7 +58,7 @@ std::expected<std::string, dgm::Error>
 dgm::Utility::loadFileAllText(std::istream& stream)
 {
     stream.seekg(0, std::ios::end);
-    size_t len = stream.tellg();
+    const size_t len = stream.tellg();
     stream.seekg(0, std::ios::beg);
 
     auto&& result = std::string(len, '\0');
