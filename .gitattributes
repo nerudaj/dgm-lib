@@ -4,3 +4,5 @@
 *.clang-tidy text
 *.clang-format text
 
+*.png binary
+*.ttf binary
