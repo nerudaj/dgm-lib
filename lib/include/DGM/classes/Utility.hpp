@@ -46,8 +46,9 @@ namespace dgm
             auto&& texture = sf::Texture();
             if (!texture.loadFromFile(path.string()))
             {
-                return std::unexpected(
-                    "Could not load texture from path '" + path.string() + "'");
+                return std::unexpected(Error(
+                    "Could not load texture from path '" + path.string()
+                    + "'"));
             }
             return texture;
         }
@@ -61,8 +62,8 @@ namespace dgm
             auto&& font = sf::Font();
             if (!font.openFromFile(path.string()))
             {
-                return std::unexpected(
-                    "Could not load font from path '" + path.string() + "'");
+                return std::unexpected(Error(
+                    "Could not load font from path '" + path.string() + "'"));
             }
             return font;
         }
@@ -76,8 +77,8 @@ namespace dgm
             auto&& sound = sf::SoundBuffer();
             if (!sound.loadFromFile(path.string()))
             {
-                return std::unexpected(
-                    "Could not load sound from path '" + path.string() + "'");
+                return std::unexpected(Error(
+                    "Could not load sound from path '" + path.string() + "'"));
             }
             return sound;
         }
@@ -94,9 +95,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     "Could not load dgm::Clip from file '" + path.string()
-                    + "', reason: " + e.what());
+                    + "', reason: " + e.what()));
             }
         }
 
@@ -112,9 +113,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     "Could not load dgm::AnimationStates from file '"
-                    + path.string() + "', reason: " + e.what());
+                    + path.string() + "', reason: " + e.what()));
             }
         }
 

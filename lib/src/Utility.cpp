@@ -11,9 +11,9 @@ dgm::Utility::loadAssetAllText(const std::filesystem::path& path)
     }
     catch (const std::exception& ex)
     {
-        return std::unexpected(
+        return std::unexpected(Error(
             "Could not open file '" + path.string()
-            + "' for reading: " + ex.what());
+            + "' for reading: " + ex.what()));
     }
 }
 

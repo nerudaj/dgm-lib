@@ -15,7 +15,7 @@ namespace dgm
         struct [[nodiscard]] ResourceLocation final
         {
         private:
-            constexpr ResourceLocation(size_t idx) : idx(idx) {}
+            constexpr explicit ResourceLocation(size_t idx) : idx(idx) {}
 
         private:
             size_t idx;
