@@ -4,10 +4,10 @@
 #include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <cmath>
 #include <functional>
 #include <map>
 #include <memory>
-#include <cmath>
 
 namespace dgm
 {
@@ -36,7 +36,7 @@ namespace dgm
          *
          *  The states are not copied! They must outlive the animation object.
          */
-        Animation(
+        explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
 
     public:

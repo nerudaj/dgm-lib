@@ -13,7 +13,7 @@ namespace dgm
     class [[nodiscard]] Exception : public std::runtime_error
     {
     public:
-        Exception(
+        explicit Exception(
             const std::string& message,
 #ifdef __cpp_lib_stacktrace
             std::stacktrace trace = std::stacktrace::current())
@@ -34,7 +34,7 @@ namespace dgm
     class [[nodiscard]] Error final
     {
     public:
-        Error(const std::string& message)
+        explicit Error(const std::string& message)
             : message(message)
 #ifdef __cpp_lib_stacktrace
             , trace(std::stacktrace::current())

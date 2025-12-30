@@ -5,7 +5,9 @@ Checks: >
   clang-diagnostic-unused-variable,
   bugprone-assignment-in-if-condition,
   bugprone-optional-value-conversion,
-  bugprone-use-after-move
+  bugprone-use-after-move,
+  google-explicit-constructor
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
+ExcludeHeaderFilterRegex: 'catch_amalgamated.*'
 FormatStyle: none

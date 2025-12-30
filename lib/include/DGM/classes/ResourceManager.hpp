@@ -104,9 +104,9 @@ namespace dgm
 
             if (hasResource<T>(resId.value()))
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     "Resource with id '" + resId.value()
-                    + "' is already loaded in the manager.");
+                    + "' is already loaded in the manager."));
             }
 
             try
@@ -120,9 +120,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     std::string("Unable to load resource. Reason: ")
-                    + e.what());
+                    + e.what()));
             }
 
             return std::true_type {};
@@ -146,9 +146,9 @@ namespace dgm
 
             if (hasResource<T>(id))
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     "Resource with id '" + id
-                    + "' is already loaded in the manager.");
+                    + "' is already loaded in the manager."));
             }
 
             try
@@ -159,9 +159,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     std::string("Unable to load resource. Reason: ")
-                    + e.what());
+                    + e.what()));
             }
 
             return std::true_type {};
@@ -183,7 +183,8 @@ namespace dgm
                 auto&& resources = data.at(tid);
                 auto&& itr = resources.find(id);
                 if (itr == resources.end())
-                    throw std::runtime_error("Id '" + id + "' is not loaded");
+                    throw std::runtime_error(
+                        Exception("Id '" + id + "' is not loaded"));
 
                 destructors.at(tid)(itr->second);
                 ::operator delete(itr->second);
@@ -191,9 +192,9 @@ namespace dgm
             }
             catch (std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     std::string("Unloading resource failed. Reason: ")
-                    + e.what());
+                    + e.what()));
             }
 
             return std::true_type {};
@@ -255,8 +256,8 @@ namespace dgm
             if (!fs::is_directory(path))
 #endif
             {
-                return std::unexpected(
-                    "Path '" + folderPath.string() + "' is not a directory!");
+                return std::unexpected(Error(
+                    "Path '" + folderPath.string() + "' is not a directory!"));
             }
 
 #ifdef ANDROID
@@ -314,9 +315,9 @@ namespace dgm
             }
             catch (const std::exception& e)
             {
-                return std::unexpected(
+                return std::unexpected(Error(
                     std::string("Cannot list all resource ids. Reason: ")
-                    + e.what());
+                    + e.what()));
             }
         }
 

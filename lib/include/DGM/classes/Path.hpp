@@ -4,10 +4,10 @@
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <iterator>
 #include <type_traits>
 #include <vector>
-#include <cstdint>
 
 namespace dgm
 {
@@ -79,7 +79,7 @@ namespace dgm
         }
 
     private:
-        explicit Path(const Path&) = default;
+        Path(const Path&) = default;
 
     public:
         /**

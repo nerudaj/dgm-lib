@@ -32,7 +32,7 @@ std::expected<std::string, Error> dgm::ResourceManager::getResourceId(
     }
     catch (std::exception& e)
     {
-        return std::unexpected(
-            std::string("Cannot compute resource id. Reason: ") + e.what());
+        return std::unexpected(Error(
+            std::string("Cannot compute resource id. Reason: ") + e.what()));
     }
 }
