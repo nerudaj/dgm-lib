@@ -1,3 +1,7 @@
+dgm-lib v3.x.x
+ * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`
+    * Enums are now accepted, internally calling `std::to_underlying`
+
 dgm-lib v3.1.0
  * `dgm::Controller::readAnalog` no longer returns negative values for negative axii halves
     * One gamepad could've a negative half on up, second could have it on down, it is easier to handle in client code this way
