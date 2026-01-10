@@ -1,9 +1,11 @@
 #pragma once
 
 #include <DGM/classes/Compatibility.hpp>
+#include <DGM/classes/Traits.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace dgm
@@ -44,7 +46,8 @@ namespace dgm
             return frames.at(index);
         }
 
-        [[nodiscard]] const sf::IntRect& getFrame(std::is_enum auto index) const
+        [[nodiscard]] const sf::IntRect&
+        getFrame(dgm::EnumType auto index) const
         {
             return frames.at(std::to_underlying(index));
         }
@@ -61,7 +64,7 @@ namespace dgm
         }
 
         [[nodiscard]] const sf::IntRect&
-        getFrameUnchecked(std::is_enum auto index) const noexcept
+        getFrameUnchecked(dgm::EnumType auto index) const noexcept
         {
             return frames[std::to_underlying(index)];
         }

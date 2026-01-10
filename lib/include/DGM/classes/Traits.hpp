@@ -72,4 +72,7 @@ namespace dgm
             Base>
         || std::convertible_to<T, Base>;
 
+    template<class T>
+    concept EnumType = std::is_enum_v<T>;
+
 } // namespace dgm
