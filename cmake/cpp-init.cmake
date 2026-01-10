@@ -294,7 +294,10 @@ endfunction ()
 
 macro ( link_public_header_folder TARGET )
     if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-        target_include_directories( ${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
+        target_include_directories( ${TARGET}
+            PUBLIC
+                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                $<INSTALL_INTERFACE:include>)
     endif ()
 endmacro ()
 
