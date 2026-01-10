@@ -39,10 +39,14 @@ namespace dgm
          *
          *  This function throws if index is out of bounds.
          */
-        [[nodiscard]] const sf::IntRect&
-        getFrame(const std::size_t index) const
+        [[nodiscard]] const sf::IntRect& getFrame(const std::size_t index) const
         {
             return frames.at(index);
+        }
+
+        [[nodiscard]] const sf::IntRect& getFrame(std::is_enum auto index) const
+        {
+            return frames.at(std::to_underlying(index));
         }
 
         /**
@@ -54,6 +58,12 @@ namespace dgm
         getFrameUnchecked(const std::size_t index) const noexcept
         {
             return frames[index];
+        }
+
+        [[nodiscard]] const sf::IntRect&
+        getFrameUnchecked(std::is_enum auto index) const noexcept
+        {
+            return frames[std::to_underlying(index)];
         }
 
         /**
