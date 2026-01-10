@@ -255,7 +255,6 @@ function ( apply_compile_options TARGET )
 			DEBUG_POSTFIX "-d"
 		)
 		
-		
 	else ()
 		message ( "apply_compile_options: no options for non-msvc compiler" )
 	endif ()
@@ -272,7 +271,6 @@ function ( enable_autoformatter TARGET )
 	)
 endfunction ()
 
-# NOTE: C++23 doesn't go well with .clang-tidy v17 currently installed in MSVC
 function ( enable_linter TARGET )
 	file ( COPY_FILE
 		"${CLANG_TIDY_PATH}"
@@ -290,16 +288,13 @@ function ( enable_linter TARGET )
 			VS_GLOBAL_EnableClangTidyCodeAnalysis true
 		)
 	else ()
-		message ( "apply_compile_options: no options for non-msvc compiler" )
+		message ( "enable_linter: no options for non-msvc compiler" )
 	endif ()
 endfunction ()
 
 macro ( link_public_header_folder TARGET )
     if ( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-        target_include_directories( ${TARGET} PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
-            $<INSTALL_INTERFACE:include>
-        )
+        target_include_directories( ${TARGET} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
     endif ()
 endmacro ()
 
@@ -310,8 +305,8 @@ macro ( link_private_header_folder TARGET )
 endmacro ()
 
 macro ( make_static_library TARGET )
-    set( options )
-    set( multiValueArgs DEPS )
+    set ( options ENABLE_LINTER )
+    set ( multiValueArgs DEPS )
 
     cmake_parse_arguments ( CIMSL "${options}" "" "${multiValueArgs}" ${ARGN} )
 
@@ -326,13 +321,16 @@ macro ( make_static_library TARGET )
         target_link_libraries ( ${TARGET} PUBLIC ${CIMSL_DEPS} )
     endif ()
 
+    if ( CIMSL_ENABLE_LINTER )
+        enable_linter ( ${TARGET} )
+    endif ()
+
     enable_autoformatter ( ${TARGET} )
-    enable_linter( ${TARGET} )
     apply_compile_options ( ${TARGET} )
 endmacro()
 
 macro ( make_executable TARGET )
-    set( options )
+    set( options ENABLE_LINTER )
     set( multiValueArgs DEPS )
 
     cmake_parse_arguments ( CIME "${options}" "" "${multiValueArgs}" ${ARGN} )
@@ -348,8 +346,11 @@ macro ( make_executable TARGET )
         target_link_libraries ( ${TARGET} PUBLIC ${CIME_DEPS} )
     endif ()
 
+    if ( CIME_ENABLE_LINTER )
+        enable_linter ( ${TARGET} )
+    endif ()
+
     enable_autoformatter ( ${TARGET} )
-    enable_linter( ${TARGET} )
     apply_compile_options ( ${TARGET} )
 endmacro()
 

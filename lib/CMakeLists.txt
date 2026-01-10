@@ -2,7 +2,11 @@ cmake_minimum_required ( VERSION 3.26 )
 
 set ( TARGET dgm-lib )
 
-make_static_library ( ${TARGET} )
+if ( ${ENABLE_LINTER} )
+    set ( MAKE_LIBRARY_OPTIONS ENABLE_LINTER )
+endif()
+
+make_static_library ( ${TARGET} ${MAKE_LIBRARY_OPTIONS} )
 
 message ( "Current system: ${CMAKE_SYSTEM_NAME}" )
 
