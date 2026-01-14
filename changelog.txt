@@ -1,6 +1,7 @@
 dgm-lib v3.x.x
  * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`
     * Enums are now accepted, internally calling `std::to_underlying`
+ * dgm::App sets a default view encapsulating the whole screen at a current resolution before each draw
 
 dgm-lib v3.1.0
  * `dgm::Controller::readAnalog` no longer returns negative values for negative axii halves

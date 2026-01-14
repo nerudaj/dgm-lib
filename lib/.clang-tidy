@@ -7,6 +7,18 @@ Checks: >
   bugprone-optional-value-conversion,
   bugprone-use-after-move,
   google-explicit-constructor
+  modernize-use-nodiscard
+  modernize-use-override
+  bugprone-copy-constructor-init
+  bugprone-exception-copy-constructor-throws
+  bugprone-integer-division
+  bugprone-return-const-ref-from-parameter
+  bugprone-suspicious-include
+  cppcoreguidelines-missing-std-forward
+  bugprone-suspicious-enum-usage
+  cppcoreguidelines-slicing
+  cppcoreguidelines-virtual-class-destructor
+  modernize-avoid-bind
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 ExcludeHeaderFilterRegex: 'catch_amalgamated.*'
