@@ -101,11 +101,21 @@ namespace dgm
          * \param[in] camera  A camera instance with update view
          *
          *  This is a shorthand for calling
-         *  window.getSfmlWindowContext().setView(camera.getCurrentView())
+         *  window.setView(camera.getCurrentView())
          */
         inline void setViewFromCamera(const dgm::Camera& camera)
         {
             window.setView(camera.getCurrentView());
+        }
+
+        /**
+         * \brief Set the current view to the window
+         *
+         * \param[in] view  A view instance
+         */
+        inline void setView(const sf::View& view)
+        {
+            window.setView(view);
         }
 
         /**
