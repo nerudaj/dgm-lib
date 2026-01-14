@@ -49,8 +49,8 @@ void dgm::App::run()
         // NOTE: Setting view here fixes many issues with
         // dynamic resolution chanegs.
         window.setView(
-            sf::Vector2f(window.getSize() / 2u),
-            sf::Vector2f(window.getSize()));
+            { sf::Vector2f(window.getSize() / 2u),
+              sf::Vector2f(window.getSize()) });
 
         drawState(states.size() - 1);
         window.display();
