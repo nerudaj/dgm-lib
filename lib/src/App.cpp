@@ -45,7 +45,11 @@ void dgm::App::run()
         updateState(states.size() - 1);
 
         window.clear(getTopState().getClearColor());
-        drawState(states.size() - 1);
+
+        drawState(
+            states.size() - 1,
+            sf::View { sf::Vector2f(window.getSize() / 2u),
+                       sf::Vector2f(window.getSize()) });
         window.display();
 
         performScheduledCleanup();
@@ -95,7 +99,8 @@ void dgm::App::updateState(size_t stateIdx, bool shouldUpdateState)
     }
 }
 
-void dgm::App::drawState(size_t stateIdx, bool shouldDrawState)
+void dgm::App::drawState(
+    size_t stateIdx, const sf::View& view, bool shouldDrawState)
 {
     assert(!states.empty());
     assert(stateIdx < states.size());
@@ -106,10 +111,15 @@ void dgm::App::drawState(size_t stateIdx, bool shouldDrawState)
     {
         drawState(
             stateIdx - 1,
+            view,
             shouldDrawState && state->shouldDrawUnderlyingState());
     }
 
-    if (shouldDrawState) state->draw();
+    if (shouldDrawState)
+    {
+        window.setView(view);
+        state->draw();
+    }
 }
 
 void dgm::App::performScheduledCleanup()
