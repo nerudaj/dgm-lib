@@ -102,7 +102,8 @@ namespace dgm
 
         void updateState(size_t stateIdx, bool updateState = true);
 
-        void drawState(size_t stateIdx, bool drawState = true);
+        void drawState(
+            size_t stateIdx, const sf::View& view, bool shouldDrawState = true);
 
         /**
          *  \brief Get reference to top state on the stack
