@@ -1,3 +1,5 @@
+#pragma once
+
 #include <DGM/classes/Animation.hpp>
 #include <DGM/classes/Clip.hpp>
 #include <DGM/classes/Compatibility.hpp>
