@@ -252,8 +252,7 @@ namespace dgm
                 AAssetDir_close);
             if (!dir)
 #else
-            const fs::path path(folderPath);
-            if (!fs::is_directory(path))
+            if (!fs::is_directory(folderPath))
 #endif
             {
                 return std::unexpected(Error(
@@ -263,7 +262,7 @@ namespace dgm
 #ifdef ANDROID
             while (auto fname = AAssetDir_getNextFileName(dir.get()))
 #else
-            auto&& itr = fs::directory_iterator(path);
+            auto&& itr = fs::directory_iterator(folderPath);
             for (auto item : itr)
 #endif
             {

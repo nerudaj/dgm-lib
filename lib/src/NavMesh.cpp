@@ -426,8 +426,7 @@ dgm::WorldNavMesh::computePath(const sf::Vector2f& from, const sf::Vector2f& to)
         rawPath,
         tileFrom,
         tileTo,
-        std::bind(
-            &dgm::WorldNavMesh::toWorldNavpoint, this, std::placeholders::_1));
+        [&](const sf::Vector2u& vec) { return toWorldNavpoint(vec); });
 }
 
 void dgm::WorldNavMesh::discoverConnectionsForJumpPoint(
