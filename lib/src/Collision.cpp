@@ -263,13 +263,86 @@ bool dgm::Collision::advanced(
     return true;
 }
 
+template<class T>
+bool dgm::Collision::advanced(
+    const dgm::Rect& anchor, T body, sf::Vector2f& forward)
+{
+    auto localForward = forward;
+
+    body.move(localForward);
+    if (!dgm::Collision::basic(anchor, body))
+    {
+        return false;
+    }
+
+    body.move({ 0.f, -localForward.y });
+    if (!dgm::Collision::basic(anchor, body))
+    {
+        forward.y = 0.f;
+        return true;
+    }
+
+    body.move({ -localForward.x, localForward.y });
+    if (!dgm::Collision::basic(anchor, body))
+    {
+        forward.x = 0.f;
+        return true;
+    }
+
+    forward = sf::Vector2f(0.f, 0.f);
+    return true;
+}
+
+template<class T>
+bool dgm::Collision::advanced(
+    const dgm::Circle& anchor, T body, sf::Vector2f& forward)
+{
+    auto localForward = forward;
+
+    body.move(localForward);
+    if (!dgm::Collision::basic(body, anchor))
+    {
+        return false;
+    }
+
+    body.move({ 0.f, -localForward.y });
+    if (!dgm::Collision::basic(body, anchor))
+    {
+        forward.y = 0.f;
+        return true;
+    }
+
+    body.move({ -localForward.x, localForward.y });
+    if (!dgm::Collision::basic(body, anchor))
+    {
+        forward.x = 0.f;
+        return true;
+    }
+
+    forward = sf::Vector2f(0.f, 0.f);
+    return true;
+}
+
 template bool dgm::Collision::advanced<dgm::Circle>(
     const dgm::Mesh& mesh,
     dgm::Circle body,
     sf::Vector2f& forward,
     std::size_t* meshHitPosition);
+
 template bool dgm::Collision::advanced<dgm::Rect>(
     const dgm::Mesh& mesh,
     dgm::Rect body,
     sf::Vector2f& forward,
     std::size_t* meshHitPosition);
+
+template bool dgm::Collision::advanced<dgm::Circle>(
+    const dgm::Rect& anchor, dgm::Circle body, sf::Vector2f& forward);
+
+template bool dgm::Collision::advanced<dgm::Rect>(
+    const dgm::Rect& anchor, dgm::Rect body, sf::Vector2f& forward);
+
+template bool dgm::Collision::advanced<dgm::Circle>(
+    const dgm::Circle& anchor, dgm::Circle body, sf::Vector2f& forward);
+
+template bool dgm::Collision::advanced<dgm::Rect>(
+    const dgm::Circle& anchor, dgm::Rect body, sf::Vector2f& forward);

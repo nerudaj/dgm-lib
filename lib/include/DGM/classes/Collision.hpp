@@ -193,5 +193,13 @@ namespace dgm
             T body,
             sf::Vector2f& forward,
             std::size_t* meshHitPosition = nullptr);
+
+        template<class T>
+        static bool
+        advanced(const dgm::Rect& anchor, T body, sf::Vector2f& forward);
+
+        template<class T>
+        static bool
+        advanced(const dgm::Circle& anchor, T body, sf::Vector2f& forward);
     };
 } // namespace dgm
