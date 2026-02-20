@@ -139,7 +139,7 @@ namespace dgm
         using StatesIteratorType = StatesType::const_iterator;
 #endif
         StatesType states;
-        StatesType::const_iterator currentState;
+        StatesIteratorType currentState;
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);
         std::size_t currentFrameIndex = 0;
