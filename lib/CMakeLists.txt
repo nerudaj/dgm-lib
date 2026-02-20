@@ -28,7 +28,7 @@ target_link_libraries ( ${TARGET}
 )
 
 if ( ${ENABLE_LEGACY_ANIMATION} )
-	target_compile_definitions( ${TARGET} PRIVATE LEGACY_ANIMATION=1 )
+	target_compile_definitions( ${TARGET} PUBLIC LEGACY_ANIMATION=1 )
 endif ()
 
 if ( NOT "${PROJECT_VERSION}" STREQUAL "" )

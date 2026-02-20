@@ -75,6 +75,7 @@ namespace dgm
 
         [[nodiscard]] bool hasClipFinishedPlaying() const noexcept
         {
+            static_assert(LEGACY_ANIMATION);
 #ifdef LEGACY_ANIMATION
             return currentFrameIndex >= currentState->second.getFrameCount();
 #else
@@ -93,7 +94,7 @@ namespace dgm
         [[nodiscard]] unsigned getSpeed() const
         {
             return static_cast<unsigned>(
-                std::round(1000.f / timePerFrame.asMilliseconds()));
+                std::round(1.f / timePerFrame.asSeconds()));
         }
 
         /**
@@ -132,14 +133,12 @@ namespace dgm
 
     private:
 #ifdef LEGACY_ANIMATION
-        using StatesType = const AnimationStates&;
-        using StatesIteratorType = AnimationStates::const_iterator;
+        const AnimationStates& states;
+        AnimationStates::const_iterator currentState;
 #else
-        using StatesType = std::unordered_map<std::string, size_t>;
-        using StatesIteratorType = StatesType::const_iterator;
+        std::unordered_map<std::string, size_t> states;
+        std::unordered_map<std::string, size_t>::const_iterator currentState;
 #endif
-        StatesType states;
-        StatesIteratorType currentState;
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);
         std::size_t currentFrameIndex = 0;
