@@ -5,6 +5,7 @@
 #ifdef __cpp_lib_stacktrace
 #include <stacktrace>
 #endif
+#include <DGM/classes/Traits.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -34,8 +35,13 @@ namespace dgm
     class [[nodiscard]] Error final
     {
     public:
+#ifdef BUILD_ANDROID
         explicit Error(const std::string& message)
             : message(message)
+#else
+        explicit Error(UniversalReference<std::string> auto&& message)
+            : message(std::forward<decltype(message)>(message))
+#endif
 #ifdef __cpp_lib_stacktrace
             , trace(std::stacktrace::current())
 #endif
@@ -43,13 +49,13 @@ namespace dgm
         }
 
     public:
-        const std::string& getMessage() const noexcept
+        [[nodiscard]] const std::string& getMessage() const noexcept
         {
             return message;
         }
 
 #ifdef __cpp_lib_stacktrace
-        const std::stacktrace& getTrace() const noexcept
+        [[nodiscard]] const std::stacktrace& getTrace() const noexcept
         {
             return trace;
         }

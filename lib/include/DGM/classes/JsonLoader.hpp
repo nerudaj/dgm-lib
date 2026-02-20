@@ -41,7 +41,7 @@ namespace dgm
          * is maximum avaialable in regards to frame size
          * and boundaries.
          */
-        [[nodiscard]] virtual dgm::Clip
+        [[nodiscard]] dgm::Clip
         loadClipFromFile(const std::filesystem::path&) const override;
 
         [[nodiscard]] dgm::Clip loadClipFromStream(sf::InputStream&) const;
@@ -98,7 +98,7 @@ namespace dgm
          * One can use the defaults key to specify common
          * frame size and common spacing.
          */
-        [[nodiscard]] virtual dgm::AnimationStates
+        [[nodiscard]] dgm::AnimationStates
         loadAnimationsFromFile(const std::filesystem::path&) const override;
 
         [[nodiscard]] dgm::AnimationStates
