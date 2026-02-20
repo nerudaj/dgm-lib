@@ -10,9 +10,8 @@ namespace dgm
     {
     public:
         constexpr explicit AppState(
-            dgm::App& app,
-            const AppStateConfig& config = AppStateConfig()) noexcept
-            : app(app), config(config)
+            dgm::App& app, AppStateConfig config = AppStateConfig()) noexcept
+            : app(app), config(std::move(config))
         {
         }
 
@@ -55,8 +54,7 @@ namespace dgm
         }
 
     public:
-        [[nodiscard]] constexpr const sf::Color&
-        getClearColor() const noexcept
+        [[nodiscard]] constexpr const sf::Color& getClearColor() const noexcept
         {
             return config.clearColor;
         }
@@ -67,8 +65,7 @@ namespace dgm
             return config.shouldUpdateUnderlyingState;
         }
 
-        [[nodiscard]] constexpr bool
-        shouldDrawUnderlyingState() const noexcept
+        [[nodiscard]] constexpr bool shouldDrawUnderlyingState() const noexcept
         {
             return config.shouldDrawUnderlyingState;
         }

@@ -1,24 +1,31 @@
 Checks: >
   -*,
-  misc-const-correctness,
-  cppcoreguidelines-avoid-non-const-global-variables,
-  clang-diagnostic-unused-variable,
   bugprone-assignment-in-if-condition,
+  bugprone-copy-constructor-init,
+  bugprone-dangling-handle,
+  bugprone-exception-copy-constructor-throws,
+  bugprone-integer-division,
   bugprone-optional-value-conversion,
+  bugprone-return-const-ref-from-parameter,
+  bugprone-string-constructor,
+  bugprone-suspicious-enum-usage,
+  bugprone-suspicious-include,
   bugprone-use-after-move,
-  google-explicit-constructor
-  modernize-use-nodiscard
-  modernize-use-override
-  bugprone-copy-constructor-init
-  bugprone-exception-copy-constructor-throws
-  bugprone-integer-division
-  bugprone-return-const-ref-from-parameter
-  bugprone-suspicious-include
-  cppcoreguidelines-missing-std-forward
-  bugprone-suspicious-enum-usage
-  cppcoreguidelines-slicing
-  cppcoreguidelines-virtual-class-destructor
-  modernize-avoid-bind
+  clang-diagnostic-pessimizing-move,
+  clang-diagnostic-unused-variable,
+  cppcoreguidelines-avoid-non-const-global-variables,
+  cppcoreguidelines-missing-std-forward,
+  cppcoreguidelines-owning-memory,
+  cppcoreguidelines-slicing,
+  cppcoreguidelines-virtual-class-destructor,
+  google-explicit-constructor,
+  misc-const-correctness,
+  modernize-avoid-bind,
+  modernize-pass-by-value,
+  modernize-use-nodiscard,
+  modernize-use-override,
+  performance-move-const-arg,
+  performance-unnecessary-copy-initialization
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 ExcludeHeaderFilterRegex: 'catch_amalgamated.*'

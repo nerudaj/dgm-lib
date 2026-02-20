@@ -93,8 +93,8 @@ namespace dgm
         }
 
     private:
-        virtual void
-        draw(sf::RenderTarget& target, sf::RenderStates states) const;
+        void
+        draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     protected:
         const sf::Texture* texturePtr = nullptr;

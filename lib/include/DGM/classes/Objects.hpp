@@ -23,7 +23,8 @@ namespace dgm
     class Object
     {
     public:
-        virtual const sf::Vector2f& getPosition() const noexcept = 0;
+        [[nodiscard]] virtual const sf::Vector2f&
+        getPosition() const noexcept = 0;
 
         virtual void setPosition(const sf::Vector2f& position) noexcept = 0;
 
@@ -215,19 +216,19 @@ namespace dgm
         void debugRender(
             dgm::Window& window, sf::Color color = sf::Color::Yellow) const;
 
-        virtual constexpr const sf::Vector2f&
+        [[nodiscard]] constexpr const sf::Vector2f&
         getPosition() const noexcept override
         {
             return position;
         }
 
-        virtual constexpr void
+        constexpr void
         setPosition(const sf::Vector2f& newPosition) noexcept override
         {
             position = newPosition;
         }
 
-        virtual void move(const sf::Vector2f& direction) noexcept override
+        void move(const sf::Vector2f& direction) noexcept override
         {
             position += direction;
         }
