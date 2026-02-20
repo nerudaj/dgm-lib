@@ -87,8 +87,9 @@ int main()
                                     + boxes[1].getGlobalBounds().size.y
                                     - 160.f });
 
-    dgm::Animation soldierAnimation(
-        resmgr.get<dgm::AnimationStates>("soldier_config.json"));
+    const auto& soldierAnimationStates =
+        resmgr.get<dgm::AnimationStates>("soldier_config.json");
+    dgm::Animation soldierAnimation(soldierAnimationStates);
     soldierAnimation.setState("idle", true);
     soldierAnimation.setSpeed(4);
 
@@ -146,7 +147,9 @@ int main()
 
         effectFountain.draw(window);
 
-        soldierSprite.setTextureRect(soldierAnimation.getCurrentFrame());
+        soldierSprite.setTextureRect(
+            soldierAnimationStates.at(soldierAnimation.getStateName())
+                .getFrame(soldierAnimation.getCurrentFrameIndex()));
         window.draw(soldierSprite);
         effectBloodSpatter.draw(window);
 

@@ -34,9 +34,14 @@ Animation::PlaybackStatus Animation::update(const dgm::Time& time) noexcept
 
         currentFrameIndex = 0;
 
-        auto allFramesLength =
+#ifdef LEGACY_ANIMATION
+        const auto allFramesLength =
             timePerFrame
             * static_cast<float>(currentState->second.getFrameCount());
+#else
+        const auto allFramesLength =
+            timePerFrame * static_cast<float>(currentState->second);
+#endif
 
         while (elapsedTime > allFramesLength)
             elapsedTime -= allFramesLength;
@@ -67,11 +72,23 @@ void Animation::setSpeed(unsigned framesPerSecond)
         static_cast<std::int32_t>(std::round(1000.f / framesPerSecond)));
 }
 
-Animation::Animation(
-    const AnimationStates& _states, int framesPerSecond)
+#ifdef LEGACY_ANIMATION
+Animation::Animation(const AnimationStates& _states, int framesPerSecond)
     : states(_states), currentState(states.begin())
 {
     static_assert(noexcept(states.begin()));
 
     setSpeed(framesPerSecond);
 }
+#else
+Animation::Animation(const AnimationStates& _states, int framesPerSecond)
+{
+    for (auto&& [name, clip] : _states)
+    {
+        states[name] = clip.getFrameCount();
+    }
+
+    currentState = states.begin();
+    setSpeed(framesPerSecond);
+}
+#endif

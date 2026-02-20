@@ -35,6 +35,8 @@ namespace dgm
          *  \brief Construct animation object from states and required FPS
          *
          *  The states are not copied! They must outlive the animation object.
+         *  (only applies if ENABLE_LEGACY_ANIMATION was ON during CMake
+         * configure)
          */
         explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
@@ -73,7 +75,12 @@ namespace dgm
 
         [[nodiscard]] bool hasClipFinishedPlaying() const noexcept
         {
+            static_assert(LEGACY_ANIMATION);
+#ifdef LEGACY_ANIMATION
             return currentFrameIndex >= currentState->second.getFrameCount();
+#else
+            return currentFrameIndex >= currentState->second;
+#endif
         }
 
         constexpr void setLooping(bool enabled) noexcept
@@ -87,7 +94,7 @@ namespace dgm
         [[nodiscard]] unsigned getSpeed() const
         {
             return static_cast<unsigned>(
-                std::round(1000.f / timePerFrame.asMilliseconds()));
+                std::round(1.f / timePerFrame.asSeconds()));
         }
 
         /**
@@ -103,9 +110,16 @@ namespace dgm
             return looping;
         }
 
-        [[nodiscard]] const sf::IntRect& getCurrentFrame() const noexcept
+#ifdef LEGACY_ANIMATION
+        [[nodiscard, deprecated]] const sf::IntRect&
+        getCurrentFrame() const noexcept
         {
             return currentState->second.getFrame(currentFrameIndex);
+        }
+#endif
+        const size_t getCurrentFrameIndex() const noexcept
+        {
+            return currentFrameIndex;
         }
 
         /**
@@ -118,8 +132,13 @@ namespace dgm
         }
 
     private:
+#ifdef LEGACY_ANIMATION
         const AnimationStates& states;
         AnimationStates::const_iterator currentState;
+#else
+        std::unordered_map<std::string, size_t> states;
+        std::unordered_map<std::string, size_t>::const_iterator currentState;
+#endif
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);
         std::size_t currentFrameIndex = 0;

@@ -4,6 +4,11 @@ dgm-lib v3.x.x
  * dgm::App sets a default view encapsulating the whole screen at a current resolution before each draw
  * Add `isIndexValid` helper to `dgm::SpatialBuffer`
  * Add advanced collision support for combinations of rectangles and circles
+ * `dgm::Animation::getCurrentFrame` is now deprecated, but kept to not break backward compatibility
+	* Ideally, configure cmake with -D ENABLE_LEGACY_ANIMATION=OFF
+	* New version of the animation doesn't depend on input animation states and doesn't index into each clip
+	* You shall keep the animation states elsewhere and ask the animation for current state name and frame index
+	* This makes the code cleaner since the animation object doesn't depend on rendering information
 
 dgm-lib v3.1.0
  * `dgm::Controller::readAnalog` no longer returns negative values for negative axii halves
