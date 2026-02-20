@@ -116,6 +116,11 @@ namespace dgm
             super::removeFromLookup(id, box);
         }
 
+        [[nodiscard]] bool isIndexValid(IndexType idx) const
+        {
+            return items.isIndexValid(idx);
+        }
+
 #ifdef ANDROID
         T& operator[](IndexType id)
         {
