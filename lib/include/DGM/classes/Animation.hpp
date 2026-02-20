@@ -35,6 +35,8 @@ namespace dgm
          *  \brief Construct animation object from states and required FPS
          *
          *  The states are not copied! They must outlive the animation object.
+         *  (only applies if ENABLE_LEGACY_ANIMATION was ON during CMake
+         * configure)
          */
         explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
@@ -73,7 +75,11 @@ namespace dgm
 
         [[nodiscard]] bool hasClipFinishedPlaying() const noexcept
         {
+#ifdef LEGACY_ANIMATION
             return currentFrameIndex >= currentState->second.getFrameCount();
+#else
+            return currentFrameIndex >= currentState->second;
+#endif
         }
 
         constexpr void setLooping(bool enabled) noexcept
@@ -103,9 +109,16 @@ namespace dgm
             return looping;
         }
 
-        [[nodiscard]] const sf::IntRect& getCurrentFrame() const noexcept
+#ifdef LEGACY_ANIMATION
+        [[nodiscard, deprecated]] const sf::IntRect&
+        getCurrentFrame() const noexcept
         {
             return currentState->second.getFrame(currentFrameIndex);
+        }
+#endif
+        const size_t getCurrentFrameIndex() const noexcept
+        {
+            return currentFrameIndex;
         }
 
         /**
@@ -118,8 +131,15 @@ namespace dgm
         }
 
     private:
-        const AnimationStates& states;
-        AnimationStates::const_iterator currentState;
+#ifdef LEGACY_ANIMATION
+        using StatesType = const AnimationStates&;
+        using StatesIteratorType = AnimationStates::const_iterator;
+#else
+        using StatesType = std::unordered_map<std::string, size_t>;
+        using StatesIteratorType = StatesType::const_iterator;
+#endif
+        StatesType states;
+        StatesType::const_iterator currentState;
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);
         std::size_t currentFrameIndex = 0;

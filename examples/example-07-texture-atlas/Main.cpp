@@ -8,7 +8,7 @@ class AnimatedSprite
 public:
     AnimatedSprite(
         const sf::Texture& texture, const dgm::AnimationStates& states)
-        : sprite(texture), animation(states, 15)
+        : sprite(texture), animationStates(states), animation(states, 15)
     {
     }
 
@@ -16,7 +16,8 @@ public:
     void update(const dgm::Time& time)
     {
         animation.update(time);
-        sprite.setTextureRect(animation.getCurrentFrame());
+        sprite.setTextureRect(animationStates.at(animation.getStateName())
+                                  .getFrame(animation.getCurrentFrameIndex()));
     }
 
     void draw(dgm::Window& window)
@@ -26,6 +27,7 @@ public:
 
 private:
     sf::Sprite sprite;
+    const dgm::AnimationStates& animationStates;
     dgm::Animation animation;
 };
 
