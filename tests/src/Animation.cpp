@@ -62,6 +62,7 @@ TEST_CASE("[Animation]")
             == dgm::Animation::PlaybackStatus::Playing);
     }
 
+#ifndef LEGACY_ANIMATION
     SECTION("Copy works correctly")
     {
         auto orig = std::make_unique<dgm::Animation>(spritesheet);
@@ -83,4 +84,5 @@ TEST_CASE("[Animation]")
 
         REQUIRE("first" == animation2.getStateName());
     }
+#endif
 }
