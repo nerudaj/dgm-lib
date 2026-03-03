@@ -13,6 +13,9 @@ env:
 jobs:
   build:
     runs-on: windows-2022
+    strategy:
+      matrix:
+        configure_args: [ "", "-D ENABLE_LEGACY_ANIMATION=OFF" ]
 
     steps:
     - uses: actions/checkout@v4
@@ -27,9 +30,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        mkdir "${{env.BUILD_DIR}}"
-        cd "${{env.BUILD_DIR}}"
-        cmake ..
+        cmake -B "${{env.BUILD_DIR}}" ${{matrix.configure_args}} .
       shell: cmd
 
     - name: Build
