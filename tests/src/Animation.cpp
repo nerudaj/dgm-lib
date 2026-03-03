@@ -61,4 +61,26 @@ TEST_CASE("[Animation]")
             animation.update(_25msElapsed)
             == dgm::Animation::PlaybackStatus::Playing);
     }
+
+    SECTION("Copy works correctly")
+    {
+        auto orig = std::make_unique<dgm::Animation>(spritesheet);
+        orig->setState("first", false);
+
+        auto animation2 = *orig;
+        orig.reset();
+
+        REQUIRE("first" == animation2.getStateName());
+    }
+
+    SECTION("Move works correctly")
+    {
+        auto orig = std::make_unique<dgm::Animation>(spritesheet);
+        orig->setState("first", false);
+
+        auto animation2 = std::move(*orig);
+        orig.reset();
+
+        REQUIRE("first" == animation2.getStateName());
+    }
 }

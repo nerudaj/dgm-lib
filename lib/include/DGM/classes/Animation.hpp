@@ -41,6 +41,16 @@ namespace dgm
         explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
 
+#ifndef LEGACY_ANIMATION
+        Animation(const Animation&);
+        Animation(Animation&&);
+
+        Animation& operator=(Animation);
+        Animation& operator=(Animation&&);
+
+        friend void swap(Animation& first, Animation& second) noexcept;
+#endif
+
     public:
         /**
          *  \brief Update animation object with time
