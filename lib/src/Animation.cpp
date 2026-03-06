@@ -98,8 +98,8 @@ dgm::Animation::Animation(const Animation& other)
     , currentState(states.find(other.currentState->first))
     , elapsedTime(other.elapsedTime)
     , timePerFrame(other.timePerFrame)
-    , currentFrameIndex(currentFrameIndex)
-    , looping(looping)
+    , currentFrameIndex(other.currentFrameIndex)
+    , looping(other.looping)
 {
 }
 
