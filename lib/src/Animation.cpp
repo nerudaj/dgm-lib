@@ -60,8 +60,12 @@ void Animation::setState(const std::string& stateName, bool shouldLoop)
         throw dgm::Exception("Cannot find animation state '" + stateName + "'");
     }
 
+#ifdef LEGACY_ANIMATION
+    currentState = newState;
+#else
     currentStateName = newState->first;
     currentStateFrameCount = newState->second;
+#endif
     setLooping(shouldLoop);
     reset();
 }
