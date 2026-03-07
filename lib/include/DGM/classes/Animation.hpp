@@ -123,7 +123,11 @@ namespace dgm
 
         const size_t getCurrentStateFrameCount() const noexcept
         {
+#ifdef LEGACY_ANIMATION
+            return currentState->second.getFrameCount();
+#else
             return currentStateFrameCount;
+#endif
         }
 
         /**
