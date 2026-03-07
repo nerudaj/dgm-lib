@@ -41,16 +41,6 @@ namespace dgm
         explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
 
-#ifndef LEGACY_ANIMATION
-        Animation(const Animation&);
-        Animation(Animation&&);
-
-        Animation& operator=(Animation);
-        Animation& operator=(Animation&&);
-
-        friend void swap(Animation& first, Animation& second) noexcept;
-#endif
-
     public:
         /**
          *  \brief Update animation object with time
@@ -88,7 +78,7 @@ namespace dgm
 #ifdef LEGACY_ANIMATION
             return currentFrameIndex >= currentState->second.getFrameCount();
 #else
-            return currentFrameIndex >= currentState->second;
+            return currentFrameIndex >= currentStateFrameCount;
 #endif
         }
 
@@ -111,7 +101,7 @@ namespace dgm
          */
         [[nodiscard]] const std::string& getStateName() const noexcept
         {
-            return currentState->first;
+            return currentStateName;
         }
 
         [[nodiscard]] constexpr bool isLooping() const noexcept
@@ -131,6 +121,11 @@ namespace dgm
             return currentFrameIndex;
         }
 
+        const size_t getCurrentStateFrameCount() const noexcept
+        {
+            return currentStateFrameCount;
+        }
+
         /**
          *  \brief Reset the current state of animation to frame 0
          */
@@ -146,7 +141,8 @@ namespace dgm
         AnimationStates::const_iterator currentState;
 #else
         std::unordered_map<std::string, size_t> states;
-        std::unordered_map<std::string, size_t>::const_iterator currentState;
+        std::string currentStateName;
+        size_t currentStateFrameCount = 0;
 #endif
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);

@@ -40,7 +40,7 @@ Animation::PlaybackStatus Animation::update(const dgm::Time& time) noexcept
             * static_cast<float>(currentState->second.getFrameCount());
 #else
         const auto allFramesLength =
-            timePerFrame * static_cast<float>(currentState->second);
+            timePerFrame * static_cast<float>(currentStateFrameCount);
 #endif
 
         while (elapsedTime > allFramesLength)
@@ -60,7 +60,8 @@ void Animation::setState(const std::string& stateName, bool shouldLoop)
         throw dgm::Exception("Cannot find animation state '" + stateName + "'");
     }
 
-    currentState = newState;
+    currentStateName = newState->first;
+    currentStateFrameCount = newState->second;
     setLooping(shouldLoop);
     reset();
 }
@@ -89,46 +90,9 @@ Animation::Animation(const AnimationStates& _states, int framesPerSecond)
         states[name] = clip.getFrameCount();
     }
 
-    currentState = states.begin();
+    auto currentState = states.begin();
+    currentStateName = currentState->first;
+    currentStateFrameCount = currentState->second;
     setSpeed(framesPerSecond);
-}
-
-dgm::Animation::Animation(const Animation& other)
-    : states(other.states)
-    , currentState(states.find(other.currentState->first))
-    , elapsedTime(other.elapsedTime)
-    , timePerFrame(other.timePerFrame)
-    , currentFrameIndex(other.currentFrameIndex)
-    , looping(other.looping)
-{
-}
-
-dgm::Animation::Animation(Animation&& other)
-{
-    swap(*this, other);
-}
-
-Animation& dgm::Animation::operator=(Animation other)
-{
-    swap(*this, other);
-    return *this;
-}
-
-Animation& dgm::Animation::operator=(Animation&& other)
-{
-    auto tmp = std::move(other);
-    swap(*this, tmp);
-    return *this;
-}
-
-void dgm::swap(Animation& first, Animation& second) noexcept
-{
-    using std::swap;
-    swap(first.states, second.states);
-    swap(first.currentState, second.currentState);
-    swap(first.elapsedTime, second.elapsedTime);
-    swap(first.timePerFrame, second.timePerFrame);
-    swap(first.currentFrameIndex, second.currentFrameIndex);
-    swap(first.looping, second.looping);
 }
 #endif
