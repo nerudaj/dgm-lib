@@ -101,7 +101,11 @@ namespace dgm
          */
         [[nodiscard]] const std::string& getStateName() const noexcept
         {
+#ifdef LEGACY_ANIMATION
+            return currentState->first;
+#else
             return currentStateName;
+#endif
         }
 
         [[nodiscard]] constexpr bool isLooping() const noexcept
