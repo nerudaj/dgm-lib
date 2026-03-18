@@ -262,14 +262,12 @@ struct WorldNode
     WorldNode() = default;
 
     WorldNode(
-        const sf::Vector2u& point,
+        const sf::Vector2u& _point,
         const sf::Vector2u& pred,
         const sf::Vector2u& end,
-        unsigned gcost)
+        unsigned _gcost)
+        : point(_point), predecessor(pred), gcost(_gcost)
     {
-        this->point = point;
-        predecessor = pred;
-        this->gcost = gcost;
         const unsigned dx = (point.x - end.x);
         const unsigned dy = (point.y - end.y);
         hcost = static_cast<unsigned>(
@@ -289,7 +287,7 @@ struct WorldNode
 
 dgm::WorldNavMesh::WorldNavMesh(dgm::Mesh _mesh) : mesh(std::move(_mesh))
 {
-    auto isJumpPoint = [&](const sf::Vector2u& point)
+    auto shouldRegisterAsJumpPoint = [&](const sf::Vector2u& point)
     {
         /**
          *  Test if this point is at the tip of some impassable tile, eg:
@@ -334,7 +332,7 @@ dgm::WorldNavMesh::WorldNavMesh(dgm::Mesh _mesh) : mesh(std::move(_mesh))
                 if (mesh[{ x, y }] > 0) continue;
 
                 const sf::Vector2u point(x, y);
-                if (isJumpPoint(point))
+                if (shouldRegisterAsJumpPoint(point))
                 {
                     jumpPointConnections[point] = {};
                 }

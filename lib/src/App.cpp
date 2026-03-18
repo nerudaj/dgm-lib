@@ -4,8 +4,8 @@
 #include <SFML/System/Err.hpp>
 #include <iostream>
 
-dgm::App::App(dgm::Window& window)
-    : window(window)
+dgm::App::App(dgm::Window& _window)
+    : window(_window)
 #ifndef ANDROID
     , outbuf("stdout.txt")
     , errbuf("stderr.txt")

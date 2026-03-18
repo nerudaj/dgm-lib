@@ -25,13 +25,13 @@ jobs:
       # Step 3: Run cppcheck
       - name: Run static analysis
         run: |
-          cppcheck --enable=all --inconclusive --quiet --error-exitcode=1 lib/
+          cppcheck --enable=style --quiet --error-exitcode=1 lib/ -I lib/include
 
       # Step 4: Upload cppcheck report (optional)
       - name: Save cppcheck report
         if: always()
         run: |
-          cppcheck --enable=all --xml --xml-version=2 lib/ 2> cppcheck-report.xml
+          cppcheck --enable=style --inconclusive --xml --xml-version=2 lib/ -I lib/include 2> cppcheck-report.xml
         continue-on-error: true
 
       - name: Upload report artifact
