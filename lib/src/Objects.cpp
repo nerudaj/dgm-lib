@@ -59,9 +59,7 @@ void dgm::VisionCone::rotate(const sf::Angle angle) noexcept
     forward = forward.rotatedBy(angle);
 }
 
-dgm::VisionCone::VisionCone(const float length, const float width)
+dgm::VisionCone::VisionCone(const float length, const float _width)
+    : position({ 0.f, 0.f }), forward({ length, 0.f }), width(_width)
 {
-    position = { 0.f, 0.f };
-    forward = { length, 0.f };
-    VisionCone::width = width;
 }

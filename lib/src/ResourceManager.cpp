@@ -6,9 +6,8 @@ using dgm::ResourceManager;
 namespace fs = std::filesystem;
 
 ResourceManager::ResourceManager(ResourceManager&& other) noexcept
+    : data(std::move(other.data)), destructors(std::move(other.destructors))
 {
-    data = other.data;
-    other.data.clear();
 }
 
 ResourceManager::~ResourceManager()
@@ -21,8 +20,8 @@ ResourceManager::~ResourceManager()
         }
 }
 
-std::expected<std::string, Error> dgm::ResourceManager::getResourceId(
-    const std::filesystem::path& path) const noexcept
+std::expected<std::string, Error>
+dgm::ResourceManager::getResourceId(const std::filesystem::path& path) noexcept
 {
     try
     {

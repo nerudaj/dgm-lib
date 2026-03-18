@@ -282,7 +282,7 @@ namespace dgm
         }
 
         [[nodiscard]] static std::expected<std::string, Error>
-        getResourceId(const std::filesystem::path& path) const noexcept;
+        getResourceId(const std::filesystem::path& path) noexcept;
 
         template<CompatibleResourceType T>
         [[nodiscard]] bool hasResource(const std::string& id) const noexcept
