@@ -135,7 +135,7 @@ namespace dgm
         /**
          *  \brief Test whether window is still open
          */
-        [[nodiscard]] virtual bool isOpen() const
+        [[nodiscard]] bool isOpen() const
         {
             return window.isOpen();
         }

@@ -281,8 +281,8 @@ namespace dgm
             return std::true_type {};
         }
 
-        [[nodiscard]] std::expected<std::string, Error>
-        getResourceId(const std::filesystem::path& path) const noexcept;
+        [[nodiscard]] static std::expected<std::string, Error>
+        getResourceId(const std::filesystem::path& path) noexcept;
 
         template<CompatibleResourceType T>
         [[nodiscard]] bool hasResource(const std::string& id) const noexcept
@@ -324,15 +324,13 @@ namespace dgm
         template<class T>
         void registerDestructor(std::size_t typeHash)
         {
-            if (destructors.count(typeHash) == 0)
-            {
-                destructors[typeHash] = [](byte* buffer)
-                { reinterpret_cast<T*>(buffer)->~T(); };
-            }
+            destructors.try_emplace(
+                typeHash,
+                [](byte* buffer) { reinterpret_cast<T*>(buffer)->~T(); });
         }
 
         template<class T>
-        byte* allocateInitializedMemory()
+        static byte* allocateInitializedMemory()
         {
             byte* buffer = static_cast<byte*>(::operator new(sizeof(T)));
             if (!buffer)

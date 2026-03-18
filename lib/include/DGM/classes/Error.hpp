@@ -17,9 +17,10 @@ namespace dgm
         explicit Exception(
             const std::string& message,
 #ifdef __cpp_lib_stacktrace
-            std::stacktrace trace = std::stacktrace::current())
+            const std::stacktrace& trace = std::stacktrace::current())
 #else
-            std::string trace = "Trace is not available with your compiler")
+            const std::string& trace =
+                "Trace is not available with your compiler")
 #endif
             : std::runtime_error(
                   "Error message: " + message + "\n\nStacktrace: " +

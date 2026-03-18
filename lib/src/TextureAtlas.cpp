@@ -6,18 +6,13 @@ using ClipLocation = dgm::TextureAtlas::ResourceLocation<dgm::Clip>;
 using SheetLocation = dgm::TextureAtlas::ResourceLocation<dgm::AnimationStates>;
 
 dgm::TextureAtlas::TextureAtlas(int atlasWidth, int atlasHeight)
+    : atlasImage(sf::Vector2u { sf::Vector2i { atlasWidth, atlasHeight } })
+    , freeAreas(
+          { sf::IntRect {
+              sf::Vector2i(0, 0),
+              sf::Vector2i(atlasWidth, atlasHeight),
+          } })
 {
-    atlasImage = sf::Image(sf::Vector2u {
-        sf::Vector2i {
-            atlasWidth,
-            atlasHeight,
-        },
-    });
-
-    freeAreas.push_back(sf::IntRect {
-        sf::Vector2i(0, 0),
-        sf::Vector2i(atlasWidth, atlasHeight),
-    });
 }
 
 [[nodiscard]] std::expected<ClipLocation, dgm::Error>
@@ -94,30 +89,32 @@ std::vector<sf::IntRect> dgm::TextureAtlas::subdivideArea(
 
     if (takenTextureDims.x < area.size.x)
     {
-        result.push_back(sf::IntRect {
-            sf::Vector2i {
-                area.position.x + takenTextureDims.x,
-                area.position.y,
-            },
-            sf::Vector2i {
-                area.size.x - takenTextureDims.x,
-                takenTextureDims.y,
-            },
-        });
+        result.push_back(
+            sf::IntRect {
+                sf::Vector2i {
+                    area.position.x + takenTextureDims.x,
+                    area.position.y,
+                },
+                sf::Vector2i {
+                    area.size.x - takenTextureDims.x,
+                    takenTextureDims.y,
+                },
+            });
     }
 
     if (takenTextureDims.y < area.size.y)
     {
-        result.push_back(sf::IntRect {
-            sf::Vector2i {
-                area.position.x,
-                area.position.y + takenTextureDims.y,
-            },
-            sf::Vector2i {
-                area.size.x,
-                area.size.y - takenTextureDims.y,
-            },
-        });
+        result.push_back(
+            sf::IntRect {
+                sf::Vector2i {
+                    area.position.x,
+                    area.position.y + takenTextureDims.y,
+                },
+                sf::Vector2i {
+                    area.size.x,
+                    area.size.y - takenTextureDims.y,
+                },
+            });
     }
 
     return result;
@@ -143,15 +140,16 @@ dgm::AnimationStates dgm::TextureAtlas::recomputeAnimationStates(
     const sf::Vector2i& startCoord,
     const sf::Vector2i& textureSize)
 {
-    auto&& view = animationStates
-                | std::views::transform(
-                    [&](const std::pair<std::string, dgm::Clip>& pair)
-                    {
-                        return std::pair {
-                            pair.first,
-                            recomputeClip(pair.second, startCoord, textureSize),
-                        };
-                    });
+    auto&& view =
+        animationStates
+        | std::views::transform(
+            [&](const std::pair<std::string, dgm::Clip>& pair)
+            {
+                return std::pair {
+                    pair.first,
+                    recomputeClip(pair.second, startCoord, textureSize),
+                };
+            });
     return dgm::AnimationStates(view.begin(), view.end());
 }
 
