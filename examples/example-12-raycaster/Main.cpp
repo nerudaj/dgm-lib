@@ -5,25 +5,10 @@ It also collides with red squares that disappear afterwards.
 */
 
 #include "DemoData.hpp"
+#include "Helpers.hpp"
 #include "SimpleController.hpp"
+#include <DGM/classes/Raycaster.hpp>
 #include <DGM/dgm.hpp>
-
-void handleCollisionsWithCherries(
-    const dgm::Circle& player, dgm::DynamicBuffer<dgm::Rect>& cherries)
-{
-    std::optional<size_t> cherryIdxToDelete;
-
-    for (auto&& [cherry, idx] : cherries)
-    {
-        if (dgm::Collision::basic(cherry, player))
-        {
-            cherryIdxToDelete = idx;
-            break;
-        }
-    }
-
-    if (cherryIdxToDelete) cherries.eraseAtIndex(*cherryIdxToDelete);
-}
 
 int main()
 {
@@ -67,8 +52,6 @@ int main()
         player.move(forward);
         camera.setPosition(player.getPosition());
 
-        handleCollisionsWithCherries(player, cherries);
-
         /* DRAW */
         window.setViewFromCamera(camera);
         window.clear();
@@ -77,7 +60,17 @@ int main()
         player.debugRender(window);
 
         for (auto&& [cherry, _] : cherries)
+        {
             cherry.debugRender(window, sf::Color::Red);
+
+            const bool isVisible = dgm::Raycaster::hasDirectVisibility(
+                player.getPosition(), cherry.getCenter(), level.getMesh());
+            drawLine(
+                window,
+                cherry.getCenter(),
+                player.getPosition(),
+                isVisible ? sf::Color::Green : sf::Color::Red);
+        }
 
         window.display();
     }

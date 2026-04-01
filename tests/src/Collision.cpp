@@ -317,12 +317,12 @@ TEST_CASE("Rect-in-cone", "Collision")
 
     SECTION("No collision")
     {
-        REQUIRE_FALSE(dgm::Collision::basic(cone, rect));
+        REQUIRE_FALSE(dgm::Collision::basic(rect, cone));
     }
 
     SECTION("Normal collision")
     {
         cone.setRotation(sf::degrees(225.f));
-        REQUIRE(dgm::Collision::basic(cone, rect));
+        REQUIRE(dgm::Collision::basic(rect, cone));
     }
 }

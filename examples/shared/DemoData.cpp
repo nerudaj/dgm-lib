@@ -103,3 +103,19 @@ dgm::ResourceManager DemoData::loadDemoResources()
         RESOURCE_DIR, dgm::Utility::loadClip, { ".clip" }));
     return resmgr;
 }
+
+dgm::DynamicBuffer<dgm::Rect> DemoData::spawnCherries()
+{
+    const std::vector<sf::Vector2f> positions = {
+        { 96.f, 512.f },  { 363.f, 290.f }, { 668.f, 384.f }, { 839.f, 734.f },
+        { 542.f, 622.f }, { 393.f, 778.f }, { 159.f, 757.f }, { 287.f, 310.f },
+    };
+    const sf::Vector2f size = { 16.f, 16.f };
+
+    auto&& cherries = dgm::DynamicBuffer<dgm::Rect>(16);
+
+    for (auto&& position : positions)
+        cherries.emplaceBack(position, size);
+
+    return cherries;
+}

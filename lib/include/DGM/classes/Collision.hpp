@@ -168,7 +168,19 @@ namespace dgm
          * \return TRUE if rectangle is within the cone, FALSE otherwise
          */
         [[deprecated("Use the method with swapped parameters")]]
-        static bool basic(const dgm::VisionCone& cone, const dgm::Rect& r);
+        static bool basic(const dgm::VisionCone& cone, const dgm::Rect& r)
+        {
+            return basic(r, cone);
+        }
+
+        /**
+         *  \brief Detect presense of a rectangle within a vision cone
+         *
+         * \param cone Vision cone to check within
+         * \param r Rectange to check
+         * \return TRUE if rectangle is within the cone, FALSE otherwise
+         */
+        static bool basic(const dgm::Rect& r, const dgm::VisionCone& cone);
 
         /**
          *  \brief Elaborates movement of an object within a mesh
