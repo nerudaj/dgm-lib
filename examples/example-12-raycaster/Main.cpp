@@ -1,7 +1,8 @@
 /*
-Move the yellow dot by pressing
-WASD.The yellow dot will properly collide with the environment around it.
-It also collides with red squares that disappear afterwards.
+Move the yellow dot by pressing WASD.
+Raycasts are spawned from the yellow dot to the red dots, showed as white lines.
+If raycast has direct visibility to the target (doesn't hit any walls), line is
+green instead of white.
 */
 
 #include "DemoData.hpp"
@@ -63,13 +64,25 @@ int main()
         {
             cherry.debugRender(window, sf::Color::Red);
 
-            const bool isVisible = dgm::Raycaster::hasDirectVisibility(
-                player.getPosition(), cherry.getCenter(), level.getMesh());
+            const auto raycast = dgm::Raycaster::raycast(
+                player.getPosition(),
+                cherry.getCenter() - player.getPosition(),
+                level.getMesh());
             drawLine(
                 window,
-                cherry.getCenter(),
                 player.getPosition(),
-                isVisible ? sf::Color::Green : sf::Color::Red);
+                raycast.hitLocation,
+                sf::Color::White);
+
+            if (dgm::Raycaster::hasDirectVisibility(
+                    player.getPosition(), cherry.getCenter(), level.getMesh()))
+            {
+                drawLine(
+                    window,
+                    cherry.getCenter(),
+                    player.getPosition(),
+                    sf::Color::Green);
+            }
         }
 
         window.display();

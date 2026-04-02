@@ -1,3 +1,4 @@
+#include <DGM/classes/Math.hpp>
 #include <DGM/classes/Raycaster.hpp>
 #include <cmath>
 
@@ -47,7 +48,11 @@ dgm::Raycaster::Result dgm::Raycaster::raycast(
     return Result {
         .tile = state.tile,
         .hitDirection = advancementDirection,
-        // TODO: hitPosition
+        .hitLocation =
+            (normalizedFrom
+             + dgm::Math::toUnit(direction)
+                   * getInterceptDistance(state, advancementDirection))
+                .componentWiseMul(sf::Vector2f(levelMesh.getVoxelSize())),
     };
 }
 
@@ -71,7 +76,11 @@ dgm::Raycaster::Result dgm::Raycaster::raycast(
     return Result {
         .tile = state.tile,
         .hitDirection = advancementDirection,
-        // TODO: hitPosition
+        .hitLocation =
+            (normalizedFrom
+             + dgm::Math::toUnit(direction)
+                   * getInterceptDistance(state, advancementDirection))
+                .componentWiseMul(sf::Vector2f(levelMesh.getVoxelSize())),
     };
 }
 
