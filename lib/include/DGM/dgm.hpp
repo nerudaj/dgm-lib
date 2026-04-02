@@ -36,6 +36,7 @@
 // Navigation
 #include "classes/NavMesh.hpp"
 #include "classes/Path.hpp"
+#include "classes/Raycaster.hpp"
 
 // Helpers
 #include "classes/Traits.hpp"

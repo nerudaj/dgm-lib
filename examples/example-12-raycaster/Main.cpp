@@ -1,29 +1,15 @@
 /*
-Move the yellow dot by pressing
-WASD.The yellow dot will properly collide with the environment around it.
-It also collides with red squares that disappear afterwards.
+Move the yellow dot by pressing WASD.
+Raycasts are spawned from the yellow dot to the red dots, showed as white lines.
+If raycast has direct visibility to the target (doesn't hit any walls), line is
+green instead of white.
 */
 
 #include "DemoData.hpp"
+#include "Helpers.hpp"
 #include "SimpleController.hpp"
+#include <DGM/classes/Raycaster.hpp>
 #include <DGM/dgm.hpp>
-
-void handleCollisionsWithCherries(
-    const dgm::Circle& player, dgm::DynamicBuffer<dgm::Rect>& cherries)
-{
-    std::optional<size_t> cherryIdxToDelete;
-
-    for (auto&& [cherry, idx] : cherries)
-    {
-        if (dgm::Collision::basic(cherry, player))
-        {
-            cherryIdxToDelete = idx;
-            break;
-        }
-    }
-
-    if (cherryIdxToDelete) cherries.eraseAtIndex(*cherryIdxToDelete);
-}
 
 int main()
 {
@@ -67,8 +53,6 @@ int main()
         player.move(forward);
         camera.setPosition(player.getPosition());
 
-        handleCollisionsWithCherries(player, cherries);
-
         /* DRAW */
         window.setViewFromCamera(camera);
         window.clear();
@@ -77,7 +61,29 @@ int main()
         player.debugRender(window);
 
         for (auto&& [cherry, _] : cherries)
+        {
             cherry.debugRender(window, sf::Color::Red);
+
+            const auto raycast = dgm::Raycaster::raycast(
+                player.getPosition(),
+                cherry.getCenter() - player.getPosition(),
+                level.getMesh());
+            drawLine(
+                window,
+                player.getPosition(),
+                raycast.hitLocation,
+                sf::Color::White);
+
+            if (dgm::Raycaster::hasDirectVisibility(
+                    player.getPosition(), cherry.getCenter(), level.getMesh()))
+            {
+                drawLine(
+                    window,
+                    cherry.getCenter(),
+                    player.getPosition(),
+                    sf::Color::Green);
+            }
+        }
 
         window.display();
     }

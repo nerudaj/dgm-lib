@@ -111,8 +111,9 @@ bool dgm::Collision::basic(
     const dgm::Mesh& A, const dgm::Circle& B, std::size_t* meshHitPosition)
 {
     const sf::Vector2f radius(B.getRadius(), B.getRadius());
-    const sf::IntRect outBody(sf::FloatRect(
-        B.getPosition() - radius - A.getPosition(), radius * 2.f));
+    const sf::IntRect outBody(
+        sf::FloatRect(
+            B.getPosition() - radius - A.getPosition(), radius * 2.f));
     const sf::IntRect bounds = normalizeBoundaries(outBody, A);
 
     const sf::Vector2f tileSize(A.getVoxelSize());
@@ -217,7 +218,7 @@ bool dgm::Collision::basic(const dgm::VisionCone& cone, const sf::Vector2f& p)
     return transposedPointPos.x * coneRiseFactor > transposedPointPos.y;
 }
 
-bool dgm::Collision::basic(const dgm::VisionCone& cone, const dgm::Rect& r)
+bool dgm::Collision::basic(const dgm::Rect& r, const dgm::VisionCone& cone)
 {
     auto pos = r.getPosition();
     auto size = r.getSize();

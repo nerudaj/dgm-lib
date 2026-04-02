@@ -10,6 +10,7 @@ dgm-lib v3.x.x
 	* You shall keep the animation states elsewhere and ask the animation for current state name and frame index
 	* This makes the code cleaner since the animation object doesn't depend on rendering information
  * Added `dgm::Animation::getCurrentStateFrameCount`
+ * Added `dgm::Raycaster` class for doing visibility checks and coding Wolfenstein3D-like engines :)
 
 dgm-lib v3.1.0
  * `dgm::Controller::readAnalog` no longer returns negative values for negative axii halves
