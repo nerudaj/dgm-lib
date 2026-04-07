@@ -114,18 +114,18 @@ namespace dgm
         }
 
 #ifdef LEGACY_ANIMATION
-        [[nodiscard, deprecated]] const sf::IntRect&
-        getCurrentFrame() const noexcept
+        [[nodiscard,
+          deprecated]] const sf::IntRect& getCurrentFrame() const noexcept
         {
             return currentState->second.getFrame(currentFrameIndex);
         }
 #endif
-        const size_t getCurrentFrameIndex() const noexcept
+        [[nodiscard]] constexpr size_t getCurrentFrameIndex() const noexcept
         {
             return currentFrameIndex;
         }
 
-        const size_t getCurrentStateFrameCount() const noexcept
+        [[nodiscard]] size_t getCurrentStateFrameCount() const noexcept
         {
 #ifdef LEGACY_ANIMATION
             return currentState->second.getFrameCount();
