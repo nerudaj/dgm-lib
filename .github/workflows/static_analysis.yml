@@ -13,6 +13,9 @@ env:
 jobs:
   build:
     runs-on: windows-2022
+    strategy:
+      matrix:
+        configure_args: [ "", "-D ENABLE_LEGACY_ANIMATION=OFF" ]
 
     steps:
     - uses: actions/checkout@v4
@@ -29,7 +32,7 @@ jobs:
       run: |
         mkdir "${{env.BUILD_DIR}}"
         cd "${{env.BUILD_DIR}}"
-        cmake -D ENABLE_LINTER=ON  ..
+        cmake -D ENABLE_LINTER=ON ${{ matrix.configure_args }} ..
       shell: cmd
 
     - name: Build
