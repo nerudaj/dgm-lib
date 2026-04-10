@@ -36,9 +36,6 @@ namespace dgm
             view = defaultView;
         }
 
-        Camera(const Camera&) = delete;
-        Camera(Camera&&) = delete;
-
     protected:
         /**
          *  Container holding transform effect

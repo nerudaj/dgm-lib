@@ -1,3 +1,6 @@
+dgm-lib v3.x.x
+ * Copy and move constructors for `dgm::Camera` are now implicitly defined (previously explicitly deleted)
+
 dgm-lib v3.2.0
  * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`
     * Enums are now accepted, internally calling `std::to_underlying`
