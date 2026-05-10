@@ -41,6 +41,11 @@ jobs:
         cmake --build . --config Debug
       shell: cmd
 
+    - name: Install cppcheck
+      run: |
+        winget install -e --id Cppcheck.Cppcheck
+      shell: cmd
+
     - name: Cppcheck
       working-directory: ${{github.workspace}}
       run: |
