@@ -40,3 +40,13 @@ jobs:
       run: |
         cmake --build . --config Debug
       shell: cmd
+
+    - name: Cppcheck
+      working-directory: ${{github.workspace}}
+      run: |
+        cppcheck ./lib/src \
+        -I ./lib/include/ \
+        --enable=all \
+        --suppress=unusedFunction \
+        --suppress=missingIncludeSystem
+      shell: cmd
