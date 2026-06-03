@@ -144,7 +144,7 @@ TEST_CASE("Cout/cerr restoration", "App")
 {
     auto stdoutbackup = std::cout.rdbuf();
 
-    auto&& window = dgm::Window({ 0, 0 }, "", false);
+    auto&& window = dgm::Window({ 1u, 1u }, "", false);
     dgm::App* app = new dgm::App(window);
 
     REQUIRE(std::cout.rdbuf() != nullptr);
