@@ -54,4 +54,8 @@ jobs:
         cmake --build .
       shell: bash
 
-    # NOTE: No tests because X server is returning errors
+    - name: Test
+      working-directory: ${{env.BUILD_DIR}}
+      run: |
+        ctest --rerun-failed --output-on-failure
+      shell: cmd
