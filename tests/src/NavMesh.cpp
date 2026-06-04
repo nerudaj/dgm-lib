@@ -74,14 +74,17 @@ TEST_CASE("Constructing WorldNavMesh", "[WorldNavMesh]")
             points.begin(),
             points.end(),
             [](const sf::Vector2u& a, const sf::Vector2u& b) -> bool
-            { return a.x <= b.x && a.y <= b.y; });
+            {
+                if (a.x == b.x) return a.y <= b.y;
+                return a.x < b.x;
+            });
 
         REQUIRE(points.size() == 5);
         REQUIRE_SAME_VECTORS(points[0], sf::Vector2u(1, 2));
-        REQUIRE_SAME_VECTORS(points[1], sf::Vector2u(3, 2));
-        REQUIRE_SAME_VECTORS(points[2], sf::Vector2u(5, 2));
-        REQUIRE_SAME_VECTORS(points[3], sf::Vector2u(1, 4));
-        REQUIRE_SAME_VECTORS(points[4], sf::Vector2u(3, 4));
+        REQUIRE_SAME_VECTORS(points[1], sf::Vector2u(1, 4));
+        REQUIRE_SAME_VECTORS(points[2], sf::Vector2u(3, 2));
+        REQUIRE_SAME_VECTORS(points[3], sf::Vector2u(3, 4));
+        REQUIRE_SAME_VECTORS(points[4], sf::Vector2u(5, 2));
     }
 
     SECTION("Jump point connections")

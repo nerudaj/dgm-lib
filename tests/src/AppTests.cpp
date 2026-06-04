@@ -140,11 +140,11 @@ public:
     void draw() override {}
 };
 
-TEST_CASE("Cout/cerr restoration", "App")
+TEST_CASE("Cout/cerr restoration", "[App]")
 {
     auto stdoutbackup = std::cout.rdbuf();
 
-    auto&& window = dgm::Window({ 0, 0 }, "", false);
+    auto&& window = dgm::Window({ 1u, 1u }, "", false);
     dgm::App* app = new dgm::App(window);
 
     REQUIRE(std::cout.rdbuf() != nullptr);
@@ -156,10 +156,10 @@ TEST_CASE("Cout/cerr restoration", "App")
     REQUIRE(std::cout.rdbuf() == stdoutbackup);
 }
 
-TEST_CASE("App")
+TEST_CASE("General appstate tests", "[App]")
 {
     Reporter reporter;
-    auto&& window = dgm::Window({ 1u, 1u }, "", false);
+    auto&& window = dgm::Window({ 0u, 0u }, "", false);
     dgm::App app(window);
 
     SECTION("input/update/draw are called even with pop in the middle")

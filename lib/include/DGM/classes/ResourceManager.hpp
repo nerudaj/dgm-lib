@@ -8,6 +8,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <algorithm>
 
 #ifdef ANDROID
 #include <SFML/System/NativeActivity.hpp>
@@ -310,6 +311,7 @@ namespace dgm
                 for (auto&& [id, _] : data.at(typeHash))
                     result.push_back(id);
 
+                std::sort(result.begin(), result.end());
                 return result;
             }
             catch (const std::exception& e)
