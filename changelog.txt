@@ -2,6 +2,7 @@ dgm-lib v3.x.x
  * Copy and move constructors for `dgm::Camera` are now implicitly defined (previously explicitly deleted)
  * All CMake configure options are now prefixed with `DGM_`
 	* Old options are available until next release, but are deprecated
+ * `dgm::TileMap` now handles negative values in image data (via `std::abs`)
 
 dgm-lib v3.2.0
  * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`

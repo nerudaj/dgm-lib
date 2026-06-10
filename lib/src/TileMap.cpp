@@ -70,7 +70,9 @@ void dgm::TileMap::build(
             changeTile(
                 static_cast<uint32_t>(x),
                 static_cast<uint32_t>(y),
-                imageData[y * dataSize.x + x]);
+                // Negative values are often used to denote empty space for collisions
+                // and the absolute value is the tile index
+                std::abs(imageData[y * dataSize.x + x]));
         }
     }
 }
