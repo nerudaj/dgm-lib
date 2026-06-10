@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-2022
     strategy:
       matrix:
-        configure_args: [ "", "-D ENABLE_LEGACY_ANIMATION=OFF" ]
+        configure_args: [ "", "-D DGM_ENABLE_LEGACY_ANIMATION=OFF" ]
 
     steps:
     - uses: actions/checkout@v4

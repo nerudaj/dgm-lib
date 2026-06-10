@@ -35,7 +35,7 @@ namespace dgm
          *  \brief Construct animation object from states and required FPS
          *
          *  The states are not copied! They must outlive the animation object.
-         *  (only applies if ENABLE_LEGACY_ANIMATION was ON during CMake
+         *  (only applies if DGM_ENABLE_LEGACY_ANIMATION was ON during CMake
          * configure)
          */
         explicit Animation(

@@ -51,15 +51,15 @@ Dependencies are managed via CPM. Latest CPM script is downloaded during configu
 
 Project has following options:
 
- * `ENABLE_TESTS` - Default: ON. When enabled, unit-tests target is created.
- * `ENABLE_EXAMPLES` - Default: ON. When enabled, example targets are created.
- * `ENABLE_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
- * `BOOTSTRAP_CPM` - Default: ON. When enable, newest version of CMake Package Manager is downloaded and included. This is required for dependencies. Only turn OFF when your project is also using CPM.
- * `OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
- * `DONT_LOOK_FOR_SFML` - Default: OFF. When enabled, CMake won't attempt to locate SFML through `find_package`.
- * `DONT_FETCH_SFML` - Default: OFF. When enabled, CMake won't bring in SFML through CPM.
+ * `DGM_BUILD_TESTS` - Default: ON. When enabled, unit-tests target is created.
+ * `DGM_BUILD_EXAMPLES` - Default: ON. When enabled, example targets are created.
+ * `DGM_BUILD_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
+ * `DGM_BOOTSTRAP_CPM` - Default: ON. When enable, newest version of CMake Package Manager is downloaded and included. This is required for dependencies. Only turn OFF when your project is also using CPM.
+ * `DGM_OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
+ * `DGM_DONT_LOOK_FOR_SFML` - Default: OFF. When enabled, CMake won't attempt to locate SFML through `find_package`.
+ * `DGM_DONT_FETCH_SFML` - Default: OFF. When enabled, CMake won't bring in SFML through CPM.
 
-`ENABLE_*` and `BOOTSTRAP_CPM` options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts. The `DONT_LOOK_FOR_SFML` and `DONT_FETCH_SFML` are used to affect how SFML is sourced into the library. If you for example use both TGUI and dgm-lib, you want to ensure both these libraries are using the same version of SFML. Therefore, you can disable automatic fetching. On the other hand, if you only want to use SFLM from within dgm-lib, you can save time during configure by not looking for SFML and fetching it through CPM right away.
+`ENABLE_*` and `DGM_BOOTSTRAP_CPM` options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts. The `DGM_DONT_LOOK_FOR_SFML` and `DGM_DONT_FETCH_SFML` are used to affect how SFML is sourced into the library. If you for example use both TGUI and dgm-lib, you want to ensure both these libraries are using the same version of SFML. Therefore, you can disable automatic fetching. On the other hand, if you only want to use SFLM from within dgm-lib, you can save time during configure by not looking for SFML and fetching it through CPM right away.
 
 ## Documentation
 
