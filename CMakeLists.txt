@@ -54,7 +54,7 @@ include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
 if ( ${DGM_BOOTSTRAP_CPM} )
-    DGM_BOOTSTRAP_CPM ()
+    bootstrap_cpm ()
 endif ()
 
 message ( "Generator used: ${CMAKE_GENERATOR}" )
