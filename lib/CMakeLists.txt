@@ -2,7 +2,7 @@ cmake_minimum_required ( VERSION 3.26 )
 
 set ( TARGET dgm-lib )
 
-if ( ${ENABLE_LINTER} )
+if ( ${DGM_ENABLE_LINTER} )
     set ( MAKE_LIBRARY_OPTIONS ENABLE_LINTER )
 endif()
 
@@ -27,7 +27,7 @@ target_link_libraries ( ${TARGET}
     PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
 
-if ( ${ENABLE_LEGACY_ANIMATION} )
+if ( ${DGM_ENABLE_LEGACY_ANIMATION} )
 	target_compile_definitions( ${TARGET} PUBLIC LEGACY_ANIMATION=1 )
 endif ()
 
