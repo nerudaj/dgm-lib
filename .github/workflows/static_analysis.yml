@@ -30,9 +30,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        mkdir "${{env.BUILD_DIR}}"
-        cd "${{env.BUILD_DIR}}"
-        cmake -D DGM_ENABLE_LINTER=ON ${{ matrix.configure_args }} ..
+        cmake -B "${{env.BUILD_DIR}}" -D DGM_ENABLE_LINTER=ON ${{ matrix.configure_args }} -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
       shell: cmd
 
     - name: Build
