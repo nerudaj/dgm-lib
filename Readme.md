@@ -16,24 +16,24 @@ This project is an extension library for [SFML](http://sfml-dev.org). The librar
 ```
 mkdir _build
 cd _build
-cmake ..
-cmake --build . --config Debug
+cmake -B _build -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
+cmake --build _build --config Debug
 ```
 
 * Windows + Clang
 ```
-mkdir _build
-cd _build
-cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++ ..
+cmake -B _build -G Ninja -D CMAKE_CXX_COMPILER=clang++ -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON .
+cmake --build _build
 ```
 
 * Ubuntu
-```
-mkdir _build
-cd _build
-cmake -G Ninja -D CMAKE_CXX_COMPILER=clang++-21 -D CMAKE_C_COMPILER=clang-21 ..
-```
 
+Clang 18 and above should be fine for compilation
+
+```
+cmake -B _build -G Ninja -D CMAKE_CXX_COMPILER=clang++-18 -D CMAKE_C_COMPILER=clang-18 -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON .
+cmake --build _build
+```
 
 ## Integration
 

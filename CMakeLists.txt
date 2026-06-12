@@ -57,25 +57,6 @@ if ( ${DGM_BOOTSTRAP_CPM} )
     bootstrap_cpm ()
 endif ()
 
-message ( "Generator used: ${CMAKE_GENERATOR}" )
-
-if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
-    message ( "Building for Android" )
-elseif ( "${CMAKE_GENERATOR}" STREQUAL "Ninja" )
-    message ( "Ninja generator used, not setting CMAKE_GENERATOR_PLATFORM" )
-else ()
-    if (  "${CMAKE_GENERATOR_PLATFORM}" STREQUAL "" )
-        message ("CMAKE_GENERATOR_PLATFORM not set, defaulting to x64")
-        set ( CMAKE_GENERATOR_PLATFORM x64 )
-    else()
-        message ("Detected CMAKE_GENERATOR_PLATFORM: '${CMAKE_GENERATOR_PLATFORM}'" )
-    endif ()
-endif ()
-
-
-set ( CMAKE_CXX_STANDARD 23 )
-set ( CMAKE_CXX_STANDARD_REQUIRED ON )
-
 get_version_from_git (
     PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
     FULL_VERSION_VARIABLE FULL_PROJECT_VERSION

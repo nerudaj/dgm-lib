@@ -28,7 +28,7 @@ jobs:
       run: |
         mkdir "${{github.workspace}}/Debug"
         cd "${{github.workspace}}/Debug"
-        cmake .. -D BUILD_TESTS=OFF BUILD_EXAMPLES=OFF
+        cmake .. -D BUILD_TESTS=OFF -B BUILD_EXAMPLES=OFF -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64
         cmake --build . --config Debug
         cpack -C Debug
     
@@ -36,7 +36,7 @@ jobs:
       run: |
         mkdir "${{github.workspace}}/Release"
         cd "${{github.workspace}}/Release"
-        cmake .. -D BUILD_TESTS=OFF BUILD_EXAMPLES=OFF
+        cmake .. -D BUILD_TESTS=OFF -D BUILD_EXAMPLES=OFF -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64
         cmake --build . --config Release
         cpack -C Release
 
