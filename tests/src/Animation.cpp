@@ -62,6 +62,14 @@ TEST_CASE("[Animation]")
             == dgm::Animation::PlaybackStatus::Playing);
     }
 
+    SECTION("Non-looping state reports last valid frame after finishing")
+    {
+        animation.setSpeed(120);     // 8.3 ms per frame
+        animation.setState("first"); // 2-frame clip
+        REQUIRE(animation.update(_25msElapsed) == dgm::Animation::PlaybackStatus::Finished);
+        REQUIRE(animation.getCurrentFrameIndex() == 1u);
+    }
+
 #ifndef LEGACY_ANIMATION
     SECTION("Copy works correctly")
     {

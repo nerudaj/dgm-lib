@@ -4,6 +4,7 @@
 #include <DGM/classes/Compatibility.hpp>
 #include <DGM/classes/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <algorithm>
 #include <cmath>
 #include <functional>
 #include <map>
@@ -122,7 +123,7 @@ namespace dgm
 #endif
         [[nodiscard]] constexpr size_t getCurrentFrameIndex() const noexcept
         {
-            return currentFrameIndex;
+            return std::clamp(currentFrameIndex, size_t{0}, getCurrentStateFrameCount() - 1u);
         }
 
         [[nodiscard]] size_t getCurrentStateFrameCount() const noexcept

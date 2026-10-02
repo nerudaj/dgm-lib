@@ -3,6 +3,7 @@ dgm-lib v3.x.x
  * All CMake configure options are now prefixed with `DGM_`
 	* Old options are available until next release, but are deprecated
  * `dgm::TileMap` now handles negative values in image data (via `std::abs`)
+ * `dgm::Animation::getCurrentFrameIndex` returns last valid frame index after non-looping animation finished
 
 dgm-lib v3.2.0
  * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`
