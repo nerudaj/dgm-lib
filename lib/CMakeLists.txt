@@ -25,6 +25,8 @@ target_link_libraries ( ${TARGET}
     PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
 
+target_compile_features( ${TARGET} PUBLIC cxx_std_23 )
+
 if ( ${DGM_ENABLE_LEGACY_ANIMATION} )
 	target_compile_definitions( ${TARGET} PUBLIC LEGACY_ANIMATION=1 )
 endif ()
