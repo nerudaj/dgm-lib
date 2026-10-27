@@ -5,7 +5,7 @@ add_executable ( ${TARGET} WIN32
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE dgm::dgm-lib
+	PRIVATE dgm::dgm-lib
 )
 
 apply_compile_options ( ${TARGET} )

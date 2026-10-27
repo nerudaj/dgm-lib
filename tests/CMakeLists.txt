@@ -12,7 +12,7 @@ add_executable ( ${TARGET}
 )
 
 target_include_directories( ${TARGET}
-	PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+	PRIVATE  "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
 target_link_libraries ( ${TARGET}

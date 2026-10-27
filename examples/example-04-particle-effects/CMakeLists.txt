@@ -10,7 +10,7 @@ add_executable ( ${TARGET} WIN32
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE examples-common
+	PRIVATE examples-common
 )
 
 set_target_properties( ${TARGET} PROPERTIES

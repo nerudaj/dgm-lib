@@ -10,4 +10,4 @@ CPMAddPackage("gh:nerudaj/dgm-lib#${GIT_BRANCH}")
 
 add_executable ( ${PROJECT_NAME} Main.cpp )
 
-target_link_libraries ( ${PROJECT_NAME} dgm::dgm-lib )
+target_link_libraries ( ${PROJECT_NAME} PRIVATE dgm::dgm-lib )
