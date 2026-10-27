@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.22 )
-
 set ( TARGET examples-shared )
 
 add_library ( ${TARGET} STATIC
@@ -19,7 +17,7 @@ target_include_directories ( ${TARGET}
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PUBLIC dgm::dgm-lib
+	PUBLIC dgm::dgm-lib
 )
 
 set_target_properties( ${TARGET} PROPERTIES

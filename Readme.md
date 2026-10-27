@@ -25,7 +25,7 @@ AI-generated contributions are prohibited, because other OSS projects could lose
 
 ## Requirements
 
-* CMake v3.28 or newer
+* CMake v3.31 or newer
 * Microsoft Visual Studio 2022 v17.3 or newer
 * OR clang 20 (or newer) + Ninja
 

@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET "example-04-particle-effects" )
 
 add_executable ( ${TARGET} WIN32
@@ -12,7 +10,7 @@ add_executable ( ${TARGET} WIN32
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE examples-common
+	PRIVATE examples-common
 )
 
 set_target_properties( ${TARGET} PROPERTIES
