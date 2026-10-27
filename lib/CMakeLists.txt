@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET dgm-lib )
 
 if ( ${DGM_ENABLE_LINTER} )

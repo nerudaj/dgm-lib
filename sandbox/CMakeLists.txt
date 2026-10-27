@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET sandbox )
 
 add_executable ( ${TARGET} WIN32

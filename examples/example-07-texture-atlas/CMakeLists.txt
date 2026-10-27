@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.19 )
-
 set ( TARGET "example-07-texture-atlas" )
 
 add_executable ( ${TARGET} WIN32

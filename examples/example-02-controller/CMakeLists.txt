@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET "example-02-controller" )
 
 add_executable ( ${TARGET} WIN32
