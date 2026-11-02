@@ -43,7 +43,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake -B "${{env.BUILD_DIR}}" -G Ninja -D CMAKE_C_COMPILER=clang-${{ matrix.clang }} -D CMAKE_CXX_COMPILER=clang++-${{ matrix.clang }} -D SFML_STATIC_LIBRARIES=OFF -D SFML_USE_SYSTEM_DEPS=OFF -D SFML_USE_SYSTEM_DEPS_DEFAULT=OFF .
+        cmake -B "${{env.BUILD_DIR}}" -G Ninja -D CMAKE_C_COMPILER=clang-${{ matrix.clang }} -D CMAKE_CXX_COMPILER=clang++-${{ matrix.clang }} -D FT_DISABLE_HARFBUZZ=ON -D SFML_STATIC_LIBRARIES=OFF -D SFML_USE_SYSTEM_DEPS=OFF -D SFML_USE_SYSTEM_DEPS_DEFAULT=OFF .
       shell: bash
 
     - name: Build
