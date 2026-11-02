@@ -90,12 +90,12 @@ if ( ${DGM_BUILD_TESTS} )
     enable_testing()
 endif ()
 
-set ( SFML_VERSION "3.0.1" )
+set ( SFML_VERSION "3.1.0" )
 
 # Dependencies
 find_or_fetch_dependency(
 	PACKAGE_NAME SFML
-	VERSION 3.0
+	VERSION 3.1
 	CPM_URL "gh:SFML/SFML#${SFML_VERSION}"
 	COMPONENTS System Window Graphics
 	DONT_LOOK ${DGM_DONT_LOOK_FOR_SFML}
