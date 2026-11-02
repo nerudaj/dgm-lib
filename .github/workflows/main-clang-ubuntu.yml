@@ -45,7 +45,7 @@ jobs:
 
     - name: Build
       run: |
-        cmake --build --preset clang-build-debug
+        cmake --build --preset clang-debug-build
       shell: bash
 
     # Once CMake is updated to 4+, this can be uncommented
