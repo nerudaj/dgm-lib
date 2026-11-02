@@ -13,9 +13,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        clang: [20, 21]
 
     steps:
     - uses: actions/checkout@v4
@@ -28,14 +25,14 @@ jobs:
     - name: Setup SFML development libraries
       run: |
         sudo apt update
-        sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev
+        sudo apt install libc++-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev
       shell: bash
     
-    - name: Install Clang ${{ matrix.clang }}
+    - name: Install Clang 18
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
-        sudo ./llvm.sh ${{ matrix.clang }}
+        sudo ./llvm.sh 18
       shell: bash
 
     - name: Check cmake version
