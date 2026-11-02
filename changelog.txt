@@ -1,4 +1,4 @@
-dgm-lib v3.x.x
+dgm-lib v3.3.0
  * Copy and move constructors for `dgm::Camera` are now implicitly defined (previously explicitly deleted)
  * All CMake configure options are now prefixed with `DGM_`
 	* Old options are available until next release, but are deprecated
