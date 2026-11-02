@@ -9,7 +9,7 @@ on:
 jobs:
   cppcheck:
     name: Run Cppcheck
-    runs-on: ubuntu-latest  # You can also use windows-latest or macos-latest
+    runs-on: ubuntu-24.04  # You can also use windows-latest or macos-latest
 
     steps:
       # Step 1: Checkout repository
