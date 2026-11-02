@@ -7,6 +7,7 @@ dgm-lib v3.3.0
 	* Old options are available until next release, but are deprecated
  * `dgm::TileMap` now handles negative values in image data (via `std::abs`)
  * `dgm::Animation::getCurrentFrameIndex` returns last valid frame index after non-looping animation finished
+ * All code pertaining to "legacy animation" was removed
 
 dgm-lib v3.2.0
  * Added convenience overloads for `dgm::Clip::getFrame` and `dgm::Clip::getFrameUnchecked`

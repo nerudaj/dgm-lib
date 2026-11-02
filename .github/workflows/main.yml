@@ -13,9 +13,6 @@ env:
 jobs:
   build:
     runs-on: windows-2022
-    strategy:
-      matrix:
-        configure_args: [ "", "-D DGM_ENABLE_LEGACY_ANIMATION=OFF" ]
 
     steps:
     - uses: actions/checkout@v4
@@ -30,7 +27,7 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake -B "${{env.BUILD_DIR}}" ${{matrix.configure_args}} -D CMAKE_GENERATOR_PLATFORM=x64 .
+        cmake -B "${{env.BUILD_DIR}}" -D CMAKE_GENERATOR_PLATFORM=x64 .
       shell: cmd
 
     - name: Build

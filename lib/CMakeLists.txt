@@ -27,10 +27,6 @@ target_link_libraries ( ${TARGET}
 
 target_compile_features( ${TARGET} PUBLIC cxx_std_23 )
 
-if ( ${DGM_ENABLE_LEGACY_ANIMATION} )
-	target_compile_definitions( ${TARGET} PUBLIC LEGACY_ANIMATION=1 )
-endif ()
-
 if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
     install (
         DIRECTORY    "${CMAKE_CURRENT_SOURCE_DIR}/include"
