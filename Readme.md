@@ -45,11 +45,11 @@ cmake --build _build
 
 * Ubuntu
 
-Clang 18 and above should be fine for compilation
+You need to have clang18 installed. With that, you can use a preset:
 
 ```
-cmake -B _build -G Ninja -D CMAKE_CXX_COMPILER=clang++-18 -D CMAKE_C_COMPILER=clang-18 -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON .
-cmake --build _build
+cmake --preset clang-debug
+cmake --build --preset build-clang-debug
 ```
 
 ## Integration
