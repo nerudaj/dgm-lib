@@ -33,8 +33,6 @@ AI-generated contributions are prohibited, because other OSS projects could lose
 
 * Windows + MSVC:
 ```
-mkdir _build
-cd _build
 cmake -B _build -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
 cmake --build _build --config Debug
 ```
