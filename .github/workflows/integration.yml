@@ -33,12 +33,12 @@ jobs:
     - name: Setup cmake
       uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '3.26.1'
+        cmake-version: '3.31.1'
 
     - name: Configure
       working-directory: ${{env.IT_DIR}}/${{matrix.case}}
       run: |
-        cmake -B _build -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} -D LATEST_TAG=${{ steps.dgm.outputs.release }} -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
+        cmake -B _build -D GIT_BRANCH=${{ steps.branch-names.outputs.current_branch }} -D LATEST_TAG=${{ steps.dgm.outputs.release }} -D CMAKE_GENERATOR_PLATFORM=x64 .
       shell: cmd
 
     - name: Build

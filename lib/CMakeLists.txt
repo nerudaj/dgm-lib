@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET dgm-lib )
 
 if ( ${DGM_ENABLE_LINTER} )
@@ -26,6 +24,8 @@ target_link_libraries ( ${TARGET}
     PUBLIC SFML::System SFML::Window SFML::Graphics ${EXTRA_WINDOWS_LIBS} ${EXTRA_ANDROID_LIBS} ${EXTRA_LINUX_LIBS}
     PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
+
+target_compile_features( ${TARGET} PUBLIC cxx_std_23 )
 
 if ( ${DGM_ENABLE_LEGACY_ANIMATION} )
 	target_compile_definitions( ${TARGET} PUBLIC LEGACY_ANIMATION=1 )

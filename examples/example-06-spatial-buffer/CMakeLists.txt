@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.19 )
-
 set ( TARGET "example-06-spatial-buffer" )
 
 add_executable ( ${TARGET} WIN32
@@ -7,7 +5,7 @@ add_executable ( ${TARGET} WIN32
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE examples-common
+	PRIVATE examples-common
 )
 
 set_target_properties( ${TARGET} PROPERTIES

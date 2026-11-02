@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.26 )
-
 set ( TARGET sandbox )
 
 add_executable ( ${TARGET} WIN32
@@ -7,7 +5,7 @@ add_executable ( ${TARGET} WIN32
 )
 
 target_link_libraries ( ${TARGET}
-	LINK_PRIVATE dgm::dgm-lib
+	PRIVATE dgm::dgm-lib
 )
 
 apply_compile_options ( ${TARGET} )
