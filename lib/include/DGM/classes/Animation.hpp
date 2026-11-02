@@ -34,10 +34,6 @@ namespace dgm
     public:
         /**
          *  \brief Construct animation object from states and required FPS
-         *
-         *  The states are not copied! They must outlive the animation object.
-         *  (only applies if DGM_ENABLE_LEGACY_ANIMATION was ON during CMake
-         * configure)
          */
         explicit Animation(
             const AnimationStates& states, int framesPerSecond = 30);
@@ -76,11 +72,7 @@ namespace dgm
 
         [[nodiscard]] bool hasClipFinishedPlaying() const noexcept
         {
-#ifdef LEGACY_ANIMATION
-            return currentFrameIndex >= currentState->second.getFrameCount();
-#else
             return currentFrameIndex >= currentStateFrameCount;
-#endif
         }
 
         constexpr void setLooping(bool enabled) noexcept
@@ -102,11 +94,7 @@ namespace dgm
          */
         [[nodiscard]] const std::string& getStateName() const noexcept
         {
-#ifdef LEGACY_ANIMATION
-            return currentState->first;
-#else
             return currentStateName;
-#endif
         }
 
         [[nodiscard]] constexpr bool isLooping() const noexcept
@@ -114,13 +102,6 @@ namespace dgm
             return looping;
         }
 
-#ifdef LEGACY_ANIMATION
-        [[nodiscard,
-          deprecated]] const sf::IntRect& getCurrentFrame() const noexcept
-        {
-            return currentState->second.getFrame(currentFrameIndex);
-        }
-#endif
         [[nodiscard]] constexpr size_t getCurrentFrameIndex() const noexcept
         {
             return std::clamp(currentFrameIndex, size_t{0}, getCurrentStateFrameCount() - 1u);
@@ -128,11 +109,7 @@ namespace dgm
 
         [[nodiscard]] size_t getCurrentStateFrameCount() const noexcept
         {
-#ifdef LEGACY_ANIMATION
-            return currentState->second.getFrameCount();
-#else
             return currentStateFrameCount;
-#endif
         }
 
         /**
@@ -145,14 +122,9 @@ namespace dgm
         }
 
     private:
-#ifdef LEGACY_ANIMATION
-        const AnimationStates& states;
-        AnimationStates::const_iterator currentState;
-#else
         std::unordered_map<std::string, size_t> states;
         std::string currentStateName;
         size_t currentStateFrameCount = 0;
-#endif
         sf::Time elapsedTime = sf::seconds(0);
         sf::Time timePerFrame = sf::seconds(0);
         std::size_t currentFrameIndex = 0;
