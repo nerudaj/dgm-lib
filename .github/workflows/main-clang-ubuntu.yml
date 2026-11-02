@@ -49,9 +49,4 @@ jobs:
       shell: bash
 
     # Github Actions don't have X server and therefore
-    # some tests cannot pass, so we need to exclude them
-    - name: Test
-      working-directory: ${{env.BUILD_DIR}}
-      run: |
-        ctest --rerun-failed --output-on-failure -- ~[App]
-      shell: bash
+    # some tests cannot pass
