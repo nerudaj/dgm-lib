@@ -7,7 +7,7 @@ project ( fetch_release )
 message ( "Git branch: ${GIT_BRANCH}" )
 message ( "Latest tag: ${LATEST_TAG}" )
 
-set ( SFML_VERSION "3.1.0" )
+set ( SFML_VERSION "3.0.1" )
 
 # Fetch zips with compiled libraries
 # fetch_prebuilt_dependency comes from cpp-init, internally calls FetchContent_Declare/MakeAvailable
