@@ -4,8 +4,6 @@ include ( "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/cpp-init.cmake" )
 
 project ( fetch_release )
 
-cpp_init()
-
 message ( "Git branch: ${GIT_BRANCH}" )
 message ( "Latest tag: ${LATEST_TAG}" )
 

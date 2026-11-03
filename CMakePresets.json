@@ -39,9 +39,19 @@
             "configuration": "Debug"
         },
         {
+            "name": "clang-release",
+            "configurePreset": "clang",
+            "configuration": "Release"
+        },
+        {
             "name": "msvc-2022",
             "configurePreset": "msvc-2022",
             "configuration": "Debug"
+        },
+        {
+            "name": "msvc-2022-release",
+            "configurePreset": "msvc-2022",
+            "configuration": "Release"
         }
     ],
     "testPresets": [
@@ -54,9 +64,25 @@
             }
         },
         {
+            "name": "clang-release",
+            "configurePreset": "clang",
+            "configuration": "Release",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
             "name": "msvc-2022",
             "configurePreset": "msvc-2022",
             "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "msvc-2022-release",
+            "configurePreset": "msvc-2022",
+            "configuration": "Release",
             "output": {
                 "outputOnFailure": true
             }

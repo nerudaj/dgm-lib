@@ -12,7 +12,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY nerudaj/dgm-lib
     GIT_TAG ${GIT_BRANCH}
     OPTIONS
-        DONT_FETCH_JSON ON
+        DGM_DONT_FETCH_JSON ON
 )
 
 add_executable ( ${PROJECT_NAME} Main.cpp )

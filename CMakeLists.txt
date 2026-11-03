@@ -4,18 +4,6 @@ cmake_minimum_required ( VERSION 3.31 )
 set ( DGM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
 set ( DGM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
 
-# Deprecated options, will be removed after the next release
-option ( ENABLE_TESTS "Deprecated, use DGM_BUILD_TESTS instead" OFF )
-option ( ENABLE_SANDBOX "Deprecated, use DGM_BUILD_SANDBOX instead" OFF )
-option ( ENABLE_EXAMPLES "Deprecated, use DGM_BUILD_EXAMPLES instead" OFF )
-option ( ENABLE_LINTER "Deprecated, use DGM_ENABLE_LINTER instead" OFF )
-option ( BOOTSTRAP_CPM "Deprecated, use DGM_BOOTSTRAP_CPM instead" OFF )
-option ( OVERRIDE_RUNTIME_OUTPUT_DIR "Deprecated, use DGM_OVERRIDE_RUNTIME_OUTPUT_DIR instead" OFF )
-option ( DONT_LOOK_FOR_SFML "Deprecated, use DGM_DONT_LOOK_FOR_SFML instead" OFF )
-option ( DONT_FETCH_SFML "Deprecated, use DGM_DONT_FETCH_SFML instead" OFF )
-option ( DONT_LOOK_FOR_JSON "Deprecated, use DGM_DONT_LOOK_FOR_JSON instead" OFF )
-option ( DONT_FETCH_JSON "Deprecated, use DGM_DONT_FETCH_JSON instead" OFF )
-
 # Configure options
 option ( DGM_BUILD_TESTS "Generate unit test target" ON )
 option ( DGM_BUILD_SANDBOX "Generate sandbox target" ON )
@@ -26,31 +14,13 @@ option ( DGM_OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT
 option ( DGM_DONT_LOOK_FOR_SFML "Don't look for SFML, use CPM to download it" OFF )
 option ( DGM_DONT_FETCH_SFML "Don't auto-fetch SFML, fail if not found" OFF )
 option ( DGM_DONT_LOOK_FOR_JSON "Don't look for nlohmann::json, use CPM to download it" OFF )
-option ( DGM_DONT_FETCH_JSON "Don't auto-fetch SFML, fail if not found" OFF )
-
-# This will be removed alongside deprecated options
-macro ( set_if_true dst src )
-    if (${src})
-        set ( dst ON )
-    endif ()
-endmacro()
-
-set_if_true( DGM_BUILD_TESTS ENABLE_TESTS )
-set_if_true( DGM_BUILD_SANDBOX ENABLE_SANDBOX )
-set_if_true( DGM_BUILD_EXAMPLES ENABLE_EXAMPLES )
-set_if_true( DGM_ENABLE_LINTER ENABLE_LINTER )
-set_if_true( DGM_BOOTSTRAP_CPM BOOTSTRAP_CPM )
-set_if_true( DGM_OVERRIDE_RUNTIME_OUTPUT_DIR OVERRIDE_RUNTIME_OUTPUT_DIR )
-set_if_true( DGM_DONT_LOOK_FOR_SFML DONT_LOOK_FOR_SFML )
-set_if_true( DGM_DONT_FETCH_SFML DONT_FETCH_SFML )
-set_if_true( DGM_DONT_LOOK_FOR_JSON DONT_LOOK_FOR_JSON )
-set_if_true( DGM_DONT_FETCH_JSON DONT_FETCH_JSON )
+option ( DGM_DONT_FETCH_JSON "Don't auto-fetch nlohmann::json, fail if not found" OFF )
 
 # CppInit
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
-if ( ${DGM_BOOTSTRAP_CPM} )
+if ( DGM_BOOTSTRAP_CPM AND NOT COMMAND CPMAddPackage )
     bootstrap_cpm ()
 endif ()
 

@@ -1,5 +1,6 @@
 dgm-lib v3.x.x
  * Bump SFML to v3.1.0
+ * All CMake configure options that were not prefixed with `DGM_` are now removed
 
 dgm-lib v3.3.0
  * Copy and move constructors for `dgm::Camera` are now implicitly defined (previously explicitly deleted)

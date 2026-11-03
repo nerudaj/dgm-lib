@@ -39,23 +39,6 @@ function ( bootstrap_cpm )
     include ( "${CMAKE_CURRENT_BINARY_DIR}/get_cpm.cmake" )
 endfunction ()
 
-# Macro: set_cpp23_x64
-# Description: Sets the CMake generator platform to x64 and configures the C++ standard to C++23, ensuring that it is required.
-# Arguments: None
-macro ( set_cpp23_x64 )
-    set ( CMAKE_GENERATOR_PLATFORM     x64 )
-    set ( CMAKE_CXX_STANDARD		   23 )
-    set ( CMAKE_CXX_STANDARD_REQUIRED  ON )
-endmacro () 
-
-# Macro: cpp-init
-# Description: Initializes the project by calling the bootstrap_cpm function to set up CPM.cmake and the set_cpp23_x64 macro to configure the C++ standard and platform.
-# Arguments: None
-macro( cpp_init )
-    bootstrap_cpm()
-    set_cpp23_x64()
-endmacro ()
-
 # Function: glob_headers_and_sources
 # Description: Recursively globs header and source files, organizes them into source groups, and sets the output variables with the discovered files.
 # Arguments:

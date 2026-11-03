@@ -12,7 +12,7 @@ CPMAddPackage(
     GITHUB_REPOSITORY nerudaj/dgm-lib
     GIT_TAG ${GIT_BRANCH}
     OPTIONS
-        DONT_FETCH_SFML ON
+        DGM_DONT_FETCH_SFML ON
 )
 
 add_executable ( ${PROJECT_NAME} Main.cpp )
