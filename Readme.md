@@ -35,8 +35,8 @@ AI-generated contributions are prohibited, because other OSS projects could lose
 
 ```
 cmake --preset msvc-2022
-cmake --build --preset msvc-2022 [--config Release]
-ctest --preset msvc-2022 [-C Release]
+cmake --build --preset msvc-2022[-release]
+ctest --preset msvc-2022[-release]
 ```
 
 Or you can just open the folder in Visual Studio if you have the CMake tools installed.
@@ -45,8 +45,8 @@ Or you can just open the folder in Visual Studio if you have the CMake tools ins
 
 ```
 cmake --preset clang
-cmake --build --preset clang [--config Release]
-ctest --preset clang [-C Release]
+cmake --build --preset clang[-release]
+ctest --preset clang[-release]
 ```
 
 ### Ubuntu-based systems
@@ -56,8 +56,8 @@ and installed newer clang via `llvm.sh`, it is available under `clang++-<version
 
 ```sh
 cmake --preset clang
-cmake --build --preset clang [--config Release]
-ctest --preset clang [-C Release]
+cmake --build --preset clang[-release]
+ctest --preset clang[-release]
 ```
 
 ## Integration
@@ -79,12 +79,15 @@ Project has following options:
  * `DGM_BUILD_TESTS` - Default: ON. When enabled, unit-tests target is created.
  * `DGM_BUILD_EXAMPLES` - Default: ON. When enabled, example targets are created.
  * `DGM_BUILD_SANDBOX` - Default: ON. When enabled, simple sandbox target with window is created so developer can play around with features.
+ * `DGM_ENABLE_LINTER` - Default: OFF. MSVC only. When enabled, clang-tidy is enabled for MSVC builds. It is off by default because it doubles build times.
  * `DGM_BOOTSTRAP_CPM` - Default: ON. When enable, newest version of CMake Package Manager is downloaded and included. This is required for dependencies. Only turn OFF when your project is also using CPM.
  * `DGM_OVERRIDE_RUNTIME_OUTPUT_DIR` - Default: ON. When enabled, all runtime build artifacts (dlls and exes), even those from depedencies are compiled into one common folder (`${CMAKE_BINARY_DIR}/Compiled`). This way executables can be run right away without worrying about DLL lookup.
  * `DGM_DONT_LOOK_FOR_SFML` - Default: OFF. When enabled, CMake won't attempt to locate SFML through `find_package`.
  * `DGM_DONT_FETCH_SFML` - Default: OFF. When enabled, CMake won't bring in SFML through CPM.
+ * `DGM_DONT_LOOK_FOR_JSON` - Default: OFF. When enabled, CMake won't attempt to locate nlohmann::json through `find_package`.
+ * `DGM_DONT_FETCH_JSON` - Default: OFF. WHen enabled, CMake won't bring in nlohmann::json through CPM.
 
-`ENABLE_*` and `DGM_BOOTSTRAP_CPM` options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts. The `DGM_DONT_LOOK_FOR_SFML` and `DGM_DONT_FETCH_SFML` are used to affect how SFML is sourced into the library. If you for example use both TGUI and dgm-lib, you want to ensure both these libraries are using the same version of SFML. Therefore, you can disable automatic fetching. On the other hand, if you only want to use SFLM from within dgm-lib, you can save time during configure by not looking for SFML and fetching it through CPM right away.
+`DGM_BUILD_*` and options are disabled when the library is used as a dependency to improve build times and to ensure proper placement of build artifacts. The `DGM_DONT_LOOK_FOR_SFML` and `DGM_DONT_FETCH_SFML` are used to affect how SFML is sourced into the library. If you for example use both TGUI and dgm-lib, you want to ensure both these libraries are using the same version of SFML. Therefore, you can disable automatic fetching. On the other hand, if you only want to use SFLM from within dgm-lib, you can save time during configure by not looking for SFML and fetching it through CPM right away. Same applies for `DGM_DONT_LOOK_FOR_JSON`/`DGM_DONT_FETCH_JSON`
 
 ## Documentation
 
@@ -99,7 +102,7 @@ This project depends on couple other projects:
 * nlohmann/json
 * catch2 (unit-tests target)
 
-These are fetched automatically through CMake FetchContent.
+These are fetched automatically through CMake CPM.
 
 ## Versioning
 

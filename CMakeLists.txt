@@ -14,13 +14,13 @@ option ( DGM_OVERRIDE_RUNTIME_OUTPUT_DIR "Specify value for CMAKE_RUNTIME_OUTPUT
 option ( DGM_DONT_LOOK_FOR_SFML "Don't look for SFML, use CPM to download it" OFF )
 option ( DGM_DONT_FETCH_SFML "Don't auto-fetch SFML, fail if not found" OFF )
 option ( DGM_DONT_LOOK_FOR_JSON "Don't look for nlohmann::json, use CPM to download it" OFF )
-option ( DGM_DONT_FETCH_JSON "Don't auto-fetch SFML, fail if not found" OFF )
+option ( DGM_DONT_FETCH_JSON "Don't auto-fetch nlohmann::json, fail if not found" OFF )
 
 # CppInit
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
-if ( ${DGM_BOOTSTRAP_CPM} )
+if ( DGM_BOOTSTRAP_CPM AND NOT COMMAND CPMAddPackage )
     bootstrap_cpm ()
 endif ()
 
