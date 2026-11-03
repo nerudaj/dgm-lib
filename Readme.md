@@ -26,30 +26,38 @@ AI-generated contributions are prohibited, because other OSS projects could lose
 ## Requirements
 
 * CMake v3.31 or newer
-* Microsoft Visual Studio 2022 v17.3 or newer
-* OR clang 18 + Ninja
+* Microsoft Visual Studio 2022
+* OR Clang 18 or newer + Ninja
 
 ## How to build:
 
-* Windows + MSVC:
-```
-cmake -B _build -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
-cmake --build _build --config Debug
-```
-
-* Windows + Clang
-```
-cmake -B _build -G Ninja -D CMAKE_CXX_COMPILER=clang++ -D CMAKE_CXX_STANDARD=23 -D CMAKE_CXX_STANDARD_REQUIRED=ON .
-cmake --build _build
-```
-
-* Ubuntu
-
-You need to have clang18 installed. With that, you can use a preset:
+### Windows + MSVC:
 
 ```
-cmake --preset clang-debug
-cmake --build --preset build-clang-debug
+cmake --preset msvc-2022
+cmake --build --preset msvc-2022 [--config Release]
+ctest --preset msvc-2022 [-C Release]
+```
+
+Or you can just open the folder in Visual Studio if you have the CMake tools installed.
+
+### Windows + Clang
+
+```
+cmake --preset clang
+cmake --build --preset clang [--config Release]
+ctest --preset clang [-C Release]
+```
+
+### Ubuntu-based systems
+
+You need Clang 18 or newer installed. If `clang++ --version` outputs the correct version, you are fine. If you are on an older distro
+and installed newer clang via `llvm.sh`, it is available under `clang++-<version>`, so you need to set an environment variable `CLANG_SUFFIX` to `-<version>`.
+
+```sh
+cmake --preset clang
+cmake --build --preset clang [--config Release]
+ctest --preset clang [-C Release]
 ```
 
 ## Integration
