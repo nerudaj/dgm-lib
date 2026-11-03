@@ -9,51 +9,57 @@
         {
             "name": "base",
             "hidden": true,
+            "binaryDir": "${sourceDir}/_build-${presetName}",
             "cacheVariables": {
                 "CMAKE_CXX_EXTENSIONS": "OFF"
             }
         },
         {
-            "name": "clang-base",
-            "hidden": true,
+            "name": "clang",
             "inherits": "base",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/_build-${presetName}",
+            "generator": "Ninja Multi-Config",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-18",
-                "CMAKE_CXX_COMPILER": "clang++-18",
+                "CMAKE_C_COMPILER": "clang$penv{CLANG_SUFFIX}",
+                "CMAKE_CXX_COMPILER": "clang++$penv{CLANG_SUFFIX}",
                 "CMAKE_CXX_FLAGS": "-stdlib=libc++"
             }
         },
         {
-            "name": "clang-debug",
-            "inherits": "clang-base",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "clang-release",
-            "inherits": "clang-base",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
+            "name": "msvc-2022",
+            "inherits": "base",
+            "generator":"Visual Studio 17 2022",
+            "architecture": "x64",
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
         }
     ],
     "buildPresets": [
         {
-            "name": "clang-debug-build",
-            "configurePreset": "clang-debug",
-            "targets": [
-                "all"
-            ]
+            "name": "clang",
+            "configurePreset": "clang",
+            "configuration": "Debug"
         },
         {
-            "name": "clang-release-build",
-            "configurePreset": "clang-release",
-            "targets": [
-                "all"
-            ]
+            "name": "msvc-2022",
+            "configurePreset": "msvc-2022",
+            "configuration": "Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "clang",
+            "configurePreset": "clang",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "msvc-2022",
+            "configurePreset": "msvc-2022",
+            "configuration": "Debug",
+            "output": {
+                "outputOnFailure": true
+            }
         }
     ]
 }
