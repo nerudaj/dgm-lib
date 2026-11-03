@@ -7,12 +7,14 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-env:
-  BUILD_DIR: ${{github.workspace}}/vsbuild
-
 jobs:
   build:
     runs-on: ubuntu-24.04
+    strategy:
+        matrix:
+          clang: [18, 20, 21]
+    env:
+      CLANG_SUFFIX: -${{ matrix.clang }}
 
     steps:
     - uses: actions/checkout@v4
@@ -21,18 +23,19 @@ jobs:
       uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '4.0.3'
+    
+    - name: Install Clang ${{ matrix.clang }}
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh ${{ matrix.clang }}
+      shell: bash
 
     - name: Setup SFML development libraries
       run: |
         sudo apt update
-        sudo apt install libc++-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev
-      shell: bash
-    
-    - name: Install Clang 18
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 18
+        sudo apt install libc++-${{ matrix.clang }}-dev libc++abi-${{ matrix.clang }}-dev
+        sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev
       shell: bash
 
     - name: Check cmake version
@@ -40,13 +43,17 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake --preset clang-debug
+        cmake --preset clang
       shell: bash
 
     - name: Build
       run: |
-        cmake --build --preset clang-debug-build
+        cmake --build --preset clang --config Debug
       shell: bash
 
     # Github Actions don't have X server and therefore
-    # some tests cannot pass
+    # some tests cannot pass, so we need to exclude them
+    #- name: Test
+    #  run: |
+    #    ctest --rerun-failed --output-on-failure -- ~[App]
+    #  shell: bash

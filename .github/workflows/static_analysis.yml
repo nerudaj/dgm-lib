@@ -7,9 +7,6 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
-env:
-  BUILD_DIR: ${{github.workspace}}/vsbuild
-
 jobs:
   build:
     runs-on: windows-2022
@@ -27,11 +24,10 @@ jobs:
 
     - name: Configure CMake
       run: |
-        cmake -B "${{env.BUILD_DIR}}" -D DGM_ENABLE_LINTER=ON -D CMAKE_GENERATOR_PLATFORM=x64 .
+        cmake --preset msvc-2022 -D DGM_ENABLE_LINTER=ON
       shell: cmd
 
     - name: Build
-      working-directory: ${{env.BUILD_DIR}}
       run: |
-        cmake --build . --config Debug
+        cmake --build --preset msvc-2022 --config Debug
       shell: cmd
