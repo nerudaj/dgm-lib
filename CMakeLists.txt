@@ -1,5 +1,15 @@
 cmake_minimum_required ( VERSION 3.31 )
 
+include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
+
+get_version_from_git (
+    PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
+    FULL_VERSION_VARIABLE FULL_PROJECT_VERSION
+)
+
+# Project setup
+project ( dgm-lib VERSION "${GIT_PROJECT_VERSION}" )
+
 # Remember source directories
 set ( DGM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" )
 set ( DGM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" )
@@ -16,21 +26,11 @@ option ( DGM_DONT_FETCH_SFML "Don't auto-fetch SFML, fail if not found" OFF )
 option ( DGM_DONT_LOOK_FOR_JSON "Don't look for nlohmann::json, use CPM to download it" OFF )
 option ( DGM_DONT_FETCH_JSON "Don't auto-fetch nlohmann::json, fail if not found" OFF )
 
-# CppInit
-include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
 if ( DGM_BOOTSTRAP_CPM AND NOT COMMAND CPMAddPackage )
     bootstrap_cpm ( VERSION 0.43.2 )
 endif ()
-
-get_version_from_git (
-    PROJECT_VERSION_VARIABLE GIT_PROJECT_VERSION
-    FULL_VERSION_VARIABLE FULL_PROJECT_VERSION
-)
-
-# Project setup
-project ( dgm-lib VERSION "${GIT_PROJECT_VERSION}" )
 
 if (NOT ${PROJECT_IS_TOP_LEVEL} )
     message ( "INFO: dgm-lib is used as a dependency, turning off unwanted features" )
