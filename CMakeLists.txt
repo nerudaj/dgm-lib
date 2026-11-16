@@ -21,7 +21,7 @@ include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cpp-init.cmake" )
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
 if ( DGM_BOOTSTRAP_CPM AND NOT COMMAND CPMAddPackage )
-    bootstrap_cpm ()
+    bootstrap_cpm ( VERSION 0.43.2 )
 endif ()
 
 get_version_from_git (
