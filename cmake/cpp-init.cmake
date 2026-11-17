@@ -222,30 +222,18 @@ function ( fetch_headeronly_dependency DEPNAME )
     return ( PROPAGATE "${DEPNAME}_FOLDER" )
 endfunction ()
 
-function ( apply_compile_options TARGET )
-	if ( ${MSVC} )
-		target_compile_options ( ${TARGET}
-			PRIVATE
-			/W4
-			/MP
-			/we4265 # Missing virtual dtor
-			/we4834 # Discarding result of [[nodiscard]] function
-			/we4456 # Name shadowing
-			/we4457 # Name shadowing
-			/we4458 # Name shadowing
-			/we4459 # Name shadowing
-			# /wd4251
-			/we4369 # value of enum overflows underlying type
-			/we5205 # Dtor on iface is not virtual
-		)
-		
+function ( apply_recommended_compile_options TARGET )
+    target_compile_options ( ${TARGET}
+        PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /MP /we4265 /we4834 /we4456 /we4457 /we4458 /we4459 /we4369 /we5205>
+        $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic -Werror=shadow -Werror=non-virtual-dtor>
+    )
+
+    if ( ${MSVC} )
 		set_target_properties(
 			${TARGET} PROPERTIES
 			DEBUG_POSTFIX "-d"
-		)
-		
-	else ()
-		message ( "apply_compile_options: no options for non-msvc compiler" )
+		)	
 	endif ()
 endfunction ()
 
@@ -318,7 +306,7 @@ macro ( make_static_library TARGET )
     endif ()
 
     enable_autoformatter ( ${TARGET} )
-    apply_compile_options ( ${TARGET} )
+    apply_recommended_compile_options ( ${TARGET} )
 endmacro()
 
 macro ( make_executable TARGET )
@@ -343,7 +331,7 @@ macro ( make_executable TARGET )
     endif ()
 
     enable_autoformatter ( ${TARGET} )
-    apply_compile_options ( ${TARGET} )
+    apply_recommended_compile_options ( ${TARGET} )
 endmacro()
 
 ### === BOOTSTRAPPING === ###
