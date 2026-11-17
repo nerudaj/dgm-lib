@@ -28,5 +28,5 @@ target_compile_definitions ( ${TARGET} PUBLIC
 	RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/../resources"
 )
 
-apply_compile_options ( ${TARGET} )
+apply_recommended_compile_options ( ${TARGET} )
 enable_autoformatter ( ${TARGET} )

@@ -8,4 +8,4 @@ target_link_libraries ( ${TARGET}
 	PRIVATE dgm::dgm-lib
 )
 
-apply_compile_options ( ${TARGET} )
+apply_recommended_compile_options ( ${TARGET} )

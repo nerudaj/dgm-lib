@@ -1,6 +1,6 @@
 set ( TARGET dgm-lib )
 
-if ( ${DGM_ENABLE_LINTER} )
+if ( DGM_ENABLE_LINTER )
     set ( MAKE_LIBRARY_OPTIONS ENABLE_LINTER )
 endif()
 
@@ -8,22 +8,19 @@ make_static_library ( ${TARGET} ${MAKE_LIBRARY_OPTIONS} )
 
 message ( "Current system: ${CMAKE_SYSTEM_NAME}" )
 
-if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Android" )
-    set ( EXTRA_ANDROID_LIBS android log )
-endif()
-
-if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" )
-    set ( EXTRA_LINUX_LIBS stdc++exp )
-endif()
-
-if ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
-    set ( EXTRA_WINDOWS_LIBS SFML::Main )
-endif()
-
 target_link_libraries ( ${TARGET}
-    PUBLIC SFML::System SFML::Window SFML::Graphics ${EXTRA_WINDOWS_LIBS} ${EXTRA_ANDROID_LIBS} ${EXTRA_LINUX_LIBS}
+    PUBLIC SFML::System SFML::Window SFML::Graphics
     PRIVATE $<BUILD_INTERFACE:nlohmann_json::nlohmann_json>
 )
+
+target_link_libraries ( dgm-lib PUBLIC
+    # On Windows, we must additionally link SFML::Main
+    $<$<PLATFORM_ID:Windows>:SFML::Main>
+    # On Android, we must additionally link android, log
+    $<$<PLATFORM_ID:Android>:android;log>
+    # On Linux, if we ever support GCC / libstdc++, we must include libstdc++exp (not needed for clang)
+    $<$<AND:$<PLATFORM_ID:Linux>,$<CXX_COMPILER_ID:GNU>>:stdc++exp>
+) 
 
 target_compile_features( ${TARGET} PUBLIC cxx_std_23 )
 
@@ -56,6 +53,6 @@ if ( NOT "${PROJECT_VERSION}" STREQUAL "" )
         DESTINATION lib/cmake/${TARGET}
     )
 else()
-    message ( "PROJECT_VERSION is empty, git was likely fetched in shallow mode" )
-    message ( "No install rules will be called" )
+    message ( WARNING "dgm-lib: PROJECT_VERSION is empty, git was likely fetched in shallow mode" )
+    message ( WARNING "dgm-lib: No install rules will be called" )
 endif()
