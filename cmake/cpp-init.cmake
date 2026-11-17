@@ -324,7 +324,7 @@ macro ( make_executable TARGET )
     link_private_header_folder ( ${TARGET} )
 
     if ( CIME_DEPS )
-        target_link_libraries ( ${TARGET} PUBLIC ${CIME_DEPS} )
+        target_link_libraries ( ${TARGET} PRIVATE ${CIME_DEPS} )
     endif ()
 
     if ( CIME_ENABLE_LINTER )
