@@ -26,13 +26,13 @@ function ( bootstrap_cpm )
 
     cmake_parse_arguments( BOOTSTRAP_CPM "" "${oneValueArgs}" "" ${ARGN} )
 
-    set ( VERSION "latest" )
+    set ( GET_CPM_URL "https://github.com/cpm-cmake/CPM.cmake/releases/latest/download/get_cpm.cmake" )
     if ( BOOTSTRAP_CPM_VERSION )
-        set ( VERSION "${BOOTSTRAP_CPM_VERSION}" )
-    endif()
+        set ( GET_CPM_URL "https://github.com/cpm-cmake/CPM.cmake/releases/download/${BOOTSTRAP_CPM_VERSION}/get_cpm.cmake" )
+    endif ()
 
     file ( DOWNLOAD 
-        "https://github.com/cpm-cmake/CPM.cmake/releases/${VERSION}/download/get_cpm.cmake"
+        "${GET_CPM_URL}"
         "${CMAKE_CURRENT_BINARY_DIR}/get_cpm.cmake"
     )
 
