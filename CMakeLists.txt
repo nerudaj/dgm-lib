@@ -29,7 +29,7 @@ option ( DGM_DONT_FETCH_JSON "Don't auto-fetch nlohmann::json, fail if not found
 include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake" )
 
 if ( DGM_BOOTSTRAP_CPM AND NOT COMMAND CPMAddPackage )
-    bootstrap_cpm ( VERSION 0.43.2 )
+    include ( "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CPM_0.43.2.cmake" )
 endif ()
 
 if (NOT ${PROJECT_IS_TOP_LEVEL} )
