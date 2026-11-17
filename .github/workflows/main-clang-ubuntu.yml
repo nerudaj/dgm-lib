@@ -34,8 +34,7 @@ jobs:
     - name: Setup SFML development libraries
       run: |
         sudo apt update
-        sudo apt install libc++-${{ matrix.clang }}-dev libc++abi-${{ matrix.clang }}-dev
-        sudo apt install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libfreetype-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev
+        sudo bash install_ubuntu_deps.sh ${{ matrix.clang }}
       shell: bash
 
     - name: Check cmake version

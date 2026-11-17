@@ -52,9 +52,10 @@ ctest --preset clang[-release]
 ### Ubuntu-based systems
 
 You need Clang 18 or newer installed. If `clang++ --version` outputs the correct version, you are fine. If you are on an older distro
-and installed newer clang via `llvm.sh`, it is available under `clang++-<version>`, so you need to set an environment variable `CLANG_SUFFIX` to `-<version>`.
+and installed newer clang via `llvm.sh`, it is available under `clang++-<version>`, so you need to set an environment variable `CLANG_SUFFIX` to `-<version>`. There are also additional system dependencies you need to install through `install_ubuntu_deps.sh` script. It requires your clang version (18, 19, 20, ...) as its only argument:
 
 ```sh
+sudo bash install_ubuntu_deps.sh 18 # If you have clang v18
 cmake --preset clang
 cmake --build --preset clang[-release]
 ctest --preset clang[-release]
