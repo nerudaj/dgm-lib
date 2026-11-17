@@ -13,5 +13,5 @@ set_target_properties( ${TARGET} PROPERTIES
 	FOLDER "examples"
 )
 
-apply_compile_options ( ${TARGET} )
+apply_recommended_compile_options ( ${TARGET} )
 enable_autoformatter ( ${TARGET} )
