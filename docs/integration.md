@@ -96,7 +96,7 @@ You can find precompiled binaries under [Releases](https://github.com/nerudaj/dg
 
 ```
 set ( SFML_VERSION "3.0.0" )
-set ( DGM_VERSION "v3.0.0" )
+set ( DGM_VERSION "3.0.0" )
 
 include (FetchContent)
 
@@ -106,7 +106,7 @@ FetchContent_Declare ( SFML
 )
 
 FetchContent_Declare ( DGM
-	URL "https://github.com/nerudaj/dgm-lib/releases/download/${DGM_VERSION}/dgm-lib-${DGM_VERSION}-Windows-x64-MSVC-143-for-SFML-${SFML_VERSION}.zip"
+	URL "https://github.com/nerudaj/dgm-lib/releases/download/v${DGM_VERSION}/dgm-lib-v${DGM_VERSION}-Windows-x64-MSVC-143-for-SFML-${SFML_VERSION}.zip"
 	DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
