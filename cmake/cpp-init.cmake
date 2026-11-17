@@ -49,32 +49,38 @@ endfunction ()
 function ( glob_headers_and_sources HEADERS_OUTVARNAME SOURCES_OUTVARNAME )
     file ( GLOB_RECURSE
         LOCAL_HEADERS
-        "${CMAKE_CURRENT_SOURCE_DIR}/include**/*.hpp"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp"
     )
 	
 	file ( GLOB_RECURSE
 		LOCAL_HEADERS2
-        "${CMAKE_CURRENT_SOURCE_DIR}/include**/*.h"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h"
 	)
     
     file ( GLOB_RECURSE
         PRIVATE_HEADERS
-        "${CMAKE_CURRENT_SOURCE_DIR}/private_include**/*.hpp"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/private_include/*.hpp"
     )
     
     file ( GLOB_RECURSE
         PRIVATE_HEADERS2
-        "${CMAKE_CURRENT_SOURCE_DIR}/private_include**/*.h"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/private_include/*.h"
     )
 
     file ( GLOB_RECURSE
         LOCAL_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/src**/*.cpp"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
     )
     
     file ( GLOB_RECURSE
         LOCAL_SOURCES2
-        "${CMAKE_CURRENT_SOURCE_DIR}/source**/*.cpp"
+        CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
     )
 
     source_group(
