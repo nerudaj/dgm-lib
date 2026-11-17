@@ -110,6 +110,7 @@ endfunction ()
 # Additional Information:
 #   The version string is retrieved using the `git describe --tags` command, which extracts the latest annotated tag from the git history.
 #   The tags should follow the Semantic Versioning (semver) format, with an optional 'v' prefix. For example, 'v1.0.0' or '1.0.0'.
+#   Could can have an optional [-text] suffix after the version, such as v0.0.1-alpha7. Note it will be ignored.
 # Example:
 #   get_version_from_git(PROJECT_VERSION_VARIABLE my_project_version FULL_VERSION_VARIABLE my_full_version)
 function ( get_version_from_git )
@@ -126,7 +127,7 @@ function ( get_version_from_git )
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 
-    string ( REGEX MATCH "[0-9]+\.[0-9]+\.[0-9]+" LOCAL_CORE_VERSION "${LOCAL_STDOUT}" )
+    string ( REGEX MATCH "[0-9]+[.][0-9]+[.][0-9]+" LOCAL_CORE_VERSION "${LOCAL_STDOUT}" )
 
     message ( "Found full git version: ${LOCAL_STDOUT}" )
     message ( "Inferred project version: ${LOCAL_CORE_VERSION}" )
