@@ -43,6 +43,16 @@ Or you can just open the folder in Visual Studio if you have the CMake tools ins
 
 ### Windows + Clang
 
+You can use these `winget` commands to install the necessary dependencies:
+
+```
+winget install kitware.cmake
+winget install MartinStorsjo.LLVM-MinGW.UCRT
+winget install Ninja-build.Ninja
+```
+
+Now the build will work:
+
 ```
 cmake --preset clang
 cmake --build --preset clang[-release]

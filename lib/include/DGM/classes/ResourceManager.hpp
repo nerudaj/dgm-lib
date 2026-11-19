@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 #ifdef ANDROID
 #include <SFML/System/NativeActivity.hpp>
