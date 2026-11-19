@@ -71,7 +71,7 @@ namespace dgm
         /**
          *  \brief Returns radius of circle
          */
-        [[nodiscard]] constexpr const float getRadius() const noexcept
+        [[nodiscard]] constexpr float getRadius() const noexcept
         {
             return radius;
         }

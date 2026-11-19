@@ -9,7 +9,7 @@ void Particle::setAnimationFrame(const sf::IntRect& frame) noexcept
     VBOHelper::setTextureCoords(vertices.data(), frame);
 }
 
-// This just makes a unit vector that has angle of 45°
+// This just makes a unit vector that has angle of 45
 constexpr float SIN_OF_45_DEG = 0.707106f;
 const sf::Vector2f VEC_45_DEG = sf::Vector2f(SIN_OF_45_DEG, -SIN_OF_45_DEG);
 
